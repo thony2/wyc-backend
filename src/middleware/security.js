@@ -151,8 +151,8 @@ function csrfTokenGenerator(req, res, next) {
         const token = crypto.randomBytes(32).toString('hex');
         res.cookie('csrf_token', token, {
             httpOnly: false,
-            sameSite: 'Lax',
-            secure:   false,
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+            secure:   process.env.NODE_ENV === 'production',
             maxAge:   3_600_000,
             path:     '/',
         });
