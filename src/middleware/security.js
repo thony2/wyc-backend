@@ -205,7 +205,6 @@ function csrfValidator(req, res, next) {
     }
 
     next();
-}
 
 
 // ── Request ID ───────────────────────────────────────────────
