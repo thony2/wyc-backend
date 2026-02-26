@@ -1,0 +1,31 @@
+# ============================================================
+# West Yorkshire Carpets — Git Ignore Rules
+# Files listed here will NEVER be uploaded to GitHub or any
+# version control system. This protects secrets and data.
+# ============================================================
+
+# Secret environment variables — NEVER upload this
+.env
+.env.local
+.env.production
+
+# Database files — contains real customer data
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Log files — not needed in version control
+logs/
+*.log
+
+# Node dependencies — always reinstalled fresh on the server
+node_modules/
+
+# Mac system files — irrelevant to the project
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/settings.json
+.idea/
