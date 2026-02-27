@@ -79,7 +79,7 @@ const corsOptions = {
         logger.warn(`[CORS] Blocked request from disallowed origin: ${origin}`);
         return callback(new Error('Not allowed by CORS policy'));
     },
-    methods:            ['GET', 'POST', 'OPTIONS'],
+    methods:            ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'X-CSRF-Token', 'Authorization'],
     exposedHeaders:     ['X-Request-Id'],
     credentials:        true,    // Required for cookie-based CSRF tokens
