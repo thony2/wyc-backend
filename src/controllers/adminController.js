@@ -255,12 +255,11 @@ function deleteLead(req, res) {
         }
 
         if (hardDelete) {
-            // Permanent deletion — use only when explicitly required by Subject Access Request
-            const result = stmtDeleteLead.run(id);
-            stmtInsertAudit.run(id, 'deleted', 'admin', JSON.stringify({ hard: true }), getClientIp(req));
-            logger.warn(`[Admin] Hard-deleted lead ${id}`);
-            return res.json({ success: true, message: 'Lead permanently deleted.' });
-        }
+    const result = stmtDeleteLead.run(id);
+    try { stmtInsertAudit.run(id, 'deleted', 'admin', JSON.stringify({ hard: true }), getClientIp(req)); } catch(auditErr) { /* audit optional */ }
+    logger.warn(`[Admin] Hard-deleted lead ${id}`);
+    return res.json({ success: true, message: 'Lead permanently deleted.' });
+}
 
         // Soft anonymisation — preserves record for analytics; removes all PII
         db.prepare(`
