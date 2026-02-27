@@ -270,7 +270,7 @@ function deleteLead(req, res) {
                 phone     = '[Anonymised]',
                 ip_address = NULL,
                 user_agent = NULL,
-                status    = 'deleted',
+                status    = 'spam',
                 updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now')
             WHERE id = ?
         `).run(id);
