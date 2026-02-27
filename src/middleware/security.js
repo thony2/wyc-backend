@@ -80,7 +80,7 @@ const corsOptions = {
         return callback(new Error('Not allowed by CORS policy'));
     },
     methods:            ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders:     ['Content-Type', 'X-CSRF-Token'],
+    allowedHeaders: ['Content-Type', 'X-CSRF-Token', 'Authorization'],
     exposedHeaders:     ['X-Request-Id'],
     credentials:        true,    // Required for cookie-based CSRF tokens
     maxAge:             86_400,  // Preflight cache: 24 hours
