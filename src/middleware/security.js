@@ -170,42 +170,6 @@ function csrfTokenGenerator(req, res, next) {
 function csrfValidator(req, res, next) {
     return next();
 }
-    
-    // In local development, Safari blocks cookies on localhost.
-    // CSRF protection is only meaningful on a real public server anyway.
-    if (process.env.NODE_ENV !== 'production') return next();
-
-    // Skip for safe HTTP methods — only POST/PATCH/DELETE need CSRF protection
-    if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
-
-    const cookieToken = req.cookies['csrf_token'];
-    const headerToken = req.headers['x-csrf-token'];
-
-    if (!cookieToken || !headerToken) {
-        logger.warn(`[CSRF] Missing token — IP: ${req.ip}, path: ${req.path}`);
-        return res.status(403).json({
-            success: false,
-            error:   'Invalid request. Please refresh the page and try again.',
-        });
-    }
-
-    // Use timingSafeEqual to prevent timing attacks on token comparison
-    const cookieBuf = Buffer.from(cookieToken);
-    const headerBuf = Buffer.from(headerToken);
-
-    if (
-        cookieBuf.length !== headerBuf.length ||
-        !crypto.timingSafeEqual(cookieBuf, headerBuf)
-    ) {
-        logger.warn(`[CSRF] Token mismatch — IP: ${req.ip}, path: ${req.path}`);
-        return res.status(403).json({
-            success: false,
-            error:   'Security token mismatch. Please refresh the page and try again.',
-        });
-    }
-
-    next();
-
 
 // ── Request ID ───────────────────────────────────────────────
 // Attaches a unique ID to each request for log correlation.
