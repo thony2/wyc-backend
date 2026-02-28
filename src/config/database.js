@@ -133,15 +133,26 @@ function convertPlaceholders(sql) {
 
 function runMigrations(db) {
     const migrations = [
-        `ALTER TABLE leads ADD COLUMN booking_date  TEXT`,
-        `ALTER TABLE leads ADD COLUMN booking_time  TEXT`,
-        `ALTER TABLE leads ADD COLUMN booking_type  TEXT`,
-        `ALTER TABLE leads ADD COLUMN booking_notes TEXT`,
+        `ALTER TABLE leads ADD COLUMN booking_date   TEXT`,
+        `ALTER TABLE leads ADD COLUMN booking_time   TEXT`,
+        `ALTER TABLE leads ADD COLUMN booking_type   TEXT`,
+        `ALTER TABLE leads ADD COLUMN booking_notes  TEXT`,
+        `ALTER TABLE leads ADD COLUMN lead_number    INTEGER`,
     ];
     for (const sql of migrations) {
-        try { db.exec(sql); logger.info(`[DB] Migration applied: ${sql.slice(0,50)}`); }
-        catch(e) { /* column already exists — safe to ignore */ }
+        try { db.exec(sql); logger.info(`[DB] Migration: ${sql.slice(0,60)}`); }
+        catch(e) { /* already exists — safe */ }
     }
+    // Backfill lead_number for existing records
+    try {
+        db.exec(`
+            UPDATE leads SET lead_number = (
+                SELECT COUNT(*) FROM leads l2
+                WHERE l2.created_at <= leads.created_at
+            )
+            WHERE lead_number IS NULL
+        `);
+    } catch(e) {}
 }
 
 function runSchema(db) {

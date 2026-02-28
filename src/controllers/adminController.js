@@ -30,7 +30,9 @@ const stmtListLeads = db.prepare(`
         service_type, message,
         room_length_m, room_width_m, flooring_type,
         include_underlay, include_fitting, estimated_cost,
-        gdpr_consent_at, status, source, created_at, updated_at
+        gdpr_consent_at, status, source,
+        booking_date, booking_time, booking_type, booking_notes,
+        created_at, updated_at
     FROM leads
     ORDER BY created_at DESC
     LIMIT ? OFFSET ?
@@ -147,16 +149,16 @@ function listLeads(req, res) {
         let leads;
         if (status && VALID_STATUSES.includes(status)) {
             leads = db.prepare(`
-                SELECT id, name, email, phone, postcode,
-                       service_type, message, estimated_cost,
-                       status, source, created_at, updated_at
-                FROM leads
-                WHERE status = ?
-                ORDER BY created_at DESC
-                LIMIT ? OFFSET ?
-            `).all(status, limit, offset);
-        } else {
-            leads = stmtListLeads.all(limit, offset);
+    SELECT id, name, email, phone, postcode,
+           service_type, message, estimated_cost,
+           status, source,
+           booking_date, booking_time, booking_type, booking_notes,
+           lead_number, created_at, updated_at
+    FROM leads
+    WHERE status = ?
+    ORDER BY created_at DESC
+    LIMIT ? OFFSET ?
+`).all(status, limit, offset);
         }
 
         const totalRow = stmtCountLeads.get({ status: status || null });
