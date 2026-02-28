@@ -147,6 +147,12 @@ function listLeads(req, res) {
     ORDER BY created_at DESC
     LIMIT ? OFFSET ?
 `).all(status, limit, offset);
+        } else {
+            leads = db.prepare(`
+    SELECT * FROM leads
+    ORDER BY created_at DESC
+    LIMIT ? OFFSET ?
+`).all(limit, offset);
         }
 
         const totalRow = stmtCountLeads.get({ status: status || null });
