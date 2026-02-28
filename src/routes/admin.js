@@ -94,7 +94,8 @@ router.get('/leads/:id', adminController.getLead);
 // Update lead status
 // Body: { "status": "contacted" | "quoted" | "won" | "lost" | "spam" }
 router.patch('/leads/:id/status', adminController.updateStatus);
-
+router.patch('/leads/:id/booking', adminController.setBooking);
+router.get('/calendar', adminController.getCalendar);
 // Soft-anonymise (GDPR) or hard-delete (with ?hard=true) a lead
 router.delete('/leads/:id', adminController.deleteLead);
 

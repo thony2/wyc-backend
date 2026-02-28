@@ -131,6 +131,19 @@ function convertPlaceholders(sql) {
 
 // ── Initialise schema on first run ───────────────────────────
 
+function runMigrations(db) {
+    const migrations = [
+        `ALTER TABLE leads ADD COLUMN booking_date  TEXT`,
+        `ALTER TABLE leads ADD COLUMN booking_time  TEXT`,
+        `ALTER TABLE leads ADD COLUMN booking_type  TEXT`,
+        `ALTER TABLE leads ADD COLUMN booking_notes TEXT`,
+    ];
+    for (const sql of migrations) {
+        try { db.exec(sql); logger.info(`[DB] Migration applied: ${sql.slice(0,50)}`); }
+        catch(e) { /* column already exists — safe to ignore */ }
+    }
+}
+
 function runSchema(db) {
     const schemaPath = path.join(__dirname, 'schema.sql');
     if (!fs.existsSync(schemaPath)) {
@@ -160,7 +173,8 @@ function getDatabase() {
         _instance = createPostgresPool();
     } else {
         _instance = createSQLiteConnection();
-        runSchema(_instance);  // Auto-create tables on SQLite first run
+        runSchema(_instance);
+        runMigrations(_instance);
     }
 
     return _instance;

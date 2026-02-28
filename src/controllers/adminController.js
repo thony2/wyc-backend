@@ -51,6 +51,33 @@ const stmtGetAuditLog = db.prepare(`
     ORDER BY created_at ASC
 `);
 
+const stmtSetBooking = db.prepare(`
+    UPDATE leads
+    SET booking_date  = ?,
+        booking_time  = ?,
+        booking_type  = ?,
+        booking_notes = ?,
+        updated_at    = strftime('%Y-%m-%dT%H:%M:%SZ', 'now')
+    WHERE id = ?
+`);
+
+const stmtGetCalendar = db.prepare(`
+    SELECT id, name, phone, postcode, service_type,
+           status, booking_date, booking_time, booking_type, booking_notes
+    FROM leads
+    WHERE booking_date BETWEEN ? AND ?
+    ORDER BY booking_date ASC, booking_time ASC
+`);
+
+const stmtGetUnscheduled = db.prepare(`
+    SELECT id, name, phone, postcode, service_type, status, created_at
+    FROM leads
+    WHERE booking_date IS NULL
+      AND status NOT IN ('won', 'lost', 'spam')
+    ORDER BY created_at DESC
+    LIMIT 20
+`);
+
 const stmtUpdateStatus = db.prepare(`
     UPDATE leads SET status = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now')
     WHERE id = ?
@@ -368,6 +395,72 @@ function getDashboard(req, res) {
 }
 
 
+// ============================================================
+// PATCH /api/admin/leads/:id/booking
+// Body: { booking_date, booking_time, booking_type, booking_notes }
+// ============================================================
+function setBooking(req, res) {
+    try {
+        const { id } = req.params;
+        const { booking_date, booking_time, booking_type, booking_notes } = req.body;
+
+        const existing = stmtGetLead.get(id);
+        if (!existing) {
+            return res.status(404).json({ success: false, error: 'Lead not found.' });
+        }
+
+        const validTypes = ['measurement', 'installation', 'callback', 'quote', null, ''];
+        if (booking_type && !validTypes.includes(booking_type)) {
+            return res.status(400).json({ success: false, error: 'Invalid booking type.' });
+        }
+
+        stmtSetBooking.run(
+            booking_date  || null,
+            booking_time  || null,
+            booking_type  || null,
+            booking_notes || null,
+            id
+        );
+
+        try {
+            stmtInsertAudit.run(id, 'updated', 'admin',
+                JSON.stringify({ field: 'booking', booking_date, booking_type }),
+                getClientIp(req));
+        } catch(e) {}
+
+        logger.info(`[Admin] Lead ${id} booked for ${booking_date}`);
+        return res.json({ success: true, message: 'Booking saved.' });
+
+    } catch (err) {
+        logger.error(`[Admin] setBooking error: ${err.message}`);
+        return res.status(500).json({ success: false, error: 'Failed to save booking.' });
+    }
+}
+
+// ============================================================
+// GET /api/admin/calendar?month=2026-03
+// Returns all bookings for a given month + unscheduled leads
+// ============================================================
+function getCalendar(req, res) {
+    try {
+        const month = req.query.month || new Date().toISOString().slice(0, 7);
+        const from  = `${month}-01`;
+        const to    = `${month}-31`;
+
+        const bookings     = stmtGetCalendar.all(from, to);
+        const unscheduled  = stmtGetUnscheduled.all();
+
+        return res.json({
+            success: true,
+            data: { bookings, unscheduled, month }
+        });
+
+    } catch (err) {
+        logger.error(`[Admin] getCalendar error: ${err.message}`);
+        return res.status(500).json({ success: false, error: 'Failed to load calendar.' });
+    }
+}
+
 module.exports = {
     listLeads,
     getLead,
@@ -375,4 +468,6 @@ module.exports = {
     deleteLead,
     exportCsv,
     getDashboard,
+    setBooking,
+    getCalendar,
 };
