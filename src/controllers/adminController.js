@@ -25,14 +25,7 @@ const logger     = require('../utils/logger');
 // ── Prepared Statements ──────────────────────────────────────
 
 const stmtListLeads = db.prepare(`
-    SELECT
-        id, name, email, phone, postcode,
-        service_type, message,
-        room_length_m, room_width_m, flooring_type,
-        include_underlay, include_fitting, estimated_cost,
-        gdpr_consent_at, status, source,
-        booking_date, booking_time, booking_type, booking_notes,
-        created_at, updated_at
+    SELECT *
     FROM leads
     ORDER BY created_at DESC
     LIMIT ? OFFSET ?
@@ -149,12 +142,7 @@ function listLeads(req, res) {
         let leads;
         if (status && VALID_STATUSES.includes(status)) {
             leads = db.prepare(`
-    SELECT id, name, email, phone, postcode,
-           service_type, message, estimated_cost,
-           status, source,
-           booking_date, booking_time, booking_type, booking_notes,
-           lead_number, created_at, updated_at
-    FROM leads
+    SELECT * FROM leads
     WHERE status = ?
     ORDER BY created_at DESC
     LIMIT ? OFFSET ?
