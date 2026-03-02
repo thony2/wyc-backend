@@ -68,13 +68,14 @@ CREATE INDEX IF NOT EXISTS idx_leads_new         ON leads (created_at DESC)
 -- Immutable append-only log of all changes to leads.
 -- Supports GDPR Subject Access Requests and data breach investigation.
 CREATE TABLE IF NOT EXISTS audit_log (
-    id          INTEGER     PRIMARY KEY AUTOINCREMENT,
-    lead_id     TEXT        REFERENCES leads(id) ON DELETE SET NULL,
-    action      TEXT        NOT NULL CHECK(action IN ('created', 'viewed', 'updated', 'deleted', 'exported', 'anonymised')),
-    actor       TEXT        NOT NULL DEFAULT 'system',  -- 'system' | 'admin' | 'api'
-    detail      TEXT,                                   -- JSON payload of changes
-    ip_address  TEXT,
-    created_at  TEXT        NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id    INTEGER,
+    username   TEXT,
+    action     TEXT NOT NULL,
+    table_name TEXT,
+    record_id  INTEGER,
+    details    TEXT,
+    created_at TEXT DEFAULT (datetime('now'))
 );
 
 CREATE INDEX IF NOT EXISTS idx_audit_lead_id    ON audit_log (lead_id);
