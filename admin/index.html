@@ -3,141 +3,178 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="./assets/favicon/favicon.svg" type="image/svg+xml">
-    <link rel="icon" href="./assets/favicon/favicon.ico" sizes="any">
-    <link rel="icon" href="./assets/favicon/favicon-32x32.png" type="image/png" sizes="32x32">
-    <link rel="icon" href="./assets/favicon/favicon-16x16.png" type="image/png" sizes="16x16">
-    <link rel="apple-touch-icon" href="./assets/favicon/apple-touch-icon.png">
-    <link rel="manifest" href="./assets/favicon/site.webmanifest" crossorigin="use-credentials">
-    <title>West Yorkshire Carpets — Admin</title>
+<title>West Yorkshire Carpets — Admin</title>
 <style>
-/* ── RESET ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-/* ── VARIABLES ── */
 :root {
-    --slate:   #1C1D22;
-    --red:     #c8102e;
-    --white:   #ffffff;
-    --cream:   #f5f0eb;
-    --grey:    #6b7280;
-    --border:  #e5e7eb;
-    --success: #16a34a;
-    --warn:    #d97706;
-    --danger:  #dc2626;
-    --radius:  8px;
-    --shadow:  0 1px 3px rgba(0,0,0,0.12);
+    --slate: #1a2332; --slate-mid: #243044; --red: #c8102e; --red-dark: #a00d24;
+    --white: #ffffff; --cream: #f5f0eb; --cream-mid: #e8e0d6; --grey: #6b7280;
+    --grey-light: #9ca3af; --border: #e5e7eb; --success: #16a34a; --warn: #d97706;
+    --danger: #dc2626; --radius: 10px; --radius-sm: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08); --shadow-lg: 0 10px 40px rgba(0,0,0,0.15);
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
+body { font-family: var(--font); background: #f0ede8; color: var(--slate); font-size: 14px; min-height: 100vh; }
 
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f9fafb; color: var(--slate); font-size: 14px; }
-
-/* ── LOGIN ── */
+/* LOGIN */
 #login-screen { display:flex; align-items:center; justify-content:center; min-height:100vh; background:var(--slate); }
-.login-box { background:var(--white); padding:40px; border-radius:var(--radius); width:100%; max-width:400px; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
-.login-box .logo { font-size:1.4rem; font-weight:700; color:var(--slate); margin-bottom:8px; }
-.login-box .logo span { color:var(--red); }
-.login-box p { color:var(--grey); margin-bottom:28px; font-size:0.85rem; }
-.form-field { margin-bottom:16px; }
-.form-field label { display:block; font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--grey); margin-bottom:6px; }
-.form-field input, .form-field select, .form-field textarea {
-    width:100%; padding:10px 12px; border:1.5px solid var(--border); border-radius:var(--radius);
-    font-size:0.92rem; font-family:inherit; color:var(--slate); background:var(--white);
-    transition: border-color .2s;
-}
-.form-field input:focus, .form-field select:focus, .form-field textarea:focus {
-    outline:none; border-color:var(--red);
-}
-.btn { display:inline-flex; align-items:center; gap:6px; padding:10px 20px; border-radius:var(--radius); font-size:0.88rem; font-weight:600; cursor:pointer; border:none; transition:opacity .2s; }
-.btn:hover { opacity:.88; }
-.btn-primary { background:var(--red); color:var(--white); width:100%; justify-content:center; }
-.btn-secondary { background:var(--cream); color:var(--slate); }
-.btn-success { background:var(--success); color:var(--white); }
-.btn-danger { background:var(--danger); color:var(--white); }
-.btn-sm { padding:6px 12px; font-size:0.8rem; }
+.login-box { background:var(--white); padding:48px 40px; border-radius:16px; width:100%; max-width:420px; box-shadow:0 24px 80px rgba(0,0,0,0.4); }
+.login-brand { font-size:1.2rem; font-weight:700; color:var(--slate); margin-bottom:4px; }
+.login-brand span { color:var(--red); }
+.login-sub { color:var(--grey); font-size:0.85rem; margin-bottom:32px; }
+.field { margin-bottom:16px; }
+.field label { display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--grey); margin-bottom:6px; }
+.field input, .field select, .field textarea { width:100%; padding:11px 13px; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-size:0.92rem; font-family:var(--font); color:var(--slate); background:var(--cream); transition:border-color .2s; }
+.field input:focus, .field select:focus, .field textarea:focus { outline:none; border-color:var(--red); background:var(--white); }
+.field textarea { resize:vertical; min-height:80px; }
+.btn-login { width:100%; padding:13px; background:var(--red); color:var(--white); border:none; border-radius:var(--radius-sm); font-size:0.95rem; font-weight:600; cursor:pointer; transition:background .2s; margin-top:4px; }
+.btn-login:hover { background:var(--red-dark); }
+.login-error { color:var(--danger); font-size:0.83rem; margin-bottom:10px; display:none; }
 
-/* ── LAYOUT ── */
+/* APP */
 #app { display:none; }
-.sidebar { position:fixed; left:0; top:0; bottom:0; width:220px; background:var(--slate); padding:24px 0; overflow-y:auto; z-index:100; }
-.sidebar .brand { padding:0 20px 24px; border-bottom:1px solid rgba(255,255,255,.1); margin-bottom:16px; }
-.sidebar .brand-name { font-size:1rem; font-weight:700; color:var(--white); }
-.sidebar .brand-sub { font-size:0.72rem; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:.1em; }
-.nav-item { display:block; padding:10px 20px; color:rgba(255,255,255,.65); text-decoration:none; font-size:0.88rem; cursor:pointer; border-left:3px solid transparent; transition:all .15s; }
-.nav-item:hover { background:rgba(255,255,255,.06); color:var(--white); }
-.nav-item.active { background:rgba(200,16,46,.15); color:var(--white); border-left-color:var(--red); }
-.nav-item .icon { margin-right:8px; width:16px; display:inline-block; text-align:center; }
-.nav-divider { height:1px; background:rgba(255,255,255,.08); margin:12px 20px; }
-.sidebar-footer { position:absolute; bottom:0; left:0; right:0; padding:16px 20px; border-top:1px solid rgba(255,255,255,.08); }
-.sidebar-user { font-size:0.8rem; color:rgba(255,255,255,.5); margin-bottom:8px; }
-.sidebar-user strong { color:var(--white); display:block; }
+.sidebar { position:fixed; left:0; top:0; bottom:0; width:230px; background:var(--slate); display:flex; flex-direction:column; z-index:100; }
+.sidebar-brand { padding:26px 22px 18px; border-bottom:1px solid rgba(255,255,255,.08); }
+.sidebar-brand-name { font-size:1rem; font-weight:700; color:var(--white); }
+.sidebar-brand-name span { color:var(--red); }
+.sidebar-brand-sub { font-size:0.68rem; color:rgba(255,255,255,.3); text-transform:uppercase; letter-spacing:.1em; margin-top:2px; }
+.sidebar-nav { padding:14px 10px; flex:1; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:10px 12px; color:rgba(255,255,255,.5); border-radius:var(--radius-sm); cursor:pointer; font-size:0.88rem; border:none; background:none; width:100%; text-align:left; transition:all .15s; margin-bottom:2px; }
+.nav-item:hover { background:rgba(255,255,255,.07); color:rgba(255,255,255,.85); }
+.nav-item.active { background:rgba(200,16,46,.2); color:var(--white); }
+.nav-divider { height:1px; background:rgba(255,255,255,.08); margin:10px 12px; }
+.sidebar-footer { padding:14px 10px; border-top:1px solid rgba(255,255,255,.08); }
+.sidebar-user { font-size:0.77rem; color:rgba(255,255,255,.35); margin-bottom:8px; }
+.sidebar-user strong { color:rgba(255,255,255,.75); display:block; }
+.btn-logout { width:100%; padding:8px; background:rgba(255,255,255,.07); color:rgba(255,255,255,.55); border:none; border-radius:var(--radius-sm); font-size:0.82rem; cursor:pointer; transition:all .15s; }
+.btn-logout:hover { background:rgba(255,255,255,.13); color:var(--white); }
 
-.main { margin-left:220px; min-height:100vh; }
-.topbar { background:var(--white); border-bottom:1px solid var(--border); padding:0 24px; height:56px; display:flex; align-items:center; justify-content:space-between; }
-.topbar h1 { font-size:1rem; font-weight:600; }
-.content { padding:24px; }
+.main { margin-left:230px; min-height:100vh; }
+.topbar { background:var(--white); border-bottom:1px solid var(--border); padding:0 26px; height:58px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; }
+.topbar h1 { font-size:1.02rem; font-weight:700; }
+.topbar-stats { display:flex; gap:20px; }
+.topbar-stat { font-size:0.8rem; color:var(--grey); }
+.topbar-stat strong { color:var(--slate); }
+.topbar-stat.warn strong { color:var(--warn); }
+.page-content { padding:26px; }
 
-/* ── STATS ── */
-.stats-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:16px; margin-bottom:24px; }
-.stat-card { background:var(--white); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); }
-.stat-card .label { font-size:0.75rem; text-transform:uppercase; letter-spacing:.08em; color:var(--grey); margin-bottom:8px; }
-.stat-card .value { font-size:2rem; font-weight:700; color:var(--slate); }
-.stat-card.warn .value { color:var(--warn); }
-.stat-card.danger .value { color:var(--danger); }
+/* TOOLBAR */
+.toolbar { display:flex; align-items:center; gap:10px; margin-bottom:22px; flex-wrap:wrap; }
+.cat-tabs { display:flex; gap:6px; flex:1; flex-wrap:wrap; }
+.cat-tab { padding:7px 15px; border-radius:100px; border:1.5px solid var(--border); background:var(--white); color:var(--grey); font-size:0.82rem; font-weight:500; cursor:pointer; transition:all .15s; white-space:nowrap; }
+.cat-tab:hover { border-color:var(--slate); color:var(--slate); }
+.cat-tab.active { background:var(--slate); border-color:var(--slate); color:var(--white); }
+.search-wrap { position:relative; }
+.search-wrap input { padding:8px 12px 8px 32px; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-size:0.87rem; font-family:var(--font); width:190px; }
+.search-wrap input:focus { outline:none; border-color:var(--red); }
+.search-icon { position:absolute; left:9px; top:50%; transform:translateY(-50%); color:var(--grey-light); font-size:0.85rem; pointer-events:none; }
+.btn-add { display:flex; align-items:center; gap:6px; padding:9px 18px; background:var(--red); color:var(--white); border:none; border-radius:var(--radius-sm); font-size:0.87rem; font-weight:600; cursor:pointer; white-space:nowrap; transition:background .15s; }
+.btn-add:hover { background:var(--red-dark); }
 
-/* ── TABLE ── */
-.card { background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; margin-bottom:24px; }
-.card-header { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
-.card-header h2 { font-size:0.95rem; font-weight:600; }
-.card-body { padding:20px; }
-.table-wrap { overflow-x:auto; }
-table { width:100%; border-collapse:collapse; }
-th { text-align:left; font-size:0.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--grey); padding:10px 12px; border-bottom:2px solid var(--border); white-space:nowrap; }
-td { padding:10px 12px; border-bottom:1px solid var(--border); font-size:0.88rem; vertical-align:middle; }
-tr:last-child td { border-bottom:none; }
-tr:hover td { background:#fafafa; }
-.badge { display:inline-block; padding:2px 8px; border-radius:100px; font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
-.badge-seller { background:#fef3c7; color:#92400e; }
-.badge-sale    { background:#fee2e2; color:#991b1b; }
-.badge-premium { background:#ede9fe; color:#5b21b6; }
-.badge-new     { background:#d1fae5; color:#065f46; }
-.badge-active  { background:#d1fae5; color:#065f46; }
-.badge-inactive{ background:#f3f4f6; color:#6b7280; }
-.stock-low  { color:var(--danger); font-weight:700; }
-.stock-ok   { color:var(--success); }
-.actions { display:flex; gap:6px; flex-wrap:wrap; }
+/* PRODUCT GRID */
+.product-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(255px,1fr)); gap:18px; }
+.product-card { background:var(--white); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); transition:transform .2s,box-shadow .2s; }
+.product-card:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,.09); }
+.product-card.inactive { opacity:.55; }
+.card-img { position:relative; height:175px; background:var(--cream); overflow:hidden; }
+.card-img img { width:100%; height:100%; object-fit:cover; transition:transform .3s; }
+.product-card:hover .card-img img { transform:scale(1.04); }
+.card-badge { position:absolute; top:10px; left:10px; padding:3px 9px; border-radius:100px; font-size:0.68rem; font-weight:700; text-transform:uppercase; }
+.badge-seller { background:#1a2332; color:#fff; }
+.badge-sale { background:var(--red); color:#fff; }
+.badge-premium { background:#5b21b6; color:#fff; }
+.badge-new { background:var(--success); color:#fff; }
+.card-hidden-tag { position:absolute; top:10px; right:10px; background:rgba(0,0,0,.65); color:white; font-size:0.67rem; padding:2px 8px; border-radius:100px; font-weight:700; }
+.card-deal-tag { position:absolute; bottom:10px; left:10px; background:var(--red); color:white; font-size:0.68rem; padding:3px 9px; border-radius:100px; font-weight:700; }
+.card-body { padding:15px; }
+.card-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; }
+.card-cat { font-size:0.7rem; text-transform:uppercase; letter-spacing:.08em; color:var(--grey); font-weight:600; }
+.card-sku { font-size:0.68rem; color:var(--grey-light); }
+.card-name { font-size:0.95rem; font-weight:700; margin-bottom:9px; line-height:1.3; }
+.card-price-row { display:flex; align-items:baseline; gap:7px; margin-bottom:8px; }
+.card-price { font-size:1.25rem; font-weight:800; color:var(--red); cursor:pointer; border-bottom:1.5px dashed transparent; transition:border-color .15s; }
+.card-price:hover { border-color:var(--red); }
+.card-price small { font-size:0.68rem; font-weight:500; color:var(--grey); }
+.card-was { font-size:0.8rem; color:var(--grey-light); text-decoration:line-through; }
+.card-stock { font-size:0.77rem; margin-bottom:12px; }
+.card-stock span { font-weight:700; cursor:pointer; border-bottom:1px dashed transparent; transition:border-color .15s; }
+.card-stock span:hover { border-bottom-color:currentColor; }
+.stock-ok { color:var(--success); }
+.stock-low { color:var(--warn); }
+.stock-zero { color:var(--danger); }
+.card-actions { display:flex; gap:5px; }
+.btn-edit { flex:1; padding:8px; background:var(--cream); color:var(--slate); border:none; border-radius:var(--radius-sm); font-size:0.82rem; font-weight:600; cursor:pointer; transition:background .15s; }
+.btn-edit:hover { background:var(--cream-mid); }
+.btn-vis { padding:8px 10px; background:var(--cream); color:var(--grey); border:none; border-radius:var(--radius-sm); font-size:0.82rem; cursor:pointer; transition:all .15s; }
+.btn-vis:hover { background:var(--cream-mid); }
+.btn-vis.on { background:#d1fae5; color:var(--success); }
+.btn-del { padding:8px 10px; background:#fee2e2; color:var(--danger); border:none; border-radius:var(--radius-sm); font-size:0.82rem; cursor:pointer; transition:background .15s; }
+.btn-del:hover { background:#fecaca; }
 
-/* ── TOOLBAR ── */
-.toolbar { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:16px; }
-.toolbar input, .toolbar select { padding:8px 12px; border:1.5px solid var(--border); border-radius:var(--radius); font-size:0.88rem; font-family:inherit; }
-.toolbar input:focus, .toolbar select:focus { outline:none; border-color:var(--red); }
-.toolbar input { min-width:200px; }
+/* MODAL */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(2px); }
+.modal { background:var(--white); border-radius:14px; width:100%; max-width:640px; max-height:90vh; overflow-y:auto; box-shadow:var(--shadow-lg); }
+.modal-head { padding:20px 24px 16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:var(--white); z-index:1; }
+.modal-head h3 { font-size:1rem; font-weight:700; }
+.modal-x { background:var(--cream); border:none; width:30px; height:30px; border-radius:50%; font-size:1.1rem; cursor:pointer; color:var(--grey); transition:all .15s; }
+.modal-x:hover { background:var(--cream-mid); color:var(--slate); }
+.modal-body { padding:22px 24px; }
+.modal-foot { padding:14px 24px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:10px; position:sticky; bottom:0; background:var(--white); }
+.row2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+.row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:14px; }
+.row1 { margin-bottom:14px; }
+.section-title { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--grey); margin:18px 0 10px; padding-bottom:7px; border-bottom:1px solid var(--border); }
+.img-preview { width:100%; height:130px; object-fit:cover; border-radius:var(--radius-sm); margin-top:8px; display:none; border:1.5px solid var(--border); }
+.toggle-row { display:flex; flex-wrap:wrap; gap:16px; }
+.toggle-item { display:flex; align-items:center; gap:7px; cursor:pointer; font-size:0.87rem; }
+.toggle-item input { width:15px; height:15px; accent-color:var(--red); cursor:pointer; }
 
-/* ── MODAL ── */
-.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px; }
-.modal { background:var(--white); border-radius:var(--radius); width:100%; max-width:600px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.3); }
-.modal-header { padding:20px 24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
-.modal-header h3 { font-size:1rem; font-weight:600; }
-.modal-close { background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--grey); line-height:1; }
-.modal-body { padding:24px; }
-.modal-footer { padding:16px 24px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:10px; }
-.form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-.form-row.three { grid-template-columns:1fr 1fr 1fr; }
-.toggle-row { display:flex; align-items:center; gap:12px; padding:10px 0; }
-.toggle-row label { font-size:0.88rem; color:var(--slate); cursor:pointer; }
-input[type="checkbox"] { width:16px; height:16px; cursor:pointer; accent-color:var(--red); }
+/* BUTTONS */
+.btn { display:inline-flex; align-items:center; gap:6px; padding:9px 18px; border-radius:var(--radius-sm); font-size:0.87rem; font-weight:600; cursor:pointer; border:none; font-family:var(--font); transition:all .15s; }
+.btn-primary { background:var(--red); color:var(--white); }
+.btn-primary:hover { background:var(--red-dark); }
+.btn-secondary { background:var(--cream); color:var(--slate); }
+.btn-secondary:hover { background:var(--cream-mid); }
+.btn-sm { padding:6px 13px; font-size:0.79rem; }
 
-/* ── TOAST ── */
-#toast { position:fixed; bottom:24px; right:24px; background:var(--slate); color:var(--white); padding:12px 20px; border-radius:var(--radius); font-size:0.88rem; box-shadow:0 4px 20px rgba(0,0,0,.2); z-index:9999; transform:translateY(100px); opacity:0; transition:all .3s; }
+/* DEALS */
+.deals-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:18px; }
+.deal-card { background:var(--white); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow); border-left:4px solid var(--red); }
+.deal-card.off { border-left-color:var(--grey-light); opacity:.6; }
+.deal-product { font-weight:700; font-size:0.93rem; margin-bottom:3px; }
+.deal-name { font-size:0.82rem; color:var(--grey); margin-bottom:9px; }
+.deal-price { font-size:1.15rem; font-weight:800; color:var(--red); margin-bottom:4px; }
+.deal-dates { font-size:0.77rem; color:var(--grey); margin-bottom:12px; }
+.deal-badge { display:inline-block; padding:2px 9px; border-radius:100px; font-size:0.7rem; font-weight:700; text-transform:uppercase; }
+.deal-badge.live { background:#d1fae5; color:var(--success); }
+.deal-badge.off { background:var(--cream); color:var(--grey); }
+
+/* SETTINGS */
+.settings-card { background:var(--white); border-radius:var(--radius); padding:26px; box-shadow:var(--shadow); max-width:460px; }
+.settings-card h3 { font-size:0.93rem; font-weight:700; margin-bottom:18px; }
+
+/* EMPTY */
+.empty { text-align:center; padding:72px 20px; }
+.empty-icon { font-size:2.8rem; margin-bottom:10px; }
+.empty h3 { font-size:0.97rem; color:var(--slate); margin-bottom:5px; }
+.empty p { color:var(--grey); font-size:0.86rem; }
+
+/* TOAST */
+#toast { position:fixed; bottom:26px; right:26px; padding:11px 18px; border-radius:var(--radius-sm); font-size:0.87rem; font-weight:500; z-index:9999; transform:translateY(16px); opacity:0; transition:all .3s; pointer-events:none; }
 #toast.show { transform:translateY(0); opacity:1; }
-#toast.success { background:var(--success); }
-#toast.error   { background:var(--danger); }
+#toast.success { background:var(--success); color:white; }
+#toast.error { background:var(--danger); color:white; }
+#toast.info { background:var(--slate); color:white; }
 
-/* ── RESPONSIVE ── */
-@media (max-width:768px) {
-    .sidebar { width:200px; transform:translateX(-100%); transition:transform .3s; }
-    .sidebar.open { transform:translateX(0); }
+/* LOADING */
+.loading { display:flex; align-items:center; justify-content:center; padding:72px; }
+.spinner { width:30px; height:30px; border:3px solid var(--border); border-top-color:var(--red); border-radius:50%; animation:spin .7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+@media(max-width:860px) {
+    .sidebar { display:none; }
     .main { margin-left:0; }
-    .form-row, .form-row.three { grid-template-columns:1fr; }
-    .stats-grid { grid-template-columns:1fr 1fr; }
+    .row2,.row3 { grid-template-columns:1fr; }
 }
 </style>
 </head>
@@ -146,606 +183,514 @@ input[type="checkbox"] { width:16px; height:16px; cursor:pointer; accent-color:v
 <!-- LOGIN -->
 <div id="login-screen">
     <div class="login-box">
-        <div class="logo">West Yorkshire <span>Carpets</span></div>
-        <p>Admin Panel — Staff Access Only</p>
-        <div class="form-field">
-            <label>Username</label>
-            <input type="text" id="login-user" placeholder="username" autocomplete="username">
-        </div>
-        <div class="form-field">
-            <label>Password</label>
-            <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
-        </div>
-        <div id="login-error" style="color:var(--danger);font-size:.85rem;margin-bottom:12px;display:none;"></div>
-        <button class="btn btn-primary" onclick="login()">Sign In</button>
+        <div class="login-brand">West Yorkshire <span>Carpets</span></div>
+        <div class="login-sub">Admin Panel — Staff Access Only</div>
+        <div class="field"><label>Username</label><input type="text" id="login-user" placeholder="admin" autocomplete="username"></div>
+        <div class="field"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"></div>
+        <div class="login-error" id="login-error"></div>
+        <button class="btn-login" onclick="login()">Sign In</button>
     </div>
 </div>
 
 <!-- APP -->
 <div id="app">
-    <!-- SIDEBAR -->
-    <nav class="sidebar" id="sidebar">
-        <div class="brand">
-            <div class="brand-name">WYC Admin</div>
-            <div class="brand-sub">West Yorkshire Carpets</div>
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand-name">WY <span>Carpets</span></div>
+            <div class="sidebar-brand-sub">Admin Panel</div>
         </div>
-        <a class="nav-item active" onclick="showPage('dashboard')" data-page="dashboard"><span class="icon">📊</span> Dashboard</a>
-        <a class="nav-item" onclick="showPage('products')" data-page="products"><span class="icon">📦</span> Products</a>
-        <a class="nav-item" onclick="showPage('offers')" data-page="offers"><span class="icon">🏷️</span> Deals & Offers</a>
-        <div class="nav-divider"></div>
-        <a class="nav-item" onclick="showPage('audit')" data-page="audit"><span class="icon">📋</span> Audit Log</a>
-        <a class="nav-item" onclick="showPage('settings')" data-page="settings"><span class="icon">⚙️</span> Settings</a>
+        <div class="sidebar-nav">
+            <button class="nav-item active" onclick="nav('products')" data-page="products">📦 Products</button>
+            <button class="nav-item" onclick="nav('deals')" data-page="deals">🏷️ Deals & Offers</button>
+            <div class="nav-divider"></div>
+            <button class="nav-item" onclick="nav('settings')" data-page="settings">⚙️ Settings</button>
+        </div>
         <div class="sidebar-footer">
-            <div class="sidebar-user"><strong id="sidebar-username"></strong>Logged in</div>
-            <button class="btn btn-secondary btn-sm" onclick="logout()" style="width:100%;justify-content:center;">Sign Out</button>
+            <div class="sidebar-user"><strong id="sidebar-user">—</strong>Logged in</div>
+            <button class="btn-logout" onclick="logout()">Sign Out</button>
         </div>
     </nav>
 
-    <!-- MAIN -->
     <div class="main">
         <div class="topbar">
-            <h1 id="page-title">Dashboard</h1>
-            <div style="display:flex;gap:10px;">
-                <button class="btn btn-primary btn-sm" onclick="showPage('products');setTimeout(openAddProduct,100)" id="quick-add" style="display:none">+ Add Product</button>
-            </div>
+            <h1 id="page-title">Products</h1>
+            <div class="topbar-stats" id="topbar-stats"></div>
         </div>
-        <div class="content" id="content"><!-- pages render here --></div>
+        <div class="page-content" id="page-content">
+            <div class="loading"><div class="spinner"></div></div>
+        </div>
     </div>
 </div>
 
 <!-- PRODUCT MODAL -->
-<div id="product-modal" style="display:none;">
-    <div class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 id="modal-title">Add Product</h3>
-                <button class="modal-close" onclick="closeModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="p-id">
-                <div class="form-row">
-                    <div class="form-field">
-                        <label>Product Name *</label>
-                        <input type="text" id="p-name" placeholder="e.g. Prestige Saxony">
-                    </div>
-                    <div class="form-field">
-                        <label>Category *</label>
-                        <select id="p-category">
-                            <option value="carpets">Carpets</option>
-                            <option value="vinyl">Vinyl</option>
-                            <option value="laminate">Laminate</option>
-                            <option value="wood">Wood</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row three">
-                    <div class="form-field">
-                        <label>Price (£/m²) *</label>
-                        <input type="number" id="p-price" min="0" step="0.01" placeholder="0.00">
-                    </div>
-                    <div class="form-field">
-                        <label>Was Price (£/m²)</label>
-                        <input type="number" id="p-original-price" min="0" step="0.01" placeholder="0.00">
-                    </div>
-                    <div class="form-field">
-                        <label>Stock Level</label>
-                        <input type="number" id="p-stock" min="0" placeholder="0">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-field">
-                        <label>SKU</label>
-                        <input type="text" id="p-sku" placeholder="e.g. C-001">
-                    </div>
-                    <div class="form-field">
-                        <label>Subcategory</label>
-                        <input type="text" id="p-subcat" placeholder="e.g. Saxony, Twist, LVT">
-                    </div>
-                </div>
-                <div class="form-field">
-                    <label>Image URL</label>
-                    <input type="text" id="p-img" placeholder="https://...">
-                </div>
-                <div class="form-field">
-                    <label>Description</label>
-                    <textarea id="p-desc" rows="3" placeholder="Product description..."></textarea>
-                </div>
-                <div class="form-row">
-                    <div class="form-field">
-                        <label>Badge Text</label>
-                        <input type="text" id="p-badge" placeholder="e.g. Best Seller">
-                    </div>
-                    <div class="form-field">
-                        <label>Badge Type</label>
-                        <select id="p-badge-type">
-                            <option value="">None</option>
-                            <option value="seller">Best Seller</option>
-                            <option value="sale">Sale</option>
-                            <option value="premium">Premium</option>
-                            <option value="new">New In</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-field">
-                        <label>Durability (1–5)</label>
-                        <input type="number" id="p-durability" min="1" max="5" value="3">
-                    </div>
-                    <div class="form-field">
-                        <label>Softness (1–5)</label>
-                        <input type="number" id="p-softness" min="1" max="5" value="3">
-                    </div>
-                </div>
-                <div class="form-field">
-                    <label>Suitable Rooms (comma separated)</label>
-                    <input type="text" id="p-rooms" placeholder="living, bedroom, hallway, stairs, kitchen, bathroom">
-                </div>
-                <div class="toggle-row">
-                    <input type="checkbox" id="p-featured"><label for="p-featured">⭐ Featured Product</label>
-                </div>
-                <div class="toggle-row">
-                    <input type="checkbox" id="p-deal"><label for="p-deal">🏷️ Mark as Deal</label>
-                </div>
-                <div class="toggle-row">
-                    <input type="checkbox" id="p-active" checked><label for="p-active">✅ Active (visible on website)</label>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
+<div id="product-modal" style="display:none">
+<div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+<div class="modal">
+    <div class="modal-head">
+        <h3 id="modal-title">Add Product</h3>
+        <button class="modal-x" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+        <input type="hidden" id="p-id">
+        <div class="row1 field">
+            <label>Image URL</label>
+            <input type="text" id="p-img" placeholder="https://images.unsplash.com/..." oninput="previewImg(this.value)">
+            <img id="img-preview" class="img-preview" alt="preview">
+        </div>
+
+        <div class="section-title">Basic Information</div>
+        <div class="row2">
+            <div class="field"><label>Product Name *</label><input type="text" id="p-name" placeholder="e.g. Prestige Saxony"></div>
+            <div class="field"><label>Category *</label>
+                <select id="p-category">
+                    <option value="carpets">Carpets</option>
+                    <option value="vinyl">Vinyl</option>
+                    <option value="laminate">Laminate</option>
+                    <option value="wood">Wood</option>
+                </select>
             </div>
         </div>
+        <div class="row2">
+            <div class="field"><label>SKU / Code</label><input type="text" id="p-sku" placeholder="e.g. C-001"></div>
+            <div class="field"><label>Subcategory</label><input type="text" id="p-subcat" placeholder="e.g. Saxony, LVT"></div>
+        </div>
+        <div class="row1 field"><label>Description</label><textarea id="p-desc" placeholder="Describe the product..."></textarea></div>
+
+        <div class="section-title">Pricing & Stock</div>
+        <div class="row3">
+            <div class="field"><label>Price (£/m²) *</label><input type="number" id="p-price" min="0" step="0.01" placeholder="0.00"></div>
+            <div class="field"><label>Was Price (£/m²)</label><input type="number" id="p-original-price" min="0" step="0.01" placeholder="Optional"></div>
+            <div class="field"><label>Stock Level</label><input type="number" id="p-stock" min="0" value="0"></div>
+        </div>
+
+        <div class="section-title">Badge & Ratings</div>
+        <div class="row2">
+            <div class="field"><label>Badge Text</label><input type="text" id="p-badge" placeholder="e.g. Best Seller"></div>
+            <div class="field"><label>Badge Style</label>
+                <select id="p-badge-type">
+                    <option value="">No Badge</option>
+                    <option value="seller">Best Seller (Dark)</option>
+                    <option value="sale">Sale (Red)</option>
+                    <option value="premium">Premium (Purple)</option>
+                    <option value="new">New In (Green)</option>
+                </select>
+            </div>
+        </div>
+        <div class="row2">
+            <div class="field"><label>Durability (1–5)</label><input type="number" id="p-durability" min="1" max="5" value="3"></div>
+            <div class="field"><label>Softness (1–5)</label><input type="number" id="p-softness" min="1" max="5" value="3"></div>
+        </div>
+
+        <div class="section-title">Room Suitability</div>
+        <div class="toggle-row">
+            <label class="toggle-item"><input type="checkbox" name="room" value="living"> Living Room</label>
+            <label class="toggle-item"><input type="checkbox" name="room" value="bedroom"> Bedroom</label>
+            <label class="toggle-item"><input type="checkbox" name="room" value="hallway"> Hallway</label>
+            <label class="toggle-item"><input type="checkbox" name="room" value="stairs"> Stairs</label>
+            <label class="toggle-item"><input type="checkbox" name="room" value="kitchen"> Kitchen</label>
+            <label class="toggle-item"><input type="checkbox" name="room" value="bathroom"> Bathroom</label>
+        </div>
+
+        <div class="section-title">Visibility & Flags</div>
+        <div class="toggle-row">
+            <label class="toggle-item"><input type="checkbox" id="p-featured"> ⭐ Featured</label>
+            <label class="toggle-item"><input type="checkbox" id="p-deal"> 🏷️ Weekly Deal</label>
+            <label class="toggle-item"><input type="checkbox" id="p-active" checked> ✅ Visible on Website</label>
+        </div>
     </div>
-</div>
+    <div class="modal-foot">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
+    </div>
+</div></div></div>
 
 <!-- OFFER MODAL -->
-<div id="offer-modal" style="display:none;">
-    <div class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h3>Create Deal / Offer</h3>
-                <button class="modal-close" onclick="closeOfferModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-field">
-                    <label>Product *</label>
-                    <select id="o-product"></select>
-                </div>
-                <div class="form-field">
-                    <label>Offer Name *</label>
-                    <input type="text" id="o-name" placeholder="e.g. Summer Sale 20% Off">
-                </div>
-                <div class="form-field">
-                    <label>Discounted Price (£/m²) *</label>
-                    <input type="number" id="o-price" min="0" step="0.01" placeholder="0.00">
-                </div>
-                <div class="form-row">
-                    <div class="form-field">
-                        <label>Start Date *</label>
-                        <input type="date" id="o-start">
-                    </div>
-                    <div class="form-field">
-                        <label>End Date *</label>
-                        <input type="date" id="o-end">
-                    </div>
-                </div>
-                <div class="toggle-row">
-                    <input type="checkbox" id="o-featured"><label for="o-featured">⭐ Feature on homepage</label>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeOfferModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveOffer()">Save Offer</button>
-            </div>
+<div id="offer-modal" style="display:none">
+<div class="modal-overlay" onclick="if(event.target===this)closeOfferModal()">
+<div class="modal">
+    <div class="modal-head">
+        <h3>New Deal / Offer</h3>
+        <button class="modal-x" onclick="closeOfferModal()">×</button>
+    </div>
+    <div class="modal-body">
+        <div class="row1 field"><label>Product *</label><select id="o-product"></select></div>
+        <div class="row1 field"><label>Offer Name *</label><input type="text" id="o-name" placeholder="e.g. Summer Sale — 20% Off"></div>
+        <div class="row2">
+            <div class="field"><label>Sale Price (£/m²) *</label><input type="number" id="o-price" min="0" step="0.01" placeholder="0.00"></div>
+            <div class="field"><label>Featured</label><div style="padding:11px 0"><label class="toggle-item"><input type="checkbox" id="o-featured"> Show on homepage</label></div></div>
+        </div>
+        <div class="row2">
+            <div class="field"><label>Start Date *</label><input type="date" id="o-start"></div>
+            <div class="field"><label>End Date *</label><input type="date" id="o-end"></div>
         </div>
     </div>
-</div>
+    <div class="modal-foot">
+        <button class="btn btn-secondary" onclick="closeOfferModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveOffer()">Create Deal</button>
+    </div>
+</div></div></div>
 
 <div id="toast"></div>
 
 <script>
 const API = '/api/panel';
 let TOKEN = localStorage.getItem('wyc_token') || '';
-let currentUser = JSON.parse(localStorage.getItem('wyc_user') || 'null');
+let USER  = JSON.parse(localStorage.getItem('wyc_user') || 'null');
+let allProducts = [];
+let currentCat  = 'all';
 
-/* ── AUTH ── */
+/* AUTH */
 async function login() {
     const username = document.getElementById('login-user').value.trim();
     const password = document.getElementById('login-pass').value;
     const err = document.getElementById('login-error');
     err.style.display = 'none';
+    if (!username || !password) { err.textContent='Enter username and password'; err.style.display='block'; return; }
     try {
-        const res = await fetch(`${API}/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
-        });
+        const res  = await fetch(`${API}/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
         const data = await res.json();
-        if (!res.ok) { err.textContent = data.error; err.style.display = 'block'; return; }
-        TOKEN = data.token;
-        currentUser = data;
-        localStorage.setItem('wyc_token', TOKEN);
-        localStorage.setItem('wyc_user', JSON.stringify(data));
+        if (!res.ok) { err.textContent=data.error||'Login failed'; err.style.display='block'; return; }
+        TOKEN=data.token; USER=data;
+        localStorage.setItem('wyc_token',TOKEN);
+        localStorage.setItem('wyc_user',JSON.stringify(data));
         showApp();
-    } catch (e) { err.textContent = 'Connection error'; err.style.display = 'block'; }
+    } catch(e) { err.textContent='Connection error'; err.style.display='block'; }
 }
 
 function logout() {
-    TOKEN = ''; currentUser = null;
-    localStorage.removeItem('wyc_token');
-    localStorage.removeItem('wyc_user');
-    document.getElementById('app').style.display = 'none';
-    document.getElementById('login-screen').style.display = 'flex';
+    TOKEN=''; USER=null;
+    localStorage.removeItem('wyc_token'); localStorage.removeItem('wyc_user');
+    document.getElementById('app').style.display='none';
+    document.getElementById('login-screen').style.display='flex';
 }
 
 function showApp() {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    document.getElementById('sidebar-username').textContent = currentUser?.username || '';
-    showPage('dashboard');
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('sidebar-user').textContent=USER?.username||'';
+    nav('products'); loadStats();
 }
 
-document.getElementById('login-pass')?.addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
 
-/* ── AUTHENTICATED FETCH ── */
-async function apiFetch(url, opts = {}) {
-    const res = await fetch(url, {
-        ...opts,
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${TOKEN}`, ...(opts.headers || {}) }
-    });
-    if (res.status === 401) { logout(); return null; }
+/* API HELPER */
+async function api(path,opts={}) {
+    const res = await fetch(`${API}${path}`,{...opts,headers:{'Content-Type':'application/json','Authorization':`Bearer ${TOKEN}`,...(opts.headers||{})}});
+    if (res.status===401){logout();return null;}
     return res;
 }
 
-/* ── NAVIGATION ── */
-function showPage(page) {
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+/* NAV */
+function nav(page) {
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
     document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
-    document.getElementById('page-title').textContent =
-        { dashboard:'Dashboard', products:'Products', offers:'Deals & Offers', audit:'Audit Log', settings:'Settings' }[page];
-    document.getElementById('quick-add').style.display = page === 'products' ? 'flex' : 'none';
-    const pages = { dashboard: renderDashboard, products: renderProducts, offers: renderOffers, audit: renderAudit, settings: renderSettings };
-    if (pages[page]) pages[page]();
+    document.getElementById('page-title').textContent={products:'Products',deals:'Deals & Offers',settings:'Settings'}[page];
+    ({products:renderProducts,deals:renderDeals,settings:renderSettings})[page]?.();
 }
 
-/* ── TOAST ── */
-function toast(msg, type = 'success') {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = `show ${type}`;
-    setTimeout(() => t.className = '', 3000);
+/* STATS */
+async function loadStats() {
+    const res=await api('/stats'); if(!res)return;
+    const s=await res.json();
+    document.getElementById('topbar-stats').innerHTML=`
+        <div class="topbar-stat">Products <strong>${s.total_products}</strong></div>
+        <div class="topbar-stat">Deals <strong>${s.active_deals}</strong></div>
+        <div class="topbar-stat ${s.low_stock>0?'warn':''}">Low Stock <strong>${s.low_stock}</strong></div>`;
 }
 
-/* ── DASHBOARD ── */
-async function renderDashboard() {
-    document.getElementById('content').innerHTML = `<div style="text-align:center;padding:40px;color:var(--grey);">Loading...</div>`;
-    const res = await apiFetch(`${API}/stats`);
-    if (!res) return;
-    const s = await res.json();
-    document.getElementById('content').innerHTML = `
-        <div class="stats-grid">
-            <div class="stat-card"><div class="label">Active Products</div><div class="value">${s.total_products}</div></div>
-            <div class="stat-card"><div class="label">Active Deals</div><div class="value">${s.active_deals}</div></div>
-            <div class="stat-card ${s.low_stock > 0 ? 'warn' : ''}"><div class="label">Low Stock (&le;5)</div><div class="value">${s.low_stock}</div></div>
-            <div class="stat-card"><div class="label">Total Enquiries</div><div class="value">${s.total_leads}</div></div>
-        </div>
-        ${s.low_stock_items.length ? `
-        <div class="card">
-            <div class="card-header"><h2>⚠️ Low Stock Alert</h2></div>
-            <div class="card-body">
-                <table><thead><tr><th>Product</th><th>Category</th><th>Stock</th><th>Action</th></tr></thead>
-                <tbody>${s.low_stock_items.map(p => `
-                    <tr>
-                        <td>${p.name}</td>
-                        <td><span class="badge badge-seller">${p.category_slug}</span></td>
-                        <td class="stock-low">${p.stock_level}</td>
-                        <td><button class="btn btn-secondary btn-sm" onclick="quickStock(${p.id},'${p.name}')">Update Stock</button></td>
-                    </tr>`).join('')}
-                </tbody></table>
-            </div>
-        </div>` : ''}
-        <div class="card">
-            <div class="card-header"><h2>Recent Activity</h2></div>
-            <div class="card-body">
-                ${s.recent_changes.length ? `<table><thead><tr><th>User</th><th>Action</th><th>When</th></tr></thead>
-                <tbody>${s.recent_changes.map(l => `
-                    <tr><td>${l.username}</td><td>${l.action} — ${l.table_name} #${l.record_id || '-'}</td><td>${l.created_at}</td></tr>
-                `).join('')}</tbody></table>` : '<p style="color:var(--grey)">No activity yet.</p>'}
-            </div>
-        </div>`;
+/* TOAST */
+function toast(msg,type='success'){
+    const t=document.getElementById('toast');
+    t.textContent=msg; t.className=`show ${type}`;
+    clearTimeout(t._t); t._t=setTimeout(()=>t.className='',3200);
 }
 
-/* ── PRODUCTS ── */
-let allProducts = [];
+/* PRODUCTS */
 async function renderProducts() {
-    document.getElementById('content').innerHTML = `<div style="text-align:center;padding:40px;color:var(--grey);">Loading...</div>`;
-    const res = await apiFetch(`${API}/products`);
-    if (!res) return;
-    allProducts = await res.json();
-    renderProductTable(allProducts);
+    document.getElementById('page-content').innerHTML='<div class="loading"><div class="spinner"></div></div>';
+    const res=await api('/products'); if(!res)return;
+    allProducts=await res.json();
+    buildProductsUI();
 }
 
-function renderProductTable(products) {
-    document.getElementById('content').innerHTML = `
+function buildProductsUI() {
+    const cats=['all','carpets','vinyl','laminate','wood'];
+    const counts={};
+    cats.forEach(c=>counts[c]=c==='all'?allProducts.length:allProducts.filter(p=>p.category_slug===c).length);
+    const filtered=currentCat==='all'?allProducts:allProducts.filter(p=>p.category_slug===currentCat);
+    document.getElementById('page-content').innerHTML=`
         <div class="toolbar">
-            <input type="text" placeholder="🔍 Search products..." oninput="filterProducts(this.value)" id="product-search">
-            <select onchange="filterByCategory(this.value)">
-                <option value="">All Categories</option>
-                <option value="carpets">Carpets</option>
-                <option value="vinyl">Vinyl</option>
-                <option value="laminate">Laminate</option>
-                <option value="wood">Wood</option>
-            </select>
+            <div class="cat-tabs">
+                ${cats.map(c=>`<button class="cat-tab ${currentCat===c?'active':''}" onclick="filterCat('${c}')">${c==='all'?'All':c.charAt(0).toUpperCase()+c.slice(1)} (${counts[c]})</button>`).join('')}
+            </div>
+            <div class="search-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" placeholder="Search..." oninput="searchProducts(this.value)">
+            </div>
+            <button class="btn-add" onclick="openAddProduct()">+ Add Product</button>
         </div>
-        <div class="card">
-            <div class="card-header">
-                <h2>Products (${products.length})</h2>
-                <button class="btn btn-primary btn-sm" onclick="openAddProduct()">+ Add Product</button>
-            </div>
-            <div class="table-wrap">
-                <table>
-                    <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Badges</th><th>Actions</th></tr></thead>
-                    <tbody>
-                        ${products.map(p => `
-                        <tr>
-                            <td><strong>${p.name}</strong>${p.sku ? `<br><small style="color:var(--grey)">${p.sku}</small>` : ''}</td>
-                            <td>${p.category_slug}</td>
-                            <td>£${parseFloat(p.price).toFixed(2)}${p.original_price ? `<br><small style="text-decoration:line-through;color:var(--grey)">£${parseFloat(p.original_price).toFixed(2)}</small>` : ''}</td>
-                            <td class="${p.stock_level <= 5 ? 'stock-low' : 'stock-ok'}">${p.stock_level} <button class="btn btn-secondary btn-sm" style="margin-left:4px" onclick="quickStock(${p.id},'${p.name}')">✏️</button></td>
-                            <td><span class="badge ${p.is_active ? 'badge-active' : 'badge-inactive'}">${p.is_active ? 'Active' : 'Hidden'}</span></td>
-                            <td>${p.is_featured ? '⭐' : ''}${p.is_deal ? '🏷️' : ''}${p.badge ? `<span class="badge badge-${p.badge_type}">${p.badge}</span>` : ''}</td>
-                            <td class="actions">
-                                <button class="btn btn-secondary btn-sm" onclick="editProduct(${p.id})">Edit</button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id},'${p.name}')">Delete</button>
-                            </td>
-                        </tr>`).join('')}
-                    </tbody>
-                </table>
-            </div>
-        </div>`;
+        ${filtered.length
+            ?`<div class="product-grid">${filtered.map(buildCard).join('')}</div>`
+            :`<div class="empty"><div class="empty-icon">📦</div><h3>No products here</h3><p>Add your first product with the button above.</p></div>`}`;
 }
 
-function filterProducts(query) {
-    const q = query.toLowerCase();
-    renderProductTable(allProducts.filter(p => p.name.toLowerCase().includes(q) || (p.sku||'').toLowerCase().includes(q)));
-}
-function filterByCategory(cat) {
-    renderProductTable(cat ? allProducts.filter(p => p.category_slug === cat) : allProducts);
+function buildCard(p) {
+    const sc=p.stock_level===0?'stock-zero':p.stock_level<=5?'stock-low':'stock-ok';
+    const sl=p.stock_level===0?'⚠️ Out of stock':p.stock_level<=5?`⚠️ Low: ${p.stock_level}`:`✓ ${p.stock_level} in stock`;
+    return `<div class="product-card ${p.is_active?'':'inactive'}">
+        <div class="card-img">
+            ${p.img_url?`<img src="${p.img_url}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">`:``}
+            ${p.badge&&p.badge_type?`<div class="card-badge badge-${p.badge_type}">${p.badge}</div>`:''}
+            ${!p.is_active?`<div class="card-hidden-tag">HIDDEN</div>`:''}
+            ${p.is_deal?`<div class="card-deal-tag">🏷️ DEAL</div>`:''}
+        </div>
+        <div class="card-body">
+            <div class="card-meta"><span class="card-cat">${p.category_slug}</span>${p.sku?`<span class="card-sku">${p.sku}</span>`:''}</div>
+            <div class="card-name">${p.name}</div>
+            <div class="card-price-row">
+                <span class="card-price" id="price-${p.id}" onclick="editPrice(${p.id})" title="Click to edit">£${parseFloat(p.price).toFixed(2)}<small>/m²</small></span>
+                ${p.original_price?`<span class="card-was">£${parseFloat(p.original_price).toFixed(2)}</span>`:''}
+            </div>
+            <div class="card-stock">Stock: <span id="stock-${p.id}" class="${sc}" onclick="editStock(${p.id})" title="Click to edit">${sl}</span></div>
+            <div class="card-actions">
+                <button class="btn-edit" onclick="editProduct(${p.id})">✏️ Edit</button>
+                <button class="btn-vis ${p.is_active?'on':''}" onclick="toggleActive(${p.id},${p.is_active})" title="${p.is_active?'Hide from website':'Show on website'}">${p.is_active?'👁️':'🚫'}</button>
+                <button class="btn-del" onclick="deleteProduct(${p.id},'${p.name.replace(/'/g,"\\'")}')" title="Delete">🗑️</button>
+            </div>
+        </div>
+    </div>`;
 }
 
-/* ── PRODUCT MODAL ── */
+function filterCat(cat){currentCat=cat;buildProductsUI();}
+
+function searchProducts(q) {
+    const lq=q.toLowerCase();
+    const filtered=allProducts.filter(p=>(currentCat==='all'||p.category_slug===currentCat)&&(p.name.toLowerCase().includes(lq)||(p.sku||'').toLowerCase().includes(lq)));
+    const grid=document.querySelector('.product-grid');
+    if(grid) grid.innerHTML=filtered.map(buildCard).join('');
+}
+
+/* QUICK EDIT */
+async function editPrice(id) {
+    const p=allProducts.find(x=>x.id===id); if(!p)return;
+    const val=prompt(`New price for "${p.name}"\nCurrent: £${parseFloat(p.price).toFixed(2)}/m²\n\nEnter new price (£):`);
+    if(val===null)return;
+    const price=parseFloat(val);
+    if(isNaN(price)||price<0){toast('Invalid price','error');return;}
+    const res=await api(`/products/${id}/price`,{method:'PATCH',body:JSON.stringify({price})});
+    if(!res||!res.ok){toast('Error updating price','error');return;}
+    p.price=price;
+    document.getElementById(`price-${id}`).innerHTML=`£${price.toFixed(2)}<small>/m²</small>`;
+    toast(`Price updated to £${price.toFixed(2)} ✓`);
+    loadStats();
+}
+
+async function editStock(id) {
+    const p=allProducts.find(x=>x.id===id); if(!p)return;
+    const val=prompt(`New stock level for "${p.name}"\nCurrent: ${p.stock_level} units\n\nEnter new stock level:`);
+    if(val===null)return;
+    const stock_level=parseInt(val);
+    if(isNaN(stock_level)||stock_level<0){toast('Invalid stock level','error');return;}
+    const res=await api(`/products/${id}/stock`,{method:'PATCH',body:JSON.stringify({stock_level})});
+    if(!res||!res.ok){toast('Error updating stock','error');return;}
+    p.stock_level=stock_level;
+    const el=document.getElementById(`stock-${id}`);
+    const sc=stock_level===0?'stock-zero':stock_level<=5?'stock-low':'stock-ok';
+    const sl=stock_level===0?'⚠️ Out of stock':stock_level<=5?`⚠️ Low: ${stock_level}`:`✓ ${stock_level} in stock`;
+    el.className=sc; el.textContent=sl;
+    toast(`Stock updated to ${stock_level} ✓`); loadStats();
+}
+
+async function toggleActive(id,current) {
+    const p=allProducts.find(x=>x.id===id); if(!p)return;
+    const newVal=current?0:1;
+    const payload={...p,is_active:newVal,rooms:p.rooms||'[]'};
+    const res=await api(`/products/${id}`,{method:'PUT',body:JSON.stringify(payload)});
+    if(!res||!res.ok){toast('Error updating visibility','error');return;}
+    p.is_active=newVal;
+    toast(newVal?`"${p.name}" now visible on website ✓`:`"${p.name}" hidden from website`);
+    buildProductsUI(); loadStats();
+}
+
+/* MODAL */
 function openAddProduct() {
-    document.getElementById('modal-title').textContent = 'Add Product';
-    document.getElementById('p-id').value = '';
-    ['p-name','p-price','p-original-price','p-stock','p-sku','p-subcat','p-img','p-desc','p-badge','p-rooms'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('p-category').value = 'carpets';
-    document.getElementById('p-badge-type').value = '';
-    document.getElementById('p-durability').value = '3';
-    document.getElementById('p-softness').value = '3';
-    document.getElementById('p-featured').checked = false;
-    document.getElementById('p-deal').checked = false;
-    document.getElementById('p-active').checked = true;
-    document.getElementById('p-stock').value = '0';
-    document.getElementById('product-modal').style.display = 'block';
+    document.getElementById('modal-title').textContent='Add Product';
+    document.getElementById('p-id').value='';
+    ['p-name','p-price','p-original-price','p-sku','p-subcat','p-desc','p-badge','p-img'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('p-stock').value='0';
+    document.getElementById('p-category').value='carpets';
+    document.getElementById('p-badge-type').value='';
+    document.getElementById('p-durability').value='3';
+    document.getElementById('p-softness').value='3';
+    document.getElementById('p-featured').checked=false;
+    document.getElementById('p-deal').checked=false;
+    document.getElementById('p-active').checked=true;
+    document.querySelectorAll('input[name="room"]').forEach(c=>c.checked=false);
+    document.getElementById('img-preview').style.display='none';
+    document.getElementById('product-modal').style.display='block';
 }
 
 function editProduct(id) {
-    const p = allProducts.find(x => x.id === id);
-    if (!p) return;
-    document.getElementById('modal-title').textContent = 'Edit Product';
-    document.getElementById('p-id').value = p.id;
-    document.getElementById('p-name').value = p.name || '';
-    document.getElementById('p-category').value = p.category_slug || 'carpets';
-    document.getElementById('p-price').value = p.price || '';
-    document.getElementById('p-original-price').value = p.original_price || '';
-    document.getElementById('p-stock').value = p.stock_level || 0;
-    document.getElementById('p-sku').value = p.sku || '';
-    document.getElementById('p-subcat').value = p.subcategory || '';
-    document.getElementById('p-img').value = p.img_url || '';
-    document.getElementById('p-desc').value = p.description || '';
-    document.getElementById('p-badge').value = p.badge || '';
-    document.getElementById('p-badge-type').value = p.badge_type || '';
-    document.getElementById('p-durability').value = p.durability || 3;
-    document.getElementById('p-softness').value = p.softness || 3;
-    document.getElementById('p-featured').checked = !!p.is_featured;
-    document.getElementById('p-deal').checked = !!p.is_deal;
-    document.getElementById('p-active').checked = !!p.is_active;
-    try { document.getElementById('p-rooms').value = JSON.parse(p.rooms||'[]').join(', '); } catch { document.getElementById('p-rooms').value = ''; }
-    document.getElementById('product-modal').style.display = 'block';
+    const p=allProducts.find(x=>x.id===id); if(!p)return;
+    document.getElementById('modal-title').textContent='Edit Product';
+    document.getElementById('p-id').value=p.id;
+    document.getElementById('p-name').value=p.name||'';
+    document.getElementById('p-category').value=p.category_slug||'carpets';
+    document.getElementById('p-price').value=p.price||'';
+    document.getElementById('p-original-price').value=p.original_price||'';
+    document.getElementById('p-stock').value=p.stock_level??0;
+    document.getElementById('p-sku').value=p.sku||'';
+    document.getElementById('p-subcat').value=p.subcategory||'';
+    document.getElementById('p-desc').value=p.description||'';
+    document.getElementById('p-badge').value=p.badge||'';
+    document.getElementById('p-badge-type').value=p.badge_type||'';
+    document.getElementById('p-durability').value=p.durability||3;
+    document.getElementById('p-softness').value=p.softness||3;
+    document.getElementById('p-featured').checked=!!p.is_featured;
+    document.getElementById('p-deal').checked=!!p.is_deal;
+    document.getElementById('p-active').checked=!!p.is_active;
+    document.getElementById('p-img').value=p.img_url||'';
+    previewImg(p.img_url);
+    let rooms=[]; try{rooms=JSON.parse(p.rooms||'[]');}catch{}
+    document.querySelectorAll('input[name="room"]').forEach(c=>c.checked=rooms.includes(c.value));
+    document.getElementById('product-modal').style.display='block';
+}
+
+function previewImg(url) {
+    const el=document.getElementById('img-preview');
+    if(url&&url.startsWith('http')){el.src=url;el.style.display='block';}
+    else el.style.display='none';
 }
 
 async function saveProduct() {
-    const id = document.getElementById('p-id').value;
-    const name = document.getElementById('p-name').value.trim();
-    const price = parseFloat(document.getElementById('p-price').value);
-    if (!name) { toast('Product name is required', 'error'); return; }
-    if (isNaN(price) || price < 0) { toast('Valid price is required', 'error'); return; }
-
-    const roomsRaw = document.getElementById('p-rooms').value;
-    const rooms = JSON.stringify(roomsRaw.split(',').map(r => r.trim()).filter(Boolean));
-    const origPrice = document.getElementById('p-original-price').value;
-
-    const payload = {
-        name, price,
-        category_slug: document.getElementById('p-category').value,
-        subcategory:   document.getElementById('p-subcat').value || null,
-        sku:           document.getElementById('p-sku').value || null,
-        original_price: origPrice ? parseFloat(origPrice) : null,
-        stock_level:   parseInt(document.getElementById('p-stock').value) || 0,
-        description:   document.getElementById('p-desc').value || null,
-        img_url:       document.getElementById('p-img').value || null,
-        badge:         document.getElementById('p-badge').value || null,
-        badge_type:    document.getElementById('p-badge-type').value || null,
-        durability:    parseInt(document.getElementById('p-durability').value) || 3,
-        softness:      parseInt(document.getElementById('p-softness').value) || 3,
+    const id=document.getElementById('p-id').value;
+    const name=document.getElementById('p-name').value.trim();
+    const price=parseFloat(document.getElementById('p-price').value);
+    if(!name){toast('Product name is required','error');return;}
+    if(isNaN(price)||price<0){toast('Valid price is required','error');return;}
+    const orig=document.getElementById('p-original-price').value;
+    const rooms=JSON.stringify([...document.querySelectorAll('input[name="room"]:checked')].map(c=>c.value));
+    const payload={
+        name,price,
+        category_slug:document.getElementById('p-category').value,
+        subcategory:document.getElementById('p-subcat').value||null,
+        sku:document.getElementById('p-sku').value||null,
+        original_price:orig?parseFloat(orig):null,
+        stock_level:parseInt(document.getElementById('p-stock').value)||0,
+        description:document.getElementById('p-desc').value||null,
+        img_url:document.getElementById('p-img').value||null,
+        badge:document.getElementById('p-badge').value||null,
+        badge_type:document.getElementById('p-badge-type').value||null,
+        durability:parseInt(document.getElementById('p-durability').value)||3,
+        softness:parseInt(document.getElementById('p-softness').value)||3,
         rooms,
-        is_featured: document.getElementById('p-featured').checked ? 1 : 0,
-        is_deal:     document.getElementById('p-deal').checked ? 1 : 0,
-        is_active:   document.getElementById('p-active').checked ? 1 : 0,
+        is_featured:document.getElementById('p-featured').checked?1:0,
+        is_deal:document.getElementById('p-deal').checked?1:0,
+        is_active:document.getElementById('p-active').checked?1:0,
     };
-
-    const url   = id ? `${API}/products/${id}` : `${API}/products`;
-    const method = id ? 'PUT' : 'POST';
-    const res = await apiFetch(url, { method, body: JSON.stringify(payload) });
-    if (!res) return;
-    const data = await res.json();
-    if (!res.ok) { toast(data.error, 'error'); return; }
-    toast(id ? 'Product updated ✓' : 'Product created ✓');
-    closeModal();
-    renderProducts();
+    const res=await api(id?`/products/${id}`:'/products',{method:id?'PUT':'POST',body:JSON.stringify(payload)});
+    if(!res)return;
+    const data=await res.json();
+    if(!res.ok){toast(data.error||'Error saving','error');return;}
+    toast(id?`"${name}" updated ✓`:`"${name}" added ✓`);
+    closeModal(); await renderProducts(); loadStats();
 }
 
-async function deleteProduct(id, name) {
-    if (!confirm(`Hide "${name}" from the website?\n\nIt won't be deleted — you can restore it by editing.`)) return;
-    const res = await apiFetch(`${API}/products/${id}`, { method: 'DELETE' });
-    if (!res) return;
-    toast('Product hidden from website ✓');
-    renderProducts();
+async function deleteProduct(id,name) {
+    if(!confirm(`Remove "${name}" from the website?`))return;
+    const res=await api(`/products/${id}`,{method:'DELETE'}); if(!res)return;
+    toast(`"${name}" removed ✓`);
+    await renderProducts(); loadStats();
 }
 
-function closeModal() { document.getElementById('product-modal').style.display = 'none'; }
+function closeModal(){document.getElementById('product-modal').style.display='none';}
 
-/* ── QUICK STOCK ── */
-async function quickStock(id, name) {
-    const val = prompt(`Update stock for:\n"${name}"\n\nEnter new stock level:`);
-    if (val === null) return;
-    const n = parseInt(val);
-    if (isNaN(n) || n < 0) { toast('Invalid stock level', 'error'); return; }
-    const res = await apiFetch(`${API}/products/${id}/stock`, { method: 'PATCH', body: JSON.stringify({ stock_level: n }) });
-    if (!res) return;
-    toast(`Stock updated to ${n} ✓`);
-    renderProducts();
-}
-
-/* ── OFFERS ── */
-async function renderOffers() {
-    document.getElementById('content').innerHTML = `<div style="text-align:center;padding:40px;color:var(--grey);">Loading...</div>`;
-    const res = await apiFetch(`${API}/offers`);
-    if (!res) return;
-    const offers = await res.json();
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('content').innerHTML = `
-        <div class="card">
-            <div class="card-header">
-                <h2>Active Deals & Offers (${offers.length})</h2>
-                <button class="btn btn-primary btn-sm" onclick="openAddOffer()">+ New Offer</button>
-            </div>
-            <div class="table-wrap">
-                <table>
-                    <thead><tr><th>Product</th><th>Offer Name</th><th>Sale Price</th><th>Start</th><th>End</th><th>Status</th><th>Action</th></tr></thead>
-                    <tbody>
-                        ${offers.length ? offers.map(o => {
-                            const active = o.is_active && o.start_date <= today && o.end_date >= today;
-                            return `<tr>
-                                <td>${o.product_name}</td>
-                                <td>${o.offer_name}</td>
-                                <td>£${parseFloat(o.discounted_price).toFixed(2)}/m²</td>
-                                <td>${o.start_date}</td>
-                                <td>${o.end_date}</td>
-                                <td><span class="badge ${active ? 'badge-active' : 'badge-inactive'}">${active ? 'Live' : 'Inactive'}</span></td>
-                                <td><button class="btn btn-danger btn-sm" onclick="deleteOffer(${o.id})">Remove</button></td>
-                            </tr>`;
-                        }).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--grey);padding:32px">No offers yet. Click + New Offer to create one.</td></tr>'}
-                    </tbody>
-                </table>
-            </div>
-        </div>`;
+/* DEALS */
+async function renderDeals() {
+    document.getElementById('page-content').innerHTML='<div class="loading"><div class="spinner"></div></div>';
+    const res=await api('/offers'); if(!res)return;
+    const offers=await res.json();
+    const today=new Date().toISOString().split('T')[0];
+    document.getElementById('page-content').innerHTML=`
+        <div class="toolbar"><div style="flex:1"></div><button class="btn-add" onclick="openAddOffer()">+ New Deal</button></div>
+        ${offers.length?`<div class="deals-grid">${offers.map(o=>{
+            const live=o.is_active&&o.start_date<=today&&o.end_date>=today;
+            return `<div class="deal-card ${live?'':'off'}">
+                <div class="deal-product">${o.product_name}</div>
+                <div class="deal-name">${o.offer_name}</div>
+                <div class="deal-price">£${parseFloat(o.discounted_price).toFixed(2)}/m²</div>
+                <div class="deal-dates">📅 ${o.start_date} → ${o.end_date}</div>
+                <span class="deal-badge ${live?'live':'off'}">${live?'🟢 Live':'⚫ Ended'}</span>
+                <div style="margin-top:12px"><button class="btn btn-secondary btn-sm" onclick="deleteOffer(${o.id})">Remove</button></div>
+            </div>`;
+        }).join('')}</div>`
+        :`<div class="empty"><div class="empty-icon">🏷️</div><h3>No deals yet</h3><p>Create a deal to promote a product at a special price.</p></div>`}`;
 }
 
 async function openAddOffer() {
-    const res = await apiFetch(`${API}/products`);
-    if (!res) return;
-    const products = await res.json();
-    const sel = document.getElementById('o-product');
-    sel.innerHTML = products.filter(p => p.is_active).map(p => `<option value="${p.id}">${p.name} (£${parseFloat(p.price).toFixed(2)})</option>`).join('');
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('o-start').value = today;
-    document.getElementById('o-end').value = '';
-    document.getElementById('o-name').value = '';
-    document.getElementById('o-price').value = '';
-    document.getElementById('o-featured').checked = false;
-    document.getElementById('offer-modal').style.display = 'block';
+    const res=await api('/products'); if(!res)return;
+    const products=await res.json();
+    document.getElementById('o-product').innerHTML=products.filter(p=>p.is_active).map(p=>`<option value="${p.id}">${p.name} — £${parseFloat(p.price).toFixed(2)}/m²</option>`).join('');
+    document.getElementById('o-start').value=new Date().toISOString().split('T')[0];
+    document.getElementById('o-end').value='';
+    document.getElementById('o-name').value='';
+    document.getElementById('o-price').value='';
+    document.getElementById('o-featured').checked=false;
+    document.getElementById('offer-modal').style.display='block';
 }
 
 async function saveOffer() {
-    const payload = {
-        product_id:       parseInt(document.getElementById('o-product').value),
-        offer_name:       document.getElementById('o-name').value.trim(),
-        discounted_price: parseFloat(document.getElementById('o-price').value),
-        start_date:       document.getElementById('o-start').value,
-        end_date:         document.getElementById('o-end').value,
-        is_featured:      document.getElementById('o-featured').checked ? 1 : 0,
-        is_active:        1,
+    const payload={
+        product_id:parseInt(document.getElementById('o-product').value),
+        offer_name:document.getElementById('o-name').value.trim(),
+        discounted_price:parseFloat(document.getElementById('o-price').value),
+        start_date:document.getElementById('o-start').value,
+        end_date:document.getElementById('o-end').value,
+        is_featured:document.getElementById('o-featured').checked?1:0,
+        is_active:1,
     };
-    if (!payload.offer_name || !payload.end_date || isNaN(payload.discounted_price)) {
-        toast('Please fill in all required fields', 'error'); return;
-    }
-    const res = await apiFetch(`${API}/offers`, { method: 'POST', body: JSON.stringify(payload) });
-    if (!res) return;
-    const data = await res.json();
-    if (!res.ok) { toast(data.error, 'error'); return; }
-    toast('Offer created ✓');
-    closeOfferModal();
-    renderOffers();
+    if(!payload.offer_name||!payload.end_date||isNaN(payload.discounted_price)){toast('Fill in all required fields','error');return;}
+    if(payload.end_date<payload.start_date){toast('End date must be after start date','error');return;}
+    const res=await api('/offers',{method:'POST',body:JSON.stringify(payload)}); if(!res)return;
+    if(!res.ok){const d=await res.json();toast(d.error||'Error','error');return;}
+    toast('Deal created ✓'); closeOfferModal(); renderDeals(); loadStats();
 }
 
 async function deleteOffer(id) {
-    if (!confirm('Remove this offer?')) return;
-    await apiFetch(`${API}/offers/${id}`, { method: 'DELETE' });
-    toast('Offer removed ✓');
-    renderOffers();
+    if(!confirm('Remove this deal?'))return;
+    await api(`/offers/${id}`,{method:'DELETE'});
+    toast('Deal removed ✓'); renderDeals(); loadStats();
 }
 
-function closeOfferModal() { document.getElementById('offer-modal').style.display = 'none'; }
+function closeOfferModal(){document.getElementById('offer-modal').style.display='none';}
 
-/* ── AUDIT LOG ── */
-async function renderAudit() {
-    const res = await apiFetch(`${API}/audit`);
-    if (!res) return;
-    const logs = await res.json();
-    document.getElementById('content').innerHTML = `
-        <div class="card">
-            <div class="card-header"><h2>Audit Log — Last 100 Changes</h2></div>
-            <div class="table-wrap">
-                <table>
-                    <thead><tr><th>When</th><th>User</th><th>Action</th><th>Table</th><th>Record</th></tr></thead>
-                    <tbody>${logs.map(l => `
-                        <tr><td>${l.created_at}</td><td>${l.username}</td><td>${l.action}</td><td>${l.table_name||'-'}</td><td>#${l.record_id||'-'}</td></tr>
-                    `).join('')}</tbody>
-                </table>
-            </div>
-        </div>`;
-}
-
-/* ── SETTINGS ── */
+/* SETTINGS */
 function renderSettings() {
-    document.getElementById('content').innerHTML = `
-        <div class="card" style="max-width:500px">
-            <div class="card-header"><h2>Change Password</h2></div>
-            <div class="card-body">
-                <div class="form-field"><label>Current Password</label><input type="password" id="pw-current" placeholder="••••••••"></div>
-                <div class="form-field"><label>New Password</label><input type="password" id="pw-new" placeholder="Min 8 characters"></div>
-                <div class="form-field"><label>Confirm New Password</label><input type="password" id="pw-confirm" placeholder="••••••••"></div>
-                <button class="btn btn-primary" onclick="changePassword()">Update Password</button>
-            </div>
+    document.getElementById('page-content').innerHTML=`
+        <div class="settings-card">
+            <h3>Change Password</h3>
+            <div class="field" style="margin-bottom:14px"><label>Current Password</label><input type="password" id="pw-current" placeholder="••••••••"></div>
+            <div class="field" style="margin-bottom:14px"><label>New Password</label><input type="password" id="pw-new" placeholder="Min 8 characters"></div>
+            <div class="field" style="margin-bottom:20px"><label>Confirm New Password</label><input type="password" id="pw-confirm" placeholder="••••••••"></div>
+            <button class="btn btn-primary" onclick="changePassword()">Update Password</button>
         </div>`;
 }
 
 async function changePassword() {
-    const current = document.getElementById('pw-current').value;
-    const newPw   = document.getElementById('pw-new').value;
-    const confirm = document.getElementById('pw-confirm').value;
-    if (newPw !== confirm) { toast('Passwords do not match', 'error'); return; }
-    if (newPw.length < 8)  { toast('Minimum 8 characters', 'error'); return; }
-    const res = await apiFetch(`${API}/change-password`, { method:'POST', body: JSON.stringify({ current_password: current, new_password: newPw }) });
-    if (!res) return;
-    const data = await res.json();
-    if (!res.ok) { toast(data.error, 'error'); return; }
-    toast('Password updated successfully ✓');
+    const current=document.getElementById('pw-current').value;
+    const newPw=document.getElementById('pw-new').value;
+    const confirm=document.getElementById('pw-confirm').value;
+    if(newPw!==confirm){toast('Passwords do not match','error');return;}
+    if(newPw.length<8){toast('Minimum 8 characters','error');return;}
+    const res=await api('/change-password',{method:'POST',body:JSON.stringify({current_password:current,new_password:newPw})});
+    if(!res)return;
+    const data=await res.json();
+    if(!res.ok){toast(data.error,'error');return;}
+    toast('Password updated ✓');
 }
 
-/* ── AUTO LOGIN IF TOKEN EXISTS ── */
-if (TOKEN && currentUser) showApp();
+/* INIT */
+if(TOKEN&&USER)showApp();
 </script>
 </body>
 </html>
