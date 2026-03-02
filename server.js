@@ -106,7 +106,13 @@ const productsRouter = require('./routes/products');
 const adminRouter    = require('./routes/admin');
 app.use('/api/products', productsRouter(db));
 app.use('/api/admin', adminRouter(db));
-app.use('/admin', express.static(require('path').join(__dirname, 'admin')));
+// Admin panel — served with relaxed CSP for inline styles/scripts
+app.get('/admin', (req, res) => {
+    res.setHeader('Content-Security-Policy',
+        "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self'"
+    );
+    res.sendFile(require('path').join(__dirname, 'admin', 'index.html'));
+});
 
 // ── 404 handler — all unmatched routes
 app.use((req, res) => {
