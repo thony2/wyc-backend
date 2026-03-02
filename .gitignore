@@ -1,0 +1,22 @@
+# Environment files
+.env
+.env.*
+
+# Database
+*.db
+*.sqlite
+data/
+
+# Dependencies
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# Mac files
+.DS_Store
+
+# Frontend build artifacts (if added later)
+dist/
+build/
