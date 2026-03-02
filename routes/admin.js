@@ -46,16 +46,19 @@ module.exports = (db) => {
     /* ── STATS ── */
     router.get('/stats', requireAuth, async (req, res) => {
         try {
-            const products  = await db.prepare(`SELECT COUNT(*) as c FROM products WHERE is_active=1`).get();
-            const deals     = await db.prepare(`SELECT COUNT(*) as c FROM offers WHERE is_active=1 AND end_date >= CURRENT_DATE::text`).get();
-            const lowStock  = await db.prepare(`SELECT COUNT(*) as c FROM products WHERE stock_level <= 5 AND is_active=1`).get();
-            const enquiries = await db.prepare(`SELECT COUNT(*) as c FROM leads`).get();
+            const products  = await db.prepare('SELECT COUNT(*) as c FROM products WHERE is_active=1').get();
+            const deals     = await db.prepare('SELECT COUNT(*) as c FROM offers WHERE is_active=1 AND end_date >= CURRENT_DATE::text').get();
+            const lowStock  = await db.prepare('SELECT COUNT(*) as c FROM products WHERE stock_level <= 5 AND is_active=1').get();
+            let enquiries = { c: 0 };
+            try { enquiries = await db.prepare('SELECT COUNT(*) as c FROM leads').get(); } catch(e) {}
             res.json({
-                total_products: parseInt(products?.c || products?.count || 0),
-                active_deals:   parseInt(deals?.c    || deals?.count    || 0),
-                low_stock:      parseInt(lowStock?.c  || lowStock?.count || 0),
-                total_enquiries:parseInt(enquiries?.c || enquiries?.count|| 0),
+                total_products:  parseInt(products?.c  || products?.count  || 0),
+                active_deals:    parseInt(deals?.c     || deals?.count     || 0),
+                low_stock:       parseInt(lowStock?.c  || lowStock?.count  || 0),
+                total_enquiries: parseInt(enquiries?.c || enquiries?.count || 0),
             });
+        } catch(e) { console.error('[Stats]', e.message); res.status(500).json({ error: e.message }); }
+    });
         } catch(e) { console.error('[Stats]', e.message); res.status(500).json({ error: e.message }); }
     });
 

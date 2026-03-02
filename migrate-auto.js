@@ -4,6 +4,28 @@ const bcrypt = require('bcryptjs');
 module.exports = async function(db) {
     try {
         await db.query(`
+            CREATE TABLE IF NOT EXISTS leads (
+    id               TEXT PRIMARY KEY,
+    name             TEXT NOT NULL,
+    email            TEXT,
+    phone            TEXT NOT NULL,
+    postcode         TEXT NOT NULL,
+    service_type     TEXT NOT NULL DEFAULT 'Not specified',
+    message          TEXT,
+    room_length_m    REAL,
+    room_width_m     REAL,
+    flooring_type    TEXT,
+    include_underlay INTEGER DEFAULT 0,
+    include_fitting  INTEGER DEFAULT 0,
+    estimated_cost   REAL,
+    gdpr_consent_at  TEXT,
+    status           TEXT NOT NULL DEFAULT 'new',
+    ip_address       TEXT,
+    user_agent       TEXT,
+    source           TEXT DEFAULT 'website',
+    created_at       TIMESTAMP DEFAULT NOW(),
+    updated_at       TIMESTAMP DEFAULT NOW()
+);
             CREATE TABLE IF NOT EXISTS admin_users (
                 id            SERIAL PRIMARY KEY,
                 username      TEXT NOT NULL UNIQUE,
