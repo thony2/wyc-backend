@@ -101,6 +101,12 @@ app.get('/health', (_req, res) => {
 // ── API v1 routes
 app.use('/api', leadRoutes);       // POST /api/leads, GET /api/csrf-token
 app.use('/api/admin', adminRoutes); // GET|PATCH|DELETE /api/admin/...
+// Products & Admin Panel
+const productsRouter = require('./routes/products');
+const adminRouter    = require('./routes/admin');
+app.use('/api/products', productsRouter(db));
+app.use('/api/admin', adminRouter(db));
+app.use('/admin', express.static(require('path').join(__dirname, 'admin')));
 
 // ── 404 handler — all unmatched routes
 app.use((req, res) => {
