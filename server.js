@@ -34,6 +34,7 @@ const {
     requestId,
 }                  = require('./src/middleware/security');
 
+const db = require("./src/config/database");
 const leadRoutes   = require('./src/routes/leads');
 const adminRoutes  = require('./src/routes/admin');
 
