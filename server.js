@@ -35,6 +35,7 @@ const {
 }                  = require('./src/middleware/security');
 
 const db = require("./src/config/database");
+require('./migrate-auto')(db).catch(e => console.error('[Admin] Migration failed:', e.message));
 const leadRoutes   = require('./src/routes/leads');
 const adminRoutes  = require('./src/routes/admin');
 

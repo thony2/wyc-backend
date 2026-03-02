@@ -61,11 +61,11 @@ function createPostgresPool() {
     const { Pool } = require('pg');
 
     const pool = new Pool({
-        host:     process.env.POSTGRES_HOST     || 'localhost',
-        port:     parseInt(process.env.POSTGRES_PORT || '5432', 10),
-        database: process.env.POSTGRES_DB       || 'wyc_leads',
-        user:     process.env.POSTGRES_USER     || 'wyc_user',
-        password: process.env.POSTGRES_PASSWORD,
+        host:     process.env.PGHOST     || 'localhost',
+        port:     parseInt(process.env.PGPORT || '5432', 10),
+        database: process.env.PGDATABASE       || 'wyc_leads',
+        user:     process.env.PGUSER     || 'wyc_user',
+        password: process.env.PGPASSWORD,
         max:      10,          // max pool size
         idleTimeoutMillis: 30_000,
         connectionTimeoutMillis: 5_000,
@@ -115,7 +115,7 @@ function createPostgresPool() {
         _isPostgres: true,
     };
 
-    logger.info(`[DB] PostgreSQL pool connected → ${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}`);
+    logger.info(`[DB] PostgreSQL pool connected → ${process.env.PGHOST}:${process.env.PGPORT}/${process.env.PGDATABASE}`);
     return wrapper;
 }
 
