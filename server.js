@@ -51,7 +51,15 @@ const PORT = parseInt(process.env.PORT || '3001', 10);
 app.use(requestId);
 
 // 2. HTTP security headers (Helmet)
-app.use(helmetMiddleware);
+app.use((req, res, next) => {
+    if (req.path === '/admin' || req.path.startsWith('/admin/')) {
+        res.setHeader('Content-Security-Policy',
+            "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self'"
+        );
+        return next();
+    }
+    return helmetMiddleware(req, res, next);
+});
 
 // 3. CORS — must come before routes
 app.use(corsMiddleware);
