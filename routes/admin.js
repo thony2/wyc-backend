@@ -47,7 +47,7 @@ module.exports = (db) => {
     router.get('/stats', requireAuth, async (req, res) => {
         try {
             const products  = await db.prepare(`SELECT COUNT(*) as c FROM products WHERE is_active=1`).get();
-            const deals     = await db.prepare(`SELECT COUNT(*) as c FROM offers WHERE is_active=1 AND end_date >= NOW()::date`).get();
+            const deals     = await db.prepare(`SELECT COUNT(*) as c FROM offers WHERE is_active=1 AND end_date >= CURRENT_DATE::text`).get();
             const lowStock  = await db.prepare(`SELECT COUNT(*) as c FROM products WHERE stock_level <= 5 AND is_active=1`).get();
             const enquiries = await db.prepare(`SELECT COUNT(*) as c FROM leads`).get();
             res.json({
