@@ -113,7 +113,7 @@ app.use('/api/admin', adminRoutes); // GET|PATCH|DELETE /api/admin/...
 const productsRouter = require('./routes/products');
 const adminRouter    = require('./routes/admin');
 app.use('/api/products', productsRouter(db));
-app.use('/api/admin', adminRouter(db));
+app.use('/api/panel', adminRouter(db));
 // Admin panel — served with relaxed CSP for inline styles/scripts
 app.get('/admin', (req, res) => {
     res.setHeader('Content-Security-Policy',
