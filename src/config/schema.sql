@@ -31,6 +31,8 @@ CREATE INDEX IF NOT EXISTS idx_leads_new        ON leads (created_at DESC) WHERE
 
 CREATE TABLE IF NOT EXISTS audit_log (
     actor      TEXT,
+    detail     TEXT,
+    ip_address TEXT,
     id         INTEGER PRIMARY KEY AUTOINCREMENT,
     lead_id    TEXT    REFERENCES leads(id) ON DELETE SET NULL,
     user_id    INTEGER,
