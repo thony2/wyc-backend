@@ -184,7 +184,7 @@ body { font-family: var(--font); background: #f0ede8; color: var(--slate); font-
 <div id="login-screen">
     <div class="login-box">
         <img 
-            src="images/logo.svg" 
+            src="./images/logo.svg" 
             alt="West Yorkshire Carpets logo"
             class="h-10 w-auto object-contain"
             loading="eager"
@@ -201,14 +201,19 @@ body { font-family: var(--font); background: #f0ede8; color: var(--slate); font-
 <div id="app">
     <nav class="sidebar">
         <div class="sidebar-brand">
-            <div class="sidebar-brand-name">WY <span>Carpets</span></div>
+            <div class="sidebar-logo-text"><img 
+            src="images/logo.svg" 
+            alt="West Yorkshire Carpets logo"
+            class="h-10 w-auto object-contain"
+            loading="eager"
+          /></div>
             <div class="sidebar-brand-sub">Admin Panel</div>
         </div>
         <div class="sidebar-nav">
-            <button class="nav-item active" onclick="nav('products')" data-page="products">📦 Products</button>
-            <button class="nav-item" onclick="nav('deals')" data-page="deals">🏷️ Deals & Offers</button>
+            <button class="nav-item active" onclick="nav('products')" data-page="products">Products</button>
+            <button class="nav-item" onclick="nav('deals')" data-page="deals">Deals & Offers</button>
             <div class="nav-divider"></div>
-            <button class="nav-item" onclick="nav('settings')" data-page="settings">⚙️ Settings</button>
+            <button class="nav-item" onclick="nav('settings')" data-page="settings">Settings</button>
         </div>
         <div class="sidebar-footer">
             <div class="sidebar-user"><strong id="sidebar-user">—</strong>Logged in</div>
