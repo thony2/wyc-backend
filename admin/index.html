@@ -1301,7 +1301,7 @@ async function saveBooking() {
     const r = await fetch(`${LEADS_API}/api/admin/leads/${currentLead.id}/booking`, {
       method:  'PATCH',
       headers: {'Authorization': `Bearer ${TOKEN}`, 'Content-Type': 'application/json'},
-      body:    JSON.stringify({job_date: date, job_time: time||null, booking_type: btype||null, booking_notes: notes||null}),
+      body:    JSON.stringify({booking_date: date, booking_time: time||null, booking_type: btype||null, booking_notes: notes||null}),
     });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const d = await r.json();
@@ -1410,7 +1410,8 @@ async function loadCalendar() {
   document.getElementById('cal-grid').querySelectorAll('.cal-day').forEach(d=>d.remove());
   document.getElementById('cal-month-label').textContent = 'Loading…';
   try {
-    const r = await fetch(`${LEADS_API}/api/admin/leads/calendar?year=${calYear}&month=${calMonth+1}`, {
+    const monthStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}`;
+    const r = await fetch(`${LEADS_API}/api/admin/calendar?month=${monthStr}`, {
       headers: {'Authorization': `Bearer ${TOKEN}`}
     });
     const d = await r.json();
@@ -1437,7 +1438,7 @@ function renderCalendar() {
 
   const bookingsByDate = {};
   calBookings.forEach(b => {
-    const d = b.job_date;
+    const d = b.booking_date;
     if (!bookingsByDate[d]) bookingsByDate[d] = [];
     bookingsByDate[d].push(b);
   });
