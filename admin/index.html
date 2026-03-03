@@ -17,11 +17,11 @@
 body { font-family: var(--font); background: #f0ede8; color: var(--slate); font-size: 14px; min-height: 100vh; }
 
 /* LOGIN */
-#login-screen { display:flex; align-items:center; justify-content:center; min-height:100vh; background:var(--slate); }
-.login-box { background:var(--white); padding:48px 40px; border-radius:16px; width:100%; max-width:420px; box-shadow:0 24px 80px rgba(0,0,0,0.4); }
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--dark);}
+.login-box{width:100%;max-width:400px;padding:48px 40px;background:var(--white);border:1px solid var(--border);border-radius:12px;text-align:center}
 .login-brand { font-size:1.2rem; font-weight:700; color:var(--slate); margin-bottom:4px; }
 .login-brand span { color:var(--red); }
-.login-sub { color:var(--grey); font-size:0.85rem; margin-bottom:32px; }
+.login-sub { color:var(--grey); font-size:0.85rem; margin-bottom:20px; margin-top: 20px; }
 .field { margin-bottom:16px; }
 .field label { display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--grey); margin-bottom:6px; }
 .field input, .field select, .field textarea { width:100%; padding:11px 13px; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-size:0.92rem; font-family:var(--font); color:var(--slate); background:var(--cream); transition:border-color .2s; }
@@ -183,10 +183,15 @@ body { font-family: var(--font); background: #f0ede8; color: var(--slate); font-
 <!-- LOGIN -->
 <div id="login-screen">
     <div class="login-box">
-        <div class="login-brand">West Yorkshire <span>Carpets</span></div>
-        <div class="login-sub">Admin Panel — Staff Access Only</div>
-        <div class="field"><label>Username</label><input type="text" id="login-user" placeholder="admin" autocomplete="username"></div>
-        <div class="field"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"></div>
+        <img 
+            src="images/logo.svg" 
+            alt="West Yorkshire Carpets logo"
+            class="h-10 w-auto object-contain"
+            loading="eager"
+          />
+        <div class="login-sub">CATALOGUE SYSTEM</div>
+        <div class="field"><input type="text" id="login-user" placeholder="admin" autocomplete="username"></div>
+        <div class="field"><input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"></div>
         <div class="login-error" id="login-error"></div>
         <button class="btn-login" onclick="login()">Sign In</button>
     </div>
