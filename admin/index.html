@@ -1410,7 +1410,7 @@ async function loadCalendar() {
   document.getElementById('cal-grid').querySelectorAll('.cal-day').forEach(d=>d.remove());
   document.getElementById('cal-month-label').textContent = 'Loading…';
   try {
-    const r = await fetch(`${LEADS_API}/api/admin/leads/calendar?year=${calYear}&month=${calMonth+1}`, {
+    const r = await fetch(`${LEADS_API}/api/admin/calendar?month=${calYear}-${String(calMonth+1).padStart(2,'0')}`, {
       headers: {'Authorization': `Bearer ${TOKEN}`}
     });
     const d = await r.json();
