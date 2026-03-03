@@ -24,6 +24,11 @@ module.exports = async function(db) {
     user_agent       TEXT,
     source           TEXT DEFAULT 'website',
     created_at       TIMESTAMP DEFAULT NOW(),
+    booking_date     TEXT,
+    booking_time     TEXT,
+    booking_type     TEXT,
+    booking_notes    TEXT,
+    lead_number      INTEGER,
     updated_at       TIMESTAMP DEFAULT NOW()
 );
             CREATE TABLE IF NOT EXISTS admin_users (
