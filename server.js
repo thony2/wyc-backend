@@ -116,7 +116,12 @@ const adminRouter    = require('./routes/admin');
 app.use('/api/products', productsRouter(db));
 app.use('/api/panel', adminRouter(db));
 // Admin panel — served with relaxed CSP for inline styles/scripts
-app.get('/dashboard', (req, res) => res.sendFile(require('path').join(__dirname, 'dashboard.html')));
+app.get('/dashboard', (req, res) => {
+    res.setHeader('Content-Security-Policy',
+        "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:"
+    );
+    res.sendFile(require('path').join(__dirname, 'dashboard.html'));
+});
 app.use('/admin', require('express').static(require('path').join(__dirname, 'admin')));
 app.get('/admin', (req, res) => {
     res.setHeader('Content-Security-Policy',
