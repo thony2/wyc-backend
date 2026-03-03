@@ -51,11 +51,16 @@ const PORT = parseInt(process.env.PORT || '3001', 10);
 // 1. Unique request ID — attach before anything logs
 app.use(requestId);
 
-// 2. HTTP security headers (Helmet)
+/// 2. HTTP security headers (Helmet)
 app.use((req, res, next) => {
     if (req.path === '/admin' || req.path.startsWith('/admin/')) {
         res.setHeader('Content-Security-Policy',
-            "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self'"
+            "default-src 'self'; " +
+            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " +
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " +
+            "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; " +
+            "img-src 'self' data: https:; " +
+            "connect-src 'self' https://wyc-backend-production-ed78.up.railway.app"
         );
         return next();
     }
@@ -122,13 +127,17 @@ app.get('/dashboard', (req, res) => {
     );
     res.sendFile(require('path').join(__dirname, 'dashboard.html'));
 });
-app.use('/admin', require('express').static(require('path').join(__dirname, 'admin')));
-app.get('/admin', (req, res) => {
+app.use('/admin', (req, res, next) => {
     res.setHeader('Content-Security-Policy',
-        "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self'"
+        "default-src 'self'; " +
+        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " +
+        "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; " +
+        "img-src 'self' data: https:; " +
+        "connect-src 'self' https://wyc-backend-production-ed78.up.railway.app"
     );
-    res.sendFile(require('path').join(__dirname, 'admin', 'index.html'));
-});
+    next();
+}, require('express').static(require('path').join(__dirname, 'admin')));
 
 // ── 404 handler — all unmatched routes
 app.use((req, res) => {
