@@ -158,7 +158,12 @@ async function setBooking(req, res) {
 
 async function getCalendar(req, res) {
     try {
-        const month = req.query.month || new Date().toISOString().slice(0, 7);
+       let month = req.query.month;
+if (!month && req.query.year) {
+    const m = String(req.query.month||new Date().getMonth()+1).padStart(2,'0');
+    month = `${req.query.year}-${m}`;
+}
+if (!month) month = new Date().toISOString().slice(0, 7);
         const from  = `${month}-01`;
         const to    = `${month}-31`;
         const bookings    = await db.query(`SELECT id, name, phone, postcode, service_type, status, booking_date, booking_time, booking_type, booking_notes FROM leads WHERE booking_date BETWEEN $1 AND $2 ORDER BY booking_date ASC, booking_time ASC`, [from, to]);

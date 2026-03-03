@@ -57,6 +57,7 @@ router.get('/leads/:id',          adminController.getLead);
 router.patch('/leads/:id/status', adminController.updateStatus);
 router.patch('/leads/:id/booking',adminController.setBooking);
 router.get('/calendar',           adminController.getCalendar);
+router.get('/leads/calendar',     adminController.getCalendar);
 router.delete('/leads/:id',       adminController.deleteLead);
 
 module.exports = router;
