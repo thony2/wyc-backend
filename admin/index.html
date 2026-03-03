@@ -1187,7 +1187,7 @@ function renderLeadsTable() {
   leads.sort((a,b) => {
     if (sort === 'oldest') return new Date(a.created_at) - new Date(b.created_at);
     if (sort === 'name')   return (a.name||'').localeCompare(b.name||'');
-    if (sort === 'booked') return (b.job_date||'').localeCompare(a.job_date||'');
+    if (sort === 'booked') return (b.booking_date||'').localeCompare(a.booking_date||'');
     return new Date(b.created_at) - new Date(a.created_at); // newest
   });
 
@@ -1260,14 +1260,14 @@ function openLeadModal(id) {
 
   // Show existing booking if any
   const bi = document.getElementById('current-booking-info');
-  if (l.job_date) {
+  if (l.booking_date) {
     bi.innerHTML = `<div class="current-booking-badge">
       <i class="fa-solid fa-calendar-check" style="color:#27AE60"></i>
-      Scheduled: ${formatLeadDate(l.job_date)}${l.job_time ? ' at ' + l.job_time : ''}
+      Scheduled: ${formatLeadDate(l.booking_date)}${l.booking_time ? ' at ' + l.booking_time : ''}
       ${l.booking_type ? ` · ${l.booking_type}` : ''}
     </div>`;
-    if (l.job_date && fpDate) fpDate.setDate(l.job_date);
-    if (l.job_time && fpTime) fpTime.setDate(l.job_time, true, 'H:i');
+    if (l.booking_date && fpDate) fpDate.setDate(l.booking_date);
+    if (l.booking_time && fpTime) fpTime.setDate(l.booking_time, true, 'H:i');
     if (l.booking_type) pickBookingType(l.booking_type, l.booking_type, 'fa-tag');
     if (l.booking_notes) document.getElementById('booking-notes').value = l.booking_notes || '';
   } else {
@@ -1301,13 +1301,13 @@ async function saveBooking() {
     const r = await fetch(`${LEADS_API}/api/admin/leads/${currentLead.id}/booking`, {
       method:  'PATCH',
       headers: {'Authorization': `Bearer ${TOKEN}`, 'Content-Type': 'application/json'},
-      body:    JSON.stringify({job_date: date, job_time: time||null, booking_type: btype||null, booking_notes: notes||null}),
+      body:    JSON.stringify({booking_date: date, booking_time: time||null, booking_type: btype||null, booking_notes: notes||null}),
     });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const d = await r.json();
     if (d.success) {
       const lead = allLeads.find(l => l.id === currentLead.id);
-      if (lead) { lead.job_date = date; lead.job_time = time; lead.booking_type = btype; lead.booking_notes = notes; }
+      if (lead) { lead.booking_date = date; lead.booking_time = time; lead.booking_type = btype; lead.booking_notes = notes; }
       renderLeadsTable();
       if (document.getElementById('view-calendar').style.display !== 'none') loadCalendar();
       showToast('Booking saved ✓', 'success');
@@ -1437,7 +1437,7 @@ function renderCalendar() {
 
   const bookingsByDate = {};
   calBookings.forEach(b => {
-    const d = b.job_date;
+    const d = b.booking_date;
     if (!bookingsByDate[d]) bookingsByDate[d] = [];
     bookingsByDate[d].push(b);
   });
@@ -1517,7 +1517,7 @@ function selectCalDay(dateStr, events) {
         <div class="day-job-dot" style="background:${statusColor(ev.status)}"></div>
         <div>
           <div class="day-job-name">${esc(ev.name||'Unknown')}</div>
-          <div class="day-job-detail">${ev.job_time||''} ${esc(ev.service_type||'')} · ${esc(ev.postcode||'')}</div>
+          <div class="day-job-detail">${ev.booking_time||''} ${esc(ev.service_type||'')} · ${esc(ev.postcode||'')}</div>
         </div>
       </div>
     `).join('');
