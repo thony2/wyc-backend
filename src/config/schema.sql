@@ -30,6 +30,7 @@ CREATE INDEX IF NOT EXISTS idx_leads_postcode   ON leads (postcode);
 CREATE INDEX IF NOT EXISTS idx_leads_new        ON leads (created_at DESC) WHERE status = 'new';
 
 CREATE TABLE IF NOT EXISTS audit_log (
+    actor      TEXT,
     id         INTEGER PRIMARY KEY AUTOINCREMENT,
     lead_id    TEXT    REFERENCES leads(id) ON DELETE SET NULL,
     user_id    INTEGER,
