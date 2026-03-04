@@ -6,11 +6,9 @@ const emailService   = require('../services/emailService');
 const logger         = require('../utils/logger');
 
 function getClientIp(req) {
-    return (
-        req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
-        req.socket?.remoteAddress ||
-        'unknown'
-    );
+    return req.headers['x-forwarded-for']?.split(',')[0]?.trim()
+        || req.socket?.remoteAddress
+        || 'unknown';
 }
 
 function anonymiseIp(ip) {
@@ -61,7 +59,7 @@ async function create(req, res) {
             room_length_m||null, room_width_m||null, flooring_type||null,
             include_underlay?1:0, include_fitting?1:0, estimated_cost||null,
             gdprConsentAt, anonIp, userAgent, 'website',
-            now, now
+            now, now,
         ]);
 
         await db.query(`
@@ -70,13 +68,13 @@ async function create(req, res) {
         `, [
             leadId, 'created', 'api',
             JSON.stringify({
-                service_type: service_type||'Not specified',
+                service_type: service_type || 'Not specified',
                 has_email:    !!email,
                 has_message:  !!message,
                 gdpr_consent: !!gdprConsentAt,
                 request_id:   requestId,
             }),
-            anonIp
+            anonIp,
         ]);
 
         logger.info(`[Lead] New submission — id: ${leadId}, service: ${service_type}, postcode: ${postcode}`);
@@ -84,15 +82,13 @@ async function create(req, res) {
         if (process.env.MAIL_ENABLED === 'true') {
             emailService.sendAdminNotification({
                 leadId, name, phone,
-                email:        email        || 'Not provided',
+                email:         email         || 'Not provided',
                 postcode,
-                service_type: service_type || 'Not specified',
-                message:      message      || 'No message provided',
+                service_type:  service_type  || 'Not specified',
+                message:       message       || 'No message provided',
                 estimated_cost,
-                created_at:   new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' }),
-            }).catch(err => {
-                logger.error(`[Email] Failed for lead ${leadId}: ${err.message}`);
-            });
+                created_at:    new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' }),
+            }).catch(err => logger.error(`[Email] Failed for lead ${leadId}: ${err.message}`));
         }
 
         return res.status(201).json({
