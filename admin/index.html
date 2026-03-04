@@ -1509,11 +1509,11 @@ function closeCalPopover() {
 function closeCalPopoverOutside(e) {
   if (!e.target.closest("#cal-popover")) closeCalPopover();
 }
+function changeMonth(dir) {
   if (dir === 0) { calYear = new Date().getFullYear(); calMonth = new Date().getMonth(); }
   else { calMonth += dir; if (calMonth > 11) { calMonth=0; calYear++; } if (calMonth < 0) { calMonth=11; calYear--; } }
   loadCalendar();
 }
-
 function toggleDrop(wrapId) {
   const wrap = document.getElementById(wrapId);
   const btn  = wrap.querySelector('.custom-select-btn');
