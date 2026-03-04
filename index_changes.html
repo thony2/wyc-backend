@@ -1,23 +1,4 @@
-<!--
-================================================================
-WEST YORKSHIRE CARPETS — index.html Integration Changes
-================================================================
-Only TWO small changes are needed in your existing index.html.
-The rest of the page is completely unchanged.
-================================================================
 
-
-CHANGE 1 — Add GDPR consent checkbox and honeypot field to form
-================================================================
-Find this in your form (around line 362):
-
-    <button type="submit" class="btn-primary btn-submit">
-
-Insert the following TWO blocks BEFORE that button:
--->
-
-                    <!-- GDPR Consent — required for GDPR Article 7 compliance -->
-                    <!-- Remove if your privacy policy covers this via legitimate interest -->
                     <div class="form-group form-group--consent">
                         <label class="checkbox-label" for="f-consent">
                             <input type="checkbox" id="f-consent" name="f-consent">
@@ -28,12 +9,6 @@ Insert the following TWO blocks BEFORE that button:
                             </span>
                         </label>
                     </div>
-
-                    <!--
-                        HONEYPOT anti-spam field.
-                        Hidden from real users via CSS (do NOT use display:none — some bots detect that).
-                        Bots fill it automatically; any submission with a value is silently discarded.
-                    -->
                     <div class="honeypot-field" aria-hidden="true" tabindex="-1">
                         <label for="f-website">Leave this field blank</label>
                         <input type="text"
@@ -42,24 +17,6 @@ Insert the following TWO blocks BEFORE that button:
                                autocomplete="off"
                                tabindex="-1">
                     </div>
-
-<!--
-CHANGE 2 — Add script tag for form handler
-================================================================
-Find at the bottom of your <body>, after the existing:
-
-    <script src="./js/script.js"></script>
-
-Add the new form handler script directly below it:
--->
-
-    <script src="./js/form-handler.js"></script>
-
-<!--
-================================================================
-CSS to add to styles.css (or a new form-additions.css)
-================================================================
--->
 
 <style>
 /* ── GDPR consent checkbox in contact form ── */
