@@ -281,7 +281,7 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #modal-overlay .booking-section-title{font-size:.7rem;color:#6B7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;gap:7px}
 #modal-overlay .booking-section-title i{color:#27AE60}
 #modal-overlay .current-booking-badge{font-size:.78rem;color:#6EE7B7;background:rgba(39,174,96,.08);border:1px solid rgba(39,174,96,.15);border-radius:8px;padding:8px 12px;margin-bottom:14px;display:flex;align-items:center;gap:7px}
-#modal-overlay .booking-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;transition:grid-template-columns .25s ease}
+#modal-overlay .booking-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 #modal-overlay .booking-row>div{display:flex;flex-direction:column;min-width:0;position:relative}
 #modal-overlay .booking-field-label{font-size:.68rem;color:#6B7280;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em}
 #modal-overlay .booking-trigger{width:100%;display:flex;align-items:center;gap:8px;padding:9px 12px;background:#2E2F36;border:1px solid rgba(255,255,255,.07);border-radius:8px;color:#A2A8B0;font-size:.83rem;font-family:'Inter',sans-serif;cursor:pointer;transition:all .18s;text-align:left}
@@ -1836,18 +1836,8 @@ function closeSidebar() {
   if (btn) btn.querySelector('i').className = 'fa-solid fa-bars';
 }
 
-function openDateCol() {
-  const dateCol = document.querySelector('.date-col');
-  const timeCol = document.querySelector('.time-col');
-  if (dateCol) dateCol.style.gridColumn = '1 / -1';
-  if (timeCol) { timeCol.style.visibility = 'hidden'; timeCol.style.position = 'absolute'; }
-}
-function closeDateCol() {
-  const dateCol = document.querySelector('.date-col');
-  const timeCol = document.querySelector('.time-col');
-  if (dateCol) dateCol.style.gridColumn = '';
-  if (timeCol) { timeCol.style.visibility = ''; timeCol.style.position = ''; }
-}
+function openDateCol() {}
+function closeDateCol() {}
 let _datePickerOpen = false;
 function toggleDatePicker(btn) {
   clearTimePicker();
