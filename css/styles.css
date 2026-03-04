@@ -1,4 +1,3 @@
-/* ----- CSS VARIABLES ----- */
 :root {
     --red:       #DE3848;
     --red-dark:  #C02535;
@@ -26,7 +25,6 @@
     --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ----- RESET & BASE ----- */
 *, *::before, *::after {
     margin: 0;
     padding: 0;
@@ -56,7 +54,6 @@ input, select, textarea { font-family: inherit; }
     margin: 0 auto;
 }
 
-/* ----- REVEAL ANIMATIONS ----- */
 .reveal {
     opacity: 0;
     transform: translateY(28px);
@@ -70,7 +67,6 @@ input, select, textarea { font-family: inherit; }
 .reveal:nth-child(3) { transition-delay: 0.2s; }
 .reveal:nth-child(4) { transition-delay: 0.3s; }
 
-/* ----- TYPOGRAPHY HELPERS ----- */
 .section-tag {
     font-family: var(--font-body);
     font-size: 0.75rem;
@@ -104,7 +100,6 @@ input, select, textarea { font-family: inherit; }
     margin-bottom: 56px;
 }
 
-/* ----- BUTTONS ----- */
 .btn-primary {
     display: inline-block;
     padding: 13px 28px;
@@ -144,9 +139,6 @@ input, select, textarea { font-family: inherit; }
     font-size: 0.95rem;
 }
 
-/* ============================
-   HEADER
-============================ */
 #site-header {
     position: fixed;
     top: 0;
@@ -244,7 +236,6 @@ input, select, textarea { font-family: inherit; }
 .hamburger.open span:nth-child(2) { opacity: 0; }
 .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* ── MOBILE NAV ── */
 .mobile-nav {
     display: none;
     flex-direction: column;
@@ -279,9 +270,6 @@ input, select, textarea { font-family: inherit; }
     font-weight: 600 !important;
 }
 
-/* ============================
-   HERO
-============================ */
 .hero {
     position: relative;
     height: 100vh;
@@ -424,9 +412,6 @@ input, select, textarea { font-family: inherit; }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* ============================
-   FEATURES STRIP
-============================ */
 .features-strip {
     background: var(--slate);
     padding: 0;
@@ -481,9 +466,6 @@ input, select, textarea { font-family: inherit; }
     line-height: 1.55;
 }
 
-/* ============================
-   FLOORING RANGE
-============================ */
 .flooring-range {
     padding: 100px 0;
     background: var(--cream);
@@ -547,9 +529,6 @@ input, select, textarea { font-family: inherit; }
 }
 .card-link:hover { gap: 10px; }
 
-/* ============================
-   WEEKLY DEALS
-============================ */
 .deals-section {
     background: var(--slate);
     padding: 0;
@@ -663,9 +642,6 @@ input, select, textarea { font-family: inherit; }
     border-radius: var(--radius-sm);
 }
 
-/* ============================
-   QUOTE CALCULATOR
-============================ */
 .quote-section {
     background: var(--cream-mid);
     padding: 100px 0;
@@ -678,7 +654,6 @@ input, select, textarea { font-family: inherit; }
     align-items: start;
 }
 
-/* ── LEFT PANEL ── */
 .calc-left {
     background: var(--white);
     border-radius: var(--radius-md);
@@ -693,7 +668,6 @@ input, select, textarea { font-family: inherit; }
     margin-bottom: 24px;
 }
 
-/* ── MODE TOGGLE ── */
 .calc-mode-group {
     display: inline-flex;
     align-items: center;
@@ -730,7 +704,6 @@ input, select, textarea { font-family: inherit; }
     color: var(--slate);
 }
 
-/* ── SWITCHER WRAP ── */
 .calc-switcher-wrap {
     position: relative;
     height: 90px;
@@ -752,14 +725,12 @@ input, select, textarea { font-family: inherit; }
     pointer-events: auto;
 }
 
-/* ── L × W ROW ── */
 .input-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
 }
 
-/* ── INPUT GROUP ── */
 .input-group {
     margin-bottom: 20px;
 }
@@ -774,7 +745,6 @@ input, select, textarea { font-family: inherit; }
     margin-bottom: 7px;
 }
 
-/* ── ALL CALCULATOR INPUTS + SELECT ── */
 .calc-left input[type="number"],
 .calc-left select {
     width: 100%;
@@ -797,7 +767,6 @@ input, select, textarea { font-family: inherit; }
     background: var(--white);
 }
 
-/* ── HIDE SPINNERS — SCOPED TO CALCULATOR ONLY ── */
 .calc-left input[type="number"]::-webkit-outer-spin-button,
 .calc-left input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -808,7 +777,6 @@ input, select, textarea { font-family: inherit; }
     -moz-appearance: textfield;
 }
 
-/* ── SELECT CHEVRON ── */
 .calc-select-wrap {
     position: relative;
 }
@@ -837,7 +805,6 @@ input, select, textarea { font-family: inherit; }
     border-top-color: var(--red);
 }
 
-/* ── DIRECT M² HINT ── */
 .calc-area-hint {
     font-size: 0.75rem;
     color: var(--grey);
@@ -845,7 +812,6 @@ input, select, textarea { font-family: inherit; }
     line-height: 1.5;
 }
 
-/* ── CUSTOM FLOORING DROPDOWN ── */
 .calc-dropdown {
     position: relative;
     width: 100%;
@@ -928,7 +894,6 @@ input, select, textarea { font-family: inherit; }
     font-weight: 600;
 }
 
-/* ── CHECKBOXES — scoped to calculator ── */
 .calc-left .check-group {
     display: flex;
     flex-direction: column;
@@ -989,7 +954,6 @@ input, select, textarea { font-family: inherit; }
     font-style: normal;
 }
 
-/* ── RIGHT RESULT PANEL ── */
 .calc-right {
     position: sticky;
     top: 100px;
@@ -1057,7 +1021,6 @@ input, select, textarea { font-family: inherit; }
     line-height: 1.5;
 }
 
-/* ── RESPONSIVE ── */
 @media (max-width: 900px) {
     .calculator { grid-template-columns: 1fr; }
     .calc-right { position: static; }
@@ -1068,9 +1031,6 @@ input, select, textarea { font-family: inherit; }
     .calc-left { padding: 24px; }
 }
 
-/* ============================
-   GALLERY
-============================ */
 .gallery-section {
     padding: 100px 0;
     background: var(--cream);
@@ -1122,9 +1082,6 @@ input, select, textarea { font-family: inherit; }
     grid-column: span 2;
 }
 
-/* ============================
-   CONTACT
-============================ */
 .contact-section {
     background: var(--slate);
     padding: 0;
@@ -1289,9 +1246,6 @@ input, select, textarea { font-family: inherit; }
     margin-top: 12px;
 }
 
-/* ============================
-   FOOTER
-============================ */
 footer {
     background: var(--black);
     padding: 0;
@@ -1374,9 +1328,6 @@ footer {
 }
 .footer-legal a:hover { color: rgba(255,255,255,0.7); }
 
-/* ============================
-   MOBILE CTA BAR
-============================ */
 .mobile-cta {
     display: none;
     position: fixed;
@@ -1414,9 +1365,6 @@ footer {
 }
 .mcta-quote:hover { background: var(--red-dark); }
 
-/* ============================
-   RESPONSIVE
-============================ */
 @media (max-width: 1100px) {
     .flooring-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -1507,7 +1455,6 @@ footer {
 
     body { padding-bottom: 76px; }
 }
-/* ── GDPR Consent Checkbox ── */
 .form-group--consent {
     margin-top: 4px;
 }
@@ -1522,80 +1469,6 @@ footer {
 }
 .form-group--consent .checkbox-label input {
     display: none;
-}
-
-.calc-mode-group {
-    display: flex;
-    background: var(--cream);
-    border: 1.5px solid var(--cream-mid);
-    border-radius: var(--radius-sm);
-    overflow: visible;
-    margin-bottom: 20px;
-    padding: 4px;
-    width: fit-content;
-}
-.calc-mode-btn {
-    padding: 8px 18px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--grey);
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    letter-spacing: 0.04em;
-    transition: background 0.2s, color 0.2s;
-    font-family: var(--font-body);
-    border-radius: var(--radius-sm);    /* ← ADD this line */
-}
-
-.calc-mode-btn:first-child {
-    margin-right: 8px !important;
-}
-
-.calc-mode-btn.active {
-    background: var(--slate);
-    color: var(--white);
-}
-.calc-mode-btn:not(.active):hover {
-    background: var(--cream-mid);
-    color: var(--slate);
-}
-
-/* ── CALCULATOR MODE SWITCHER ── */
-.calc-switcher-wrap {
-    position: relative;
-    height: 92px;
-    margin-bottom: 20px;
-}
-
-.calc-mode-panel {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.18s ease;
-    margin-bottom: 0;
-}
-
-.calc-mode-panel.is-active {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-#calc-area-row {
-    padding-top: 0px;
-}
-
-#calc-area-row input {
-    margin-top: 0px;
-}
-
-.calc-area-hint {
-    font-size: 0.75rem;
-    color: var(--grey);
-    margin-top: 5px;
 }
 
 .select-wrap {
@@ -1933,7 +1806,6 @@ footer {
     .insta-header { flex-direction: column; align-items: flex-start; }
 }
 
-/* ── CONTACT FORM CUSTOM DROPDOWN ── */
 .form-dropdown {
     position: relative;
     width: 100%;
@@ -1977,7 +1849,7 @@ footer {
 
 .form-dropdown-list {
     display: none;
-    position: absolute;;
+    position: absolute;
     left: 0;
     right: 0;
     background: var(--white);

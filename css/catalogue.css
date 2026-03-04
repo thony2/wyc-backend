@@ -17,7 +17,6 @@
     transition: visibility 0s linear 0s;
 }
 
-/* Blurred dim backdrop */
 .cat-backdrop {
     position: absolute;
     inset: 0;
@@ -84,7 +83,6 @@
     flex: 1;
 }
 
-/* Close X button */
 #cat-close {
     display: flex;
     align-items: center;
@@ -155,7 +153,6 @@
     white-space: nowrap;
 }
 
-/* Sort select */
 #cat-sort {
     appearance: none;
     -webkit-appearance: none;
@@ -186,7 +183,6 @@
     flex-wrap: wrap;
 }
 
-/* Category tabs */
 #cat-tabs {
     display: flex;
     gap: 4px;
@@ -231,7 +227,6 @@
     color: var(--white);
 }
 
-/* Price filters */
 #cat-price-filters {
     display: flex;
     gap: 4px;
@@ -284,7 +279,6 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
-    /* Remove default list styles if ever used as ul */
     list-style: none;
 }
 
@@ -314,7 +308,6 @@
     outline-offset: 2px;
 }
 
-/* Card image area */
 .cat-card-img-wrap {
     position: relative;
     overflow: hidden;
@@ -335,7 +328,6 @@
     transform: scale(1.045);
 }
 
-/* Product badge */
 .cat-card-badge {
     position: absolute;
     top: 11px;
@@ -356,7 +348,6 @@
 .badge--premium { background: #8B6914;      color: var(--white); }
 .badge--new     { background: #1A6B52;      color: var(--white); }
 
-/* Quick View hover overlay */
 .cat-card-qv-overlay {
     position: absolute;
     inset: 0;
@@ -386,7 +377,6 @@
     border-radius: 50px;
     cursor: pointer;
     letter-spacing: 0.02em;
-    /* Slides up on card hover */
     opacity: 0;
     transform: translateY(8px);
     transition:
@@ -405,7 +395,6 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-/* Card body content */
 .cat-card-body {
     padding: 17px 19px 19px;
     flex: 1;
@@ -414,7 +403,6 @@
     gap: 9px;
 }
 
-/* Meta row: category chip + price */
 .cat-card-meta {
     display: flex;
     align-items: center;
@@ -531,7 +519,6 @@
     color: var(--red);
 }
 
-/* Tooltip */
 .room-pill::after {
     content: attr(title);
     position: absolute;
@@ -555,7 +542,6 @@
 .room-pill:hover::after { opacity: 1; }
 .room-pill:hover { transform: scale(1.12); }
 
-/* Enquire button (card-level) */
 .cat-card-enquire {
     display: flex;
     align-items: center;
@@ -618,7 +604,6 @@
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     border-radius: 16px;
-    /* Hidden state */
     visibility: hidden;
     opacity: 0;
     pointer-events: none;
@@ -651,7 +636,6 @@
     scrollbar-width: thin;
     scrollbar-color: var(--grey-light) transparent;
     position: relative;
-    /* Entrance animation */
     opacity: 0;
     transform: scale(0.95) translateY(14px);
     transition:
@@ -679,7 +663,6 @@
         opacity   0.2s ease-in;
 }
 
-/* QV close button */
 .qv-close {
     position: absolute;
     top: 14px;
@@ -709,14 +692,12 @@
     transform: rotate(90deg);
 }
 
-/* QV layout: image | content */
 .qv-inner {
     display: grid;
     grid-template-columns: 1fr 1.1fr;
     min-height: 500px;
 }
 
-/* Left: image */
 .qv-image-wrap {
     position: relative;
     overflow: hidden;
@@ -731,7 +712,6 @@
     display: block;
 }
 
-/* Right: content */
 .qv-content {
     padding: 32px 32px 28px;
     display: flex;
@@ -792,7 +772,6 @@
     line-height: 1.72;
 }
 
-/* Sub-section label */
 .qv-section-title {
     font-family: var(--font-body);
     font-size: 0.66rem;
@@ -848,7 +827,6 @@
     background: var(--red);
 }
 
-/* Specs grid */
 .qv-specs {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -875,7 +853,6 @@
     font-weight: 500;
 }
 
-/* Rooms grid in QV — larger, labelled */
 .qv-rooms {
     display: flex;
     flex-wrap: wrap;
@@ -905,7 +882,6 @@
     color: var(--red);
 }
 
-/* Available colours */
 .qv-colours {
     display: flex;
     flex-wrap: wrap;
@@ -923,7 +899,6 @@
     border-radius: 50px;
 }
 
-/* QV action buttons */
 .qv-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1036,7 +1011,6 @@
 
     #cat-price-filters { flex-wrap: wrap; }
 
-    /* QV responsive */
     .qv-inner          { grid-template-columns: 1fr; min-height: auto; }
     .qv-image-wrap     { height: 260px; border-radius: 14px 14px 0 0; }
     .qv-content        { padding: 24px 26px; }
@@ -1044,7 +1018,6 @@
 }
 
 @media (max-width: 640px) {
-    /* Panel slides up from bottom */
     #cat-overlay {
         padding: 0;
         align-items: flex-end;
@@ -1054,7 +1027,6 @@
         max-width: 100%;
         max-height: 92vh;
         border-radius: 20px 20px 0 0;
-        /* Adjust animation origin */
         transform: scale(1) translateY(100%) !important;
         opacity: 1 !important;
         transition: transform 0.44s cubic-bezier(0.16, 1, 0.3, 1) !important;
@@ -1089,7 +1061,6 @@
         font-size: 0.62rem;
     }
 
-    /* QV: sheet from bottom */
     #cat-qv {
         padding: 0;
         align-items: flex-end;
@@ -1132,7 +1103,6 @@
     }
 }
 
-/* ── CATALOGUE SORT CUSTOM DROPDOWN ── */
 .cat-sort-dropdown {
     position: relative;
     cursor: pointer;
