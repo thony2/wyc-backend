@@ -276,7 +276,7 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #modal-overlay .status-pill.pill-spam{background:rgba(222,56,72,.15);color:#F87171;border-color:rgba(222,56,72,.25)}
 #modal-overlay .status-pill.is-active{opacity:1;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 #modal-overlay .modal-foot{padding:14px 24px 20px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.07)}
-
+#modal-overlay .modal-foot{padding:14px 24px 20px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.07)}
 #modal-overlay .booking-section{background:rgba(39,174,96,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:18px;margin-bottom:18px}
 #modal-overlay .booking-section-title{font-size:.7rem;color:#6B7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;gap:7px}
 #modal-overlay .booking-section-title i{color:#27AE60}
@@ -461,9 +461,9 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
   #modal-overlay .modal-body{padding:16px 18px}
   #modal-overlay .modal-head{padding:16px 18px 12px}
   #modal-overlay .modal-grid{grid-template-columns:1fr 1fr}
-  #modal-overlay .modal-foot{flex-wrap:wrap;gap:8px;padding:12px 18px 24px}
-  #modal-overlay .modal-foot .btn{flex:1;min-width:120px;justify-content:center}
-  #modal-overlay .booking-row{grid-template-columns:1fr 1fr}
+  #modal-overlay .modal-foot{display:flex;flex-direction:column;gap:8px;padding:12px 16px 20px}
+  #modal-overlay .modal-foot .foot-row{display:flex;gap:8px}
+  #modal-overlay .modal-foot .foot-row .btn{flex:1;justify-content:center}
   #modal-overlay .time-picker-grid{grid-template-columns:repeat(4,1fr)}
 }
 </style>
@@ -792,13 +792,13 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn btn-danger" onclick="deleteLead()"><i class="fa-solid fa-trash"></i> Delete</button>
-      <div style="flex:1"></div>
-      <button class="btn btn-green" onclick="saveBooking()"><i class="fa-solid fa-calendar-check"></i> Save Booking</button>
-      <a id="modal-call-btn" class="btn btn-primary" href="tel:"><i class="fa-solid fa-phone"></i> Call</a>
-      <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+      <button class="btn btn-green" onclick="saveBooking()" style="width:100%;justify-content:center"><i class="fa-solid fa-calendar-check"></i> Save Booking</button>
+      <div class="foot-row" style="display:flex;gap:8px;width:100%">
+        <a id="modal-call-btn" class="btn btn-primary" href="tel:" style="flex:1;justify-content:center"><i class="fa-solid fa-phone"></i> Call</a>
+        <button class="btn btn-ghost" onclick="closeModal()" style="flex:1;justify-content:center">Close</button>
+      </div>
+      <button class="btn btn-danger" onclick="deleteLead()" style="background:none;border:none;color:#6B7280;font-size:.78rem;align-self:center;padding:4px 8px"><i class="fa-solid fa-trash"></i> Delete Lead</button>
     </div>
-  </div>
 </div>
 
 <div id="product-modal" style="display:none">
