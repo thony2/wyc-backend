@@ -998,7 +998,7 @@ function initPickers() {
       if (dateStr) { label.textContent = formatLeadDate(dateStr); trigger.classList.add('has-value'); }
       else         { label.textContent = 'Pick a date'; trigger.classList.remove('has-value'); }
     },
-    onClose: () => { const btn = document.getElementById('date-trigger'); btn.classList.remove('picker-open'); btn.setAttribute('data-open','0'); closeDateCol(); },
+    onClose: () => { _datePickerOpen = false; document.getElementById('date-trigger').classList.remove('picker-open'); closeDateCol(); },
   });
   initTimePicker();
 }
@@ -1848,21 +1848,20 @@ function closeDateCol() {
   if (dateCol) dateCol.style.gridColumn = '';
   if (timeCol) { timeCol.style.visibility = ''; timeCol.style.position = ''; }
 }
+let _datePickerOpen = false;
 function toggleDatePicker(btn) {
   clearTimePicker();
   document.getElementById('time-picker-dropdown').classList.remove('open');
   document.getElementById('time-trigger').classList.remove('time-trigger-open');
-  if (fpDate) {
-    const isOpen = btn.getAttribute('data-open') === '1';
-    if (isOpen) {
-      btn.setAttribute('data-open', '0');
-      fpDate.close();
-      closeDateCol();
-    } else {
-      btn.setAttribute('data-open', '1');
-      fpDate.open();
-      openDateCol();
-    }
+  if (!fpDate) return;
+  if (_datePickerOpen) {
+    _datePickerOpen = false;
+    fpDate.close();
+    closeDateCol();
+  } else {
+    _datePickerOpen = true;
+    fpDate.open();
+    openDateCol();
   }
 }
 function initTimePicker() {
