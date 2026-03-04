@@ -220,6 +220,14 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #leads-section .cal-event.installation{background:rgba(39,174,96,.15);border-left:2px solid #6EE7B7;color:#6EE7B7}
 #leads-section .cal-event.callback{background:rgba(245,158,11,.15);border-left:2px solid #FCD34D;color:#FDE68A}
 #leads-section .cal-more{font-size:.62rem;color:#6B7280;padding:1px 4px}
+#leads-section .cal-day{position:relative}
+#leads-section .cal-popover{position:absolute;z-index:200;background:#2E2F36;border:1px solid rgba(222,56,72,.35);border-radius:10px;padding:6px;min-width:190px;box-shadow:0 8px 32px rgba(0,0,0,.5);top:0;left:50%;transform:translateX(-50%);animation:popIn .15s ease}
+@keyframes popIn{from{opacity:0;transform:translateX(-50%) scale(.95)}to{opacity:1;transform:translateX(-50%) scale(1)}}
+#leads-section .cal-popover-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;cursor:pointer;transition:background .12s}
+#leads-section .cal-popover-item:hover{background:#3A3B44}
+#leads-section .cal-popover-name{font-size:.82rem;color:#E8E9EF;font-weight:500}
+#leads-section .cal-popover-detail{font-size:.7rem;color:#6B7280;margin-top:1px}
+#leads-section .cal-popover-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 #leads-section .cal-popover{position:absolute;z-index:200;background:#2E2F36;border:1px solid rgba(222,56,72,.35);border-radius:10px;padding:6px;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,.5);top:0;left:50%;transform:translateX(-50%);animation:popIn .15s ease}
 @keyframes popIn{from{opacity:0;transform:translateX(-50%) scale(.95)}to{opacity:1;transform:translateX(-50%) scale(1)}}
 #leads-section .cal-popover-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;cursor:pointer;transition:background .12s}
@@ -1474,33 +1482,33 @@ function renderUnscheduled() {
   `).join('');
 }
 
-function selectCalDay(dateStr, events) {
-  selectedDay = dateStr;
-  renderCalendar();
-  const panel = document.getElementById('day-panel');
-  const body  = document.getElementById('day-panel-body');
-  document.getElementById('day-panel-title').textContent = formatLeadDate(dateStr);
-  if (!events.length) {
-    body.innerHTML = '<div class="day-empty">No jobs scheduled for this day.</div>';
-  } else {
-    body.innerHTML = events.map(ev => `
-      <div class="day-job" onclick="openLeadModal('${ev.id}')">
-        <div class="day-job-dot" style="background:${statusColor(ev.status)}"></div>
-        <div>
-          <div class="day-job-name">${esc(ev.name||'Unknown')}</div>
-          <div class="day-job-detail">${ev.booking_time||''} ${esc(ev.service_type||'')} · ${esc(ev.postcode||'')}</div>
-        </div>
+function selectCalDay(dateStr, events, targetEl) {
+  closeCalPopover();
+  if (!events.length) return;
+  if (events.length === 1) { openLeadModal(events[0].id); return; }
+  const popover = document.createElement("div");
+  popover.className = "cal-popover";
+  popover.id = "cal-popover";
+  popover.innerHTML = events.map(ev => `
+    <div class="cal-popover-item" onclick="openLeadModal('${ev.id}');closeCalPopover()">
+      <div class="cal-popover-dot" style="background:${statusColor(ev.status)}"></div>
+      <div>
+        <div class="cal-popover-name">${esc(ev.name||'Unknown')}</div>
+        <div class="cal-popover-detail">${ev.booking_time||''} · ${esc(ev.service_type||'')} · ${esc(ev.postcode||'')}</div>
       </div>
-    `).join('');
-  }
-  panel.classList.add('open');
+    </div>
+  `).join("");
+  targetEl.appendChild(popover);
+  setTimeout(() => document.addEventListener("click", closeCalPopoverOutside), 0);
 }
-function closeDayPanel() {
-  selectedDay = null;
-  document.getElementById('day-panel').classList.remove('open');
-  renderCalendar();
+function closeCalPopover() {
+  const p = document.getElementById("cal-popover");
+  if (p) p.remove();
+  document.removeEventListener("click", closeCalPopoverOutside);
 }
-function changeMonth(dir) {
+function closeCalPopoverOutside(e) {
+  if (!e.target.closest("#cal-popover")) closeCalPopover();
+}
   if (dir === 0) { calYear = new Date().getFullYear(); calMonth = new Date().getMonth(); }
   else { calMonth += dir; if (calMonth > 11) { calMonth=0; calYear++; } if (calMonth < 0) { calMonth=11; calYear--; } }
   loadCalendar();
