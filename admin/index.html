@@ -292,6 +292,21 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #modal-overlay .booking-notes-input{width:100%;padding:10px 12px;background:#2E2F36;border:1px solid rgba(255,255,255,.07);border-radius:8px;color:#E8E9EF;font-size:.83rem;outline:none;font-family:'Inter',sans-serif;resize:vertical;min-height:72px;transition:border-color .2s;line-height:1.55}
 #modal-overlay .booking-notes-input:focus{border-color:rgba(222,56,72,.4)}
 #modal-overlay .booking-notes-input::placeholder{color:#6B7280}
+#modal-overlay .date-picker-dropdown{position:absolute;top:100%;left:0;right:0;background:#2E2F36;border:0px solid rgba(222,56,72,.4);border-top:none;border-radius:0 0 10px 10px;max-height:0;overflow:hidden;transition:max-height .25s cubic-bezier(.4,0,.2,1),border-width 0s .25s;z-index:400;margin-top:0}
+#modal-overlay .date-picker-dropdown.open{max-height:340px;overflow-y:auto;border-width:1px;transition:max-height .3s cubic-bezier(.4,0,.2,1)}
+#modal-overlay .date-trigger-open{border-bottom-left-radius:0!important;border-bottom-right-radius:0!important;border-bottom-color:transparent!important;border-color:rgba(222,56,72,.4)!important}
+#modal-overlay .dp-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 6px}
+#modal-overlay .dp-nav-btn{background:none;border:none;color:#A2A8B0;cursor:pointer;padding:4px 8px;border-radius:4px;font-size:.9rem}
+#modal-overlay .dp-nav-btn:hover{color:#F0EEE4;background:#3A3B44}
+#modal-overlay .dp-month-label{font-size:.84rem;font-weight:600;color:#F0EEE4;font-family:"Inter",sans-serif}
+#modal-overlay .dp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:0 8px 10px}
+#modal-overlay .dp-day-name{text-align:center;font-size:.62rem;font-weight:600;color:#6B7280;padding:4px 0;letter-spacing:.06em}
+#modal-overlay .dp-day{text-align:center;padding:7px 2px;font-size:.8rem;color:#C8C9CF;cursor:pointer;border-radius:6px;transition:background .12s,color .12s;font-family:"Inter",sans-serif}
+#modal-overlay .dp-day:hover{background:#3A3B44;color:#F0EEE4}
+#modal-overlay .dp-day.today{color:#DE3848;font-weight:600}
+#modal-overlay .dp-day.selected{background:#DE3848;color:white;font-weight:600}
+#modal-overlay .dp-day.empty{cursor:default}
+#modal-overlay .dp-day.other-month{color:#4B4C55}
 #modal-overlay .time-picker-dropdown{position:absolute;top:100%;left:0;right:0;background:#2E2F36;border:0px solid rgba(222,56,72,.4);border-top:none;border-radius:0 0 10px 10px;max-height:0;overflow:hidden;transition:max-height .25s cubic-bezier(.4,0,.2,1),border-width 0s .25s;z-index:400;margin-top:0}
 #modal-overlay #time-trigger:not(.time-trigger-open){border-bottom-color:rgba(255,255,255,.1)!important;border-color:rgba(255,255,255,.1)!important}
 #modal-overlay .time-picker-dropdown.open{max-height:220px;overflow-y:auto;border-width:1px;transition:max-height .25s cubic-bezier(.4,0,.2,1)}
@@ -716,13 +731,16 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
         </div>
         <div id="current-booking-info"></div>
         <div class="booking-row">
-          <div class="date-col">
+          <div class="date-col" style="position:relative">
             <div class="booking-field-label">Date</div>
-            <button type="button" class="booking-trigger" id="date-trigger">
+            <button type="button" class="booking-trigger" id="date-trigger" onclick="toggleDateDropdown()">
               <i class="fa-regular fa-calendar"></i>
               <span id="date-trigger-label">Pick a date</span>
             </button>
-            <input id="booking-date" style="position:absolute;visibility:hidden;height:0;width:0;pointer-events:none">
+            <input id="booking-date" type="hidden">
+            <div class="date-picker-dropdown" id="date-picker-dropdown">
+              <div id="date-picker-inner"></div>
+            </div>
           </div>
           <div class="time-col">
             <div class="booking-field-label">Time</div>
@@ -984,28 +1002,68 @@ function activateSection(name) {
   }
 }
 
+let _dpYear, _dpMonth, _dpSelected = null;
 function initPickers() {
-  fpDate = flatpickr('#booking-date', {
-    dateFormat: 'Y-m-d',
-    disableMobile: true,
-    clickOpens: false,
-    static: true,
-    appendTo: document.getElementById('date-trigger').parentElement,
-    positionElement: document.getElementById('date-trigger'),
-    onChange: (dates, dateStr) => {
-      const trigger = document.getElementById('date-trigger');
-      const label   = document.getElementById('date-trigger-label');
-      if (dateStr) { label.textContent = formatLeadDate(dateStr); trigger.classList.add('has-value'); }
-      else         { label.textContent = 'Pick a date'; trigger.classList.remove('has-value'); }
-    },
-    onClose: () => { _datePickerOpen = false; document.getElementById('date-trigger').classList.remove('picker-open'); },
-  });
-  document.getElementById('date-trigger').addEventListener('click', function() {
-    const cal = document.querySelector('#modal-overlay .flatpickr-calendar');
-    const isOpen = cal && cal.classList.contains('open');
-    if (isOpen) { fpDate.close(); } else { fpDate.open(); }
+  const now = new Date();
+  _dpYear  = now.getFullYear();
+  _dpMonth = now.getMonth();
+  renderDateDropdown();
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.date-col')) {
+      document.getElementById('date-picker-dropdown').classList.remove('open');
+      document.getElementById('date-trigger').classList.remove('date-trigger-open');
+    }
   });
   initTimePicker();
+}
+function toggleDateDropdown() {
+  const drop    = document.getElementById('date-picker-dropdown');
+  const trigger = document.getElementById('date-trigger');
+  const isOpen  = drop.classList.contains('open');
+  drop.classList.toggle('open', !isOpen);
+  trigger.classList.toggle('date-trigger-open', !isOpen);
+}
+function renderDateDropdown() {
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const inner  = document.getElementById('date-picker-inner');
+  if (!inner) return;
+  const today  = new Date();
+  const first  = new Date(_dpYear, _dpMonth, 1);
+  const days   = new Date(_dpYear, _dpMonth + 1, 0).getDate();
+  let startDay = first.getDay();
+  startDay = startDay === 0 ? 6 : startDay - 1;
+  let html = '<div class="dp-header">';
+  html += '<button class="dp-nav-btn" onclick="dpNav(-1)" type="button"><i class="fa-solid fa-chevron-left"></i></button>';
+  html += '<span class="dp-month-label">' + months[_dpMonth] + ' ' + _dpYear + '</span>';
+  html += '<button class="dp-nav-btn" onclick="dpNav(1)" type="button"><i class="fa-solid fa-chevron-right"></i></button>';
+  html += '</div><div class="dp-grid">';
+  ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(d => { html += '<div class="dp-day-name">' + d + '</div>'; });
+  for (let i = 0; i < startDay; i++) html += '<div class="dp-day empty"></div>';
+  for (let d = 1; d <= days; d++) {
+    const dateStr = _dpYear + '-' + String(_dpMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    const isToday = d === today.getDate() && _dpMonth === today.getMonth() && _dpYear === today.getFullYear();
+    const isSel   = dateStr === _dpSelected;
+    html += '<div class="dp-day' + (isToday ? ' today' : '') + (isSel ? ' selected' : '') + '" onclick="dpSelect('' + dateStr + '')">' + d + '</div>';
+  }
+  html += '</div>';
+  inner.innerHTML = html;
+}
+function dpNav(dir) {
+  _dpMonth += dir;
+  if (_dpMonth > 11) { _dpMonth = 0; _dpYear++; }
+  if (_dpMonth < 0)  { _dpMonth = 11; _dpYear--; }
+  renderDateDropdown();
+}
+function dpSelect(dateStr) {
+  _dpSelected = dateStr;
+  document.getElementById('booking-date').value = dateStr;
+  const parts  = dateStr.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('date-trigger-label').textContent = parseInt(parts[2]) + ' ' + months[parseInt(parts[1])-1] + ' ' + parts[0];
+  document.getElementById('date-trigger').classList.add('has-value');
+  document.getElementById('date-picker-dropdown').classList.remove('open');
+  document.getElementById('date-trigger').classList.remove('date-trigger-open');
+  renderDateDropdown();
 }
 
 function toggleBookingType() {
@@ -1174,7 +1232,7 @@ function openLeadModal(id) {
   } else {
     msgWrap.style.display = 'none';
   }
-  if (fpDate) fpDate.clear();
+  _dpSelected = null; document.getElementById('booking-date').value = ''; document.getElementById('date-trigger-label').textContent = 'Pick a date'; document.getElementById('date-trigger').classList.remove('has-value','date-trigger-open'); document.getElementById('date-picker-dropdown').classList.remove('open'); if(typeof renderDateDropdown==='function') renderDateDropdown();
   clearTimePicker();
   document.getElementById('date-trigger-label').textContent = 'Pick a date';
   document.getElementById('time-trigger-label').textContent = 'Pick a time';
@@ -1841,9 +1899,7 @@ function closeSidebar() {
   if (btn) btn.querySelector('i').className = 'fa-solid fa-bars';
 }
 
-function openDateCol() {}
-function closeDateCol() {}
-let _datePickerOpen = false;
+
 function toggleDatePicker(btn) {
   clearTimePicker();
   document.getElementById('time-picker-dropdown').classList.remove('open');
