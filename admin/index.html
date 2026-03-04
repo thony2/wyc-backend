@@ -722,7 +722,7 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
               <i class="fa-regular fa-calendar"></i>
               <span id="date-trigger-label">Pick a date</span>
             </button>
-            <input id="booking-date" style="display:none!important">
+            <input id="booking-date" style="position:absolute;visibility:hidden;height:0;width:0;pointer-events:none">
           </div>
           <div class="time-col">
             <div class="booking-field-label">Time</div>
@@ -1000,8 +1000,7 @@ function initPickers() {
     },
     onClose: () => { _datePickerOpen = false; document.getElementById('date-trigger').classList.remove('picker-open'); },
   });
-  document.getElementById('date-trigger').addEventListener('mousedown', function(e) {
-    e.preventDefault();
+  document.getElementById('date-trigger').addEventListener('click', function() {
     if (_datePickerOpen) {
       _datePickerOpen = false;
       fpDate.close();
