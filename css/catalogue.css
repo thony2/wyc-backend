@@ -1187,3 +1187,26 @@
     color: var(--red);
     font-weight: 600;
 }
+
+@media (max-width: 640px) {
+    .cat-header-top {
+        padding-top: max(20px, env(safe-area-inset-top, 20px));
+    }
+    #cat-tabs {
+        width: 100%;
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+        padding-bottom: 4px;
+    }
+    .cat-tab {
+        flex-shrink: 0;
+    }
+    #cat-price-filters {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    .cat-price-btn {
+        flex-shrink: 0;
+    }
+}
