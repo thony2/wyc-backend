@@ -379,13 +379,15 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #products-section .btn-add{display:flex;align-items:center;gap:6px;padding:9px 18px;background:var(--ps-red);color:var(--ps-white);border:none;border-radius:6px;font-size:.87rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .15s}
 #products-section .btn-add:hover{background:var(--ps-red-dark)}
 
-#products-section .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:22px;flex-wrap:wrap}
-#products-section .cat-tabs{display:flex;gap:6px;flex:1;flex-wrap:wrap}
+#products-section .toolbar{display:flex;flex-direction:column;gap:10px;margin-bottom:22px}
+#products-section .cat-tabs{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
+#products-section .cat-tabs::-webkit-scrollbar{display:none}
 #products-section .cat-tab{padding:7px 15px;border-radius:100px;border:1.5px solid var(--ps-border);background:var(--ps-white);color:var(--ps-grey);font-size:.82rem;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
 #products-section .cat-tab:hover{border-color:var(--ps-slate);color:var(--ps-slate)}
 #products-section .cat-tab.active{background:var(--ps-slate);border-color:var(--ps-slate);color:var(--ps-white)}
-#products-section .search-wrap{position:relative}
-#products-section .search-wrap input{padding:8px 12px 8px 32px;border:1.5px solid var(--ps-border);border-radius:6px;font-size:.87rem;font-family:inherit;width:190px;color:var(--ps-slate);background:var(--ps-white)}
+#products-section .toolbar-top{display:flex;gap:8px;align-items:center}
+#products-section .search-wrap{position:relative;flex:1}
+#products-section .search-wrap input{padding:8px 12px 8px 32px;border:1.5px solid var(--ps-border);border-radius:6px;font-size:.87rem;font-family:inherit;width:100%;color:var(--ps-slate);background:var(--ps-white)}
 #products-section .search-wrap input:focus{outline:none;border-color:var(--ps-red)}
 #products-section .search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ps-grey-light);font-size:.85rem;pointer-events:none}
 
@@ -1539,11 +1541,13 @@ function buildProductsUI() {
           ${c==='all'?'All':c.charAt(0).toUpperCase()+c.slice(1)} (${counts[c]})
         </button>`).join('')}
       </div>
-      <div class="search-wrap">
-        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        <input type="text" placeholder="Search…" oninput="searchProducts(this.value)">
+      <div class="toolbar-top">
+        <div class="search-wrap">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" placeholder="Search products…" oninput="searchProducts(this.value)">
+        </div>
+        <button class="btn-add" onclick="openAddProduct()"><i class="fa-solid fa-plus"></i> Add</button>
       </div>
-      <button class="btn-add" onclick="openAddProduct()">+ Add Product</button>
     </div>
     ${filtered.length
       ? `<div class="product-grid">${filtered.map(buildProductCard).join('')}</div>`
