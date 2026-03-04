@@ -21,7 +21,6 @@
 </head>
 <body>
 
-    <!-- HEADER -->
     <header id="site-header">
         <div class="header-inner">
             <div class="logo">
@@ -62,7 +61,6 @@
         </div>
     </header>
 
-    <!-- HERO -->
     <section class="hero">
         <div class="hero-media">
             <img src="./images/212.png" alt="Premium flooring installation">
@@ -93,7 +91,6 @@
         </div>
     </section>
 
-    <!-- FEATURES STRIP -->
     <section class="features-strip">
         <div class="features-inner">
             <div class="feature-item reveal">
@@ -130,7 +127,6 @@
         </div>
     </section>
 
-    <!-- FLOORING RANGE -->
     <section id="range" class="flooring-range">
         <div class="container">
             <div class="section-header reveal">
@@ -182,7 +178,6 @@
         </div>
     </section>
     <div id="deals1"></div>
-    <!-- WEEKLY DEAL -->
     <section id="deals" class="deals-section">
         <div class="deals-inner">
             <div class="deals-text reveal">
@@ -208,7 +203,6 @@
         </div>
     </section>
 
-    <!-- QUOTE CALCULATOR -->
     <section id="quote" class="quote-section">
         <div class="container">
             <div class="section-header reveal">
@@ -220,16 +214,13 @@
                <div class="calc-left">
     <h3>Your Room</h3>
 
-    <!-- Mode toggle -->
     <div class="calc-mode-group">
         <button class="calc-mode-btn active" data-mode="dimensions">L × W</button>
         <button class="calc-mode-btn" data-mode="area">Direct m²</button>
     </div>
 
-    <!-- Switcher wrap — fixed height prevents layout jump -->
     <div class="calc-switcher-wrap">
 
-        <!-- Mode A: Length × Width -->
         <div class="input-row calc-mode-panel is-active" id="calc-dim-row">
             <div class="input-group">
                 <label for="calc-length">Length (m)</label>
@@ -241,7 +232,6 @@
             </div>
         </div>
 
-        <!-- Mode B: Direct m² -->
         <div class="input-group calc-mode-panel" id="calc-area-row">
             <label for="calc-area-input">Total Area (m²)</label>
             <input type="number" id="calc-area-input" min="0" step="0.5" placeholder="e.g. 14.4">
@@ -250,11 +240,9 @@
 
     </div>
 
-   <!-- Flooring type — custom dropdown -->
 <div class="input-group">
     <label>Flooring Type</label>
 
-    <!-- Hidden select — JS reads this value, never shown -->
     <select id="calc-type" style="display:none;" aria-hidden="true" tabindex="-1">
         <option value="carpet_budget">Budget Carpet</option>
         <option value="carpet_premium">Premium Carpet</option>
@@ -263,7 +251,6 @@
         <option value="wood">Real Wood</option>
     </select>
 
-    <!-- Custom visual dropdown -->
     <div class="calc-dropdown" id="calc-dropdown" role="combobox" aria-expanded="false" aria-label="Flooring Type" tabindex="0">
         <div class="calc-dropdown-selected">
             <span id="calc-dropdown-label">Budget Carpet — from £5.99/m²</span>
@@ -281,7 +268,6 @@
     </div>
 </div>
 
-    <!-- Checkboxes -->
     <div class="check-group">
         <label class="checkbox-label">
             <input type="checkbox" id="calc-underlay">
@@ -323,7 +309,6 @@
         </div>
     </section>
 
-    <!-- GALLERY -->
     <section class="gallery-section">
         <div class="container">
             <div class="section-header reveal">
@@ -351,7 +336,6 @@
         </div>
     </section>
 
-    <!-- CONTACT -->
     <section id="contact" class="contact-section">
         <div class="contact-inner">
             <div class="contact-info reveal">
@@ -401,7 +385,6 @@
                     <div class="form-group">
     <label>Service Needed</label>
 
-    <!-- Hidden select — form-handler.js reads this -->
     <select id="f-service" name="service" aria-hidden="true" tabindex="-1" style="display:none;">
         <option value="Carpet Fitting">Carpet Fitting</option>
         <option value="Vinyl Installation">Vinyl Installation</option>
@@ -409,7 +392,6 @@
         <option value="Not sure yet — need advice">Not sure yet — need advice</option>
     </select>
 
-    <!-- Custom visual dropdown -->
     <div class="form-dropdown" id="form-service-dropdown" role="combobox" aria-expanded="false" aria-label="Service Needed" tabindex="0">
         <div class="form-dropdown-selected">
             <span id="form-service-label">Carpet Fitting</span>
@@ -429,7 +411,6 @@
                         <label for="f-message">Additional Notes</label>
                         <textarea id="f-message" rows="3" name="message" placeholder="Tell us about your project..."></textarea>
                     </div>
-                    <!-- GDPR Consent -->
                     <div class="form-group form-group--consent">
                         <label class="checkbox-label" for="f-consent">
                             <input type="checkbox" id="f-consent" name="f-consent">
@@ -513,7 +494,6 @@
     </div>
 </section>
 
-    <!-- FOOTER -->
     <footer>
         <div class="footer-inner">
             <div class="footer-brand">
@@ -558,7 +538,6 @@
         </div>
     </footer>
 
-    <!-- MOBILE CTA BAR -->
     <div class="mobile-cta" id="mobile-cta">
         <a href="tel:07449188303" class="mcta-btn mcta-phone">
             <i class="fa-solid fa-phone"></i>
@@ -582,13 +561,10 @@
 
         <div class="cat-backdrop" id="cat-backdrop" aria-hidden="true"></div>
 
-        <!-- Floating catalogue panel -->
         <div id="cat-panel" role="document">
 
-            <!-- ── STICKY HEADER ── -->
             <div class="cat-header" role="banner">
 
-                <!-- Top row: close + title + sort -->
                 <div class="cat-header-top">
                     <div class="cat-header-left">
                         <button id="cat-close"
@@ -604,7 +580,6 @@
                     <div class="cat-header-right">
     <span id="cat-count" aria-live="polite" aria-atomic="true"></span>
 
-    <!-- Hidden select — catalogue.js reads this -->
     <select id="cat-sort" aria-hidden="true" tabindex="-1" style="display:none;">
         <option value="default">Featured</option>
         <option value="price-asc">Price: Low to High</option>
@@ -612,7 +587,6 @@
         <option value="name">Name: A–Z</option>
     </select>
 
-    <!-- Custom visual dropdown -->
     <div class="cat-sort-dropdown" id="cat-sort-dropdown" role="combobox" aria-expanded="false" aria-label="Sort products" tabindex="0">
         <div class="cat-sort-selected">
             <span id="cat-sort-label">Featured</span>
@@ -631,7 +605,6 @@
 </div>
                 </div>
 
-                <!-- Filter row: category tabs + price range -->
                 <div class="cat-filters" role="toolbar" aria-label="Filter products">
 
                     <div id="cat-tabs" role="tablist" aria-label="Filter by category">
@@ -653,10 +626,8 @@
                 </div>
             </div>
 
-        <!-- ── SCROLLABLE PRODUCT BODY ── -->
         <div id="cat-body" role="main">
     
-        <!-- Product grid -->
         <div id="cat-grid"
                 role="list"
                 aria-label="Flooring products"
@@ -664,7 +635,6 @@
                 aria-atomic="false">
         </div>
 
-        <!-- Empty state — -->
         <div id="cat-empty" hidden aria-live="assertive">
             <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                 <p>No products match your current filters.</p>
@@ -675,19 +645,16 @@
             </div>
         </div>
 
-        <!-- /FLOATING PANEL -->
         <div id="cat-qv"
              role="dialog"
              aria-modal="true"
              aria-label="Product quick view"
              hidden>
             <div id="cat-qv-panel">
-                <!-- Populated by JS -->
             </div>
         </div>
     </div>
 
-        <!-- /CATALOGUE OVERLAY -->
     <div id="cat-toast" role="status" aria-live="polite" aria-atomic="true"></div>
     <div id="lightbox-overlay" hidden aria-modal="true" role="dialog" aria-label="Image viewer">
         <button id="lightbox-close" aria-label="Close image viewer">
@@ -707,7 +674,6 @@
         </div>
         </div>
     </div>
-        <!-- Lightbox -->
 <div class="lightbox" id="lightbox" aria-hidden="true">
   <div class="lightbox__backdrop"></div>
 
