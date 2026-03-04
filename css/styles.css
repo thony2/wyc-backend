@@ -1926,3 +1926,11 @@ footer {
     .brands-grid { gap: 28px; }
     .brand-item img { height: 28px; }
 }
+
+@media (max-width: 640px) {
+    .calc-switcher-wrap {
+        height: auto;
+        min-height: 80px;
+        margin-bottom: 24px;
+    }
+}

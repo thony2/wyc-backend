@@ -168,7 +168,11 @@
     function syncTabs() {
         if (!DOM.tabs) return;
         DOM.tabs.querySelectorAll('.cat-tab').forEach(btn => {
-            btn.classList.toggle('is-active', btn.dataset.cat === state.activeCategory);
+            const active = btn.dataset.cat === state.activeCategory;
+            btn.classList.toggle('is-active', active);
+            if (active) {
+                btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
         });
     }
 
