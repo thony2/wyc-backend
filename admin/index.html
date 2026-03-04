@@ -1853,14 +1853,10 @@ function toggleDatePicker(btn) {
   document.getElementById('time-picker-dropdown').classList.remove('open');
   document.getElementById('time-trigger').classList.remove('time-trigger-open');
   if (fpDate) {
-    const isOpen = btn.classList.contains('picker-open');
-    if (isOpen) {
+    if (fpDate.isOpen) {
       fpDate.close();
-      btn.classList.remove('picker-open');
-      closeDateCol();
     } else {
       fpDate.open();
-      btn.classList.add('picker-open');
       openDateCol();
     }
   }
