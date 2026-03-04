@@ -161,7 +161,7 @@ module.exports = (db) => {
 
     router.delete('/products/:id', requireAuth, async (req, res) => {
         try {
-            await db.query('UPDATE products SET is_active = 0 WHERE id = $1', [req.params.id]);
+            await db.query('DELETE FROM products WHERE id = $1', [req.params.id]);
             await audit(db, req.user, 'DELETE', 'products', req.params.id, {});
             res.json({ success: true });
         } catch (e) {
