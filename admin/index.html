@@ -4,24 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>West Yorkshire Carpets — Admin</title>
-<!-- Inline favicon — eliminates the 404 errors -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='12' fill='%23DE3848'/><text y='.85em' x='15' font-size='70'>W</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css" rel="stylesheet">
 <style>
-/* ================================================================
-   RESET & BASE
-   ================================================================ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:'Inter',sans-serif}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-/* ================================================================
-   LOGIN SCREEN  (dark — unified)
-   ================================================================ */
 #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#1C1D22}
 .login-box{width:100%;max-width:400px;padding:48px 40px;background:#23242B;border:1px solid rgba(255,255,255,.07);border-radius:12px;text-align:center}
 .login-logo{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#F0EEE4}
@@ -35,9 +28,6 @@ html,body{height:100%;font-family:'Inter',sans-serif}
 .login-btn:hover{background:#B92E3C}
 .login-error{margin-top:14px;font-size:.82rem;color:#DE3848;display:none}
 
-/* ================================================================
-   APP LAYOUT
-   ================================================================ */
 #app{display:none;min-height:100vh;background:#1C1D22}
 
 /* ── Sidebar ── */
@@ -60,9 +50,6 @@ html,body{height:100%;font-family:'Inter',sans-serif}
 
 #main-content{margin-left:240px;min-height:100vh}
 
-/* ================================================================
-   SHARED TOAST
-   ================================================================ */
 #toast{position:fixed;bottom:26px;right:26px;background:#23242B;border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:12px 18px;font-size:.84rem;color:#F0EEE4;display:flex;align-items:center;gap:10px;transform:translateY(80px);opacity:0;transition:all .3s;z-index:9000;box-shadow:0 8px 24px rgba(0,0,0,.5);pointer-events:none}
 #toast.show{transform:translateY(0);opacity:1}
 #toast.success{border-left:3px solid #27AE60}
@@ -70,9 +57,6 @@ html,body{height:100%;font-family:'Inter',sans-serif}
 #toast.error{border-left:3px solid #DE3848}
 #toast.error i{color:#DE3848}
 
-/* ================================================================
-   RESPONSIVE  — sidebar collapses on small screens
-   ================================================================ */
 @media(max-width:900px){
   .sidebar{width:60px}
   .sidebar-logo-text,.sidebar-logo-sub,.nav-item span,.nav-group-label,.logout-btn span,.sidebar-user{display:none}
@@ -81,19 +65,13 @@ html,body{height:100%;font-family:'Inter',sans-serif}
   #main-content{margin-left:60px}
 }
 
-/* ================================================================
-   LEADS SECTION — DARK THEME
-   All styles scoped under #leads-section to prevent bleed
-   ================================================================ */
 #leads-section{background:#1C1D22;min-height:100vh;padding:32px;display:none}
 #leads-section.active{display:block}
 
-/* Flatpickr static */
 #leads-section .flatpickr-calendar.static{position:relative!important;top:0!important;display:none;margin-top:0;width:100%!important;box-shadow:none!important;border-radius:0 0 10px 10px!important;border-top:none!important;border-color:rgba(222,56,72,.4)!important}
 #leads-section .flatpickr-calendar.static.open{display:block}
 #date-trigger.picker-open,#time-trigger.picker-open{border-bottom-left-radius:0!important;border-bottom-right-radius:0!important;border-bottom-color:transparent!important;border-color:rgba(222,56,72,.4)!important;background:#3A3B44!important;color:#E8E9EF!important}
 
-/* Flatpickr dark theme */
 .flatpickr-calendar{background:#2E2F36!important;border:1px solid rgba(222,56,72,.2)!important;border-radius:10px!important;font-family:'Inter',sans-serif!important}
 .flatpickr-months,.flatpickr-month,.flatpickr-current-month{background:transparent!important;color:#F0EEE4!important;fill:#F0EEE4!important}
 .flatpickr-prev-month,.flatpickr-next-month{color:#6B7280!important;fill:#6B7280!important;padding:8px!important}
@@ -108,13 +86,11 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 .flatpickr-time input:hover,.flatpickr-time input:focus{background:#3A3B44!important}
 .flatpickr-time .flatpickr-time-separator{color:#6B7280!important}
 
-/* Page header */
 #leads-section .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
 #leads-section .page-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600;color:#F0EEE4}
 #leads-section .page-sub{font-size:.8rem;color:#6B7280;margin-top:2px}
 #leads-section .header-actions{display:flex;gap:10px}
 
-/* Buttons — leads + leads modal */
 #leads-section .btn,#modal-overlay .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:6px;font-size:.82rem;font-weight:500;cursor:pointer;border:none;transition:all .15s;font-family:'Inter',sans-serif;text-decoration:none}
 #leads-section .btn-primary,#modal-overlay .btn-primary{background:#DE3848;color:white}
 #leads-section .btn-primary:hover,#modal-overlay .btn-primary:hover{background:#B92E3C}
@@ -125,7 +101,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #leads-section .btn-green,#modal-overlay .btn-green{background:rgba(39,174,96,.12);color:#6EE7B7;border:1px solid rgba(39,174,96,.2)}
 #leads-section .btn-green:hover,#modal-overlay .btn-green:hover{background:rgba(39,174,96,.2)}
 
-/* Stats */
 #leads-section .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
 #leads-section .stat-card{background:#23242B;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:20px 22px;position:relative;overflow:hidden}
 #leads-section .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
@@ -143,7 +118,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #leads-section .stat-mini-label{font-size:.78rem;color:#6B7280}
 #leads-section .stat-mini-val{font-size:1rem;font-weight:600;color:#F0EEE4;margin-left:auto}
 
-/* Filters */
 #leads-section .filters-bar{display:flex;gap:10px;align-items:center;margin-bottom:20px;flex-wrap:wrap}
 #leads-section .search-wrap{position:relative;flex:1;min-width:220px}
 #leads-section .search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#6B7280;font-size:.8rem;pointer-events:none}
@@ -160,7 +134,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #leads-section .filter-pill.active-won{color:#6EE7B7;background:rgba(39,174,96,.12);border-color:rgba(39,174,96,.3)}
 #leads-section .filter-pill.active-lost{color:#D1D5DB;background:rgba(107,114,128,.12);border-color:rgba(107,114,128,.3)}
 
-/* Custom dropdowns */
 #leads-section .custom-select-wrap{position:relative;display:inline-block}
 #leads-section .custom-select-btn{display:flex;align-items:center;gap:8px;padding:8px 14px;background:#23242B;border:1px solid rgba(255,255,255,.07);border-radius:20px;color:#A2A8B0;font-size:.75rem;font-weight:500;font-family:'Inter',sans-serif;cursor:pointer;transition:all .18s;white-space:nowrap}
 #leads-section .custom-select-btn:hover{border-color:rgba(255,255,255,.15);color:#E8E9EF;background:#3A3B44}
@@ -175,7 +148,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #leads-section .custom-option.active{color:#F0EEE4;font-weight:500}
 #leads-section .filter-select{display:none}
 
-/* Table */
 #leads-section .table-wrap{background:#23242B;border:1px solid rgba(255,255,255,.07);border-radius:10px;overflow:hidden}
 #leads-section .table-header{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between}
 #leads-section .table-title{font-size:.85rem;font-weight:500;color:#F0EEE4}
@@ -191,7 +163,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #leads-section .td-id{font-size:.72rem;color:#6B7280;font-weight:600;letter-spacing:.03em}
 #leads-section .td-time{font-size:.78rem;color:#6B7280}
 
-/* Badges */
 #leads-section .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:500}
 #leads-section .badge::before{content:'';width:5px;height:5px;border-radius:50%}
 #leads-section .badge-new{background:rgba(59,130,246,.12);color:#60A5FA}#leads-section .badge-new::before{background:#60A5FA}
@@ -202,14 +173,12 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #leads-section .badge-spam{background:rgba(222,56,72,.12);color:#F87171}#leads-section .badge-spam::before{background:#F87171}
 #leads-section .service-badge{padding:3px 10px;border-radius:4px;font-size:.72rem;background:rgba(255,255,255,.05);color:#A2A8B0}
 
-/* Loading */
 #leads-section .loading{text-align:center;padding:48px;color:#6B7280}
 #leads-section .spinner{display:inline-block;width:24px;height:24px;border:2px solid rgba(255,255,255,.07);border-top-color:#DE3848;border-radius:50%;animation:spin .7s linear infinite;margin-bottom:12px}
 #leads-section .empty-state{text-align:center;padding:60px 20px}
 #leads-section .empty-state i{font-size:2.5rem;color:#3A3B44;margin-bottom:16px;display:block}
 #leads-section .empty-state p{color:#6B7280;font-size:.9rem}
 
-/* Calendar */
 #leads-section .calendar-layout{display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start}
 #leads-section .calendar-wrap{background:#23242B;border:1px solid rgba(255,255,255,.07);border-radius:10px;overflow:hidden}
 #leads-section .cal-header{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between}
@@ -262,7 +231,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 @media(max-width:1100px){#leads-section .calendar-layout{grid-template-columns:1fr}}
 @media(max-width:900px){#leads-section{padding:20px}#leads-section .stats-grid,#leads-section .stats-row2{grid-template-columns:repeat(2,1fr)}}
 
-/* Leads modal */
 #modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:2000;padding:20px;backdrop-filter:blur(4px)}
 #modal-overlay.open{display:flex}
 #modal-overlay .modal{background:#23242B;border:1px solid rgba(255,255,255,.07);border-radius:12px;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.6)}
@@ -286,7 +254,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #modal-overlay .status-pill:hover{border-color:rgba(255,255,255,.25);color:#E8E9EF}
 #modal-overlay .modal-foot{padding:14px 24px 20px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.07)}
 
-/* Booking inside leads modal */
 #modal-overlay .booking-section{background:rgba(39,174,96,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:18px;margin-bottom:18px}
 #modal-overlay .booking-section-title{font-size:.7rem;color:#6B7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;gap:7px}
 #modal-overlay .booking-section-title i{color:#27AE60}
@@ -316,9 +283,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #modal-overlay .booking-type-chevron{color:#6B7280;font-size:.65rem;transition:transform .2s;margin-left:auto}
 #modal-overlay .booking-type-btn.open .booking-type-chevron{transform:rotate(180deg)}
 
-/* ================================================================
-   PRODUCTS SECTION — LIGHT THEME (scoped)
-   ================================================================ */
 :root{
   --ps-slate:#1a2332;--ps-slate-mid:#243044;--ps-red:#c8102e;--ps-red-dark:#a00d24;
   --ps-white:#ffffff;--ps-cream:#f5f0eb;--ps-cream-mid:#e8e0d6;--ps-grey:#6b7280;
@@ -336,7 +300,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #products-section .topbar-stat.warn strong{color:var(--ps-warn)}
 #products-section .ps-page-content{padding:26px}
 
-/* Products buttons */
 #products-section .btn,#product-modal .btn,#offer-modal .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:6px;font-size:.87rem;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
 #products-section .btn-primary,#product-modal .btn-primary,#offer-modal .btn-primary{background:var(--ps-red);color:var(--ps-white)}
 #products-section .btn-primary:hover,#product-modal .btn-primary:hover,#offer-modal .btn-primary:hover{background:var(--ps-red-dark)}
@@ -346,7 +309,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #products-section .btn-add{display:flex;align-items:center;gap:6px;padding:9px 18px;background:var(--ps-red);color:var(--ps-white);border:none;border-radius:6px;font-size:.87rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .15s}
 #products-section .btn-add:hover{background:var(--ps-red-dark)}
 
-/* Toolbar */
 #products-section .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:22px;flex-wrap:wrap}
 #products-section .cat-tabs{display:flex;gap:6px;flex:1;flex-wrap:wrap}
 #products-section .cat-tab{padding:7px 15px;border-radius:100px;border:1.5px solid var(--ps-border);background:var(--ps-white);color:var(--ps-grey);font-size:.82rem;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
@@ -357,7 +319,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #products-section .search-wrap input:focus{outline:none;border-color:var(--ps-red)}
 #products-section .search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ps-grey-light);font-size:.85rem;pointer-events:none}
 
-/* Product grid */
 #products-section .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:18px}
 #products-section .product-card{background:var(--ps-white);border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08);transition:transform .2s,box-shadow .2s}
 #products-section .product-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.09)}
@@ -397,7 +358,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #products-section .btn-del{padding:8px 10px;background:#fee2e2;color:var(--ps-danger);border:none;border-radius:6px;font-size:.82rem;cursor:pointer;transition:background .15s}
 #products-section .btn-del:hover{background:#fecaca}
 
-/* Products loading/empty */
 #products-section .loading{display:flex;align-items:center;justify-content:center;padding:72px}
 #products-section .spinner{width:30px;height:30px;border:3px solid var(--ps-border);border-top-color:var(--ps-red);border-radius:50%;animation:spin .7s linear infinite}
 #products-section .empty{text-align:center;padding:72px 20px}
@@ -405,7 +365,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #products-section .empty h3{font-size:.97rem;color:var(--ps-slate);margin-bottom:5px}
 #products-section .empty p{color:var(--ps-grey);font-size:.86rem}
 
-/* Deals */
 #products-section .deals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px}
 #products-section .deal-card{background:var(--ps-white);border-radius:10px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,.08);border-left:4px solid var(--ps-red)}
 #products-section .deal-card.off{border-left-color:var(--ps-grey-light);opacity:.6}
@@ -417,7 +376,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #products-section .deal-badge.live{background:#d1fae5;color:var(--ps-success)}
 #products-section .deal-badge.off{background:var(--ps-cream);color:var(--ps-grey)}
 
-/* Settings */
 #products-section .settings-card{background:var(--ps-white);border-radius:10px;padding:26px;box-shadow:0 1px 3px rgba(0,0,0,.08);max-width:460px}
 #products-section .settings-card h3{font-size:.93rem;font-weight:700;margin-bottom:18px;color:var(--ps-slate)}
 #products-section .field{margin-bottom:14px}
@@ -425,7 +383,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #products-section .field input,#products-section .field select,#products-section .field textarea{width:100%;padding:11px 13px;border:1.5px solid var(--ps-border);border-radius:6px;font-size:.92rem;font-family:inherit;color:var(--ps-slate);background:var(--ps-cream);transition:border-color .2s}
 #products-section .field input:focus,#products-section .field select:focus{outline:none;border-color:var(--ps-red);background:var(--ps-white)}
 
-/* Products modals */
 #product-modal,#offer-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(2px)}
 #product-modal .modal,#offer-modal .modal{background:var(--ps-white);border-radius:14px;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,.15)}
 #product-modal .modal-head,#offer-modal .modal-head{padding:20px 24px 16px;border-bottom:1px solid var(--ps-border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--ps-white);z-index:1}
@@ -453,9 +410,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 </head>
 <body>
 
-<!-- ================================================================
-     LOGIN SCREEN
-     ================================================================ -->
 <div id="login-screen">
   <div class="login-box">
     <img src="images/logo.svg" alt="West Yorkshire Carpets" style="height:48px;width:auto;object-fit:contain;margin-bottom:4px">
@@ -475,12 +429,8 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
   </div>
 </div>
 
-<!-- ================================================================
-     APP
-     ================================================================ -->
 <div id="app">
 
-  <!-- ── Sidebar ── -->
   <aside class="sidebar">
     <div class="sidebar-logo">
       <img src="images/logo.svg" alt="West Yorkshire Carpets" style="height:36px;width:auto;object-fit:contain">
@@ -488,7 +438,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
     </div>
 
     <nav class="sidebar-nav">
-      <!-- LEADS -->
       <div class="nav-group-label">Leads</div>
       <button class="nav-item active" id="nav-all-leads"
         onclick="activateSection('leads'); showLeadsView('leads')">
@@ -499,9 +448,7 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
         onclick="activateSection('leads'); showLeadsView('calendar')">
         <i class="fa-solid fa-calendar-days"></i><span>Calendar</span>
       </button>
-      </button>
 
-      <!-- PRODUCTS -->
       <div class="nav-group-label">Catalogue</div>
       <button class="nav-item" id="nav-products"
         onclick="activateSection('products'); productsNav('products')">
@@ -525,15 +472,11 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
     </div>
   </aside>
 
-  <!-- ── Main content ── -->
   <div id="main-content">
 
-    <!-- ============================================================
-         LEADS SECTION
-         ============================================================ -->
+    
     <div id="leads-section">
 
-      <!-- LEADS VIEW -->
       <div id="view-leads">
         <div class="page-header">
           <div>
@@ -618,7 +561,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
         </div>
       </div>
 
-      <!-- CALENDAR VIEW -->
       <div id="view-calendar" style="display:none">
         <div class="page-header">
           <div>
@@ -675,11 +617,8 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
         </div>
       </div>
 
-    </div><!-- /leads-section -->
-
-    <!-- ============================================================
-         PRODUCTS SECTION
-         ============================================================ -->
+    </div>
+    
     <div id="products-section">
       <div class="ps-topbar">
         <h1 id="page-title">Products</h1>
@@ -688,14 +627,8 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
       <div class="ps-page-content" id="page-content">
         <div class="loading"><div class="spinner"></div></div>
       </div>
-    </div><!-- /products-section -->
-
-  </div><!-- /main-content -->
-</div><!-- /app -->
-
-<!-- ================================================================
-     LEADS MODAL
-     ================================================================ -->
+    </div>
+  </div></div>
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
   <div class="modal">
     <div class="modal-head">
@@ -794,9 +727,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
   </div>
 </div>
 
-<!-- ================================================================
-     PRODUCT MODAL
-     ================================================================ -->
 <div id="product-modal" style="display:none">
 <div class="modal-overlay" onclick="if(event.target===this)closeProdModal()">
 <div class="modal">
@@ -873,9 +803,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
   </div>
 </div></div></div>
 
-<!-- ================================================================
-     OFFER MODAL
-     ================================================================ -->
 <div id="offer-modal" style="display:none">
 <div class="modal-overlay" onclick="if(event.target===this)closeOfferModal()">
 <div class="modal">
@@ -901,9 +828,6 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
   </div>
 </div></div></div>
 
-<!-- ================================================================
-     SHARED TOAST
-     ================================================================ -->
 <div id="toast">
   <i class="fa-solid fa-circle-check"></i>
   <span id="toast-msg">Done!</span>
@@ -913,35 +837,20 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 <script>
 'use strict';
 
-/* ================================================================
-   CONFIGURATION
-   ================================================================ */
 const LEADS_API = 'https://wyc-backend-production-ed78.up.railway.app';
 const PANEL_API = '/api/panel';
 
-/* ================================================================
-   SHARED AUTH STATE
-   ================================================================ */
 let TOKEN = localStorage.getItem('wyc_token') || '';
 let USER  = JSON.parse(localStorage.getItem('wyc_user') || 'null');
 
-/* ================================================================
-   LEADS STATE
-   ================================================================ */
 let allLeads = [], currentLead = null, leadsRefreshTimer = null;
 let calYear = new Date().getFullYear(), calMonth = new Date().getMonth();
 let calBookings = [], calUnscheduled = [], selectedDay = null;
 let currentStatusFilter = '';
 let fpDate, fpTime;
 
-/* ================================================================
-   PRODUCTS STATE
-   ================================================================ */
 let allProducts = [], currentCat = 'all';
 
-/* ================================================================
-   SHARED AUTH
-   ================================================================ */
 async function doLogin() {
   const username = document.getElementById('login-user').value.trim();
   const password = document.getElementById('login-pass').value;
@@ -975,7 +884,7 @@ async function doLogin() {
   }
 }
 
-function doLogout() {
+function doLogout(reason) {
   TOKEN = ''; USER = null;
   localStorage.removeItem('wyc_token');
   localStorage.removeItem('wyc_user');
@@ -983,36 +892,34 @@ function doLogout() {
   clearInterval(leadsRefreshTimer);
   document.getElementById('app').style.display          = 'none';
   document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('login-error').textContent = 'Your session has expired. Please log in again.'; document.getElementById('login-error').style.display = 'block';
-  document.getElementById('login-pass').value           = '';
+  const errEl = document.getElementById('login-error');
+  if (reason === 'expired') {
+    errEl.textContent = 'Your session has expired. Please log in again.';
+    errEl.style.display = 'block';
+  } else {
+    errEl.style.display = 'none';
+  }
+  document.getElementById('login-pass').value = '';
 }
 
 function showApp() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display          = 'block';
   document.getElementById('sidebar-username').textContent = USER?.username || 'Admin';
-  // Default: show leads section
   activateSection('leads');
-  // Load both panels
   loadLeadsData();
   loadProductsStats();
   startLeadsAutoRefresh();
 }
 
-/* ================================================================
-   SECTION SWITCHING
-   ================================================================ */
 function activateSection(name) {
   const leadsEl    = document.getElementById('leads-section');
   const productsEl = document.getElementById('products-section');
   leadsEl.classList.toggle('active',    name === 'leads');
   productsEl.classList.toggle('active', name === 'products');
-
-  // Sync active nav state
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   if (name === 'leads') {
     document.getElementById('nav-all-leads')?.classList.add('active');
-    // Init date pickers after leads section becomes visible
     if (!fpDate) setTimeout(initPickers, 50);
   }
   if (name === 'products') {
@@ -1021,9 +928,6 @@ function activateSection(name) {
   }
 }
 
-/* ================================================================
-   LEADS — DATE PICKERS
-   ================================================================ */
 function initPickers() {
   fpDate = flatpickr('#booking-date', {
     dateFormat: 'Y-m-d',
@@ -1076,9 +980,6 @@ function pickBookingType(value, label, icon) {
   );
 }
 
-/* ================================================================
-   LEADS — DATA & AUTO-REFRESH
-   ================================================================ */
 function startLeadsAutoRefresh() {
   clearInterval(leadsRefreshTimer);
   leadsRefreshTimer = setInterval(() => {
@@ -1122,9 +1023,6 @@ async function loadLeadsData() {
     `Updated ${new Date().toLocaleTimeString('en-GB')} · auto-refreshes every 30s`;
 }
 
-/* ================================================================
-   LEADS — STATS
-   ================================================================ */
 function updateLeadsStats(data) {
   const s = data.summary;
   document.getElementById('stat-total').textContent    = s.total || 0;
@@ -1139,9 +1037,6 @@ function updateLeadsStats(data) {
   document.getElementById('nav-new-count').textContent  = s.new_count || 0;
 }
 
-/* ================================================================
-   LEADS — FILTER PILLS
-   ================================================================ */
 function setStatusFilter(el, status) {
   currentStatusFilter = status;
   document.querySelectorAll('#status-pills .filter-pill').forEach(p => {
@@ -1151,9 +1046,6 @@ function setStatusFilter(el, status) {
   renderLeadsTable();
 }
 
-/* ================================================================
-   LEADS — TABLE
-   ================================================================ */
 function renderLeadsTable() {
   const search  = document.getElementById('search-input').value.toLowerCase();
   const service = document.getElementById('filter-service').value;
@@ -1175,7 +1067,7 @@ function renderLeadsTable() {
     if (sort === 'oldest') return new Date(a.created_at) - new Date(b.created_at);
     if (sort === 'name')   return (a.name||'').localeCompare(b.name||'');
     if (sort === 'booked') return (b.booking_date||'').localeCompare(a.booking_date||'');
-    return new Date(b.created_at) - new Date(a.created_at); // newest
+    return new Date(b.created_at) - new Date(a.created_at);
   });
 
   document.getElementById('table-count').textContent = `${leads.length} of ${allLeads.length}`;
@@ -1209,9 +1101,6 @@ function renderLeadsTable() {
     </table>`;
 }
 
-/* ================================================================
-   LEADS — MODAL
-   ================================================================ */
 function openLeadModal(id) {
   currentLead = allLeads.find(l => l.id === id);
   if (!currentLead) return;
@@ -1234,8 +1123,6 @@ function openLeadModal(id) {
   } else {
     msgWrap.style.display = 'none';
   }
-
-  // Reset booking fields
   if (fpDate) fpDate.clear();
   if (fpTime) fpTime.clear();
   document.getElementById('date-trigger-label').textContent = 'Pick a date';
@@ -1244,8 +1131,6 @@ function openLeadModal(id) {
   document.getElementById('time-trigger').classList.remove('has-value');
   pickBookingType('', 'Select type…', 'fa-tag');
   document.getElementById('booking-notes').value = '';
-
-  // Show existing booking if any
   const bi = document.getElementById('current-booking-info');
   if (l.booking_date) {
     bi.innerHTML = `<div class="current-booking-badge">
@@ -1272,9 +1157,6 @@ function closeModalOutside(e) {
   if (e.target.id === 'modal-overlay') closeModal();
 }
 
-/* ================================================================
-   LEADS — BOOKING SAVE
-   ================================================================ */
 async function saveBooking() {
   if (!currentLead) return;
   const date  = document.getElementById('booking-date').value;
@@ -1304,9 +1186,6 @@ async function saveBooking() {
   } catch(e) { showToast('Error: ' + e.message, 'error'); }
 }
 
-/* ================================================================
-   LEADS — STATUS UPDATE
-   ================================================================ */
 async function updateLeadStatus(status) {
   if (!currentLead) return;
   try {
@@ -1328,9 +1207,6 @@ async function updateLeadStatus(status) {
   } catch(e) { showToast('Error: ' + e.message, 'error'); }
 }
 
-/* ================================================================
-   LEADS — DELETE
-   ================================================================ */
 async function deleteLead() {
   if (!currentLead) return;
   if (!confirm(`Permanently delete lead for ${currentLead.name || 'this lead'}?\n\nThis cannot be undone.`)) return;
@@ -1349,9 +1225,6 @@ async function deleteLead() {
   } catch(e) { showToast('Error: ' + e.message, 'error'); }
 }
 
-/* ================================================================
-   LEADS — EXPORT CSV
-   ================================================================ */
 async function exportCSV() {
   try {
     const r = await fetch(`${LEADS_API}/api/admin/leads/export.csv`, {
@@ -1368,13 +1241,9 @@ async function exportCSV() {
   } catch(e) { showToast('Export failed', 'error'); }
 }
 
-/* ================================================================
-   LEADS — VIEWS (leads / calendar)
-   ================================================================ */
 function showLeadsView(view) {
   document.getElementById('view-leads').style.display    = view === 'leads'    ? 'block' : 'none';
   document.getElementById('view-calendar').style.display = view === 'calendar' ? 'block' : 'none';
-  // Update sidebar nav active state for leads items
   document.getElementById('nav-all-leads')?.classList.toggle('active', view === 'leads');
   document.getElementById('nav-calendar')?.classList.toggle('active',  view === 'calendar');
   if (view === 'calendar') loadCalendar();
@@ -1390,9 +1259,6 @@ function leadsFilterByStatus(s) {
   renderLeadsTable();
 }
 
-/* ================================================================
-   LEADS — CALENDAR
-   ================================================================ */
 async function loadCalendar() {
   document.getElementById('cal-grid').querySelectorAll('.cal-day').forEach(d=>d.remove());
   document.getElementById('cal-month-label').textContent = 'Loading…';
@@ -1428,15 +1294,12 @@ function renderCalendar() {
     if (!bookingsByDate[d]) bookingsByDate[d] = [];
     bookingsByDate[d].push(b);
   });
-
-  // Previous month grey days
   for (let i = startDay - 1; i >= 0; i--) {
     const day = document.createElement('div');
     day.className = 'cal-day other-month';
     day.innerHTML = `<div class="cal-day-num">${daysInPrev - i}</div>`;
     grid.appendChild(day);
   }
-  // Current month days
   for (let d = 1; d <= daysInMonth; d++) {
     const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const isToday = d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear();
@@ -1463,7 +1326,6 @@ function renderCalendar() {
     }
     grid.appendChild(day);
   }
-  // Fill remaining cells
   const total = startDay + daysInMonth;
   const rem   = 7 - (total % 7);
   if (rem < 7) {
@@ -1522,9 +1384,6 @@ function changeMonth(dir) {
   loadCalendar();
 }
 
-/* ================================================================
-   LEADS — CUSTOM DROPDOWNS
-   ================================================================ */
 function toggleDrop(wrapId) {
   const wrap = document.getElementById(wrapId);
   const btn  = wrap.querySelector('.custom-select-btn');
@@ -1556,9 +1415,6 @@ document.addEventListener('click', e => {
   }
 });
 
-/* ================================================================
-   LEADS — HELPERS
-   ================================================================ */
 function statusBadge(status) {
   const m = {new:'New',contacted:'Contacted',quoted:'Quoted',won:'Won',lost:'Lost',spam:'Spam'};
   return `<span class="badge badge-${status||'new'}">${m[status]||'New'}</span>`;
@@ -1580,9 +1436,6 @@ function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-/* ================================================================
-   SHARED TOAST
-   ================================================================ */
 function showToast(msg, type='success') {
   const t   = document.getElementById('toast');
   const ico = t.querySelector('i');
@@ -1593,9 +1446,6 @@ function showToast(msg, type='success') {
   t._t = setTimeout(() => t.classList.remove('show'), 3200);
 }
 
-/* ================================================================
-   PRODUCTS — API HELPER
-   ================================================================ */
 async function panelApi(path, opts={}) {
   const res = await fetch(`${PANEL_API}${path}`, {
     ...opts,
@@ -1605,13 +1455,10 @@ async function panelApi(path, opts={}) {
       ...(opts.headers||{}),
     },
   });
-  if (res.status === 401) { doLogout(); return null; }
+  if (res.status === 401) { doLogout('expired'); return null; }
   return res;
 }
 
-/* ================================================================
-   PRODUCTS — NAV
-   ================================================================ */
 function productsNav(page) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   const navMap = {products:'nav-products', deals:'nav-deals', settings:'nav-settings'};
@@ -1621,9 +1468,6 @@ function productsNav(page) {
   ({products:renderProducts, deals:renderDeals, settings:renderSettings})[page]?.();
 }
 
-/* ================================================================
-   PRODUCTS — STATS
-   ================================================================ */
 async function loadProductsStats() {
   const res = await panelApi('/stats'); if (!res) return;
   const s   = await res.json();
@@ -1633,9 +1477,6 @@ async function loadProductsStats() {
     <div class="topbar-stat ${s.low_stock>0?'warn':''}">Low Stock <strong>${s.low_stock}</strong></div>`;
 }
 
-/* ================================================================
-   PRODUCTS — RENDER
-   ================================================================ */
 async function renderProducts() {
   document.getElementById('page-content').innerHTML =
     '<div class="loading"><div class="spinner"></div></div>';
@@ -1707,9 +1548,6 @@ function searchProducts(q) {
   if (grid) grid.innerHTML = filtered.map(buildProductCard).join('');
 }
 
-/* ================================================================
-   PRODUCTS — QUICK EDIT (price / stock)
-   ================================================================ */
 async function editPrice(id) {
   const p = allProducts.find(x=>x.id===id); if (!p) return;
   const val = prompt(`New price for "${p.name}"\nCurrent: £${parseFloat(p.price).toFixed(2)}/m²\n\nEnter new price (£):`);
@@ -1747,9 +1585,6 @@ async function toggleActive(id, current) {
   await renderProducts(); loadProductsStats();
 }
 
-/* ================================================================
-   PRODUCTS — ADD / EDIT MODAL
-   ================================================================ */
 function openAddProduct() {
   document.getElementById('modal-title').textContent = 'Add Product';
   document.getElementById('p-id').value        = '';
@@ -1845,9 +1680,6 @@ async function deleteProduct(id, name) {
 }
 function closeProdModal() { document.getElementById('product-modal').style.display='none'; }
 
-/* ================================================================
-   PRODUCTS — DEALS
-   ================================================================ */
 async function renderDeals() {
   document.getElementById('page-content').innerHTML =
     '<div class="loading"><div class="spinner"></div></div>';
@@ -1913,9 +1745,6 @@ async function deleteOffer(id) {
 }
 function closeOfferModal() { document.getElementById('offer-modal').style.display='none'; }
 
-/* ================================================================
-   PRODUCTS — SETTINGS
-   ================================================================ */
 function renderSettings() {
   document.getElementById('page-content').innerHTML = `
     <div class="settings-card">
@@ -1939,9 +1768,6 @@ async function changePassword() {
   showToast('Password updated ✓');
 }
 
-/* ================================================================
-   KEYBOARD SHORTCUTS
-   ================================================================ */
 document.getElementById('login-pass').addEventListener('keydown', e => {
   if (e.key === 'Enter') doLogin();
 });
@@ -1949,9 +1775,6 @@ document.getElementById('login-user').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('login-pass').focus();
 });
 
-/* ================================================================
-   INIT — auto-login if token already stored
-   ================================================================ */
 if (TOKEN && USER) showApp();
 </script>
 </body>
