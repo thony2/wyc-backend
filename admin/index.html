@@ -455,8 +455,8 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #products-section .field input,#products-section .field select,#products-section .field textarea{width:100%;padding:11px 13px;border:1.5px solid var(--ps-border);border-radius:6px;font-size:.92rem;font-family:inherit;color:var(--ps-slate);background:var(--ps-cream);transition:border-color .2s}
 #products-section .field input:focus,#products-section .field select:focus{outline:none;border-color:var(--ps-red);background:var(--ps-white)}
 
-#product-modal,#offer-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;display:none!important;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(2px)}
-#product-modal[style*="flex"],#offer-modal[style*="flex"]{display:flex!important}
+#product-modal,#offer-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(2px)}
+#product-modal.open,#offer-modal.open{display:flex}
 #product-modal .modal,#offer-modal .modal{background:var(--ps-white);border-radius:14px;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,.15)}
 #product-modal .modal-head,#offer-modal .modal-head{padding:20px 24px 16px;border-bottom:1px solid var(--ps-border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--ps-white);z-index:1}
 #product-modal .modal-head h3,#offer-modal .modal-head h3{font-size:1rem;font-weight:700;color:var(--ps-slate)}
@@ -1643,7 +1643,7 @@ function openAddProduct() {
   document.querySelectorAll('input[name="room"]').forEach(cb => cb.checked = false);
   const prev = document.getElementById('img-preview');
   prev.style.display = 'none'; prev.src = '';
-  document.getElementById('product-modal').style.display = 'flex';
+  document.getElementById('product-modal').classList.add('open');
 }
 async function editProduct(id) {
   console.log("editProduct called, id:", id, typeof id);
@@ -1672,7 +1672,7 @@ async function editProduct(id) {
   const rooms = p.rooms || [];
   document.querySelectorAll('input[name="room"]').forEach(cb => cb.checked = rooms.includes(cb.value));
   previewImg(p.img_url);
-  document.getElementById('product-modal').style.display = 'flex';
+  document.getElementById('product-modal').classList.add('open');
 }
 function previewImg(url) {
   const img = document.getElementById('img-preview');
@@ -1718,7 +1718,7 @@ async function deleteProduct(id, name) {
   showToast(`"${name}" removed ✓`);
   await renderProducts(); loadProductsStats();
 }
-function closeProdModal() { document.getElementById('product-modal').style.display='none'; }
+function closeProdModal() { document.getElementById('product-modal').classList.remove('open'); }
 
 async function renderDeals() {
   document.getElementById('page-content').innerHTML =
@@ -1756,7 +1756,7 @@ async function openAddOffer() {
   document.getElementById('o-name').value     = '';
   document.getElementById('o-price').value    = '';
   document.getElementById('o-featured').checked = false;
-  document.getElementById('offer-modal').style.display = 'flex';
+  document.getElementById('offer-modal').classList.add('open');
 }
 async function saveOffer() {
   const payload = {
@@ -1783,7 +1783,7 @@ async function deleteOffer(id) {
   await panelApi(`/offers/${id}`, {method:'DELETE'});
   showToast('Deal removed ✓'); renderDeals(); loadProductsStats();
 }
-function closeOfferModal() { document.getElementById('offer-modal').style.display='none'; }
+function closeOfferModal() { document.getElementById('offer-modal').classList.remove('open'); }
 
 function renderSettings() {
   document.getElementById('page-content').innerHTML = `
