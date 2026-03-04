@@ -57,12 +57,26 @@ html,body{height:100%;font-family:'Inter',sans-serif}
 #toast.error{border-left:3px solid #DE3848}
 #toast.error i{color:#DE3848}
 
+
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99;opacity:0;transition:opacity .25s}
+.sidebar-overlay.open{opacity:1}
+.mobile-topbar{display:none;position:fixed;top:0;left:0;right:0;height:56px;background:#23242B;border-bottom:1px solid rgba(255,255,255,.07);align-items:center;padding:0 16px;gap:12px;z-index:101}
+.mobile-topbar-logo{height:28px;width:auto;object-fit:contain}
+.mobile-topbar-title{font-family:"Cormorant Garamond",serif;font-size:1rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#F0EEE4;flex:1}
+.hamburger-btn{background:none;border:none;color:#A2A8B0;font-size:1.1rem;cursor:pointer;padding:6px;display:flex;align-items:center;justify-content:center;transition:color .15s}
+.hamburger-btn:hover{color:#F0EEE4}
 @media(max-width:900px){
-  .sidebar{width:60px}
-  .sidebar-logo-text,.sidebar-logo-sub,.nav-item span,.nav-group-label,.logout-btn span,.sidebar-user{display:none}
-  .nav-item{justify-content:center;padding:12px}
-  .nav-badge{display:none}
-  #main-content{margin-left:60px}
+  .mobile-topbar{display:flex}
+  .sidebar{transform:translateX(-100%);transition:transform .25s cubic-bezier(.4,0,.2,1);z-index:200;width:240px}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay{display:block}
+  #main-content{margin-left:0;padding-top:56px}
+  .sidebar-logo img.logo-desktop{display:none}
+  .sidebar-logo img.logo-mobile{display:block}
+}
+@media(min-width:901px){
+  .sidebar-logo img.logo-mobile{display:none}
+  .sidebar-logo img.logo-desktop{display:block}
 }
 
 #leads-section{background:#1C1D22;min-height:100vh;padding:32px;display:none}
@@ -431,41 +445,51 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 
 <div id="app">
 
-  <aside class="sidebar">
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+  <div class="mobile-topbar">
+    <button class="hamburger-btn" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <img src="images/logo2.svg" alt="West Yorkshire Carpets" class="mobile-topbar-logo">
+    <span class="mobile-topbar-title">Admin</span>
+  </div>
+  <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
-      <img src="images/logo.svg" alt="West Yorkshire Carpets" style="height:36px;width:auto;object-fit:contain">
+      <img src="images/logo.svg" alt="West Yorkshire Carpets" class="logo-desktop" style="height:36px;width:auto;object-fit:contain">
+      <img src="images/logo2.svg" alt="West Yorkshire Carpets" class="logo-mobile" style="height:36px;width:auto;object-fit:contain">
       <div class="sidebar-logo-sub">Admin Portal</div>
     </div>
 
     <nav class="sidebar-nav">
       <div class="nav-group-label">Leads</div>
       <button class="nav-item active" id="nav-all-leads"
-        onclick="activateSection('leads'); showLeadsView('leads')">
+        onclick="activateSection('leads'); showLeadsView('leads'); closeSidebar()">
         <i class="fa-solid fa-inbox"></i><span>All Leads</span>
         <span class="nav-badge" id="nav-new-count">0</span>
       </button>
       <button class="nav-item" id="nav-calendar"
-        onclick="activateSection('leads'); showLeadsView('calendar')">
+        onclick="activateSection('leads'); showLeadsView('calendar'); closeSidebar()">
         <i class="fa-solid fa-calendar-days"></i><span>Calendar</span>
       </button>
 
       <div class="nav-group-label">Catalogue</div>
       <button class="nav-item" id="nav-products"
-        onclick="activateSection('products'); productsNav('products')">
+        onclick="activateSection('products'); productsNav('products'); closeSidebar()">
         <i class="fa-solid fa-box-open"></i><span>Products</span>
       </button>
       <button class="nav-item" id="nav-deals"
-        onclick="activateSection('products'); productsNav('deals')">
+        onclick="activateSection('products'); productsNav('deals'); closeSidebar()">
         <i class="fa-solid fa-tag"></i><span>Deals &amp; Offers</span>
       </button>
-      <button class="nav-item" id="nav-settings"
-        onclick="activateSection('products'); productsNav('settings')">
-        <i class="fa-solid fa-sliders"></i><span>Settings</span>
-      </button>
+
     </nav>
 
     <div class="sidebar-footer">
       <div class="sidebar-user"><strong id="sidebar-username">—</strong>Logged in</div>
+      <button class="nav-item" id="nav-settings"
+        onclick="activateSection('products'); productsNav('settings'); closeSidebar()">
+        <i class="fa-solid fa-sliders"></i><span>Settings</span>
+      </button>
       <button class="logout-btn" onclick="doLogout()">
         <i class="fa-solid fa-right-from-bracket"></i><span>Sign Out</span>
       </button>
@@ -1766,6 +1790,25 @@ async function changePassword() {
   const data = await res.json();
   if (!res.ok) { showToast(data.error,'error'); return; }
   showToast('Password updated ✓');
+}
+
+function toggleSidebar() {
+  const sidebar  = document.getElementById('sidebar');
+  const overlay  = document.getElementById('sidebar-overlay');
+  const btn      = document.getElementById('hamburger-btn');
+  const isOpen   = sidebar.classList.contains('open');
+  sidebar.classList.toggle('open', !isOpen);
+  overlay.classList.toggle('open', !isOpen);
+  btn.querySelector('i').className = isOpen ? 'fa-solid fa-bars' : 'fa-solid fa-xmark';
+}
+function closeSidebar() {
+  const sidebar  = document.getElementById('sidebar');
+  const overlay  = document.getElementById('sidebar-overlay');
+  const btn      = document.getElementById('hamburger-btn');
+  if (!sidebar) return;
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+  if (btn) btn.querySelector('i').className = 'fa-solid fa-bars';
 }
 
 document.getElementById('login-pass').addEventListener('keydown', e => {
