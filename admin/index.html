@@ -998,7 +998,7 @@ function initPickers() {
       if (dateStr) { label.textContent = formatLeadDate(dateStr); trigger.classList.add('has-value'); }
       else         { label.textContent = 'Pick a date'; trigger.classList.remove('has-value'); }
     },
-    onClose: () => { document.getElementById('date-trigger').classList.remove('picker-open'); closeDateCol(); },
+    onClose: () => { const btn = document.getElementById('date-trigger'); btn.classList.remove('picker-open'); btn.setAttribute('data-open','0'); closeDateCol(); },
   });
   initTimePicker();
 }
@@ -1853,9 +1853,13 @@ function toggleDatePicker(btn) {
   document.getElementById('time-picker-dropdown').classList.remove('open');
   document.getElementById('time-trigger').classList.remove('time-trigger-open');
   if (fpDate) {
-    if (fpDate.isOpen) {
+    const isOpen = btn.getAttribute('data-open') === '1';
+    if (isOpen) {
+      btn.setAttribute('data-open', '0');
       fpDate.close();
+      closeDateCol();
     } else {
+      btn.setAttribute('data-open', '1');
       fpDate.open();
       openDateCol();
     }
