@@ -86,9 +86,11 @@ html,body{height:100%;font-family:'Inter',sans-serif}
 #leads-section .flatpickr-calendar.static.open{display:block}
 #date-trigger.picker-open,#time-trigger.picker-open{border-bottom-left-radius:0!important;border-bottom-right-radius:0!important;border-bottom-color:transparent!important;border-color:rgba(222,56,72,.4)!important;background:#3A3B44!important;color:#E8E9EF!important}
 #modal-overlay .booking-trigger{width:100%}
-#modal-overlay .booking-row{position:relative;align-items:flex-start}
-#modal-overlay .booking-row>div{display:flex;flex-direction:column;position:relative}
-#modal-overlay .date-col.cal-open{position:absolute;left:0;right:0;z-index:50;background:#23242B;padding-bottom:4px}
+#modal-overlay .booking-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:flex-start}
+#modal-overlay .booking-row>div{display:flex;flex-direction:column}
+#modal-overlay .booking-row.cal-open{grid-template-columns:1fr 0}
+#modal-overlay .booking-row.cal-open .time-col{visibility:hidden;overflow:hidden}
+#modal-overlay .date-col{min-width:0}
 
 .flatpickr-calendar{background:#2E2F36!important;border:1px solid rgba(222,56,72,.4)!important;border-top:none!important;border-radius:0 0 10px 10px!important;font-family:'Inter',sans-serif!important;margin-top:0!important;box-shadow:none!important;width:100%!important}
 .flatpickr-months,.flatpickr-month,.flatpickr-current-month{background:transparent!important;color:#F0EEE4!important;fill:#F0EEE4!important;padding:8px 0!important}
@@ -728,7 +730,7 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
             </button>
             <input id="booking-date" style="display:none!important">
           </div>
-          <div style="position:relative">
+          <div class="time-col">
             <div class="booking-field-label">Time</div>
             <button type="button" class="booking-trigger" id="time-trigger" onclick="toggleTimePicker()">
               <i class="fa-regular fa-clock"></i>
@@ -1845,15 +1847,15 @@ function toggleDatePicker(btn) {
   document.getElementById('time-trigger').classList.remove('time-trigger-open');
   if (fpDate) {
     const isOpen = btn.classList.contains('picker-open');
-    const col = document.querySelector('.date-col');
+    const row = document.querySelector('#modal-overlay .booking-row');
     if (isOpen) {
       fpDate.close();
       btn.classList.remove('picker-open');
-      if (col) col.classList.remove('cal-open');
+      if (row) row.classList.remove('cal-open');
     } else {
       fpDate.open();
       btn.classList.add('picker-open');
-      if (col) col.classList.add('cal-open');
+      if (row) row.classList.add('cal-open');
     }
   }
 }
