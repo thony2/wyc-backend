@@ -86,9 +86,15 @@ html,body{height:100%;font-family:'Inter',sans-serif}
 #leads-section .flatpickr-calendar.static.open{display:block}
 #date-trigger.picker-open,#time-trigger.picker-open{border-bottom-left-radius:0!important;border-bottom-right-radius:0!important;border-bottom-color:transparent!important;border-color:rgba(222,56,72,.4)!important;background:#3A3B44!important;color:#E8E9EF!important}
 #modal-overlay .booking-trigger{width:100%}
-#modal-overlay .booking-row>div{display:flex;flex-direction:column}
+#modal-overlay .booking-row>div{display:flex;flex-direction:column;position:relative}
+#modal-overlay .booking-row>div:focus-within{z-index:10}
+#modal-overlay .booking-row>div.cal-open{position:absolute;left:0;right:0;z-index:50}
+#modal-overlay .booking-row{position:relative;align-items:flex-start}
 #modal-overlay .booking-trigger{width:100%}
-#modal-overlay .booking-row>div{display:flex;flex-direction:column}
+#modal-overlay .booking-row>div{display:flex;flex-direction:column;position:relative}
+#modal-overlay .booking-row>div:focus-within{z-index:10}
+#modal-overlay .booking-row>div.cal-open{position:absolute;left:0;right:0;z-index:50}
+#modal-overlay .booking-row{position:relative;align-items:flex-start}
 
 .flatpickr-calendar{background:#2E2F36!important;border:1px solid rgba(222,56,72,.4)!important;border-top:none!important;border-radius:0 0 10px 10px!important;font-family:'Inter',sans-serif!important;margin-top:0!important;box-shadow:none!important;width:100%!important}
 .flatpickr-months,.flatpickr-month,.flatpickr-current-month{background:transparent!important;color:#F0EEE4!important;fill:#F0EEE4!important;padding:8px 0!important}
@@ -296,6 +302,7 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #modal-overlay .booking-notes-input:focus{border-color:rgba(222,56,72,.4)}
 #modal-overlay .booking-notes-input::placeholder{color:#6B7280}
 #modal-overlay .time-picker-dropdown{position:absolute;top:100%;left:0;right:0;background:#2E2F36;border:1px solid rgba(222,56,72,.4);border-top:none;border-radius:0 0 10px 10px;max-height:0;overflow:hidden;transition:max-height .25s cubic-bezier(.4,0,.2,1);z-index:400;margin-top:0}
+#modal-overlay #time-trigger:not(.time-trigger-open){border-bottom-color:rgba(255,255,255,.1)!important;border-color:rgba(255,255,255,.1)!important}
 #modal-overlay .time-picker-dropdown.open{max-height:220px;overflow-y:auto}
 #modal-overlay .time-picker-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:8px}
 #modal-overlay .time-slot{padding:8px 4px;text-align:center;font-size:.78rem;color:#A2A8B0;cursor:pointer;border-radius:6px;transition:background .12s,color .12s;font-family:'Inter',sans-serif}
@@ -721,7 +728,7 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
           <div>
             <div class="booking-field-label">Date</div>
             <button type="button" class="booking-trigger" id="date-trigger"
-              onclick="fpDate&&fpDate.open();this.classList.toggle('picker-open')">
+              onclick="toggleDatePicker(this)">
               <i class="fa-regular fa-calendar"></i>
               <span id="date-trigger-label">Pick a date</span>
             </button>
@@ -1838,6 +1845,16 @@ function closeSidebar() {
   if (btn) btn.querySelector('i').className = 'fa-solid fa-bars';
 }
 
+function toggleDatePicker(btn) {
+  clearTimePicker();
+  document.getElementById('time-picker-dropdown').classList.remove('open');
+  document.getElementById('time-trigger').classList.remove('time-trigger-open');
+  if (fpDate) {
+    const isOpen = btn.classList.contains('picker-open');
+    if (isOpen) { fpDate.close(); btn.classList.remove('picker-open'); }
+    else { fpDate.open(); btn.classList.add('picker-open'); }
+  }
+}
 function initTimePicker() {
   const grid = document.getElementById('time-picker-grid');
   if (!grid || grid.children.length) return;
@@ -1859,6 +1876,8 @@ function toggleTimePicker() {
   const isOpen  = drop.classList.contains('open');
   drop.classList.toggle('open', !isOpen);
   trigger.classList.toggle('time-trigger-open', !isOpen);
+  if (fpDate) fpDate.close();
+  document.getElementById('date-trigger').classList.remove('picker-open');
 }
 function selectTimeSlot(value) {
   document.getElementById('booking-time').value = value;
