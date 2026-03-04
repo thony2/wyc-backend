@@ -1657,9 +1657,6 @@ function openAddProduct() {
   document.getElementById('product-modal').classList.add('open');
 }
 async function editProduct(id) {
-  console.log("editProduct called, id:", id, typeof id);
-  console.log("allProducts sample:", allProducts[0]?.id, typeof allProducts[0]?.id);
-  const p = allProducts.find(x=>x.id==id); 
   console.log("found:", p);
   if (!p) return;
   document.getElementById('modal-title').textContent       = 'Edit Product';
@@ -1677,9 +1674,6 @@ async function editProduct(id) {
   document.getElementById('p-badge-type').value            = p.badge_type||'';
   document.getElementById('p-durability').value            = p.durability||3;
   document.getElementById('p-softness').value              = p.softness||3;
-  document.getElementById('p-featured').checked            = !!p.is_featured;
-  document.getElementById('p-deal').checked                = !!p.is_deal;
-  document.getElementById('p-active').checked              = !!p.is_active;
   const rooms = typeof p.rooms === 'string' ? JSON.parse(p.rooms || '[]') : (p.rooms || []);
   document.querySelectorAll('.pm-pill[data-room]').forEach(btn => {
     btn.classList.toggle('pm-pill-active', rooms.includes(btn.dataset.room));
