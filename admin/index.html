@@ -281,7 +281,7 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #modal-overlay .booking-section-title{font-size:.7rem;color:#6B7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;gap:7px}
 #modal-overlay .booking-section-title i{color:#27AE60}
 #modal-overlay .current-booking-badge{font-size:.78rem;color:#6EE7B7;background:rgba(39,174,96,.08);border:1px solid rgba(39,174,96,.15);border-radius:8px;padding:8px 12px;margin-bottom:14px;display:flex;align-items:center;gap:7px}
-#modal-overlay .booking-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+#modal-overlay .booking-row{display:flex;flex-direction:column;gap:10px;margin-bottom:10px}
 #modal-overlay .booking-row>div{display:flex;flex-direction:column;min-width:0;position:relative}
 #modal-overlay .booking-field-label{font-size:.68rem;color:#6B7280;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em}
 #modal-overlay .booking-trigger{width:100%;display:flex;align-items:center;gap:8px;padding:9px 12px;background:#2E2F36;border:1px solid rgba(255,255,255,.07);border-radius:8px;color:#A2A8B0;font-size:.83rem;font-family:'Inter',sans-serif;cursor:pointer;transition:all .18s;text-align:left}
@@ -718,8 +718,7 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
         <div class="booking-row">
           <div class="date-col">
             <div class="booking-field-label">Date</div>
-            <button type="button" class="booking-trigger" id="date-trigger"
-              onclick="toggleDatePicker(this)">
+            <button type="button" class="booking-trigger" id="date-trigger">
               <i class="fa-regular fa-calendar"></i>
               <span id="date-trigger-label">Pick a date</span>
             </button>
@@ -989,6 +988,7 @@ function initPickers() {
   fpDate = flatpickr('#booking-date', {
     dateFormat: 'Y-m-d',
     disableMobile: true,
+    clickOpens: false,
     static: true,
     appendTo: document.getElementById('date-trigger').parentElement,
     positionElement: document.getElementById('date-trigger'),
@@ -998,7 +998,17 @@ function initPickers() {
       if (dateStr) { label.textContent = formatLeadDate(dateStr); trigger.classList.add('has-value'); }
       else         { label.textContent = 'Pick a date'; trigger.classList.remove('has-value'); }
     },
-    onClose: () => { document.getElementById('date-trigger').classList.remove('picker-open'); setTimeout(() => { _datePickerOpen = false; closeDateCol(); }, 50); },
+    onClose: () => { _datePickerOpen = false; document.getElementById('date-trigger').classList.remove('picker-open'); },
+  });
+  document.getElementById('date-trigger').addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    if (_datePickerOpen) {
+      _datePickerOpen = false;
+      fpDate.close();
+    } else {
+      _datePickerOpen = true;
+      fpDate.open();
+    }
   });
   initTimePicker();
 }
