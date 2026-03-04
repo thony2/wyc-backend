@@ -502,6 +502,17 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #product-modal .pm-pill.pm-pill-active{background:var(--ps-red);border-color:var(--ps-red);color:var(--ps-white)}
 #product-modal .pm-pill i{font-size:.72rem}
 #product-modal .modal-x{background:var(--ps-cream);border:none;width:32px;height:32px;border-radius:50%;font-size:.9rem;cursor:pointer;color:var(--ps-grey);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+#product-modal .pm-section{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--ps-border)}
+#product-modal .pm-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+#product-modal .pm-section-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ps-grey);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+#product-modal .pm-section-label i{color:var(--ps-red);font-size:.7rem}
+#product-modal .pm-pills{display:flex;flex-wrap:wrap;gap:8px}
+#product-modal .pm-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:100px;border:1.5px solid var(--ps-border);background:var(--ps-white);color:var(--ps-grey);font-size:.8rem;font-weight:500;cursor:pointer;transition:all .15s;font-family:inherit}
+#product-modal .pm-pill:hover{border-color:var(--ps-red);color:var(--ps-red)}
+#product-modal .pm-pill.pm-pill-active{background:var(--ps-red);border-color:var(--ps-red);color:var(--ps-white)}
+#product-modal .pm-pill i{font-size:.72rem}
+#product-modal .modal-x{background:var(--ps-cream);border:none;width:32px;height:32px;border-radius:50%;font-size:.9rem;cursor:pointer;color:var(--ps-grey);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -1689,6 +1700,8 @@ function previewImg(url) {
   if (url) { img.src = url; img.style.display = 'block'; }
   else      { img.style.display = 'none'; }
 }
+function togglePmPill(btn) { btn.classList.toggle('pm-pill-active'); }
+function togglePmFlag(btn) { btn.classList.toggle('pm-pill-active'); }
 function togglePmPill(btn) { btn.classList.toggle('pm-pill-active'); }
 function togglePmFlag(btn) { btn.classList.toggle('pm-pill-active'); }
 async function saveProduct() {
