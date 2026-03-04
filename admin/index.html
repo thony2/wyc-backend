@@ -1931,16 +1931,16 @@ function initTimePicker() {
   }
 }
 function toggleTimePicker() {
-  if (fpDate) fpDate.close();
-  document.getElementById('date-trigger').classList.remove('picker-open');
-  closeDateCol();
+function toggleTimePicker() {
+  document.getElementById('date-picker-dropdown').classList.remove('open');
+  document.getElementById('date-trigger').classList.remove('date-trigger-open');
   const drop    = document.getElementById('time-picker-dropdown');
   const trigger = document.getElementById('time-trigger');
   const isOpen  = drop.classList.contains('open');
   drop.classList.toggle('open', !isOpen);
   trigger.classList.toggle('time-trigger-open', !isOpen);
 }
-function selectTimeSlot(value) {
+
   document.getElementById('booking-time').value = value;
   document.getElementById('time-trigger-label').textContent = value;
   const trigger = document.getElementById('time-trigger');
