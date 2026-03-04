@@ -998,7 +998,7 @@ function initPickers() {
       if (dateStr) { label.textContent = formatLeadDate(dateStr); trigger.classList.add('has-value'); }
       else         { label.textContent = 'Pick a date'; trigger.classList.remove('has-value'); }
     },
-    onClose: () => document.getElementById('date-trigger').classList.remove('picker-open'),
+    onClose: () => { document.getElementById('date-trigger').classList.remove('picker-open'); closeDateCol(); },
   });
   initTimePicker();
 }
