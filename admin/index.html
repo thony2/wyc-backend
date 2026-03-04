@@ -983,6 +983,7 @@ function doLogout() {
   clearInterval(leadsRefreshTimer);
   document.getElementById('app').style.display          = 'none';
   document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-error').textContent = 'Your session has expired. Please log in again.'; document.getElementById('login-error').style.display = 'block';
   document.getElementById('login-pass').value           = '';
 }
 
