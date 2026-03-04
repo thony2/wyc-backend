@@ -264,8 +264,15 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #modal-overlay .modal-section-label{font-size:.68rem;color:#6B7280;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;display:block}
 #modal-overlay .modal-message-box{font-size:.86rem;color:#A2A8B0;line-height:1.6;background:#2E2F36;padding:11px 14px;border-radius:6px}
 #modal-overlay .status-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
-#modal-overlay .status-pill{padding:6px 13px;border-radius:20px;font-size:.76rem;border:1px solid rgba(255,255,255,.07);color:#A2A8B0;cursor:pointer;background:transparent;font-family:'Inter',sans-serif;transition:all .15s}
-#modal-overlay .status-pill:hover{border-color:rgba(255,255,255,.25);color:#E8E9EF}
+#modal-overlay .status-pill{padding:6px 14px;border-radius:20px;font-size:.75rem;font-weight:500;border:1px solid transparent;cursor:pointer;font-family:'Inter',sans-serif;transition:all .18s;opacity:.45}
+#modal-overlay .status-pill:hover{opacity:.75}
+#modal-overlay .status-pill.pill-new{background:rgba(59,130,246,.15);color:#93C5FD;border-color:rgba(59,130,246,.25)}
+#modal-overlay .status-pill.pill-contacted{background:rgba(245,158,11,.15);color:#FCD34D;border-color:rgba(245,158,11,.25)}
+#modal-overlay .status-pill.pill-quoted{background:rgba(139,92,246,.15);color:#C4B5FD;border-color:rgba(139,92,246,.25)}
+#modal-overlay .status-pill.pill-won{background:rgba(39,174,96,.15);color:#6EE7B7;border-color:rgba(39,174,96,.25)}
+#modal-overlay .status-pill.pill-lost{background:rgba(107,114,128,.15);color:#9CA3AF;border-color:rgba(107,114,128,.25)}
+#modal-overlay .status-pill.pill-spam{background:rgba(222,56,72,.15);color:#F87171;border-color:rgba(222,56,72,.25)}
+#modal-overlay .status-pill.is-active{opacity:1;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 #modal-overlay .modal-foot{padding:14px 24px 20px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.07)}
 
 #modal-overlay .booking-section{background:rgba(39,174,96,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:18px;margin-bottom:18px}
@@ -282,6 +289,14 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #modal-overlay .booking-notes-input{width:100%;padding:10px 12px;background:#2E2F36;border:1px solid rgba(255,255,255,.07);border-radius:8px;color:#E8E9EF;font-size:.83rem;outline:none;font-family:'Inter',sans-serif;resize:vertical;min-height:72px;transition:border-color .2s;line-height:1.55}
 #modal-overlay .booking-notes-input:focus{border-color:rgba(222,56,72,.4)}
 #modal-overlay .booking-notes-input::placeholder{color:#6B7280}
+#modal-overlay .time-picker-dropdown{position:absolute;top:100%;left:0;right:0;background:#2E2F36;border:1px solid rgba(222,56,72,.3);border-top:none;border-radius:0 0 10px 10px;max-height:0;overflow:hidden;transition:max-height .25s cubic-bezier(.4,0,.2,1);z-index:400}
+#modal-overlay .time-picker-dropdown.open{max-height:220px;overflow-y:auto}
+#modal-overlay .time-picker-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:8px}
+#modal-overlay .time-slot{padding:8px 4px;text-align:center;font-size:.78rem;color:#A2A8B0;cursor:pointer;border-radius:6px;transition:background .12s,color .12s;font-family:'Inter',sans-serif}
+#modal-overlay .time-slot:hover{background:#3A3B44;color:#E8E9EF}
+#modal-overlay .time-slot.selected{background:#DE3848;color:white;font-weight:600}
+#modal-overlay .time-trigger-open{border-bottom-left-radius:0!important;border-bottom-right-radius:0!important;border-bottom-color:transparent!important;border-color:rgba(222,56,72,.4)!important}
+
 #modal-overlay .booking-type-wrap{position:relative;margin-bottom:10px}
 #modal-overlay .booking-type-btn{width:100%;display:flex;align-items:center;gap:8px;padding:9px 12px;background:#2E2F36;border:1px solid rgba(255,255,255,.07);border-radius:8px;color:#A2A8B0;font-size:.83rem;font-family:'Inter',sans-serif;cursor:pointer;transition:all .18s;text-align:left}
 #modal-overlay .booking-type-btn:hover{border-color:rgba(255,255,255,.15);color:#E8E9EF;background:#3A3B44}
@@ -672,7 +687,7 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
         <div class="modal-field"><label>Service</label><span id="modal-service">—</span></div>
         <div class="modal-field"><label>Status</label><span id="modal-status-badge">—</span></div>
         <div class="modal-field"><label>Email</label><span id="modal-email" class="email-val">—</span></div>
-        <div class="modal-field"><label>UUID</label><span id="modal-id" style="font-size:.68rem;color:#6B7280;font-family:monospace;word-break:break-all">—</span></div>
+        <div class="modal-field"><label>Ref</label><span id="modal-id" style="font-size:.78rem;color:#A2A8B0;font-family:monospace;letter-spacing:.04em">—</span></div>
       </div>
       <div class="modal-section" id="modal-message-wrap" style="display:none">
         <span class="modal-section-label">Message from customer</span>
@@ -694,14 +709,16 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
             </button>
             <input id="booking-date" style="display:none!important">
           </div>
-          <div>
+          <div style="position:relative">
             <div class="booking-field-label">Time</div>
-            <button type="button" class="booking-trigger" id="time-trigger"
-              onclick="fpTime&&fpTime.open();this.classList.toggle('picker-open')">
+            <button type="button" class="booking-trigger" id="time-trigger" onclick="toggleTimePicker()">
               <i class="fa-regular fa-clock"></i>
               <span id="time-trigger-label">Pick a time</span>
             </button>
-            <input id="booking-time" style="display:none!important">
+            <input id="booking-time" type="hidden">
+            <div class="time-picker-dropdown" id="time-picker-dropdown">
+              <div class="time-picker-grid" id="time-picker-grid"></div>
+            </div>
           </div>
         </div>
         <div>
@@ -731,13 +748,13 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 
       <div class="modal-section">
         <span class="modal-section-label">Update Status</span>
-        <div class="status-pills">
-          <button class="status-pill" onclick="updateLeadStatus('new')">🔵 New</button>
-          <button class="status-pill" onclick="updateLeadStatus('contacted')">🟡 Contacted</button>
-          <button class="status-pill" onclick="updateLeadStatus('quoted')">🟣 Quoted</button>
-          <button class="status-pill" onclick="updateLeadStatus('won')">🟢 Won</button>
-          <button class="status-pill" onclick="updateLeadStatus('lost')">⚫ Lost</button>
-          <button class="status-pill" onclick="updateLeadStatus('spam')">🔴 Spam</button>
+        <div class="status-pills" id="status-pills-modal">
+          <button class="status-pill pill-new"       data-status="new"       onclick="updateLeadStatus('new')">New</button>
+          <button class="status-pill pill-contacted" data-status="contacted" onclick="updateLeadStatus('contacted')">Contacted</button>
+          <button class="status-pill pill-quoted"    data-status="quoted"    onclick="updateLeadStatus('quoted')">Quoted</button>
+          <button class="status-pill pill-won"       data-status="won"       onclick="updateLeadStatus('won')">Won</button>
+          <button class="status-pill pill-lost"      data-status="lost"      onclick="updateLeadStatus('lost')">Lost</button>
+          <button class="status-pill pill-spam"      data-status="spam"      onclick="updateLeadStatus('spam')">Spam</button>
         </div>
       </div>
     </div>
@@ -967,21 +984,7 @@ function initPickers() {
     },
     onClose: () => document.getElementById('date-trigger').classList.remove('picker-open'),
   });
-  fpTime = flatpickr('#booking-time', {
-    enableTime: true, noCalendar: true,
-    dateFormat: 'H:i', time_24hr: true, minuteIncrement: 15,
-    disableMobile: true,
-    static: true,
-    appendTo: document.getElementById('time-trigger').parentElement,
-    positionElement: document.getElementById('time-trigger'),
-    onChange: (dates, timeStr) => {
-      const trigger = document.getElementById('time-trigger');
-      const label   = document.getElementById('time-trigger-label');
-      if (timeStr) { label.textContent = timeStr; trigger.classList.add('has-value'); }
-      else         { label.textContent = 'Pick a time'; trigger.classList.remove('has-value'); }
-    },
-    onClose: () => document.getElementById('time-trigger').classList.remove('picker-open'),
-  });
+  initTimePicker();
 }
 
 function toggleBookingType() {
@@ -1130,14 +1133,17 @@ function openLeadModal(id) {
   if (!currentLead) return;
   const l = currentLead;
   document.getElementById('modal-name').textContent        = l.name || 'Unknown';
-  document.getElementById('modal-lead-id').textContent     = (l.id||'').split('-')[0].toUpperCase();
+  document.getElementById('modal-lead-id').textContent     = 'WYC-' + (l.id||'').replace(/-/g,'').slice(0,8).toUpperCase();
   document.getElementById('modal-date').textContent        = formatLeadDate(l.created_at);
   document.getElementById('modal-phone').textContent       = l.phone || '—';
   document.getElementById('modal-postcode').textContent    = l.postcode || '—';
   document.getElementById('modal-service').textContent     = l.service_type || '—';
   document.getElementById('modal-status-badge').innerHTML  = statusBadge(l.status);
+  document.querySelectorAll('#status-pills-modal .status-pill').forEach(p =>
+    p.classList.toggle('is-active', p.dataset.status === l.status)
+  );
   document.getElementById('modal-email').textContent       = l.email || 'Not provided';
-  document.getElementById('modal-id').textContent          = l.id || '—';
+  document.getElementById('modal-id').textContent          = (l.id||'').replace(/-/g,'').slice(0,8).toUpperCase();
   document.getElementById('modal-call-btn').href           = `tel:${l.phone||''}`;
 
   const msgWrap = document.getElementById('modal-message-wrap');
@@ -1148,7 +1154,7 @@ function openLeadModal(id) {
     msgWrap.style.display = 'none';
   }
   if (fpDate) fpDate.clear();
-  if (fpTime) fpTime.clear();
+  clearTimePicker();
   document.getElementById('date-trigger-label').textContent = 'Pick a date';
   document.getElementById('time-trigger-label').textContent = 'Pick a time';
   document.getElementById('date-trigger').classList.remove('has-value');
@@ -1163,7 +1169,7 @@ function openLeadModal(id) {
       ${l.booking_type ? ` · ${l.booking_type}` : ''}
     </div>`;
     if (l.booking_date && fpDate) fpDate.setDate(l.booking_date);
-    if (l.booking_time && fpTime) fpTime.setDate(l.booking_time, true, 'H:i');
+    if (l.booking_time) setTimePickerValue(l.booking_time);
     if (l.booking_type) pickBookingType(l.booking_type, l.booking_type, 'fa-tag');
     if (l.booking_notes) document.getElementById('booking-notes').value = l.booking_notes || '';
   } else {
@@ -1225,6 +1231,9 @@ async function updateLeadStatus(status) {
       if (lead) lead.status = status;
       currentLead.status = status;
       document.getElementById('modal-status-badge').innerHTML = statusBadge(status);
+      document.querySelectorAll('#status-pills-modal .status-pill').forEach(p =>
+        p.classList.toggle('is-active', p.dataset.status === status)
+      );
       renderLeadsTable(); fetchLeadsDashboard();
       showToast(`Status → ${status}`, 'success');
     } else showToast('Failed: ' + d.error, 'error');
@@ -1811,6 +1820,75 @@ function closeSidebar() {
   if (btn) btn.querySelector('i').className = 'fa-solid fa-bars';
 }
 
+function initTimePicker() {
+  const grid = document.getElementById('time-picker-grid');
+  if (!grid || grid.children.length) return;
+  for (let h = 7; h <= 19; h++) {
+    for (let m of [0, 30]) {
+      const slot = document.createElement('div');
+      slot.className = 'time-slot';
+      const label = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+      slot.textContent = label;
+      slot.dataset.value = label;
+      slot.onclick = () => selectTimeSlot(label);
+      grid.appendChild(slot);
+    }
+  }
+}
+function toggleTimePicker() {
+  const drop    = document.getElementById('time-picker-dropdown');
+  const trigger = document.getElementById('time-trigger');
+  const isOpen  = drop.classList.contains('open');
+  drop.classList.toggle('open', !isOpen);
+  trigger.classList.toggle('time-trigger-open', !isOpen);
+}
+function selectTimeSlot(value) {
+  document.getElementById('booking-time').value = value;
+  document.getElementById('time-trigger-label').textContent = value;
+  const trigger = document.getElementById('time-trigger');
+  trigger.classList.add('has-value');
+  trigger.classList.remove('time-trigger-open');
+  document.getElementById('time-picker-dropdown').classList.remove('open');
+  document.querySelectorAll('.time-slot').forEach(s =>
+    s.classList.toggle('selected', s.dataset.value === value)
+  );
+}
+function clearTimePicker() {
+  document.getElementById('booking-time').value = '';
+  document.getElementById('time-trigger-label').textContent = 'Pick a time';
+  document.getElementById('time-trigger').classList.remove('has-value','time-trigger-open');
+  document.getElementById('time-picker-dropdown').classList.remove('open');
+  document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+}
+function setTimePickerValue(value) {
+  if (!value) return;
+  const norm = value.slice(0,5);
+  document.getElementById('booking-time').value = norm;
+  document.getElementById('time-trigger-label').textContent = norm;
+  document.getElementById('time-trigger').classList.add('has-value');
+  document.querySelectorAll('.time-slot').forEach(s =>
+    s.classList.toggle('selected', s.dataset.value === norm)
+  );
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('#time-trigger') && !e.target.closest('#time-picker-dropdown')) {
+    document.getElementById('time-picker-dropdown')?.classList.remove('open');
+    document.getElementById('time-trigger')?.classList.remove('time-trigger-open');
+  }
+});
+
+
+@media(max-width:640px){
+  #modal-overlay .modal{max-height:95vh;border-radius:16px 16px 0 0;margin-top:auto}
+  #modal-overlay{align-items:flex-end;padding:0}
+  #modal-overlay .modal-body{padding:16px 18px}
+  #modal-overlay .modal-head{padding:16px 18px 12px}
+  #modal-overlay .modal-grid{grid-template-columns:1fr 1fr}
+  #modal-overlay .modal-foot{flex-wrap:wrap;gap:8px;padding:12px 18px 24px}
+  #modal-overlay .modal-foot .btn{flex:1;min-width:120px;justify-content:center}
+  #modal-overlay .booking-row{grid-template-columns:1fr 1fr}
+  #modal-overlay .time-picker-grid{grid-template-columns:repeat(4,1fr)}
+}
 document.getElementById('login-pass').addEventListener('keydown', e => {
   if (e.key === 'Enter') doLogin();
 });
