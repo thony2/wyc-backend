@@ -1001,13 +1001,9 @@ function initPickers() {
     onClose: () => { _datePickerOpen = false; document.getElementById('date-trigger').classList.remove('picker-open'); },
   });
   document.getElementById('date-trigger').addEventListener('click', function() {
-    if (_datePickerOpen) {
-      _datePickerOpen = false;
-      fpDate.close();
-    } else {
-      _datePickerOpen = true;
-      fpDate.open();
-    }
+    const cal = document.querySelector('#modal-overlay .flatpickr-calendar');
+    const isOpen = cal && cal.classList.contains('open');
+    if (isOpen) { fpDate.close(); } else { fpDate.open(); }
   });
   initTimePicker();
 }
