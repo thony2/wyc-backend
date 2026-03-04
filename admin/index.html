@@ -435,6 +435,18 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #product-modal .toggle-row{display:flex;flex-wrap:wrap;gap:16px}
 #product-modal .toggle-item{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:.87rem;color:var(--ps-slate)}
 #product-modal .toggle-item input{width:15px;height:15px;accent-color:var(--ps-red);cursor:pointer}
+
+@media(max-width:640px){
+  #modal-overlay .modal{max-height:95vh;border-radius:16px 16px 0 0;margin-top:auto}
+  #modal-overlay{align-items:flex-end;padding:0}
+  #modal-overlay .modal-body{padding:16px 18px}
+  #modal-overlay .modal-head{padding:16px 18px 12px}
+  #modal-overlay .modal-grid{grid-template-columns:1fr 1fr}
+  #modal-overlay .modal-foot{flex-wrap:wrap;gap:8px;padding:12px 18px 24px}
+  #modal-overlay .modal-foot .btn{flex:1;min-width:120px;justify-content:center}
+  #modal-overlay .booking-row{grid-template-columns:1fr 1fr}
+  #modal-overlay .time-picker-grid{grid-template-columns:repeat(4,1fr)}
+}
 </style>
 </head>
 <body>
@@ -1877,18 +1889,6 @@ document.addEventListener('click', e => {
   }
 });
 
-
-@media(max-width:640px){
-  #modal-overlay .modal{max-height:95vh;border-radius:16px 16px 0 0;margin-top:auto}
-  #modal-overlay{align-items:flex-end;padding:0}
-  #modal-overlay .modal-body{padding:16px 18px}
-  #modal-overlay .modal-head{padding:16px 18px 12px}
-  #modal-overlay .modal-grid{grid-template-columns:1fr 1fr}
-  #modal-overlay .modal-foot{flex-wrap:wrap;gap:8px;padding:12px 18px 24px}
-  #modal-overlay .modal-foot .btn{flex:1;min-width:120px;justify-content:center}
-  #modal-overlay .booking-row{grid-template-columns:1fr 1fr}
-  #modal-overlay .time-picker-grid{grid-template-columns:repeat(4,1fr)}
-}
 document.getElementById('login-pass').addEventListener('keydown', e => {
   if (e.key === 'Enter') doLogin();
 });
