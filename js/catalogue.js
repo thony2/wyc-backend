@@ -3,12 +3,8 @@
     
     let PRODUCTS = [];
 
-    /* ============================================================
-       CONSTANTS
-    ============================================================ */
-
-    /** All six rooms shown on every card */
-    const ROOMS = [
+    
+        const ROOMS = [
         { key: 'living',   label: 'Living Room', icon: 'fa-couch' },
         { key: 'bedroom',  label: 'Bedroom',     icon: 'fa-bed' },
         { key: 'kitchen',  label: 'Kitchen',     icon: 'fa-utensils' },
@@ -17,16 +13,14 @@
         { key: 'stairs',   label: 'Stairs',      icon: 'fa-stairs' },
     ];
 
-    /** Badge CSS class map */
-    const BADGE_CLASS = {
+        const BADGE_CLASS = {
         seller:  'badge--seller',
         sale:    'badge--sale',
         premium: 'badge--premium',
         new:     'badge--new',
     };
 
-    /** Category display text */
-    const CATEGORY_META = {
+        const CATEGORY_META = {
         all:      { title: 'Full Range',        desc: 'Browse our complete collection of premium flooring' },
         carpets:  { title: 'Carpets',           desc: 'Plush, twist & berber — supreme comfort underfoot' },
         vinyl:    { title: 'Vinyl Flooring',    desc: '100% waterproof LVT — kitchens & bathrooms perfected' },
@@ -35,15 +29,11 @@
         deals:    { title: 'Weekly Deals 🔥',   desc: 'This week\'s best prices — limited stock available' },
     };
 
-    /** Category names for cards */
-    const CAT_LABEL = {
+        const CAT_LABEL = {
         carpets: 'Carpet', vinyl: 'Vinyl', laminate: 'Laminate', wood: 'Real Wood',
     };
 
-    /* ============================================================
-       STATE
-    ============================================================ */
-
+    
     const state = {
         activeCategory:   'all',
         activePriceRange: 'all',
@@ -51,16 +41,10 @@
         isOpen:           false,
     };
 
-    /* ============================================================
-       DOM CACHE — populated in init()
-    ============================================================ */
-
+    
     let DOM = {};
 
-    /* ============================================================
-       SCROLL LOCK
-    ============================================================ */
-
+    
     function lockScroll() {
         const sb = window.innerWidth - document.documentElement.clientWidth;
         document.body.style.overflow    = 'hidden';
@@ -76,37 +60,29 @@
         if (hdr) hdr.style.paddingRight = '';
     }
 
-    /* ============================================================
-       OPEN / CLOSE
-    ============================================================ */
-
+    
     function open(category) {
         category = category || 'all';
 
-        // If already open, just switch category
         if (state.isOpen) {
             setCategory(category);
             return;
         }
 
-        // Reset filters fresh on each open
         state.activeCategory   = category;
         state.activePriceRange = 'all';
         state.activeSort       = 'default';
         if (DOM.sortSelect) DOM.sortSelect.value = 'default';
 
-        // Render before revealing (prevents flash)
         syncHeader();
         syncTabs();
         syncPriceFilters();
         renderGrid();
 
-        // Show overlay
         DOM.overlay.removeAttribute('hidden');
         lockScroll();
         state.isOpen = true;
 
-        // Double rAF ensures CSS transitions fire after display change
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 DOM.overlay.classList.add('is-open');
@@ -114,14 +90,13 @@
             });
         });
 
-        // Trap focus — move to close button
         setTimeout(() => DOM.closeBtn && DOM.closeBtn.focus(), 120);
     }
 
     function close() {
         if (!state.isOpen) return;
         if (DOM.qv && !DOM.qv.hasAttribute('hidden')) {
-            _hideQV(false); // immediate, no delay
+            _hideQV(false);
         }
 
         DOM.overlay.classList.remove('is-open');
@@ -131,10 +106,7 @@
         state.isOpen = false;
     }
 
-    /* ============================================================
-       FILTERING & SORTING
-    ============================================================ */
-
+    
     function setCategory(category) {
         state.activeCategory = category;
         syncHeader();
@@ -156,14 +128,12 @@
 
     function getFilteredProducts() {
         let products = PRODUCTS.slice();
-        // Category / deals filter
         if (state.activeCategory === 'deals') {
             products = products.filter(p => p.deal);
         } else if (state.activeCategory !== 'all') {
             products = products.filter(p => p.category === state.activeCategory);
         }
 
-        // Price range filter
         if (state.activePriceRange === 'budget') {
             products = products.filter(p => p.price < 20);
         } else if (state.activePriceRange === 'mid') {
@@ -172,7 +142,6 @@
             products = products.filter(p => p.price > 40);
         }
 
-        // Sort
         if (state.activeSort === 'price-asc') {
             products.sort((a, b) => a.price - b.price);
         } else if (state.activeSort === 'price-desc') {
@@ -189,10 +158,7 @@
         return products;
     }
 
-    /* ============================================================
-       UI STATE SYNC
-    ============================================================ */
-
+    
     function syncHeader() {
         const meta = CATEGORY_META[state.activeCategory] || CATEGORY_META.all;
         if (DOM.title) DOM.title.textContent = meta.title;
@@ -213,10 +179,7 @@
         });
     }
 
-    /* ============================================================
-       RENDER — Product grid
-    ============================================================ */
-
+    
     function renderGrid() {
         const products = getFilteredProducts();
 
@@ -257,13 +220,11 @@
                 <i class="fa-solid ${r.icon}"></i>
             </span>`).join('');
 
-        // Show up to 3 spec values as pills
         const specPills = Object.values(p.specs)
             .slice(0, 3)
             .map(v => `<span>${v}</span>`)
             .join('');
 
-        // Stagger delay capped at 300ms
         const delay = Math.min(index * 55, 300);
 
         return `
@@ -313,10 +274,7 @@
             </article>`;
     }
 
-    /* ============================================================
-       QUICK VIEW
-    ============================================================ */
-
+    
     function openQuickView(productId) {
         const p = PRODUCTS.find(prod => prod.id === productId);
         if (!p || !DOM.qv || !DOM.qvPanel) return;
@@ -446,10 +404,7 @@
         ).join('');
     }
 
-    /* ============================================================
-       CONVERSION ACTIONS
-    ============================================================ */
-
+    
     function enquireAbout(productId) {
         const p = PRODUCTS.find(prod => prod.id === productId);
         if (!p) return;
@@ -523,10 +478,7 @@
         }, 380);
     }
 
-    /* ============================================================
-       TOAST
-    ============================================================ */
-
+    
     let _toastTimer = null;
 
     function showToast(message) {
@@ -540,10 +492,7 @@
         }, 3500);
     }
 
-    /* ============================================================
-       EVENT SETUP
-    ============================================================ */
-
+    
     function bindTriggers() {
         document.querySelectorAll('[data-catalogue]').forEach(el => {
             el.addEventListener('click', e => {
@@ -553,7 +502,7 @@
         });
 
         document.querySelectorAll('.flooring-card').forEach(card => {
-            const cat  = card.dataset.id; // set by existing HTML
+            const cat  = card.dataset.id;
             const link = card.querySelector('.card-link');
             if (cat && link) {
                 link.addEventListener('click', e => {
@@ -565,13 +514,10 @@
     }
 
     function bindOverlayEvents() {
-        // Close: backdrop
         DOM.backdrop.addEventListener('click', close);
 
-        // Close: button
         DOM.closeBtn.addEventListener('click', close);
 
-        // Close: ESC key
         document.addEventListener('keydown', e => {
             if (e.key !== 'Escape') return;
             if (DOM.qv && !DOM.qv.hasAttribute('hidden')) {
@@ -581,20 +527,16 @@
             }
         });
 
-        // Category tabs (delegated)
         DOM.tabs.addEventListener('click', e => {
             const btn = e.target.closest('.cat-tab');
             if (btn) setCategory(btn.dataset.cat);
         });
 
-        // Price filter (delegated)
         DOM.priceFilters.addEventListener('click', e => {
             const btn = e.target.closest('.cat-price-btn');
             if (btn) setPrice(btn.dataset.price);
         });
 
-        // Sort
-        // Sort — custom dropdown
 const sortDropdown = document.getElementById('cat-sort-dropdown');
 const sortLabel    = document.getElementById('cat-sort-label');
 
@@ -603,30 +545,24 @@ if (sortDropdown) {
         e.stopPropagation();
         const item = e.target.closest('.cat-sort-item');
         if (item) {
-            // Update visual state
             sortDropdown.querySelectorAll('.cat-sort-item').forEach(i => {
                 i.classList.remove('is-selected');
                 i.setAttribute('aria-selected', 'false');
             });
             item.classList.add('is-selected');
             item.setAttribute('aria-selected', 'true');
-            // Update label
             sortLabel.textContent = item.textContent;
-            // Sync hidden select
             DOM.sortSelect.value = item.dataset.value;
-            // Close and sort
             sortDropdown.classList.remove('is-open');
             sortDropdown.setAttribute('aria-expanded', 'false');
             setSort(item.dataset.value);
             return;
         }
-        // Toggle open/close
         const isOpen = sortDropdown.classList.contains('is-open');
         sortDropdown.classList.toggle('is-open', !isOpen);
         sortDropdown.setAttribute('aria-expanded', String(!isOpen));
     });
 
-    // Close when clicking outside
     document.addEventListener('click', function(e) {
         if (!sortDropdown.contains(e.target)) {
             sortDropdown.classList.remove('is-open');
@@ -634,7 +570,6 @@ if (sortDropdown) {
         }
     });
 
-    // Keyboard
     sortDropdown.addEventListener('keydown', function(e) {
         e.stopPropagation();
         if (e.key === 'Enter' || e.key === ' ') {
@@ -647,7 +582,6 @@ if (sortDropdown) {
     });
 }
 
-        // Product grid (delegated — handles dynamic content)
         DOM.grid.addEventListener('click', e => {
             const qvBtn      = e.target.closest('[data-action="quick-view"]');
             const enquireBtn = e.target.closest('[data-action="enquire"]');
@@ -655,7 +589,6 @@ if (sortDropdown) {
             if (enquireBtn) enquireAbout(enquireBtn.dataset.id);
         });
 
-        // Empty state reset
         if (DOM.resetBtn) {
             DOM.resetBtn.addEventListener('click', () => {
                 state.activePriceRange = 'all';
@@ -670,21 +603,16 @@ if (sortDropdown) {
             });
         }
 
-        // Click outside QV panel closes it
         if (DOM.qv) {
             DOM.qv.addEventListener('click', e => {
                 if (e.target === DOM.qv) closeQuickView();
             });
         }
 
-        // Prevent panel click from bubbling to backdrop
         DOM.panel.addEventListener('click', e => e.stopPropagation());
     }
 
-    /* ============================================================
-       INIT
-    ============================================================ */
-
+    
     async function init() {
         const overlay = document.getElementById('cat-overlay');
         if (!overlay) {
@@ -712,9 +640,8 @@ if (sortDropdown) {
             toast:        document.getElementById('cat-toast'),
         };
 
-        // Fetch live products from Railway API
         try {
-            const res = await fetch('https://wyd-backend-production.up.railway.app/api/products');
+            const res = await fetch('https://wyc-backend-production-ed78.up.railway.app/api/products');
             const data = await res.json();
             PRODUCTS = data.map(p => ({
                 id:            String(p.id),
@@ -748,10 +675,7 @@ if (sortDropdown) {
         init();
     }
 
-    /* ============================================================
-       PUBLIC API
-    ============================================================ */
-
+    
     window.WYCCatalogue = { open, close };
 
 })();

@@ -1,7 +1,3 @@
-/* ============================================================
-   WEST YORKSHIRE CARPETS — Main Script
-   ============================================================ */
-
 const PRICING = {
     flooring: {
         carpet_budget:  { rate: 5.99 },
@@ -14,13 +10,11 @@ const PRICING = {
     fitting:  6,
 };
 
-/* ── HEADER SCROLL ── */
 const header = document.getElementById('site-header');
 window.addEventListener('scroll', () => {
     header.classList.toggle('scrolled', window.scrollY > 60);
 }, { passive: true });
 
-/* ── MOBILE NAV ── */
 const hamburger = document.getElementById('hamburger');
 const mobileNav = document.getElementById('mobile-nav');
 hamburger.addEventListener('click', () => {
@@ -28,7 +22,6 @@ hamburger.addEventListener('click', () => {
     mobileNav.classList.toggle('open');
 });
 
-/* ── SCROLL REVEAL ── */
 const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) entry.target.classList.add('visible');
@@ -36,7 +29,6 @@ const revealObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-/* ── CALCULATOR ── */
 let calcMode = 'dimensions';
 
 const calcLength   = document.getElementById('calc-length');
@@ -105,7 +97,6 @@ if (dimRow)  dimRow.classList.add('is-active');
 if (areaRow) areaRow.classList.remove('is-active');
 calculateQuote();
 
-/* ── CALCULATOR FLOORING DROPDOWN ── */
 (function initCalcDropdown() {
     const dropdown     = document.getElementById('calc-dropdown');
     const hiddenSelect = document.getElementById('calc-type');
@@ -154,7 +145,6 @@ calculateQuote();
     });
 })();
 
-/* ── CONTACT FORM SERVICE DROPDOWN ── */
 (function initFormServiceDropdown() {
     const dropdown     = document.getElementById('form-service-dropdown');
     const hiddenSelect = document.getElementById('f-service');
@@ -201,7 +191,6 @@ calculateQuote();
     });
 })();
 
-/* ── SMOOTH SCROLL ── */
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         const id = this.getAttribute('href');
@@ -235,7 +224,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-/* ── LIGHTBOX ── */
 (function initLightbox() {
     const overlay  = document.getElementById('lightbox-overlay');
     const lbImg    = document.getElementById('lightbox-img');

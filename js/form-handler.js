@@ -1,11 +1,7 @@
-/**
- * West Yorkshire Carpets — Form Handler
- * Sends contact form data to the backend API securely.
- */
 (function () {
     'use strict';
 
-    const API_URL = 'https://wyc-backend-production.up.railway.app/api/leads';
+    const API_URL = 'https://wyc-backend-production-ed78.up.railway.app/api/leads';
 
     function getCalculatorData() {
         const length = parseFloat(document.getElementById('calc-length')?.value);
