@@ -1615,7 +1615,7 @@ async function editStock(id) {
   loadProductsStats();
 }
 async function toggleActive(id, current) {
-  const res = await panelApi(`/products/${id}`, {method:'PUT', body:JSON.stringify({is_active:current?0:1})});
+  const res = await panelApi(`/products/${id}/visibility`, {method:'PATCH', body:JSON.stringify({is_active:current?0:1})});
   if (!res) return;
   showToast(current ? 'Product hidden from website' : 'Product now visible on website');
   await renderProducts(); loadProductsStats();

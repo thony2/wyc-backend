@@ -159,6 +159,17 @@ module.exports = (db) => {
         }
     });
 
+    router.patch('/products/:id/visibility', requireAuth, async (req, res) => {
+        try {
+            const { is_active } = req.body;
+            await db.query('UPDATE products SET is_active=$1, updated_at=NOW() WHERE id=$2', [is_active, req.params.id]);
+            await audit(db, req.user, 'VISIBILITY', 'products', req.params.id, { is_active });
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    });
+
     router.delete('/products/:id', requireAuth, async (req, res) => {
         try {
             await db.query('DELETE FROM products WHERE id = $1', [req.params.id]);
