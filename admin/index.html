@@ -1043,7 +1043,7 @@ function renderDateDropdown() {
     const dateStr = _dpYear + '-' + String(_dpMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
     const isToday = d === today.getDate() && _dpMonth === today.getMonth() && _dpYear === today.getFullYear();
     const isSel   = dateStr === _dpSelected;
-    html += '<div class="dp-day' + (isToday ? ' today' : '') + (isSel ? ' selected' : '') + '" onclick="dpSelect('' + dateStr + '')">' + d + '</div>';
+    html += '<div class="dp-day' + (isToday ? ' today' : '') + (isSel ? ' selected' : '') + '" onclick="dpSelect(&quot;' + dateStr + '&quot;)">' + d + '</div>';
   }
   html += '</div>';
   inner.innerHTML = html;
