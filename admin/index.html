@@ -818,8 +818,7 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
     </div>
 </div>
 
-<div id="product-modal" style="display:none">
-<div class="modal-overlay" onclick="if(event.target===this)closeProdModal()">
+<div id="product-modal" style="display:none" onclick="if(event.target===this)closeProdModal()">
 <div class="modal">
   <div class="modal-head">
     <h3 id="modal-title">Add Product</h3>
@@ -892,10 +891,9 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
     <button class="btn btn-secondary" onclick="closeProdModal()">Cancel</button>
     <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
   </div>
-</div></div></div>
+</div></div>
 
-<div id="offer-modal" style="display:none">
-<div class="modal-overlay" onclick="if(event.target===this)closeOfferModal()">
+<div id="offer-modal" style="display:none" onclick="if(event.target===this)closeOfferModal()">
 <div class="modal">
   <div class="modal-head">
     <h3>New Deal / Offer</h3>
@@ -1628,25 +1626,25 @@ function buildProductsUI() {
         </button>`).join('')}
       </div>
       <div class="search-wrap">
-        <span class="search-icon">🔍</span>
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
         <input type="text" placeholder="Search…" oninput="searchProducts(this.value)">
       </div>
       <button class="btn-add" onclick="openAddProduct()">+ Add Product</button>
     </div>
     ${filtered.length
       ? `<div class="product-grid">${filtered.map(buildProductCard).join('')}</div>`
-      : `<div class="empty"><div class="empty-icon">📦</div><h3>No products here</h3><p>Add your first product with the button above.</p></div>`}`;
+      : `<div class="empty"><i class="fa-solid fa-box-open empty-icon"></i><h3>No products here</h3><p>Add your first product with the button above.</p></div>`}`;
 }
 
 function buildProductCard(p) {
   const sc = p.stock_level===0?'stock-zero':p.stock_level<=5?'stock-low':'stock-ok';
-  const sl = p.stock_level===0?'⚠️ Out of stock':p.stock_level<=5?`⚠️ Low: ${p.stock_level}`:`✓ ${p.stock_level} in stock`;
+  const sl = p.stock_level===0?'Out of stock':p.stock_level<=5?`Low: ${p.stock_level}`:`${p.stock_level} in stock`;
   return `<div class="product-card ${p.is_active?'':'inactive'}">
     <div class="card-img">
       ${p.img_url?`<img src="${p.img_url}" alt="${p.name}" loading="lazy" onerror="this.style.display='none'">`:``}
       ${p.badge&&p.badge_type?`<div class="card-badge badge-${p.badge_type}">${p.badge}</div>`:''}
       ${!p.is_active?`<div class="card-hidden-tag">HIDDEN</div>`:''}
-      ${p.is_deal?`<div class="card-deal-tag">🏷️ DEAL</div>`:''}
+      ${p.is_deal?`<div class="card-deal-tag">DEAL</div>`:''}
     </div>
     <div class="card-body">
       <div class="card-meta"><span class="card-cat">${p.category_slug}</span>${p.sku?`<span class="card-sku">${p.sku}</span>`:''}</div>
@@ -1659,8 +1657,8 @@ function buildProductCard(p) {
       </div>
       <div class="card-stock">Stock: <span id="ps-${p.id}" class="${sc}" onclick="editStock(${p.id})" title="Click to edit">${sl}</span></div>
       <div class="card-actions">
-        <button class="btn-edit" onclick="editProduct(${p.id})">✏️ Edit</button>
-        <button class="btn-vis ${p.is_active?'on':''}" onclick="toggleActive(${p.id},${p.is_active})" title="${p.is_active?'Hide':'Show'}">${p.is_active?'👁️':'🚫'}</button>
+        <button class="btn-edit" onclick="editProduct(${p.id})"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+        <button class="btn-vis ${p.is_active?'on':''}" onclick="toggleActive(${p.id},${p.is_active})" title="${p.is_active?'Hide':'Show'}"><i class="fa-solid ${p.is_active?'fa-eye':'fa-eye-slash'}"></i></button>
         <button class="btn-del" onclick="deleteProduct(${p.id},'${p.name.replace(/'/g,"\\'")}')">🗑️</button>
       </div>
     </div>
@@ -1679,7 +1677,7 @@ function searchProducts(q) {
 }
 
 async function editPrice(id) {
-  const p = allProducts.find(x=>x.id===id); if (!p) return;
+  const p = allProducts.find(x=>x.id==id); if (!p) return;
   const val = prompt(`New price for "${p.name}"\nCurrent: £${parseFloat(p.price).toFixed(2)}/m²\n\nEnter new price (£):`);
   if (val === null) return;
   const price = parseFloat(val);
@@ -1693,7 +1691,7 @@ async function editPrice(id) {
   loadProductsStats();
 }
 async function editStock(id) {
-  const p = allProducts.find(x=>x.id===id); if (!p) return;
+  const p = allProducts.find(x=>x.id==id); if (!p) return;
   const val = prompt(`New stock level for "${p.name}"\nCurrent: ${p.stock_level}\n\nEnter new stock level:`);
   if (val === null) return;
   const stock = parseInt(val);
@@ -1740,7 +1738,11 @@ function openAddProduct() {
   document.getElementById('product-modal').style.display = 'flex';
 }
 async function editProduct(id) {
-  const p = allProducts.find(x=>x.id===id); if (!p) return;
+  console.log("editProduct called, id:", id, typeof id);
+  console.log("allProducts sample:", allProducts[0]?.id, typeof allProducts[0]?.id);
+  const p = allProducts.find(x=>x.id==id); 
+  console.log("found:", p);
+  if (!p) return;
   document.getElementById('modal-title').textContent       = 'Edit Product';
   document.getElementById('p-id').value                    = p.id;
   document.getElementById('p-name').value                  = p.name||'';
