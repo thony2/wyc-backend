@@ -1881,13 +1881,14 @@ function initTimePicker() {
   }
 }
 function toggleTimePicker() {
+  if (fpDate) fpDate.close();
+  document.getElementById('date-trigger').classList.remove('picker-open');
+  closeDateCol();
   const drop    = document.getElementById('time-picker-dropdown');
   const trigger = document.getElementById('time-trigger');
   const isOpen  = drop.classList.contains('open');
   drop.classList.toggle('open', !isOpen);
   trigger.classList.toggle('time-trigger-open', !isOpen);
-  if (fpDate) fpDate.close();
-  document.getElementById('date-trigger').classList.remove('picker-open');
 }
 function selectTimeSlot(value) {
   document.getElementById('booking-time').value = value;
