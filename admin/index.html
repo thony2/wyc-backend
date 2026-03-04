@@ -202,7 +202,7 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #leads-section .cal-nav{display:flex;gap:8px}
 #leads-section .cal-nav button{background:#3A3B44;border:none;color:#A2A8B0;width:28px;height:28px;border-radius:4px;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center}
 #leads-section .cal-nav button:hover{color:#F0EEE4}
-#leads-section .cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+#leads-section .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);transition:opacity .18s ease}
 #leads-section .cal-day-name{padding:8px 4px;text-align:center;font-size:.68rem;font-weight:500;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid rgba(255,255,255,.07)}
 #leads-section .cal-day{min-height:80px;padding:6px;border-right:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07);cursor:pointer;transition:background .12s}
 #leads-section .cal-day:nth-child(7n){border-right:none}
@@ -220,9 +220,9 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #leads-section .cal-event.installation{background:rgba(39,174,96,.15);border-left:2px solid #6EE7B7;color:#6EE7B7}
 #leads-section .cal-event.callback{background:rgba(245,158,11,.15);border-left:2px solid #FCD34D;color:#FDE68A}
 #leads-section .cal-more{font-size:.62rem;color:#6B7280;padding:1px 4px}
-#leads-section .cal-legend{display:flex;gap:16px;flex-wrap:wrap;padding:12px 20px;border-top:1px solid rgba(255,255,255,.07)}
-#leads-section .legend-item{display:flex;align-items:center;gap:6px;font-size:.72rem;color:#6B7280}
-#leads-section .legend-dot{width:8px;height:8px;border-radius:50%}
+
+
+
 #leads-section .unscheduled-wrap{background:#23242B;border:1px solid rgba(255,255,255,.07);border-radius:10px;overflow:hidden}
 #leads-section .unscheduled-header{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
 #leads-section .unscheduled-title{font-size:.82rem;font-weight:500;color:#F0EEE4}
@@ -660,12 +660,7 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
                 <div class="cal-day-name">Fri</div><div class="cal-day-name">Sat</div>
                 <div class="cal-day-name">Sun</div>
               </div>
-              <div class="cal-legend">
-                <div class="legend-item"><div class="legend-dot" style="background:#60A5FA"></div>New</div>
-                <div class="legend-item"><div class="legend-dot" style="background:#FCD34D"></div>Contacted</div>
-                <div class="legend-item"><div class="legend-dot" style="background:#A78BFA"></div>Quoted</div>
-                <div class="legend-item"><div class="legend-dot" style="background:#6EE7B7"></div>Won</div>
-              </div>
+
             </div>
             <div class="day-panel" id="day-panel">
               <div class="day-panel-header">
@@ -1372,20 +1367,21 @@ function leadsFilterByStatus(s) {
 }
 
 async function loadCalendar() {
-  document.getElementById('cal-grid').querySelectorAll('.cal-day').forEach(d=>d.remove());
-  document.getElementById('cal-month-label').textContent = 'Loading…';
+  const grid = document.getElementById('cal-grid');
+  grid.style.opacity = '0';
   try {
     const r = await fetch(`${LEADS_API}/api/admin/calendar?month=${calYear}-${String(calMonth+1).padStart(2,'0')}`, {
       headers: {'Authorization': `Bearer ${TOKEN}`}
     });
     const d = await r.json();
     if (d.success) {
-      calBookings     = d.data.bookings     || [];
-      calUnscheduled  = d.data.unscheduled  || [];
+      calBookings    = d.data.bookings    || [];
+      calUnscheduled = d.data.unscheduled || [];
     }
   } catch(e) { calBookings = []; calUnscheduled = []; }
   renderCalendar();
   renderUnscheduled();
+  requestAnimationFrame(() => { grid.style.opacity = '1'; });
 }
 
 function renderCalendar() {
