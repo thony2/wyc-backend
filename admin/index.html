@@ -818,93 +818,7 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
     </div>
 </div>
 
-<div id="product-modal" style="display:none" onclick="if(event.target===this)closeProdModal()">
-<div class="modal">
-  <div class="modal-head">
-    <h3 id="modal-title">Add Product</h3>
-    <button class="modal-x" onclick="closeProdModal()">×</button>
-  </div>
-  <div class="modal-body">
-    <input type="hidden" id="p-id">
-    <div class="row1 field">
-      <label>Image URL</label>
-      <input type="text" id="p-img" placeholder="https://images.unsplash.com/…" oninput="previewImg(this.value)">
-      <img id="img-preview" class="img-preview" alt="preview">
-    </div>
-    <div class="section-title">Basic Information</div>
-    <div class="row2">
-      <div class="field"><label>Product Name *</label><input type="text" id="p-name" placeholder="e.g. Prestige Saxony"></div>
-      <div class="field"><label>Category *</label>
-        <select id="p-category">
-          <option value="carpets">Carpets</option>
-          <option value="vinyl">Vinyl</option>
-          <option value="laminate">Laminate</option>
-          <option value="wood">Wood</option>
-        </select>
-      </div>
-    </div>
-    <div class="row2">
-      <div class="field"><label>SKU / Code</label><input type="text" id="p-sku" placeholder="e.g. C-001"></div>
-      <div class="field"><label>Subcategory</label><input type="text" id="p-subcat" placeholder="e.g. Saxony, LVT"></div>
-    </div>
-    <div class="row1 field"><label>Description</label><textarea id="p-desc" placeholder="Describe the product…"></textarea></div>
-    <div class="section-title">Pricing &amp; Stock</div>
-    <div class="row3">
-      <div class="field"><label>Price (£/m²) *</label><input type="number" id="p-price" min="0" step="0.01" placeholder="0.00"></div>
-      <div class="field"><label>Was Price (£/m²)</label><input type="number" id="p-original-price" min="0" step="0.01" placeholder="Optional"></div>
-      <div class="field"><label>Stock Level</label><input type="number" id="p-stock" min="0" value="0"></div>
-    </div>
-    <div class="section-title">Badge &amp; Ratings</div>
-    <div class="row2">
-      <div class="field"><label>Badge Text</label><input type="text" id="p-badge" placeholder="e.g. Best Seller"></div>
-      <div class="field"><label>Badge Style</label>
-        <select id="p-badge-type">
-          <option value="">No Badge</option>
-          <option value="seller">Best Seller (Dark)</option>
-          <option value="sale">Sale (Red)</option>
-          <option value="premium">Premium (Purple)</option>
-          <option value="new">New In (Green)</option>
-        </select>
-      </div>
-    </div>
-    <div class="row2">
-      <div class="field"><label>Durability (1–5)</label><input type="number" id="p-durability" min="1" max="5" value="3"></div>
-      <div class="field"><label>Softness (1–5)</label><input type="number" id="p-softness" min="1" max="5" value="3"></div>
-    </div>
-    <div class="section-title">Room Suitability</div>
-    <div class="toggle-row">
-      <label class="toggle-item"><input type="checkbox" name="room" value="living"> Living Room</label>
-      <label class="toggle-item"><input type="checkbox" name="room" value="bedroom"> Bedroom</label>
-      <label class="toggle-item"><input type="checkbox" name="room" value="hallway"> Hallway</label>
-      <label class="toggle-item"><input type="checkbox" name="room" value="stairs"> Stairs</label>
-      <label class="toggle-item"><input type="checkbox" name="room" value="kitchen"> Kitchen</label>
-      <label class="toggle-item"><input type="checkbox" name="room" value="bathroom"> Bathroom</label>
-    </div>
-    <div class="section-title">Visibility &amp; Flags</div>
-    <div class="toggle-row">
-      <label class="toggle-item"><input type="checkbox" id="p-featured"> ⭐ Featured</label>
-      <label class="toggle-item"><input type="checkbox" id="p-deal"> 🏷️ Weekly Deal</label>
-      <label class="toggle-item"><input type="checkbox" id="p-active" checked> ✅ Visible on Website</label>
-    </div>
-  </div>
-  <div class="modal-foot">
-    <button class="btn btn-secondary" onclick="closeProdModal()">Cancel</button>
-    <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
-  </div>
-</div></div>
 
-<div id="offer-modal" style="display:none" onclick="if(event.target===this)closeOfferModal()">
-<div class="modal">
-  <div class="modal-head">
-    <h3>New Deal / Offer</h3>
-    <button class="modal-x" onclick="closeOfferModal()">×</button>
-  </div>
-  <div class="modal-body">
-    <div class="row1 field"><label>Product *</label><select id="o-product"></select></div>
-    <div class="row1 field"><label>Offer Name *</label><input type="text" id="o-name" placeholder="e.g. Summer Sale — 20% Off"></div>
-    <div class="row2">
-      <div class="field"><label>Sale Price (£/m²) *</label><input type="number" id="o-price" min="0" step="0.01" placeholder="0.00"></div>
-      <div class="field"><label>Featured</label><div style="padding:11px 0"><label class="toggle-item" style="color:#1a2332;display:flex;align-items:center;gap:7px;font-size:.87rem"><input type="checkbox" id="o-featured" style="width:15px;height:15px;accent-color:#c8102e"> Show on homepage</label></div></div>
     </div>
     <div class="row2">
       <div class="field"><label>Start Date *</label><input type="date" id="o-start"></div>
@@ -2004,5 +1918,91 @@ document.getElementById('login-user').addEventListener('keydown', e => {
 
 if (TOKEN && USER) showApp();
 </script>
+<div id="product-modal" style="display:none" onclick="if(event.target===this)closeProdModal()">
+<div class="modal">
+  <div class="modal-head">
+    <h3 id="modal-title">Add Product</h3>
+    <button class="modal-x" onclick="closeProdModal()">×</button>
+  </div>
+  <div class="modal-body">
+    <input type="hidden" id="p-id">
+    <div class="row1 field">
+      <label>Image URL</label>
+      <input type="text" id="p-img" placeholder="https://images.unsplash.com/…" oninput="previewImg(this.value)">
+      <img id="img-preview" class="img-preview" alt="preview">
+    </div>
+    <div class="section-title">Basic Information</div>
+    <div class="row2">
+      <div class="field"><label>Product Name *</label><input type="text" id="p-name" placeholder="e.g. Prestige Saxony"></div>
+      <div class="field"><label>Category *</label>
+        <select id="p-category">
+          <option value="carpets">Carpets</option>
+          <option value="vinyl">Vinyl</option>
+          <option value="laminate">Laminate</option>
+          <option value="wood">Wood</option>
+        </select>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>SKU / Code</label><input type="text" id="p-sku" placeholder="e.g. C-001"></div>
+      <div class="field"><label>Subcategory</label><input type="text" id="p-subcat" placeholder="e.g. Saxony, LVT"></div>
+    </div>
+    <div class="row1 field"><label>Description</label><textarea id="p-desc" placeholder="Describe the product…"></textarea></div>
+    <div class="section-title">Pricing &amp; Stock</div>
+    <div class="row3">
+      <div class="field"><label>Price (£/m²) *</label><input type="number" id="p-price" min="0" step="0.01" placeholder="0.00"></div>
+      <div class="field"><label>Was Price (£/m²)</label><input type="number" id="p-original-price" min="0" step="0.01" placeholder="Optional"></div>
+      <div class="field"><label>Stock Level</label><input type="number" id="p-stock" min="0" value="0"></div>
+    </div>
+    <div class="section-title">Badge &amp; Ratings</div>
+    <div class="row2">
+      <div class="field"><label>Badge Text</label><input type="text" id="p-badge" placeholder="e.g. Best Seller"></div>
+      <div class="field"><label>Badge Style</label>
+        <select id="p-badge-type">
+          <option value="">No Badge</option>
+          <option value="seller">Best Seller (Dark)</option>
+          <option value="sale">Sale (Red)</option>
+          <option value="premium">Premium (Purple)</option>
+          <option value="new">New In (Green)</option>
+        </select>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Durability (1–5)</label><input type="number" id="p-durability" min="1" max="5" value="3"></div>
+      <div class="field"><label>Softness (1–5)</label><input type="number" id="p-softness" min="1" max="5" value="3"></div>
+    </div>
+    <div class="section-title">Room Suitability</div>
+    <div class="toggle-row">
+      <label class="toggle-item"><input type="checkbox" name="room" value="living"> Living Room</label>
+      <label class="toggle-item"><input type="checkbox" name="room" value="bedroom"> Bedroom</label>
+      <label class="toggle-item"><input type="checkbox" name="room" value="hallway"> Hallway</label>
+      <label class="toggle-item"><input type="checkbox" name="room" value="stairs"> Stairs</label>
+      <label class="toggle-item"><input type="checkbox" name="room" value="kitchen"> Kitchen</label>
+      <label class="toggle-item"><input type="checkbox" name="room" value="bathroom"> Bathroom</label>
+    </div>
+    <div class="section-title">Visibility &amp; Flags</div>
+    <div class="toggle-row">
+      <label class="toggle-item"><input type="checkbox" id="p-featured"> ⭐ Featured</label>
+      <label class="toggle-item"><input type="checkbox" id="p-deal"> 🏷️ Weekly Deal</label>
+      <label class="toggle-item"><input type="checkbox" id="p-active" checked> ✅ Visible on Website</label>
+    </div>
+  </div>
+  <div class="modal-foot">
+    <button class="btn btn-secondary" onclick="closeProdModal()">Cancel</button>
+    <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
+  </div>
+</div></div>
+<div id="offer-modal" style="display:none" onclick="if(event.target===this)closeOfferModal()">
+<div class="modal">
+  <div class="modal-head">
+    <h3>New Deal / Offer</h3>
+    <button class="modal-x" onclick="closeOfferModal()">×</button>
+  </div>
+  <div class="modal-body">
+    <div class="row1 field"><label>Product *</label><select id="o-product"></select></div>
+    <div class="row1 field"><label>Offer Name *</label><input type="text" id="o-name" placeholder="e.g. Summer Sale — 20% Off"></div>
+    <div class="row2">
+      <div class="field"><label>Sale Price (£/m²) *</label><input type="number" id="o-price" min="0" step="0.01" placeholder="0.00"></div>
+      <div class="field"><label>Featured</label><div style="padding:11px 0"><label class="toggle-item" style="color:#1a2332;display:flex;align-items:center;gap:7px;font-size:.87rem"><input type="checkbox" id="o-featured" style="width:15px;height:15px;accent-color:#c8102e"> Show on homepage</label></div></div>
 </body>
 </html>
