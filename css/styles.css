@@ -1929,8 +1929,21 @@ footer {
 
 @media (max-width: 640px) {
     .calc-switcher-wrap {
+        position: static;
         height: auto;
-        min-height: 80px;
-        margin-bottom: 24px;
+        margin-bottom: 20px;
+    }
+    .calc-mode-panel {
+        position: static;
+        opacity: 1;
+        pointer-events: none;
+        display: none;
+    }
+    .calc-mode-panel.is-active {
+        display: block;
+        pointer-events: auto;
+    }
+    .input-row {
+        grid-template-columns: 1fr 1fr;
     }
 }
