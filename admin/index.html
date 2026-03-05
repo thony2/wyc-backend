@@ -1687,7 +1687,7 @@ async function editProduct(id) {
   document.getElementById('p-featured').checked            = !!p.is_featured;
   document.getElementById('p-deal').checked                = !!p.is_deal;
   document.getElementById('p-active').checked              = !!p.is_active;
-  const rooms = typeof p.rooms==='string' ? JSON.parse(p.rooms||'[]') : (p.rooms||[]);
+  let rooms=[]; try{ rooms=p.rooms ? (typeof p.rooms==='string' ? JSON.parse(p.rooms) : p.rooms) : []; }catch(e){ rooms=[]; }
   document.querySelectorAll('input[name="room"]').forEach(cb => cb.checked=rooms.includes(cb.value));
   previewImg(p.img_url);
   document.getElementById('product-modal').classList.add('open');
