@@ -1707,7 +1707,7 @@ async function saveProduct() {
   if (!name) { showToast('Product name is required','error'); return; }
   const price = parseFloat(document.getElementById('p-price').value);
   if (isNaN(price)||price<0) { showToast('Valid price is required','error'); return; }
-  const rooms = [...document.querySelectorAll('.pm-pill[data-room].pm-pill-active')].map(b=>b.dataset.room);
+  const rooms = [...document.querySelectorAll('input[name="room"]:checked')].map(cb=>cb.value);
   const payload = {
     name,
     category_slug:     document.getElementById('p-category').value,
@@ -1773,8 +1773,6 @@ async function openAddOffer() {
     products.filter(p=>p.is_active).map(p=>
       `<option value="${p.id}">${p.name} — £${parseFloat(p.price).toFixed(2)}/m²</option>`
     ).join('');
-  document.getElementById('o-start').value    = new Date().toISOString().split('T')[0];
-  document.getElementById('o-end').value      = '';
   document.getElementById('o-name').value     = '';
   document.getElementById('o-price').value    = '';
   document.getElementById('o-featured').checked = false;
@@ -1785,8 +1783,6 @@ async function saveOffer() {
     product_id:       parseInt(document.getElementById('o-product').value),
     offer_name:       document.getElementById('o-name').value.trim(),
     discounted_price: parseFloat(document.getElementById('o-price').value),
-    start_date:       document.getElementById('o-start').value,
-    end_date:         document.getElementById('o-end').value,
     is_featured:      document.getElementById('o-featured').checked?1:0,
     is_active:        1,
   };
@@ -1936,8 +1932,6 @@ if (TOKEN && USER) showApp();
 </script>
     </div>
     <div class="row2">
-      <div class="field"><label>Start Date *</label><input type="date" id="o-start"></div>
-      <div class="field"><label>End Date *</label><input type="date" id="o-end"></div>
     </div>
   </div>
   <div class="modal-foot">
