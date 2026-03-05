@@ -78,10 +78,14 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/products', productsRouter(db));
 app.use('/api/panel', panelRouter(db));
 
+app.get('/admin', (req, res) => {
+    res.setHeader('Content-Security-Policy', ADMIN_CSP);
+    res.sendFile(path.join(__dirname, 'admin', 'index.html'));
+});
 app.use('/admin', (req, res, next) => {
     res.setHeader('Content-Security-Policy', ADMIN_CSP);
     next();
-}, express.static(path.join(__dirname, 'admin'), { index: 'index.html', etag: false, lastModified: false }));
+}, express.static(path.join(__dirname, 'admin'), { etag: false, lastModified: false }));
 
 app.use((req, res) => {
     res.status(404).json({ success: false, error: `Route ${req.method} ${req.path} not found.` });
