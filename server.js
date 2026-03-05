@@ -33,7 +33,7 @@ const ADMIN_CSP = [
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
     "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com",
     "img-src 'self' data: https:",
-    "connect-src 'self' https://wyc-backend-production-ed78.up.railway.app",
+    "connect-src 'self' https://wyc-backend-production-ed78.up.railway.app https://api.cloudinary.com",
 ].join('; ');
 
 app.use(requestId);
