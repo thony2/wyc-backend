@@ -8,7 +8,7 @@ module.exports = (db) => {
     router.get('/', async (req, res) => {
         try {
             const { category, deals } = req.query;
-            let sql = `SELECT * FROM products WHERE is_active IN (1, true)`;
+            let sql = 'SELECT * FROM products WHERE is_active = 1';
             const params = [];
 
             if (category && category !== 'all') {
@@ -17,7 +17,7 @@ module.exports = (db) => {
             }
 
             if (deals === 'true') {
-                sql += ` AND is_deal IN (1, true)`;
+                sql += ' AND is_deal = 1';
             }
 
             sql += ' ORDER BY is_featured DESC, id ASC';
@@ -44,9 +44,9 @@ module.exports = (db) => {
                 `SELECT p.*, o.offer_name, o.discounted_price
                  FROM products p
                  LEFT JOIN offers o ON o.product_id = p.id
-                     AND o.is_active IN (1, true)
+                     AND o.is_active = 1
                      AND CURRENT_DATE BETWEEN o.start_date::date AND o.end_date::date
-                 WHERE p.is_active IN (1, true) AND p.is_deal IN (1, true)
+                 WHERE p.is_active = 1 AND p.is_deal = 1
                  ORDER BY p.is_featured DESC`
             );
             res.json(result.rows || []);
