@@ -2013,5 +2013,13 @@ if (TOKEN && USER) showApp();
     <button class="btn btn-primary" onclick="saveOffer()">Create Deal</button>
   </div>
 </div></div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var pm = document.getElementById('product-modal');
+  var om = document.getElementById('offer-modal');
+  if (pm) document.body.appendChild(pm);
+  if (om) document.body.appendChild(om);
+});
+</script>
 </body>
 <!-- v3 --></html>
