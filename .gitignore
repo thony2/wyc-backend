@@ -20,3 +20,6 @@ logs/
 # Frontend build artifacts (if added later)
 dist/
 build/
+
+# Local Netlify folder
+.netlify

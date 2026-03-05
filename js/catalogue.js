@@ -659,11 +659,11 @@ if (sortDropdown) {
                 description:   p.description || '',
                 specs:         {},
                 colours:       [],
-                rooms:         (() => { try { return JSON.parse(p.rooms || '[]'); } catch(e) { return []; } })(),
+                rooms:         (() => { try { const r = typeof p.rooms === 'string' ? JSON.parse(p.rooms || '[]') : p.rooms; return Array.isArray(r) ? r : []; } catch(e) { return []; } })(),
                 durability:    p.durability || 3,
                 softness:      p.softness || 3,
-                featured:      p.is_featured === 1,
-                deal:          p.is_deal === 1,
+                featured:      !!p.is_featured,
+                deal:          !!p.is_deal,
             }));
         } catch(e) {
             console.error('[WYCCatalogue] Failed to load products from API:', e);

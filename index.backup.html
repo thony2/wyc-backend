@@ -21,16 +21,17 @@
 </head>
 <body>
 
-    <!-- HEADER -->
     <header id="site-header">
         <div class="header-inner">
             <div class="logo">
+            <a href="/" class="logo" aria-label="Go to homepage">
                 <img 
-            src="images/logo.svg" 
-            alt="West Yorkshire Carpets logo"
-            class="h-10 w-auto object-contain"
-            loading="eager"
-        />
+                    src="images/logo.svg" 
+                    alt="West Yorkshire Carpets logo"
+                    class="h-10 w-auto object-contain"
+                    loading="eager"
+                />
+            </a>
             </div>
             <nav class="desktop-nav">
                 <a href="#" data-catalogue="carpets">Carpets</a>
@@ -60,7 +61,6 @@
         </div>
     </header>
 
-    <!-- HERO -->
     <section class="hero">
         <div class="hero-media">
             <img src="./images/212.png" alt="Premium flooring installation">
@@ -91,7 +91,6 @@
         </div>
     </section>
 
-    <!-- FEATURES STRIP -->
     <section class="features-strip">
         <div class="features-inner">
             <div class="feature-item reveal">
@@ -128,7 +127,6 @@
         </div>
     </section>
 
-    <!-- FLOORING RANGE -->
     <section id="range" class="flooring-range">
         <div class="container">
             <div class="section-header reveal">
@@ -180,7 +178,6 @@
         </div>
     </section>
     <div id="deals1"></div>
-    <!-- WEEKLY DEAL -->
     <section id="deals" class="deals-section">
         <div class="deals-inner">
             <div class="deals-text reveal">
@@ -206,7 +203,6 @@
         </div>
     </section>
 
-    <!-- QUOTE CALCULATOR -->
     <section id="quote" class="quote-section">
         <div class="container">
             <div class="section-header reveal">
@@ -215,64 +211,76 @@
                 <p class="section-sub">Get a rough idea of costs in seconds. For a precise quote, book your free in-home measure.</p>
             </div>
             <div class="calculator reveal">
-                <div class="calc-left">
+               <div class="calc-left">
     <h3>Your Room</h3>
 
-    <!-- Mode toggle -->
     <div class="calc-mode-group">
         <button class="calc-mode-btn active" data-mode="dimensions">L × W</button>
-        <button class="calc-mode-btn"        data-mode="area">Direct m²</button>
+        <button class="calc-mode-btn" data-mode="area">Direct m²</button>
     </div>
 
-   <!-- Input mode switcher -->
-<div class="calc-switcher-wrap">
+    <div class="calc-switcher-wrap">
 
-    <!-- Mode A: Length × Width -->
-    <div class="input-row calc-mode-panel is-active" id="calc-dim-row">
-        <div class="input-group">
-            <label for="calc-length">Length (m)</label>
-            <input type="number" id="calc-length" min="0" step="0.1" placeholder="e.g. 4.5">
+        <div class="input-row calc-mode-panel is-active" id="calc-dim-row">
+            <div class="input-group">
+                <label for="calc-length">Length (m)</label>
+                <input type="number" id="calc-length" min="0" step="0.1" placeholder="e.g. 4.5">
+            </div>
+            <div class="input-group">
+                <label for="calc-width">Width (m)</label>
+                <input type="number" id="calc-width" min="0" step="0.1" placeholder="e.g. 3.2">
+            </div>
         </div>
-        <div class="input-group">
-            <label for="calc-width">Width (m)</label>
-            <input type="number" id="calc-width" min="0" step="0.1" placeholder="e.g. 3.2">
+
+        <div class="input-group calc-mode-panel" id="calc-area-row">
+            <label for="calc-area-input">Total Area (m²)</label>
+            <input type="number" id="calc-area-input" min="0" step="0.5" placeholder="e.g. 14.4">
+            <p class="calc-area-hint">Already know your room size? Enter it directly.</p>
         </div>
+
     </div>
 
-    <!-- Mode B: Direct m² -->
-    <div class="calc-area-row input-group calc-mode-panel" id="calc-area-row">
-        <label for="calc-area-input">Total Area (m²)</label>
-        <input type="number" id="calc-area-input" min="0" step="0.5" placeholder="e.g. 14.4">
-        <p class="calc-area-hint">Already know your room size? Enter it directly.</p>
-    </div>
+<div class="input-group">
+    <label>Flooring Type</label>
 
+    <select id="calc-type" style="display:none;" aria-hidden="true" tabindex="-1">
+        <option value="carpet_budget">Budget Carpet</option>
+        <option value="carpet_premium">Premium Carpet</option>
+        <option value="vinyl">Vinyl Flooring</option>
+        <option value="laminate">Laminate</option>
+        <option value="wood">Real Wood</option>
+    </select>
+
+    <div class="calc-dropdown" id="calc-dropdown" role="combobox" aria-expanded="false" aria-label="Flooring Type" tabindex="0">
+        <div class="calc-dropdown-selected">
+            <span id="calc-dropdown-label">Budget Carpet — from £5.99/m²</span>
+            <svg class="calc-dropdown-arrow" width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <ul class="calc-dropdown-list" role="listbox" id="calc-dropdown-list">
+            <li class="calc-dropdown-item is-selected" role="option" data-value="carpet_budget" aria-selected="true">Budget Carpet — from £5.99/m²</li>
+            <li class="calc-dropdown-item" role="option" data-value="carpet_premium" aria-selected="false">Premium Carpet — from £25/m²</li>
+            <li class="calc-dropdown-item" role="option" data-value="vinyl" aria-selected="false">Vinyl Flooring — from £15/m²</li>
+            <li class="calc-dropdown-item" role="option" data-value="laminate" aria-selected="false">Laminate — from £20/m²</li>
+            <li class="calc-dropdown-item" role="option" data-value="wood" aria-selected="false">Real Wood — from £45/m²</li>
+        </ul>
+    </div>
 </div>
 
-    <!-- Select wrapped for custom chevron -->
-    <div class="input-group">
-        <label for="calc-type">Flooring Type</label>
-        <div class="select-wrap">
-            <select id="calc-type">
-                <option value="carpet_budget">Budget Carpet — from £10/sqm</option>
-                <option value="carpet_premium">Premium Carpet — from £25/sqm</option>
-                <option value="vinyl">Vinyl Flooring — from £15/sqm</option>
-                <option value="laminate">Laminate — from £20/sqm</option>
-                <option value="wood">Real Wood — from £45/sqm</option>
-            </select>
-        </div>
-    </div>
     <div class="check-group">
         <label class="checkbox-label">
             <input type="checkbox" id="calc-underlay">
             <span class="checkmark"></span>
-            <span>Include standard underlay <em>(+£5/sqm)</em></span>
+            <span>Include standard underlay <em>(+£5/m²)</em></span>
         </label>
         <label class="checkbox-label">
             <input type="checkbox" id="calc-fitting">
             <span class="checkmark"></span>
-            <span>Include professional fitting <em>(+£6/sqm)</em></span>
+            <span>Include professional fitting <em>(+£6/m²)</em></span>
         </label>
     </div>
+
 </div>
                 <div class="calc-right">
                     <div class="calc-result-box">
@@ -301,7 +309,6 @@
         </div>
     </section>
 
-    <!-- GALLERY -->
     <section class="gallery-section">
         <div class="container">
             <div class="section-header reveal">
@@ -329,7 +336,6 @@
         </div>
     </section>
 
-    <!-- CONTACT -->
     <section id="contact" class="contact-section">
         <div class="contact-inner">
             <div class="contact-info reveal">
@@ -377,21 +383,34 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="f-service">Service Needed</label>
-                        <div class="select-wrap">
-                            <select id="f-service" name="service">
-                                <option>Carpet Fitting</option>
-                                <option>Vinyl Installation</option>
-                                <option>Laminate / Wood</option>
-                                <option>Not sure yet — need advice</option>
-                            </select>
-                            </div>
-                    </div>
+    <label>Service Needed</label>
+
+    <select id="f-service" name="service" aria-hidden="true" tabindex="-1" style="display:none;">
+        <option value="Carpet Fitting">Carpet Fitting</option>
+        <option value="Vinyl Installation">Vinyl Installation</option>
+        <option value="Laminate / Wood">Laminate / Wood</option>
+        <option value="Not sure yet — need advice">Not sure yet — need advice</option>
+    </select>
+
+    <div class="form-dropdown" id="form-service-dropdown" role="combobox" aria-expanded="false" aria-label="Service Needed" tabindex="0">
+        <div class="form-dropdown-selected">
+            <span id="form-service-label">Carpet Fitting</span>
+            <svg class="form-dropdown-arrow" width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <ul class="form-dropdown-list" role="listbox">
+            <li class="form-dropdown-item is-selected" role="option" data-value="Carpet Fitting" aria-selected="true">Carpet Fitting</li>
+            <li class="form-dropdown-item" role="option" data-value="Vinyl Installation" aria-selected="false">Vinyl Installation</li>
+            <li class="form-dropdown-item" role="option" data-value="Laminate / Wood" aria-selected="false">Laminate / Wood</li>
+            <li class="form-dropdown-item" role="option" data-value="Not sure yet — need advice" aria-selected="false">Not sure yet — need advice</li>
+        </ul>
+    </div>
+</div>
                     <div class="form-group">
                         <label for="f-message">Additional Notes</label>
                         <textarea id="f-message" rows="3" name="message" placeholder="Tell us about your project..."></textarea>
                     </div>
-                    <!-- GDPR Consent -->
                     <div class="form-group form-group--consent">
                         <label class="checkbox-label" for="f-consent">
                             <input type="checkbox" id="f-consent" name="f-consent">
@@ -475,7 +494,6 @@
     </div>
 </section>
 
-    <!-- FOOTER -->
     <footer>
         <div class="footer-inner">
             <div class="footer-brand">
@@ -520,7 +538,6 @@
         </div>
     </footer>
 
-    <!-- MOBILE CTA BAR -->
     <div class="mobile-cta" id="mobile-cta">
         <a href="tel:07449188303" class="mcta-btn mcta-phone">
             <i class="fa-solid fa-phone"></i>
@@ -544,13 +561,10 @@
 
         <div class="cat-backdrop" id="cat-backdrop" aria-hidden="true"></div>
 
-        <!-- Floating catalogue panel -->
         <div id="cat-panel" role="document">
 
-            <!-- ── STICKY HEADER ── -->
             <div class="cat-header" role="banner">
 
-                <!-- Top row: close + title + sort -->
                 <div class="cat-header-top">
                     <div class="cat-header-left">
                         <button id="cat-close"
@@ -564,17 +578,33 @@
                         </div>
                     </div>
                     <div class="cat-header-right">
-                        <span id="cat-count" aria-live="polite" aria-atomic="true"></span>
-                        <select id="cat-sort" aria-label="Sort products">
-                            <option value="default">Featured</option>
-                            <option value="price-asc">Price: Low to High</option>
-                            <option value="price-desc">Price: High to Low</option>
-                            <option value="name">Name: A–Z</option>
-                        </select>
-                    </div>
+    <span id="cat-count" aria-live="polite" aria-atomic="true"></span>
+
+    <select id="cat-sort" aria-hidden="true" tabindex="-1" style="display:none;">
+        <option value="default">Featured</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="name">Name: A–Z</option>
+    </select>
+
+    <div class="cat-sort-dropdown" id="cat-sort-dropdown" role="combobox" aria-expanded="false" aria-label="Sort products" tabindex="0">
+        <div class="cat-sort-selected">
+            <span id="cat-sort-label">Featured</span>
+            <svg class="cat-sort-arrow" width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <ul class="cat-sort-list" role="listbox">
+            <li class="cat-sort-item is-selected" role="option" data-value="default" aria-selected="true">Featured</li>
+            <li class="cat-sort-item" role="option" data-value="price-asc" aria-selected="false">Price: Low to High</li>
+            <li class="cat-sort-item" role="option" data-value="price-desc" aria-selected="false">Price: High to Low</li>
+            <li class="cat-sort-item" role="option" data-value="name" aria-selected="false">Name: A–Z</li>
+        </ul>
+    </div>
+
+</div>
                 </div>
 
-                <!-- Filter row: category tabs + price range -->
                 <div class="cat-filters" role="toolbar" aria-label="Filter products">
 
                     <div id="cat-tabs" role="tablist" aria-label="Filter by category">
@@ -596,10 +626,8 @@
                 </div>
             </div>
 
-        <!-- ── SCROLLABLE PRODUCT BODY ── -->
         <div id="cat-body" role="main">
     
-        <!-- Product grid -->
         <div id="cat-grid"
                 role="list"
                 aria-label="Flooring products"
@@ -607,7 +635,6 @@
                 aria-atomic="false">
         </div>
 
-        <!-- Empty state — -->
         <div id="cat-empty" hidden aria-live="assertive">
             <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                 <p>No products match your current filters.</p>
@@ -618,19 +645,16 @@
             </div>
         </div>
 
-        <!-- /FLOATING PANEL -->
         <div id="cat-qv"
              role="dialog"
              aria-modal="true"
              aria-label="Product quick view"
              hidden>
             <div id="cat-qv-panel">
-                <!-- Populated by JS -->
             </div>
         </div>
     </div>
 
-        <!-- /CATALOGUE OVERLAY -->
     <div id="cat-toast" role="status" aria-live="polite" aria-atomic="true"></div>
     <div id="lightbox-overlay" hidden aria-modal="true" role="dialog" aria-label="Image viewer">
         <button id="lightbox-close" aria-label="Close image viewer">
@@ -650,5 +674,14 @@
         </div>
         </div>
     </div>
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <div class="lightbox__backdrop"></div>
+
+  <div class="lightbox__content">
+    <button class="lightbox__close" aria-label="Close image">×</button>
+    <img class="lightbox__img" src="" alt="">
+    <div class="lightbox__caption"></div>
+  </div>
+</div>
 </body>
 </html>
