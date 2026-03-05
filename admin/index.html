@@ -513,6 +513,32 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #product-modal .pm-pill.pm-pill-active{background:var(--ps-red);border-color:var(--ps-red);color:var(--ps-white)}
 #product-modal .pm-pill i{font-size:.72rem}
 #product-modal .modal-x{background:var(--ps-cream);border:none;width:32px;height:32px;border-radius:50%;font-size:.9rem;cursor:pointer;color:var(--ps-grey);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── Upgraded Product Modal ── */
+#product-modal .upload-zone{border:2px dashed var(--ps-border);border-radius:10px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--ps-cream);position:relative;margin-bottom:0}
+#product-modal .upload-zone:hover,#product-modal .upload-zone.drag-over{border-color:var(--ps-red);background:#fff5f5}
+#product-modal .upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+#product-modal .upload-zone-icon{font-size:1.8rem;color:var(--ps-red);margin-bottom:8px}
+#product-modal .upload-zone-text strong{color:var(--ps-slate);display:block;margin-bottom:2px;font-size:.88rem}
+#product-modal .upload-zone-text span{font-size:.78rem;color:var(--ps-grey)}
+#product-modal .upload-preview{position:relative;border-radius:10px;overflow:hidden;margin-bottom:0;display:none}
+#product-modal .upload-preview img{width:100%;height:180px;object-fit:cover;display:block}
+#product-modal .upload-preview-remove{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);color:white;border:none;border-radius:50%;width:28px;height:28px;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#product-modal .upload-spinner{display:none;flex-direction:column;align-items:center;gap:8px;padding:24px;background:var(--ps-cream);border-radius:10px}
+#product-modal .upload-spinner .spin{width:28px;height:28px;border:3px solid var(--ps-border);border-top-color:var(--ps-red);border-radius:50%;animation:spin .7s linear infinite}
+#product-modal .upload-spinner span{font-size:.78rem;color:var(--ps-grey)}
+#product-modal .pm-divider{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ps-grey);margin:20px 0 12px;padding-bottom:7px;border-bottom:1px solid var(--ps-border);display:flex;align-items:center;gap:7px}
+#product-modal .pm-divider i{color:var(--ps-red)}
+#product-modal .star-row{display:flex;gap:5px}
+#product-modal .star-btn{background:var(--ps-cream);border:1.5px solid var(--ps-border);border-radius:6px;width:34px;height:34px;font-size:.9rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;color:var(--ps-grey)}
+#product-modal .star-btn.active{background:#fef3c7;border-color:#f59e0b;color:#f59e0b}
+#product-modal .flag-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+#product-modal .flag-pill{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:100px;border:1.5px solid var(--ps-border);background:var(--ps-white);color:var(--ps-grey);font-size:.82rem;font-weight:500;cursor:pointer;transition:all .15s;font-family:inherit;user-select:none}
+#product-modal .flag-pill.active{background:var(--ps-red);border-color:var(--ps-red);color:white}
+#product-modal .room-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px}
+#product-modal .room-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 6px;border-radius:8px;border:1.5px solid var(--ps-border);background:var(--ps-white);color:var(--ps-grey);font-size:.72rem;font-weight:500;cursor:pointer;transition:all .15s;font-family:inherit}
+#product-modal .room-btn i{font-size:1.1rem}
+#product-modal .room-btn.active{background:var(--ps-red);border-color:var(--ps-red);color:white}
 </style>
 </head>
 <body>
@@ -1643,60 +1669,122 @@ async function toggleActive(id, current) {
   await renderProducts(); loadProductsStats();
 }
 
+const CLOUDINARY_CLOUD = 'thony2';
+const CLOUDINARY_PRESET = 'gxlpnasn';
+
+async function uploadToCloudinary(file) {
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLOUDINARY_PRESET);
+  const res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/image/upload', {method:'POST',body:fd});
+  const data = await res.json();
+  if (data.secure_url) return data.secure_url;
+  throw new Error(data.error?.message || 'Upload failed');
+}
+
+async function handleFileSelect(file) {
+  if (!file) return;
+  document.getElementById('upload-zone').style.display = 'none';
+  document.getElementById('upload-spinner').style.display = 'flex';
+  document.getElementById('upload-preview').style.display = 'none';
+  try {
+    const url = await uploadToCloudinary(file);
+    document.getElementById('p-img').value = url;
+    document.getElementById('img-preview').src = url;
+    document.getElementById('upload-preview').style.display = 'block';
+  } catch(e) {
+    showToast('Upload failed: ' + e.message, 'error');
+    document.getElementById('upload-zone').style.display = 'block';
+  } finally {
+    document.getElementById('upload-spinner').style.display = 'none';
+  }
+}
+
+function removeUploadedImage() {
+  document.getElementById('p-img').value = '';
+  document.getElementById('img-preview').src = '';
+  document.getElementById('upload-preview').style.display = 'none';
+  document.getElementById('upload-zone').style.display = 'block';
+  document.getElementById('p-img-file').value = '';
+}
+
+function setStar(type, val) {
+  document.getElementById('p-' + type).value = val;
+  document.querySelectorAll('#' + type + '-stars .star-btn').forEach((btn, i) => btn.classList.toggle('active', i < val));
+}
+
+function toggleRoom(btn) { btn.classList.toggle('active'); }
+
+function initUploadZone() {
+  const zone = document.getElementById('upload-zone');
+  if (!zone || zone._dragInit) return;
+  zone._dragInit = true;
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) handleFileSelect(file);
+  });
+}
+
 function openAddProduct() {
   document.getElementById('modal-title').textContent = 'Add Product';
-  document.getElementById('p-id').value        = '';
-  document.getElementById('p-name').value      = '';
-  document.getElementById('p-sku').value       = '';
-  document.getElementById('p-subcat').value    = '';
-  document.getElementById('p-category').value  = 'carpets';
-  document.getElementById('p-price').value     = '';
+  document.getElementById('p-id').value = '';
+  document.getElementById('p-name').value = '';
+  document.getElementById('p-sku').value = '';
+  document.getElementById('p-subcat').value = '';
+  document.getElementById('p-category').value = 'carpets';
+  document.getElementById('p-price').value = '';
   document.getElementById('p-original-price').value = '';
-  document.getElementById('p-stock').value     = '0';
-  document.getElementById('p-desc').value      = '';
-  document.getElementById('p-img').value       = '';
-  document.getElementById('p-badge').value     = '';
+  document.getElementById('p-stock').value = '0';
+  document.getElementById('p-desc').value = '';
+  document.getElementById('p-badge').value = '';
   document.getElementById('p-badge-type').value = '';
-  document.getElementById('p-durability').value = '3';
-  document.getElementById('p-softness').value  = '3';
-  document.querySelectorAll('input[name="room"]').forEach(cb => cb.checked = false);
-  document.getElementById('p-featured').checked = false;
-  document.getElementById('p-deal').checked     = false;
-  document.getElementById('p-active').checked   = true;
-  const prev = document.getElementById('img-preview');
-  prev.style.display = 'none'; prev.src = '';
+  setStar('durability', 3);
+  setStar('softness', 3);
+  document.querySelectorAll('.room-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('flag-featured').classList.remove('active');
+  document.getElementById('flag-deal').classList.remove('active');
+  document.getElementById('flag-active').classList.add('active');
+  removeUploadedImage();
+  initUploadZone();
   document.getElementById('product-modal').classList.add('open');
 }
 async function editProduct(id) {
   const p = allProducts.find(x=>x.id==id); if (!p) return;
-  document.getElementById('modal-title').textContent       = 'Edit Product';
-  document.getElementById('p-id').value                    = p.id;
-  document.getElementById('p-name').value                  = p.name||'';
-  document.getElementById('p-sku').value                   = p.sku||'';
-  document.getElementById('p-subcat').value                = p.subcategory||'';
-  document.getElementById('p-category').value              = p.category_slug||'carpets';
-  document.getElementById('p-price').value                 = p.price||'';
-  document.getElementById('p-original-price').value        = p.original_price||'';
-  document.getElementById('p-stock').value                 = p.stock_level||0;
-  document.getElementById('p-desc').value                  = p.description||'';
-  document.getElementById('p-img').value                   = p.img_url||'';
-  document.getElementById('p-badge').value                 = p.badge||'';
-  document.getElementById('p-badge-type').value            = p.badge_type||'';
-  document.getElementById('p-durability').value            = p.durability||3;
-  document.getElementById('p-softness').value              = p.softness||3;
-  document.getElementById('p-featured').checked            = !!p.is_featured;
-  document.getElementById('p-deal').checked                = !!p.is_deal;
-  document.getElementById('p-active').checked              = !!p.is_active;
-  let rooms=[]; try{ const r=p.rooms ? (typeof p.rooms==='string' ? JSON.parse(p.rooms) : p.rooms) : []; rooms=Array.isArray(r)?r:[]; }catch(e){ rooms=[]; }
-  document.querySelectorAll('input[name="room"]').forEach(cb => cb.checked=rooms.includes(cb.value));
-  previewImg(p.img_url);
+  document.getElementById('modal-title').textContent = 'Edit Product';
+  document.getElementById('p-id').value = p.id;
+  document.getElementById('p-name').value = p.name||'';
+  document.getElementById('p-sku').value = p.sku||'';
+  document.getElementById('p-subcat').value = p.subcategory||'';
+  document.getElementById('p-category').value = p.category_slug||'carpets';
+  document.getElementById('p-price').value = p.price||'';
+  document.getElementById('p-original-price').value = p.original_price||'';
+  document.getElementById('p-stock').value = p.stock_level||0;
+  document.getElementById('p-desc').value = p.description||'';
+  document.getElementById('p-badge').value = p.badge||'';
+  document.getElementById('p-badge-type').value = p.badge_type||'';
+  setStar('durability', p.durability||3);
+  setStar('softness', p.softness||3);
+  let rooms=[]; try{ const r=p.rooms?(typeof p.rooms==='string'?JSON.parse(p.rooms):p.rooms):[]; rooms=Array.isArray(r)?r:[]; }catch(e){ rooms=[]; }
+  document.querySelectorAll('.room-btn').forEach(b => b.classList.toggle('active', rooms.includes(b.dataset.room)));
+  document.getElementById('flag-featured').classList.toggle('active', !!p.is_featured);
+  document.getElementById('flag-deal').classList.toggle('active', !!p.is_deal);
+  document.getElementById('flag-active').classList.toggle('active', !!p.is_active);
+  if (p.img_url) {
+    document.getElementById('p-img').value = p.img_url;
+    document.getElementById('img-preview').src = p.img_url;
+    document.getElementById('upload-preview').style.display = 'block';
+    document.getElementById('upload-zone').style.display = 'none';
+    document.getElementById('upload-spinner').style.display = 'none';
+  } else {
+    removeUploadedImage();
+  }
+  initUploadZone();
   document.getElementById('product-modal').classList.add('open');
 }
-function previewImg(url) {
-  const img = document.getElementById('img-preview');
-  if (url) { img.src = url; img.style.display = 'block'; }
-  else      { img.style.display = 'none'; }
-}
+function previewImg(url) {}
 function togglePmPill(btn) { btn.classList.toggle('pm-pill-active'); }
 function togglePmFlag(btn) { btn.classList.toggle('pm-pill-active'); }
 function togglePmPill(btn) { btn.classList.toggle('pm-pill-active'); }
@@ -1707,7 +1795,7 @@ async function saveProduct() {
   if (!name) { showToast('Product name is required','error'); return; }
   const price = parseFloat(document.getElementById('p-price').value);
   if (isNaN(price)||price<0) { showToast('Valid price is required','error'); return; }
-  const rooms = [...document.querySelectorAll('input[name="room"]:checked')].map(cb=>cb.value);
+  const rooms = [...document.querySelectorAll('.room-btn.active')].map(b=>b.dataset.room);
   const payload = {
     name,
     category_slug:     document.getElementById('p-category').value,
@@ -1723,9 +1811,9 @@ async function saveProduct() {
     durability:        parseInt(document.getElementById('p-durability').value)||3,
     softness:          parseInt(document.getElementById('p-softness').value)||3,
     rooms,
-    is_featured: document.getElementById('p-featured').checked?1:0,
-    is_deal:     document.getElementById('p-deal').checked?1:0,
-    is_active:   document.getElementById('p-active').checked?1:0,
+    is_featured: document.getElementById('flag-featured').classList.contains('active')?1:0,
+    is_deal:     document.getElementById('flag-deal').classList.contains('active')?1:0,
+    is_active:   document.getElementById('flag-active').classList.contains('active')?1:0,
   };
   const res  = await panelApi(id?`/products/${id}`:'/products', {method:id?'PUT':'POST', body:JSON.stringify(payload)});
   if (!res) return;
@@ -1936,15 +2024,30 @@ if (TOKEN && USER) showApp();
 
 
 <div id="product-modal" onclick="if(event.target===this)closeProdModal()">
-<div class="modal">
+<div class="modal" style="max-width:680px">
   <div class="modal-head">
     <h3 id="modal-title">Add Product</h3>
     <button class="modal-x" onclick="closeProdModal()">×</button>
   </div>
   <div class="modal-body">
     <input type="hidden" id="p-id">
-    <div class="row1 field"><label>Image URL</label><input type="text" id="p-img" placeholder="https://images.unsplash.com/…" oninput="previewImg(this.value)"><img id="img-preview" class="img-preview" alt="preview"></div>
-    <div class="section-title">Basic Information</div>
+    <input type="hidden" id="p-img">
+
+    <div class="pm-divider"><i class="fa-solid fa-image"></i> Product Image</div>
+    <div id="upload-zone" class="upload-zone">
+      <input type="file" id="p-img-file" accept="image/*" onchange="handleFileSelect(this.files[0])">
+      <div class="upload-zone-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+      <div class="upload-zone-text"><strong>Drag & drop or click to browse</strong><span>JPG, PNG, WEBP up to 10MB</span></div>
+    </div>
+    <div id="upload-spinner" class="upload-spinner">
+      <div class="spin"></div><span>Uploading…</span>
+    </div>
+    <div id="upload-preview" class="upload-preview">
+      <img id="img-preview" alt="preview">
+      <button class="upload-preview-remove" onclick="removeUploadedImage()" type="button"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="pm-divider"><i class="fa-solid fa-tag"></i> Basic Information</div>
     <div class="row2">
       <div class="field"><label>Product Name *</label><input type="text" id="p-name" placeholder="e.g. Prestige Saxony"></div>
       <div class="field"><label>Category *</label><select id="p-category"><option value="carpets">Carpets</option><option value="vinyl">Vinyl</option><option value="laminate">Laminate</option><option value="wood">Wood</option></select></div>
@@ -1953,41 +2056,65 @@ if (TOKEN && USER) showApp();
       <div class="field"><label>SKU / Code</label><input type="text" id="p-sku" placeholder="e.g. C-001"></div>
       <div class="field"><label>Subcategory</label><input type="text" id="p-subcat" placeholder="e.g. Saxony, LVT"></div>
     </div>
-    <div class="row1 field"><label>Description</label><textarea id="p-desc" placeholder="Describe the product…"></textarea></div>
-    <div class="section-title">Pricing &amp; Stock</div>
+    <div class="field" style="margin-bottom:14px"><label>Description</label><textarea id="p-desc" placeholder="Describe the product…"></textarea></div>
+
+    <div class="pm-divider"><i class="fa-solid fa-sterling-sign"></i> Pricing & Stock</div>
     <div class="row3">
       <div class="field"><label>Price (£/m²) *</label><input type="number" id="p-price" min="0" step="0.01" placeholder="0.00"></div>
       <div class="field"><label>Was Price (£/m²)</label><input type="number" id="p-original-price" min="0" step="0.01" placeholder="Optional"></div>
       <div class="field"><label>Stock Level</label><input type="number" id="p-stock" min="0" value="0"></div>
     </div>
-    <div class="section-title">Badge &amp; Ratings</div>
+
+    <div class="pm-divider"><i class="fa-solid fa-certificate"></i> Badge</div>
     <div class="row2">
       <div class="field"><label>Badge Text</label><input type="text" id="p-badge" placeholder="e.g. Best Seller"></div>
       <div class="field"><label>Badge Style</label><select id="p-badge-type"><option value="">No Badge</option><option value="seller">Best Seller (Dark)</option><option value="sale">Sale (Red)</option><option value="premium">Premium (Purple)</option><option value="new">New In (Green)</option></select></div>
     </div>
+
+    <div class="pm-divider"><i class="fa-solid fa-star"></i> Ratings</div>
     <div class="row2">
-      <div class="field"><label>Durability (1–5)</label><input type="number" id="p-durability" min="1" max="5" value="3"></div>
-      <div class="field"><label>Softness (1–5)</label><input type="number" id="p-softness" min="1" max="5" value="3"></div>
+      <div class="field"><label>Durability</label>
+        <div class="star-row" id="durability-stars">
+          <button class="star-btn" type="button" onclick="setStar('durability',1)"><i class="fa-solid fa-star"></i></button>
+          <button class="star-btn" type="button" onclick="setStar('durability',2)"><i class="fa-solid fa-star"></i></button>
+          <button class="star-btn" type="button" onclick="setStar('durability',3)"><i class="fa-solid fa-star"></i></button>
+          <button class="star-btn" type="button" onclick="setStar('durability',4)"><i class="fa-solid fa-star"></i></button>
+          <button class="star-btn" type="button" onclick="setStar('durability',5)"><i class="fa-solid fa-star"></i></button>
+        </div>
+        <input type="hidden" id="p-durability" value="3">
+      </div>
+      <div class="field"><label>Softness</label>
+        <div class="star-row" id="softness-stars">
+          <button class="star-btn" type="button" onclick="setStar('softness',1)"><i class="fa-solid fa-star"></i></button>
+          <button class="star-btn" type="button" onclick="setStar('softness',2)"><i class="fa-solid fa-star"></i></button>
+          <button class="star-btn" type="button" onclick="setStar('softness',3)"><i class="fa-solid fa-star"></i></button>
+          <button class="star-btn" type="button" onclick="setStar('softness',4)"><i class="fa-solid fa-star"></i></button>
+          <button class="star-btn" type="button" onclick="setStar('softness',5)"><i class="fa-solid fa-star"></i></button>
+        </div>
+        <input type="hidden" id="p-softness" value="3">
+      </div>
     </div>
-    <div class="section-title">Room Suitability</div>
-    <div class="toggle-row">
-      <label class="toggle-item"><input type="checkbox" name="room" value="living"> Living Room</label>
-      <label class="toggle-item"><input type="checkbox" name="room" value="bedroom"> Bedroom</label>
-      <label class="toggle-item"><input type="checkbox" name="room" value="hallway"> Hallway</label>
-      <label class="toggle-item"><input type="checkbox" name="room" value="stairs"> Stairs</label>
-      <label class="toggle-item"><input type="checkbox" name="room" value="kitchen"> Kitchen</label>
-      <label class="toggle-item"><input type="checkbox" name="room" value="bathroom"> Bathroom</label>
+
+    <div class="pm-divider"><i class="fa-solid fa-house"></i> Room Suitability</div>
+    <div class="room-grid">
+      <button class="room-btn" type="button" data-room="living" onclick="toggleRoom(this)"><i class="fa-solid fa-couch"></i>Living Room</button>
+      <button class="room-btn" type="button" data-room="bedroom" onclick="toggleRoom(this)"><i class="fa-solid fa-bed"></i>Bedroom</button>
+      <button class="room-btn" type="button" data-room="hallway" onclick="toggleRoom(this)"><i class="fa-solid fa-door-open"></i>Hallway</button>
+      <button class="room-btn" type="button" data-room="stairs" onclick="toggleRoom(this)"><i class="fa-solid fa-stairs"></i>Stairs</button>
+      <button class="room-btn" type="button" data-room="kitchen" onclick="toggleRoom(this)"><i class="fa-solid fa-utensils"></i>Kitchen</button>
+      <button class="room-btn" type="button" data-room="bathroom" onclick="toggleRoom(this)"><i class="fa-solid fa-shower"></i>Bathroom</button>
     </div>
-    <div class="section-title">Visibility &amp; Flags</div>
-    <div class="toggle-row">
-      <label class="toggle-item"><input type="checkbox" id="p-featured"> Featured</label>
-      <label class="toggle-item"><input type="checkbox" id="p-deal"> Weekly Deal</label>
-      <label class="toggle-item"><input type="checkbox" id="p-active" checked> Visible on Website</label>
+
+    <div class="pm-divider"><i class="fa-solid fa-flag"></i> Visibility & Flags</div>
+    <div class="flag-row">
+      <button class="flag-pill" type="button" id="flag-featured" onclick="this.classList.toggle('active')"><i class="fa-solid fa-star"></i> Featured</button>
+      <button class="flag-pill" type="button" id="flag-deal" onclick="this.classList.toggle('active')"><i class="fa-solid fa-fire"></i> Weekly Deal</button>
+      <button class="flag-pill active" type="button" id="flag-active" onclick="this.classList.toggle('active')"><i class="fa-solid fa-eye"></i> Visible on Website</button>
     </div>
   </div>
   <div class="modal-foot">
     <button class="btn btn-secondary" onclick="closeProdModal()">Cancel</button>
-    <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
+    <button class="btn btn-primary" onclick="saveProduct()"><i class="fa-solid fa-floppy-disk"></i> Save Product</button>
   </div>
 </div></div>
 <div id="offer-modal" onclick="if(event.target===this)closeOfferModal()">
