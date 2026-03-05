@@ -81,7 +81,7 @@ app.use('/api/panel', panelRouter(db));
 app.use('/admin', (req, res, next) => {
     res.setHeader('Content-Security-Policy', ADMIN_CSP);
     next();
-}, express.static(path.join(__dirname, 'admin')));
+}, express.static(path.join(__dirname, 'admin'), { index: 'index.html', etag: false, lastModified: false }));
 
 app.use((req, res) => {
     res.status(404).json({ success: false, error: `Route ${req.method} ${req.path} not found.` });
