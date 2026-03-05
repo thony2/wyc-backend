@@ -1668,8 +1668,7 @@ function openAddProduct() {
   document.getElementById('product-modal').classList.add('open');
 }
 async function editProduct(id) {
-  console.log("found:", p);
-  if (!p) return;
+  const p = allProducts.find(x=>x.id==id); if (!p) return;
   document.getElementById('modal-title').textContent       = 'Edit Product';
   document.getElementById('p-id').value                    = p.id;
   document.getElementById('p-name').value                  = p.name||'';
@@ -1677,18 +1676,19 @@ async function editProduct(id) {
   document.getElementById('p-subcat').value                = p.subcategory||'';
   document.getElementById('p-category').value              = p.category_slug||'carpets';
   document.getElementById('p-price').value                 = p.price||'';
+  document.getElementById('p-original-price').value        = p.original_price||'';
+  document.getElementById('p-stock').value                 = p.stock_level||0;
+  document.getElementById('p-desc').value                  = p.description||'';
   document.getElementById('p-img').value                   = p.img_url||'';
   document.getElementById('p-badge').value                 = p.badge||'';
   document.getElementById('p-badge-type').value            = p.badge_type||'';
   document.getElementById('p-durability').value            = p.durability||3;
   document.getElementById('p-softness').value              = p.softness||3;
-  const rooms = typeof p.rooms === 'string' ? JSON.parse(p.rooms || '[]') : (p.rooms || []);
-  document.querySelectorAll('.pm-pill[data-room]').forEach(btn => {
-    btn.classList.toggle('pm-pill-active', rooms.includes(btn.dataset.room));
-  });
-  document.getElementById('pill-featured').classList.toggle('pm-pill-active', !!p.is_featured);
-  document.getElementById('pill-deal').classList.toggle('pm-pill-active', !!p.is_deal);
-  document.getElementById('pill-active').classList.toggle('pm-pill-active', !!p.is_active);
+  document.getElementById('p-featured').checked            = !!p.is_featured;
+  document.getElementById('p-deal').checked                = !!p.is_deal;
+  document.getElementById('p-active').checked              = !!p.is_active;
+  const rooms = typeof p.rooms==='string' ? JSON.parse(p.rooms||'[]') : (p.rooms||[]);
+  document.querySelectorAll('input[name="room"]').forEach(cb => cb.checked=rooms.includes(cb.value));
   previewImg(p.img_url);
   document.getElementById('product-modal').classList.add('open');
 }
