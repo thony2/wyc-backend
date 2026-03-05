@@ -1659,10 +1659,10 @@ function openAddProduct() {
   document.getElementById('p-badge-type').value = '';
   document.getElementById('p-durability').value = '3';
   document.getElementById('p-softness').value  = '3';
-  document.querySelectorAll('.pm-pill[data-room]').forEach(b => b.classList.remove('pm-pill-active'));
-  document.getElementById('pill-featured').classList.remove('pm-pill-active');
-  document.getElementById('pill-deal').classList.remove('pm-pill-active');
-  document.getElementById('pill-active').classList.add('pm-pill-active');
+  document.querySelectorAll('input[name="room"]').forEach(cb => cb.checked = false);
+  document.getElementById('p-featured').checked = false;
+  document.getElementById('p-deal').checked     = false;
+  document.getElementById('p-active').checked   = true;
   const prev = document.getElementById('img-preview');
   prev.style.display = 'none'; prev.src = '';
   document.getElementById('product-modal').classList.add('open');
