@@ -5,7 +5,8 @@ const bcrypt  = require('bcryptjs');
 const jwt     = require('jsonwebtoken');
 const router  = express.Router();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'wyc-change-this-secret-in-production';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) { console.error('FATAL: JWT_SECRET env var not set'); process.exit(1); }
 
 function requireAuth(req, res, next) {
     const token = req.headers.authorization?.split(' ')[1];
@@ -37,7 +38,15 @@ async function audit(db, user, action, table, recordId, details) {
 
 module.exports = (db) => {
 
-    router.post('/login', async (req, res) => {
+    const loginLimiter = require('express-rate-limit').rateLimit({
+        windowMs: 15 * 60 * 1000,
+        max: 10,
+        message: { error: 'Too many login attempts. Please wait 15 minutes.' },
+        standardHeaders: 'draft-7',
+        legacyHeaders: false,
+    });
+
+    router.post('/login', loginLimiter, async (req, res) => {
         try {
             const { username, password } = req.body;
             if (!username || !password) return res.status(400).json({ error: 'Missing credentials' });
