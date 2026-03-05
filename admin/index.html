@@ -1948,97 +1948,56 @@ if (TOKEN && USER) showApp();
 <div id="product-modal" onclick="if(event.target===this)closeProdModal()">
 <div class="modal">
   <div class="modal-head">
-    <div>
-      <h3 id="modal-title">Add Product</h3>
-      <div style="font-size:.72rem;color:var(--ps-grey);margin-top:2px">Fill in the details below and save</div>
-    </div>
-    <button class="modal-x" onclick="closeProdModal()"><i class="fa-solid fa-xmark"></i></button>
+    <h3 id="modal-title">Add Product</h3>
+    <button class="modal-x" onclick="closeProdModal()">×</button>
   </div>
   <div class="modal-body">
     <input type="hidden" id="p-id">
-
-    <div class="pm-section">
-      <div class="pm-section-label"><i class="fa-solid fa-image"></i> Product Image</div>
-      <div class="field" style="margin:0">
-        <input type="text" id="p-img" placeholder="https://images.unsplash.com/…" oninput="previewImg(this.value)" style="margin-bottom:8px">
-        <img id="img-preview" class="img-preview" alt="preview">
-      </div>
+    <div class="row1 field"><label>Image URL</label><input type="text" id="p-img" placeholder="https://images.unsplash.com/…" oninput="previewImg(this.value)"><img id="img-preview" class="img-preview" alt="preview"></div>
+    <div class="section-title">Basic Information</div>
+    <div class="row2">
+      <div class="field"><label>Product Name *</label><input type="text" id="p-name" placeholder="e.g. Prestige Saxony"></div>
+      <div class="field"><label>Category *</label><select id="p-category"><option value="carpets">Carpets</option><option value="vinyl">Vinyl</option><option value="laminate">Laminate</option><option value="wood">Wood</option></select></div>
     </div>
-
-    <div class="pm-section">
-      <div class="pm-section-label"><i class="fa-solid fa-tag"></i> Basic Information</div>
-      <div class="row2">
-        <div class="field"><label>Product Name *</label><input type="text" id="p-name" placeholder="e.g. Prestige Saxony"></div>
-        <div class="field"><label>Category *</label>
-          <select id="p-category">
-            <option value="carpets">Carpets</option>
-            <option value="vinyl">Vinyl</option>
-            <option value="laminate">Laminate</option>
-            <option value="wood">Wood</option>
-          </select>
-        </div>
-      </div>
-      <div class="row2">
-        <div class="field"><label>SKU / Code</label><input type="text" id="p-sku" placeholder="e.g. C-001"></div>
-        <div class="field"><label>Subcategory</label><input type="text" id="p-subcat" placeholder="e.g. Saxony, LVT"></div>
-      </div>
-      <div class="field" style="margin-bottom:0"><label>Description</label><textarea id="p-desc" placeholder="Describe the product…"></textarea></div>
+    <div class="row2">
+      <div class="field"><label>SKU / Code</label><input type="text" id="p-sku" placeholder="e.g. C-001"></div>
+      <div class="field"><label>Subcategory</label><input type="text" id="p-subcat" placeholder="e.g. Saxony, LVT"></div>
     </div>
-
-    <div class="pm-section">
-      <div class="pm-section-label"><i class="fa-solid fa-sterling-sign"></i> Pricing &amp; Stock</div>
-      <div class="row3">
-        <div class="field"><label>Price (£/m²) *</label><input type="number" id="p-price" min="0" step="0.01" placeholder="0.00"></div>
-        <div class="field"><label>Was Price (£/m²)</label><input type="number" id="p-original-price" min="0" step="0.01" placeholder="Optional"></div>
-        <div class="field"><label>Stock Level</label><input type="number" id="p-stock" min="0" value="0"></div>
-      </div>
+    <div class="row1 field"><label>Description</label><textarea id="p-desc" placeholder="Describe the product…"></textarea></div>
+    <div class="section-title">Pricing &amp; Stock</div>
+    <div class="row3">
+      <div class="field"><label>Price (£/m²) *</label><input type="number" id="p-price" min="0" step="0.01" placeholder="0.00"></div>
+      <div class="field"><label>Was Price (£/m²)</label><input type="number" id="p-original-price" min="0" step="0.01" placeholder="Optional"></div>
+      <div class="field"><label>Stock Level</label><input type="number" id="p-stock" min="0" value="0"></div>
     </div>
-
-    <div class="pm-section">
-      <div class="pm-section-label"><i class="fa-solid fa-certificate"></i> Badge &amp; Ratings</div>
-      <div class="row2" style="margin-bottom:14px">
-        <div class="field"><label>Badge Text</label><input type="text" id="p-badge" placeholder="e.g. Best Seller"></div>
-        <div class="field"><label>Badge Style</label>
-          <select id="p-badge-type">
-            <option value="">No Badge</option>
-            <option value="seller">Best Seller</option>
-            <option value="sale">Sale</option>
-            <option value="premium">Premium</option>
-            <option value="new">New In</option>
-          </select>
-        </div>
-      </div>
-      <div class="row2" style="margin:0">
-        <div class="field" style="margin:0"><label>Durability (1–5)</label><input type="number" id="p-durability" min="1" max="5" value="3"></div>
-        <div class="field" style="margin:0"><label>Softness (1–5)</label><input type="number" id="p-softness" min="1" max="5" value="3"></div>
-      </div>
+    <div class="section-title">Badge &amp; Ratings</div>
+    <div class="row2">
+      <div class="field"><label>Badge Text</label><input type="text" id="p-badge" placeholder="e.g. Best Seller"></div>
+      <div class="field"><label>Badge Style</label><select id="p-badge-type"><option value="">No Badge</option><option value="seller">Best Seller (Dark)</option><option value="sale">Sale (Red)</option><option value="premium">Premium (Purple)</option><option value="new">New In (Green)</option></select></div>
     </div>
-
-    <div class="pm-section">
-      <div class="pm-section-label"><i class="fa-solid fa-house"></i> Room Suitability</div>
-      <div class="pm-pills">
-        <button type="button" class="pm-pill" data-room="living" onclick="togglePmPill(this)"><i class="fa-solid fa-couch"></i> Living Room</button>
-        <button type="button" class="pm-pill" data-room="bedroom" onclick="togglePmPill(this)"><i class="fa-solid fa-bed"></i> Bedroom</button>
-        <button type="button" class="pm-pill" data-room="hallway" onclick="togglePmPill(this)"><i class="fa-solid fa-door-open"></i> Hallway</button>
-        <button type="button" class="pm-pill" data-room="stairs" onclick="togglePmPill(this)"><i class="fa-solid fa-stairs"></i> Stairs</button>
-        <button type="button" class="pm-pill" data-room="kitchen" onclick="togglePmPill(this)"><i class="fa-solid fa-utensils"></i> Kitchen</button>
-        <button type="button" class="pm-pill" data-room="bathroom" onclick="togglePmPill(this)"><i class="fa-solid fa-bath"></i> Bathroom</button>
-      </div>
+    <div class="row2">
+      <div class="field"><label>Durability (1–5)</label><input type="number" id="p-durability" min="1" max="5" value="3"></div>
+      <div class="field"><label>Softness (1–5)</label><input type="number" id="p-softness" min="1" max="5" value="3"></div>
     </div>
-
-    <div class="pm-section" style="margin-bottom:0">
-      <div class="pm-section-label"><i class="fa-solid fa-sliders"></i> Visibility &amp; Flags</div>
-      <div class="pm-pills">
-        <button type="button" class="pm-pill" id="pill-featured" onclick="togglePmFlag(this)"><i class="fa-solid fa-star"></i> Featured</button>
-        <button type="button" class="pm-pill" id="pill-deal" onclick="togglePmFlag(this)"><i class="fa-solid fa-bolt"></i> Weekly Deal</button>
-        <button type="button" class="pm-pill pm-pill-active" id="pill-active" onclick="togglePmFlag(this)"><i class="fa-solid fa-eye"></i> Visible on Website</button>
-      </div>
+    <div class="section-title">Room Suitability</div>
+    <div class="toggle-row">
+      <label class="toggle-item"><input type="checkbox" name="room" value="living"> Living Room</label>
+      <label class="toggle-item"><input type="checkbox" name="room" value="bedroom"> Bedroom</label>
+      <label class="toggle-item"><input type="checkbox" name="room" value="hallway"> Hallway</label>
+      <label class="toggle-item"><input type="checkbox" name="room" value="stairs"> Stairs</label>
+      <label class="toggle-item"><input type="checkbox" name="room" value="kitchen"> Kitchen</label>
+      <label class="toggle-item"><input type="checkbox" name="room" value="bathroom"> Bathroom</label>
     </div>
-
+    <div class="section-title">Visibility &amp; Flags</div>
+    <div class="toggle-row">
+      <label class="toggle-item"><input type="checkbox" id="p-featured"> Featured</label>
+      <label class="toggle-item"><input type="checkbox" id="p-deal"> Weekly Deal</label>
+      <label class="toggle-item"><input type="checkbox" id="p-active" checked> Visible on Website</label>
+    </div>
   </div>
   <div class="modal-foot">
     <button class="btn btn-secondary" onclick="closeProdModal()">Cancel</button>
-    <button class="btn btn-primary" onclick="saveProduct()"><i class="fa-solid fa-floppy-disk"></i> Save Product</button>
+    <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
   </div>
 </div></div>
 <div id="offer-modal" onclick="if(event.target===this)closeOfferModal()">
