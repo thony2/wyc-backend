@@ -539,6 +539,155 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #product-modal .room-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 6px;border-radius:8px;border:1.5px solid var(--ps-border);background:var(--ps-white);color:var(--ps-grey);font-size:.72rem;font-weight:500;cursor:pointer;transition:all .15s;font-family:inherit}
 #product-modal .room-btn i{font-size:1.1rem}
 #product-modal .room-btn.active{background:var(--ps-red);border-color:var(--ps-red);color:white}
+
+/* ── Mobile fixes for product modal ── */
+
+/* 1. Prevent horizontal scroll globally */
+html, body { overflow-x: hidden; max-width: 100vw; }
+
+/* 2. Modal centering & mobile layout */
+#product-modal, #offer-modal {
+  padding: 12px;
+  box-sizing: border-box;
+  align-items: flex-end;
+}
+#product-modal .modal, #offer-modal .modal {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* 3. Improved select/input styling */
+#product-modal .field select,
+#product-modal .field input[type=text],
+#product-modal .field input[type=number],
+#product-modal .field textarea,
+#offer-modal .field select,
+#offer-modal .field input {
+  width: 100%;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  padding: 12px 14px;
+  border: 1.5px solid var(--ps-border);
+  background-color: var(--ps-cream);
+  color: var(--ps-slate);
+  font-family: inherit;
+  transition: border-color .2s, background .2s;
+  min-height: 46px;
+}
+#product-modal .field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b7280' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+#product-modal .field select:focus,
+#product-modal .field input:focus,
+#product-modal .field textarea:focus {
+  outline: none;
+  border-color: var(--ps-red);
+  background-color: var(--ps-white);
+}
+
+/* 4. Ratings — stack vertically on mobile */
+@media (max-width: 600px) {
+  #product-modal, #offer-modal {
+    padding: 0;
+    align-items: flex-end;
+  }
+  #product-modal .modal, #offer-modal .modal {
+    border-radius: 20px 20px 0 0;
+    max-height: 92vh;
+  }
+  #product-modal .row2,
+  #offer-modal .row2 {
+    grid-template-columns: 1fr;
+  }
+  #product-modal .row3 {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  #product-modal .row3 .field:last-child {
+    grid-column: 1 / -1;
+  }
+  /* Stack ratings vertically */
+  #product-modal .modal-body > .row2:has(#durability-stars) {
+    grid-template-columns: 1fr;
+  }
+  .ratings-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  /* Room grid 2 cols on mobile */
+  #product-modal .room-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  /* Flag pills wrap nicely */
+  #product-modal .flag-row {
+    gap: 8px;
+  }
+  #product-modal .flag-pill {
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+  }
+  /* Modal body padding */
+  #product-modal .modal-body,
+  #offer-modal .modal-body {
+    padding: 16px;
+  }
+  #product-modal .modal-head,
+  #offer-modal .modal-head {
+    padding: 16px;
+  }
+  #product-modal .modal-foot,
+  #offer-modal .modal-foot {
+    padding: 12px 16px 24px;
+    flex-direction: row;
+  }
+  #product-modal .modal-foot .btn,
+  #offer-modal .modal-foot .btn {
+    flex: 1;
+    justify-content: center;
+  }
+  /* Star buttons bigger touch targets */
+  #product-modal .star-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  /* Room buttons bigger */
+  #product-modal .room-btn {
+    padding: 14px 8px;
+    font-size: .75rem;
+  }
+  #product-modal .room-btn i {
+    font-size: 1.3rem;
+  }
+}
+
+/* 5. Desktop — center modal properly */
+@media (min-width: 601px) {
+  #product-modal, #offer-modal {
+    align-items: center;
+  }
+  .ratings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+}
 </style>
 </head>
 <body>
@@ -2072,7 +2221,7 @@ if (TOKEN && USER) showApp();
     </div>
 
     <div class="pm-divider"><i class="fa-solid fa-star"></i> Ratings</div>
-    <div class="row2">
+    <div class="ratings-grid">
       <div class="field"><label>Durability</label>
         <div class="star-row" id="durability-stars">
           <button class="star-btn" type="button" onclick="setStar('durability',1)"><i class="fa-solid fa-star"></i></button>
