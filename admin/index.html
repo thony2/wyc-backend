@@ -1902,6 +1902,9 @@ function openAddProduct() {
   document.getElementById('flag-featured').classList.remove('active');
   document.getElementById('flag-deal').classList.remove('active');
   document.getElementById('flag-active').classList.add('active');
+  document.getElementById('p-fitting-price').value = '6.00';
+  document.getElementById('p-colours').value = '';
+  document.querySelectorAll('.feature-btn').forEach(b => b.classList.remove('active'));
   removeUploadedImage();
   initUploadZone();
   document.getElementById('product-modal').classList.add('open');
@@ -1927,6 +1930,11 @@ async function editProduct(id) {
   document.getElementById('flag-featured').classList.toggle('active', !!p.is_featured);
   document.getElementById('flag-deal').classList.toggle('active', !!p.is_deal);
   document.getElementById('flag-active').classList.toggle('active', !!p.is_active);
+  document.getElementById('p-fitting-price').value = p.fitting_price || '6.00';
+  let _col=[]; try{_col=p.colours?(typeof p.colours==='string'?JSON.parse(p.colours):p.colours):[];}catch(e){_col=[];}
+  document.getElementById('p-colours').value=Array.isArray(_col)?_col.map(c=>c.name+', '+c.hex).join('\n'):'';
+  let _feat=[]; try{_feat=p.features?(typeof p.features==='string'?JSON.parse(p.features):p.features):[];}catch(e){_feat=[];}
+  document.querySelectorAll('.feature-btn').forEach(b=>b.classList.toggle('active',_feat.includes(b.dataset.feature)));
   if (p.img_url) {
     document.getElementById('p-img').value = p.img_url;
     document.getElementById('img-preview').src = p.img_url;
@@ -1969,6 +1977,9 @@ async function saveProduct() {
     is_featured: document.getElementById('flag-featured').classList.contains('active')?1:0,
     is_deal:     document.getElementById('flag-deal').classList.contains('active')?1:0,
     is_active:   document.getElementById('flag-active').classList.contains('active')?1:0,
+    fitting_price: parseFloat(document.getElementById('p-fitting-price').value)||6.00,
+    colours: JSON.stringify(document.getElementById('p-colours').value.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const[n,...h]=l.split(',');return{name:n.trim(),hex:(h.join(',').trim()||'#888888')};}).filter(c=>c.name)),
+    features: JSON.stringify([...document.querySelectorAll('.feature-btn.active')].map(b=>b.dataset.feature)),
   };
   const res  = await panelApi(id?`/products/${id}`:'/products', {method:id?'PUT':'POST', body:JSON.stringify(payload)});
   if (!res) return;
@@ -2258,6 +2269,26 @@ if (TOKEN && USER) showApp();
       <button class="room-btn" type="button" data-room="stairs" onclick="toggleRoom(this)"><i class="fa-solid fa-stairs"></i>Stairs</button>
       <button class="room-btn" type="button" data-room="kitchen" onclick="toggleRoom(this)"><i class="fa-solid fa-utensils"></i>Kitchen</button>
       <button class="room-btn" type="button" data-room="bathroom" onclick="toggleRoom(this)"><i class="fa-solid fa-shower"></i>Bathroom</button>
+    </div>
+
+    <div class="pm-divider"><i class="fa-solid fa-shield-halved"></i> Product Features</div>
+    <div class="flag-row">
+      <button class="flag-pill feature-btn" type="button" data-feature="stain" onclick="this.classList.toggle('active')"><i class="fa-solid fa-droplet-slash"></i> Stain Resistant</button>
+      <button class="flag-pill feature-btn" type="button" data-feature="pet" onclick="this.classList.toggle('active')"><i class="fa-solid fa-paw"></i> Pet Friendly</button>
+      <button class="flag-pill feature-btn" type="button" data-feature="bleach" onclick="this.classList.toggle('active')"><i class="fa-solid fa-spray-can"></i> Bleach Cleanable</button>
+      <button class="flag-pill feature-btn" type="button" data-feature="waterproof" onclick="this.classList.toggle('active')"><i class="fa-solid fa-shield-halved"></i> Waterproof</button>
+      <button class="flag-pill feature-btn" type="button" data-feature="scratch" onclick="this.classList.toggle('active')"><i class="fa-solid fa-shield"></i> Scratch Resistant</button>
+      <button class="flag-pill feature-btn" type="button" data-feature="easyClean" onclick="this.classList.toggle('active')"><i class="fa-solid fa-broom"></i> Easy Clean</button>
+      <button class="flag-pill feature-btn" type="button" data-feature="soft" onclick="this.classList.toggle('active')"><i class="fa-solid fa-feather"></i> Ultra Soft</button>
+      <button class="flag-pill feature-btn" type="button" data-feature="insulation" onclick="this.classList.toggle('active')"><i class="fa-solid fa-temperature-low"></i> Warm Underfoot</button>
+    </div>
+
+    <div class="pm-divider"><i class="fa-solid fa-palette"></i> Available Colours</div>
+    <div class="field">
+      <label>Colours (one per line: Name, #hex)</label>
+      <textarea id="p-colours" placeholder="Lundy Bay, #9B8E82
+Linen, #D4C9B8
+Driftwood, #A8957E" style="min-height:90px;font-family:monospace;font-size:.82rem"></textarea>
     </div>
 
     <div class="pm-divider"><i class="fa-solid fa-flag"></i> Visibility & Flags</div>

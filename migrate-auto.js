@@ -93,7 +93,11 @@ module.exports = async function(db) {
             );
         `);
 
-        // Seed admin user
+        // New product columns
+        await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS fitting_price REAL DEFAULT 6.00`);
+        await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS colours TEXT DEFAULT '[]'`);
+        await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS features TEXT DEFAULT '[]'`);
+
         const hash = bcrypt.hashSync('Admin@WYC2026!', 10);
         await db.query(`
             INSERT INTO admin_users (username, password_hash, role)
