@@ -2285,20 +2285,23 @@ if (TOKEN && USER) showApp();
       <button class="flag-pill feature-btn" type="button" data-feature="insulation" onclick="this.classList.toggle('active')"><i class="fa-solid fa-temperature-low"></i> Warm Underfoot</button>
     </div>
 
-    <div class="pm-divider"><i class="fa-solid fa-palette"></i> Available Colours</div>
+    <div class="pm-divider"><i class="fa-solid fa-palette"></i> Colour Variants</div>
     <div class="field">
-      <label>Add Colour Variant</label>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-        <input type="text" id="colour-name-input" placeholder="Colour name e.g. Linen">
-        <input type="text" id="colour-img-input" placeholder="Sample image URL (optional)">
+      <label>Add Colour</label>
+      <div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:10px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px">
+          <span style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ps-grey)">Name</span>
+          <input type="text" id="colour-name-input" placeholder="e.g. Linen">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ps-grey)">Tint</span>
+          <input type="color" id="colour-hex-input" value="#9B8E82" style="width:46px;height:46px;border:1.5px solid var(--ps-border);border-radius:8px;cursor:pointer;padding:3px;background:var(--ps-cream)">
+        </div>
+        <button type="button" onclick="addColourSwatch()" style="padding:12px 18px;background:var(--ps-red);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:.83rem;cursor:pointer;white-space:nowrap;height:46px">+ Add</button>
       </div>
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-        <input type="color" id="colour-hex-input" value="#9B8E82" style="width:44px;height:44px;border:1.5px solid var(--ps-border);border-radius:8px;cursor:pointer;padding:2px;background:var(--ps-cream)">
-        <span style="font-size:.78rem;color:var(--ps-grey)">Pick fallback tint colour</span>
-        <button type="button" onclick="addColourSwatch()" style="margin-left:auto;padding:10px 16px;background:var(--ps-red);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:.83rem;cursor:pointer;white-space:nowrap">+ Add Colour</button>
-      </div>
-      <div id="colour-swatches-list" style="display:flex;flex-wrap:wrap;gap:8px;min-height:32px"></div>
+      <div id="colour-swatches-list" style="display:flex;flex-direction:column;gap:10px;min-height:10px"></div>
       <input type="hidden" id="p-colours">
+      <p style="font-size:.72rem;color:var(--ps-grey);margin:8px 0 0">Each colour can have a sample photo — drag &amp; drop or click the image zone.</p>
     </div>
 
     <div class="pm-divider"><i class="fa-solid fa-flag"></i> Visibility & Flags</div>
@@ -2351,29 +2354,72 @@ function renderColourSwatches() {
   const list = document.getElementById('colour-swatches-list');
   if (!list) return;
   list.innerHTML = _colours.map((c, i) => {
-    const thumb = c.img_url
-      ? `<img src="${c.img_url}" style="width:32px;height:32px;object-fit:cover;border-radius:4px;border:1px solid rgba(0,0,0,.1);flex-shrink:0" onerror="this.style.display='none'">`
-      : `<div style="width:20px;height:20px;border-radius:50%;background:${c.hex};border:1.5px solid rgba(0,0,0,.1);flex-shrink:0"></div>`;
-    return `<div style="display:flex;align-items:center;gap:6px;background:var(--ps-cream);border:1.5px solid var(--ps-border);border-radius:8px;padding:6px 10px">
-      ${thumb}
-      <span style="font-size:.82rem;color:var(--ps-slate);font-weight:500">${c.name}</span>
-      <button type="button" onclick="removeColour(${i})" style="background:none;border:none;color:var(--ps-grey);cursor:pointer;padding:0 2px;font-size:.9rem;line-height:1">×</button>
+    const hasImg = !!c.img_url;
+    const imgSection = hasImg
+      ? `<div style="position:relative;width:64px;height:64px;border-radius:8px;overflow:hidden;flex-shrink:0;border:1.5px solid var(--ps-border)">
+           <img src="${c.img_url}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">
+           <button type="button" onclick="colourUploadClick(${i})" title="Replace image"
+             style="position:absolute;inset:0;background:rgba(0,0,0,.35);border:none;color:#fff;font-size:.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s"
+             onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
+             <i class="fa-solid fa-camera"></i>
+           </button>
+         </div>`
+      : `<div onclick="colourUploadClick(${i})"
+           style="width:64px;height:64px;border-radius:8px;border:2px dashed var(--ps-border);background:var(--ps-cream);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:3px;flex-shrink:0;transition:border-color .15s"
+           onmouseover="this.style.borderColor='var(--ps-red)'" onmouseout="this.style.borderColor='var(--ps-border)'">
+           <i class="fa-solid fa-cloud-arrow-up" style="color:var(--ps-red);font-size:.9rem"></i>
+           <span style="font-size:.6rem;color:var(--ps-grey);text-align:center;line-height:1.2">Add<br>Photo</span>
+         </div>`;
+    const uploading = c._uploading
+      ? `<div style="position:absolute;inset:0;border-radius:8px;background:rgba(255,255,255,.8);display:flex;align-items:center;justify-content:center">
+           <div style="width:18px;height:18px;border:2px solid var(--ps-border);border-top-color:var(--ps-red);border-radius:50%;animation:spin .7s linear infinite"></div>
+         </div>` : '';
+    return `<div style="display:flex;align-items:center;gap:12px;background:var(--ps-white);border:1.5px solid var(--ps-border);border-radius:10px;padding:10px 12px;position:relative">
+      <input type="file" id="colour-file-${i}" accept="image/*" style="display:none" onchange="handleColourFileSelect(${i}, this.files[0])">
+      <div style="position:relative">${imgSection}${uploading}</div>
+      <div style="display:flex;align-items:center;gap:8px;flex:1">
+        <div style="width:18px;height:18px;border-radius:50%;background:${c.hex};border:1.5px solid rgba(0,0,0,.1);flex-shrink:0"></div>
+        <span style="font-size:.9rem;color:var(--ps-slate);font-weight:600">${c.name}</span>
+      </div>
+      <button type="button" onclick="removeColour(${i})"
+        style="background:#fee2e2;border:none;color:#dc2626;border-radius:6px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0">
+        <i class="fa-solid fa-trash"></i>
+      </button>
     </div>`;
   }).join('');
-  document.getElementById('p-colours').value = JSON.stringify(_colours);
+  document.getElementById('p-colours').value = JSON.stringify(
+    _colours.map(c => ({ name: c.name, hex: c.hex, img_url: c.img_url || null }))
+  );
 }
 
 function addColourSwatch() {
-  const name    = document.getElementById('colour-name-input').value.trim();
-  const hex     = document.getElementById('colour-hex-input').value;
-  const img_url = document.getElementById('colour-img-input').value.trim();
+  const name = document.getElementById('colour-name-input').value.trim();
+  const hex  = document.getElementById('colour-hex-input').value;
   if (!name) { showToast('Enter a colour name first','error'); return; }
   if (_colours.find(c => c.name.toLowerCase() === name.toLowerCase())) {
     showToast('Colour already added','error'); return;
   }
-  _colours.push({ name, hex, img_url: img_url || null });
+  _colours.push({ name, hex, img_url: null });
   document.getElementById('colour-name-input').value = '';
-  document.getElementById('colour-img-input').value = '';
+  renderColourSwatches();
+}
+
+function colourUploadClick(i) {
+  const input = document.getElementById('colour-file-' + i);
+  if (input) input.click();
+}
+
+async function handleColourFileSelect(i, file) {
+  if (!file) return;
+  _colours[i]._uploading = true;
+  renderColourSwatches();
+  try {
+    const url = await uploadToCloudinary(file);
+    _colours[i].img_url = url;
+  } catch(e) {
+    showToast('Image upload failed','error');
+  }
+  _colours[i]._uploading = false;
   renderColourSwatches();
 }
 
