@@ -1903,7 +1903,7 @@ function openAddProduct() {
   document.getElementById('flag-deal').classList.remove('active');
   document.getElementById('flag-active').classList.add('active');
   document.getElementById('p-fitting-price').value = '6.00';
-  document.getElementById('p-colours').value = '';
+  loadColours([]);
   document.querySelectorAll('.feature-btn').forEach(b => b.classList.remove('active'));
   removeUploadedImage();
   initUploadZone();
@@ -1931,8 +1931,7 @@ async function editProduct(id) {
   document.getElementById('flag-deal').classList.toggle('active', !!p.is_deal);
   document.getElementById('flag-active').classList.toggle('active', !!p.is_active);
   document.getElementById('p-fitting-price').value = p.fitting_price || '6.00';
-  let _col=[]; try{_col=p.colours?(typeof p.colours==='string'?JSON.parse(p.colours):p.colours):[];}catch(e){_col=[];}
-  document.getElementById('p-colours').value=Array.isArray(_col)?_col.map(c=>c.name+', '+c.hex).join('\n'):'';
+  loadColours(p.colours);
   let _feat=[]; try{_feat=p.features?(typeof p.features==='string'?JSON.parse(p.features):p.features):[];}catch(e){_feat=[];}
   document.querySelectorAll('.feature-btn').forEach(b=>b.classList.toggle('active',_feat.includes(b.dataset.feature)));
   if (p.img_url) {
@@ -2230,6 +2229,9 @@ if (TOKEN && USER) showApp();
       <div class="field"><label>Was Price (£/m²)</label><input type="number" id="p-original-price" min="0" step="0.01" placeholder="Optional"></div>
       <div class="field"><label>Stock Level</label><input type="number" id="p-stock" min="0" value="0"></div>
     </div>
+    <div class="row2" style="margin-top:0">
+      <div class="field"><label>Fitting Price (£/m²)</label><input type="number" id="p-fitting-price" min="0" step="0.01" placeholder="6.00"></div>
+    </div>
 
     <div class="pm-divider"><i class="fa-solid fa-certificate"></i> Badge</div>
     <div class="row2">
@@ -2285,10 +2287,14 @@ if (TOKEN && USER) showApp();
 
     <div class="pm-divider"><i class="fa-solid fa-palette"></i> Available Colours</div>
     <div class="field">
-      <label>Colours (one per line: Name, #hex)</label>
-      <textarea id="p-colours" placeholder="Lundy Bay, #9B8E82
-Linen, #D4C9B8
-Driftwood, #A8957E" style="min-height:90px;font-family:monospace;font-size:.82rem"></textarea>
+      <label>Add Colour Variant</label>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+        <input type="text" id="colour-name-input" placeholder="e.g. Linen" style="flex:1">
+        <input type="color" id="colour-hex-input" value="#9B8E82" style="width:44px;height:44px;border:1.5px solid var(--ps-border);border-radius:8px;cursor:pointer;padding:2px;background:var(--ps-cream)">
+        <button type="button" onclick="addColourSwatch()" style="padding:10px 16px;background:var(--ps-red);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:.83rem;cursor:pointer;white-space:nowrap">+ Add</button>
+      </div>
+      <div id="colour-swatches-list" style="display:flex;flex-wrap:wrap;gap:8px;min-height:32px"></div>
+      <input type="hidden" id="p-colours">
     </div>
 
     <div class="pm-divider"><i class="fa-solid fa-flag"></i> Visibility & Flags</div>
@@ -2333,6 +2339,46 @@ document.addEventListener('DOMContentLoaded', function() {
   if (pm) document.body.appendChild(pm);
   if (om) document.body.appendChild(om);
 });
+
+// ── Colour swatch builder ──────────────────────────────────────
+let _colours = [];
+
+function renderColourSwatches() {
+  const list = document.getElementById('colour-swatches-list');
+  if (!list) return;
+  list.innerHTML = _colours.map((c, i) => `
+    <div style="display:flex;align-items:center;gap:6px;background:var(--ps-cream);border:1.5px solid var(--ps-border);border-radius:8px;padding:6px 10px">
+      <div style="width:20px;height:20px;border-radius:50%;background:${c.hex};border:1.5px solid rgba(0,0,0,.1);flex-shrink:0"></div>
+      <span style="font-size:.82rem;color:var(--ps-slate);font-weight:500">${c.name}</span>
+      <button type="button" onclick="removeColour(${i})" style="background:none;border:none;color:var(--ps-grey);cursor:pointer;padding:0 2px;font-size:.9rem;line-height:1">×</button>
+    </div>`).join('');
+  document.getElementById('p-colours').value = JSON.stringify(_colours);
+}
+
+function addColourSwatch() {
+  const name = document.getElementById('colour-name-input').value.trim();
+  const hex  = document.getElementById('colour-hex-input').value;
+  if (!name) { showToast('Enter a colour name first','error'); return; }
+  if (_colours.find(c => c.name.toLowerCase() === name.toLowerCase())) {
+    showToast('Colour already added','error'); return;
+  }
+  _colours.push({ name, hex });
+  document.getElementById('colour-name-input').value = '';
+  renderColourSwatches();
+}
+
+function removeColour(i) {
+  _colours.splice(i, 1);
+  renderColourSwatches();
+}
+
+function loadColours(data) {
+  try {
+    _colours = data ? (typeof data === 'string' ? JSON.parse(data) : data) : [];
+    if (!Array.isArray(_colours)) _colours = [];
+  } catch(e) { _colours = []; }
+  renderColourSwatches();
+}
 </script>
 </body>
 <!-- v3 --></html>
