@@ -1977,7 +1977,7 @@ async function saveProduct() {
     is_deal:     document.getElementById('flag-deal').classList.contains('active')?1:0,
     is_active:   document.getElementById('flag-active').classList.contains('active')?1:0,
     fitting_price: parseFloat(document.getElementById('p-fitting-price').value)||6.00,
-    colours: JSON.stringify(document.getElementById('p-colours').value.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const[n,...h]=l.split(',');return{name:n.trim(),hex:(h.join(',').trim()||'#888888')};}).filter(c=>c.name)),
+    colours: document.getElementById('p-colours').value || '[]',
     features: JSON.stringify([...document.querySelectorAll('.feature-btn.active')].map(b=>b.dataset.feature)),
   };
   const res  = await panelApi(id?`/products/${id}`:'/products', {method:id?'PUT':'POST', body:JSON.stringify(payload)});
@@ -2288,10 +2288,14 @@ if (TOKEN && USER) showApp();
     <div class="pm-divider"><i class="fa-solid fa-palette"></i> Available Colours</div>
     <div class="field">
       <label>Add Colour Variant</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <input type="text" id="colour-name-input" placeholder="Colour name e.g. Linen">
+        <input type="text" id="colour-img-input" placeholder="Sample image URL (optional)">
+      </div>
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-        <input type="text" id="colour-name-input" placeholder="e.g. Linen" style="flex:1">
         <input type="color" id="colour-hex-input" value="#9B8E82" style="width:44px;height:44px;border:1.5px solid var(--ps-border);border-radius:8px;cursor:pointer;padding:2px;background:var(--ps-cream)">
-        <button type="button" onclick="addColourSwatch()" style="padding:10px 16px;background:var(--ps-red);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:.83rem;cursor:pointer;white-space:nowrap">+ Add</button>
+        <span style="font-size:.78rem;color:var(--ps-grey)">Pick fallback tint colour</span>
+        <button type="button" onclick="addColourSwatch()" style="margin-left:auto;padding:10px 16px;background:var(--ps-red);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:.83rem;cursor:pointer;white-space:nowrap">+ Add Colour</button>
       </div>
       <div id="colour-swatches-list" style="display:flex;flex-wrap:wrap;gap:8px;min-height:32px"></div>
       <input type="hidden" id="p-colours">
@@ -2346,24 +2350,30 @@ let _colours = [];
 function renderColourSwatches() {
   const list = document.getElementById('colour-swatches-list');
   if (!list) return;
-  list.innerHTML = _colours.map((c, i) => `
-    <div style="display:flex;align-items:center;gap:6px;background:var(--ps-cream);border:1.5px solid var(--ps-border);border-radius:8px;padding:6px 10px">
-      <div style="width:20px;height:20px;border-radius:50%;background:${c.hex};border:1.5px solid rgba(0,0,0,.1);flex-shrink:0"></div>
+  list.innerHTML = _colours.map((c, i) => {
+    const thumb = c.img_url
+      ? `<img src="${c.img_url}" style="width:32px;height:32px;object-fit:cover;border-radius:4px;border:1px solid rgba(0,0,0,.1);flex-shrink:0" onerror="this.style.display='none'">`
+      : `<div style="width:20px;height:20px;border-radius:50%;background:${c.hex};border:1.5px solid rgba(0,0,0,.1);flex-shrink:0"></div>`;
+    return `<div style="display:flex;align-items:center;gap:6px;background:var(--ps-cream);border:1.5px solid var(--ps-border);border-radius:8px;padding:6px 10px">
+      ${thumb}
       <span style="font-size:.82rem;color:var(--ps-slate);font-weight:500">${c.name}</span>
       <button type="button" onclick="removeColour(${i})" style="background:none;border:none;color:var(--ps-grey);cursor:pointer;padding:0 2px;font-size:.9rem;line-height:1">×</button>
-    </div>`).join('');
+    </div>`;
+  }).join('');
   document.getElementById('p-colours').value = JSON.stringify(_colours);
 }
 
 function addColourSwatch() {
-  const name = document.getElementById('colour-name-input').value.trim();
-  const hex  = document.getElementById('colour-hex-input').value;
+  const name    = document.getElementById('colour-name-input').value.trim();
+  const hex     = document.getElementById('colour-hex-input').value;
+  const img_url = document.getElementById('colour-img-input').value.trim();
   if (!name) { showToast('Enter a colour name first','error'); return; }
   if (_colours.find(c => c.name.toLowerCase() === name.toLowerCase())) {
     showToast('Colour already added','error'); return;
   }
-  _colours.push({ name, hex });
+  _colours.push({ name, hex, img_url: img_url || null });
   document.getElementById('colour-name-input').value = '';
+  document.getElementById('colour-img-input').value = '';
   renderColourSwatches();
 }
 
