@@ -97,6 +97,7 @@ module.exports = async function(db) {
         await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS fitting_price REAL DEFAULT 6.00`);
         await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS colours TEXT DEFAULT '[]'`);
         await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS features TEXT DEFAULT '[]'`);
+    await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS likes INTEGER DEFAULT 0`);
 
         const hash = bcrypt.hashSync('Admin@WYC2026!', 10);
         await db.query(`
