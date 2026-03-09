@@ -98,6 +98,11 @@ module.exports = async function(db) {
         await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS colours TEXT DEFAULT '[]'`);
         await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS features TEXT DEFAULT '[]'`);
     await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS likes INTEGER DEFAULT 0`);
+    await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS colour_family TEXT DEFAULT ''`);
+    await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS fibre TEXT DEFAULT ''`);
+    await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS carpet_style TEXT DEFAULT ''`);
+    await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS thickness TEXT DEFAULT ''`);
+    await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS density TEXT DEFAULT ''`);
 
         const hash = bcrypt.hashSync('Admin@WYC2026!', 10);
         await db.query(`

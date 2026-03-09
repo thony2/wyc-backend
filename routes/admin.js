@@ -129,6 +129,7 @@ module.exports = (db) => {
                 stock_level, description, img_url, badge, badge_type, rooms,
                 durability, softness, is_featured, is_deal, is_active,
                 fitting_price, colours, features,
+                colour_family, fibre, carpet_style, softness_label, thickness, density,
             } = req.body;
 
             if (!name || price == null) return res.status(400).json({ error: 'Name and price required' });
@@ -138,8 +139,9 @@ module.exports = (db) => {
                     (name, category_slug, subcategory, sku, price, original_price,
                      stock_level, description, img_url, badge, badge_type, rooms,
                      durability, softness, is_featured, is_deal, is_active,
-                     fitting_price, colours, features)
-                 VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
+                     fitting_price, colours, features,
+                     colour_family, fibre, carpet_style, softness_label, thickness, density)
+                 VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)
                  RETURNING id`,
                 [
                     name, category_slug, subcategory || null, sku || null, price, original_price || null,
@@ -147,6 +149,8 @@ module.exports = (db) => {
                     rooms || '[]', durability || 3, softness || 3,
                     is_featured || 0, is_deal || 0, is_active != null ? is_active : 1,
                     fitting_price || 6.00, colours || '[]', features || '[]',
+                    colour_family || '', fibre || '', carpet_style || '',
+                    softness_label || '', thickness || '', density || '',
                 ]
             );
 
@@ -164,6 +168,7 @@ module.exports = (db) => {
                 stock_level, description, img_url, badge, badge_type, rooms,
                 durability, softness, is_featured, is_deal, is_active,
                 fitting_price, colours, features,
+                colour_family, fibre, carpet_style, softness_label, thickness, density,
             } = req.body;
 
             await db.query(
@@ -172,14 +177,19 @@ module.exports = (db) => {
                     original_price=$6, stock_level=$7, description=$8, img_url=$9,
                     badge=$10, badge_type=$11, rooms=$12, durability=$13, softness=$14,
                     is_featured=$15, is_deal=$16, is_active=$17,
-                    fitting_price=$18, colours=$19, features=$20, updated_at=NOW()
-                 WHERE id=$21`,
+                    fitting_price=$18, colours=$19, features=$20,
+                    colour_family=$21, fibre=$22, carpet_style=$23,
+                    softness_label=$24, thickness=$25, density=$26,
+                    updated_at=NOW()
+                 WHERE id=$27`,
                 [
                     name, category_slug, subcategory || null, sku || null, price,
                     original_price || null, stock_level || 0, description || null, img_url || null,
                     badge || null, badge_type || null, rooms || '[]', durability || 3, softness || 3,
                     is_featured || 0, is_deal || 0, is_active != null ? is_active : 1,
                     fitting_price || 6.00, colours || '[]', features || '[]',
+                    colour_family || '', fibre || '', carpet_style || '',
+                    softness_label || '', thickness || '', density || '',
                     req.params.id,
                 ]
             );

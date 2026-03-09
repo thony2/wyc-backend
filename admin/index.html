@@ -694,6 +694,11 @@ html, body { overflow-x: hidden; max-width: 100vw; }
     margin-bottom: 14px;
   }
 }
+.cf-dot { display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:5px;border:1px solid rgba(0,0,0,.1);vertical-align:middle;flex-shrink:0; }
+.cf-btn { display:inline-flex;align-items:center; }
+.pm-attr-grid { display:flex;flex-direction:column;gap:16px;margin-bottom:4px; }
+.pm-attr-group {}
+.pm-attr-label { font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#888;margin-bottom:8px; }
 </style>
 </head>
 <body>
@@ -1905,6 +1910,7 @@ function openAddProduct() {
   document.getElementById('p-fitting-price').value = '6.00';
   loadColours([]);
   document.querySelectorAll('.feature-btn').forEach(b => b.classList.remove('active'));
+  loadAttrs({});
   removeUploadedImage();
   initUploadZone();
   document.getElementById('product-modal').classList.add('open');
@@ -1934,6 +1940,7 @@ async function editProduct(id) {
   loadColours(p.colours);
   let _feat=[]; try{_feat=p.features?(typeof p.features==='string'?JSON.parse(p.features):p.features):[];}catch(e){_feat=[];}
   document.querySelectorAll('.feature-btn').forEach(b=>b.classList.toggle('active',_feat.includes(b.dataset.feature)));
+  loadAttrs(p);
   if (p.img_url) {
     document.getElementById('p-img').value = p.img_url;
     document.getElementById('img-preview').src = p.img_url;
@@ -1951,6 +1958,32 @@ function togglePmPill(btn) { btn.classList.toggle('pm-pill-active'); }
 function togglePmFlag(btn) { btn.classList.toggle('pm-pill-active'); }
 function togglePmPill(btn) { btn.classList.toggle('pm-pill-active'); }
 function togglePmFlag(btn) { btn.classList.toggle('pm-pill-active'); }
+function setCF(btn) {
+    document.querySelectorAll('.cf-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('p-colour-family').value = btn.dataset.cf;
+}
+function setAttr(btn) {
+    const attr = btn.dataset.attr;
+    document.querySelectorAll(`.attr-btn[data-attr="${attr}"]`).forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const map = {fibre:'p-fibre',carpet_style:'p-carpet-style',softness_label:'p-softness-label',thickness:'p-thickness',density:'p-density'};
+    if (map[attr]) document.getElementById(map[attr]).value = btn.dataset.val;
+}
+function loadAttrs(p) {
+    document.querySelectorAll('.cf-btn').forEach(b => b.classList.remove('active'));
+    const cf = p.colour_family || '';
+    document.getElementById('p-colour-family').value = cf;
+    if (cf) { const b = document.querySelector(`.cf-btn[data-cf="${cf}"]`); if (b) b.classList.add('active'); }
+    const attrMap = {fibre:'p-fibre',carpet_style:'p-carpet-style',softness_label:'p-softness-label',thickness:'p-thickness',density:'p-density'};
+    Object.entries(attrMap).forEach(([attr, hid]) => {
+        document.querySelectorAll(`.attr-btn[data-attr="${attr}"]`).forEach(b => b.classList.remove('active'));
+        const val = p[attr] || '';
+        document.getElementById(hid).value = val;
+        if (val) { const b = document.querySelector(`.attr-btn[data-attr="${attr}"][data-val="${val}"]`); if (b) b.classList.add('active'); }
+    });
+}
+
 async function saveProduct() {
   const id   = document.getElementById('p-id').value;
   const name = document.getElementById('p-name').value.trim();
@@ -1979,6 +2012,12 @@ async function saveProduct() {
     fitting_price: parseFloat(document.getElementById('p-fitting-price').value)||6.00,
     colours: document.getElementById('p-colours').value || '[]',
     features: JSON.stringify([...document.querySelectorAll('.feature-btn.active')].map(b=>b.dataset.feature)),
+    colour_family: document.getElementById('p-colour-family').value || '',
+    fibre: document.getElementById('p-fibre').value || '',
+    carpet_style: document.getElementById('p-carpet-style').value || '',
+    softness_label: document.getElementById('p-softness-label').value || '',
+    thickness: document.getElementById('p-thickness').value || '',
+    density: document.getElementById('p-density').value || '',
   };
   const res  = await panelApi(id?`/products/${id}`:'/products', {method:id?'PUT':'POST', body:JSON.stringify(payload)});
   if (!res) return;
@@ -2284,6 +2323,80 @@ if (TOKEN && USER) showApp();
       <button class="flag-pill feature-btn" type="button" data-feature="soft" onclick="this.classList.toggle('active')"><i class="fa-solid fa-feather"></i> Ultra Soft</button>
       <button class="flag-pill feature-btn" type="button" data-feature="insulation" onclick="this.classList.toggle('active')"><i class="fa-solid fa-temperature-low"></i> Warm Underfoot</button>
     </div>
+
+    <div class="pm-divider"><i class="fa-solid fa-circle-half-stroke"></i> Colour Family</div>
+    <div class="flag-row" id="colour-family-row">
+      <button class="flag-pill cf-btn" type="button" data-cf="greys" onclick="setCF(this)"><span class="cf-dot" style="background:#9B9B9B"></span>Greys</button>
+      <button class="flag-pill cf-btn" type="button" data-cf="beiges" onclick="setCF(this)"><span class="cf-dot" style="background:#C9B99A"></span>Beiges</button>
+      <button class="flag-pill cf-btn" type="button" data-cf="browns" onclick="setCF(this)"><span class="cf-dot" style="background:#8B5E3C"></span>Browns</button>
+      <button class="flag-pill cf-btn" type="button" data-cf="creams" onclick="setCF(this)"><span class="cf-dot" style="background:#F5F0E8"></span>Creams</button>
+      <button class="flag-pill cf-btn" type="button" data-cf="blacks" onclick="setCF(this)"><span class="cf-dot" style="background:#1A1A1A"></span>Blacks</button>
+      <button class="flag-pill cf-btn" type="button" data-cf="blues" onclick="setCF(this)"><span class="cf-dot" style="background:#2B5EA7"></span>Blues</button>
+      <button class="flag-pill cf-btn" type="button" data-cf="golds" onclick="setCF(this)"><span class="cf-dot" style="background:#C49A3C"></span>Golds</button>
+      <button class="flag-pill cf-btn" type="button" data-cf="greens" onclick="setCF(this)"><span class="cf-dot" style="background:#2D6A4F"></span>Greens</button>
+      <button class="flag-pill cf-btn" type="button" data-cf="multicolour" onclick="setCF(this)"><span class="cf-dot" style="background:linear-gradient(135deg,#E03040,#C49A3C,#2B5EA7)"></span>Multicolour</button>
+      <button class="flag-pill cf-btn" type="button" data-cf="oranges" onclick="setCF(this)"><span class="cf-dot" style="background:#E87722"></span>Oranges</button>
+      <button class="flag-pill cf-btn" type="button" data-cf="reds" onclick="setCF(this)"><span class="cf-dot" style="background:#E03040"></span>Reds</button>
+      <button class="flag-pill cf-btn" type="button" data-cf="silvers" onclick="setCF(this)"><span class="cf-dot" style="background:#C0C0C0"></span>Silvers</button>
+      <button class="flag-pill cf-btn" type="button" data-cf="yellows" onclick="setCF(this)"><span class="cf-dot" style="background:#F5C518"></span>Yellows</button>
+    </div>
+    <input type="hidden" id="p-colour-family">
+
+    <div class="pm-divider"><i class="fa-solid fa-layer-group"></i> Carpet Attributes</div>
+    <div class="pm-attr-grid">
+      <div class="pm-attr-group">
+        <div class="pm-attr-label">Fibre</div>
+        <div class="flag-row">
+          <button class="flag-pill attr-btn" type="button" data-attr="fibre" data-val="100% Recycled Polyester" onclick="setAttr(this)">100% Recycled Polyester</button>
+          <button class="flag-pill attr-btn" type="button" data-attr="fibre" data-val="100% Polyester" onclick="setAttr(this)">100% Polyester</button>
+          <button class="flag-pill attr-btn" type="button" data-attr="fibre" data-val="100% Polypropylene" onclick="setAttr(this)">100% Polypropylene</button>
+          <button class="flag-pill attr-btn" type="button" data-attr="fibre" data-val="100% Wool" onclick="setAttr(this)">100% Wool</button>
+          <button class="flag-pill attr-btn" type="button" data-attr="fibre" data-val="Mixed Fibres" onclick="setAttr(this)">Mixed Fibres</button>
+          <button class="flag-pill attr-btn" type="button" data-attr="fibre" data-val="Natural Fibre" onclick="setAttr(this)">Natural Fibre</button>
+        </div>
+      </div>
+      <div class="pm-attr-group">
+        <div class="pm-attr-label">Style</div>
+        <div class="flag-row">
+          <button class="flag-pill attr-btn" type="button" data-attr="carpet_style" data-val="Herringbone" onclick="setAttr(this)">Herringbone</button>
+          <button class="flag-pill attr-btn" type="button" data-attr="carpet_style" data-val="Loop Pile" onclick="setAttr(this)">Loop Pile</button>
+          <button class="flag-pill attr-btn" type="button" data-attr="carpet_style" data-val="Velvet" onclick="setAttr(this)">Velvet</button>
+          <button class="flag-pill attr-btn" type="button" data-attr="carpet_style" data-val="Twist" onclick="setAttr(this)">Twist</button>
+          <button class="flag-pill attr-btn" type="button" data-attr="carpet_style" data-val="Saxony" onclick="setAttr(this)">Saxony</button>
+          <button class="flag-pill attr-btn" type="button" data-attr="carpet_style" data-val="Berber" onclick="setAttr(this)">Berber</button>
+        </div>
+      </div>
+      <div class="pm-attr-group">
+        <div class="pm-attr-label">Softness</div>
+        <div class="flag-row">
+          <button class="flag-pill attr-btn" type="button" data-attr="softness_label" data-val="Firm" onclick="setAttr(this)">Firm</button>
+          <button class="flag-pill attr-btn" type="button" data-attr="softness_label" data-val="Soft" onclick="setAttr(this)">Soft</button>
+        </div>
+      </div>
+      <div class="pm-attr-group">
+        <div class="pm-attr-label">Thickness</div>
+        <div class="flag-row">
+          <button class="flag-pill attr-btn" type="button" data-attr="thickness" data-val="Extra Short" onclick="setAttr(this)">Extra Short</button>
+          <button class="flag-pill attr-btn" type="button" data-attr="thickness" data-val="Short" onclick="setAttr(this)">Short</button>
+          <button class="flag-pill attr-btn" type="button" data-attr="thickness" data-val="Medium" onclick="setAttr(this)">Medium</button>
+        </div>
+      </div>
+      <div class="pm-attr-group">
+        <div class="pm-attr-label">Density</div>
+        <div class="flag-row">
+          <button class="flag-pill attr-btn" type="button" data-attr="density" data-val="Extra Loose" onclick="setAttr(this)">Extra Loose</button>
+          <button class="flag-pill attr-btn" type="button" data-attr="density" data-val="Loose" onclick="setAttr(this)">Loose</button>
+          <button class="flag-pill attr-btn" type="button" data-attr="density" data-val="Medium" onclick="setAttr(this)">Medium</button>
+          <button class="flag-pill attr-btn" type="button" data-attr="density" data-val="Compact" onclick="setAttr(this)">Compact</button>
+          <button class="flag-pill attr-btn" type="button" data-attr="density" data-val="Extra Compact" onclick="setAttr(this)">Extra Compact</button>
+        </div>
+      </div>
+    </div>
+    <input type="hidden" id="p-fibre">
+    <input type="hidden" id="p-carpet-style">
+    <input type="hidden" id="p-softness-label">
+    <input type="hidden" id="p-thickness">
+    <input type="hidden" id="p-density">
 
     <div class="pm-divider"><i class="fa-solid fa-palette"></i> Colour Variants</div>
     <div class="field">
