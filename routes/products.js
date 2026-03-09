@@ -55,5 +55,23 @@ module.exports = (db) => {
         }
     });
 
+    // POST /api/products/:id/like — toggle like
+    router.post('/:id/like', async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { action } = req.body; // 'like' or 'unlike'
+            const delta = action === 'unlike' ? -1 : 1;
+            const result = await db.query(
+                `UPDATE products SET likes = GREATEST(COALESCE(likes,0) + $1, 0) WHERE id = $2 RETURNING likes`,
+                [delta, id]
+            );
+            if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });
+            res.json({ likes: result.rows[0].likes });
+        } catch (e) {
+            console.error('Like error:', e);
+            res.status(500).json({ error: 'Server error' });
+        }
+    });
+
     return router;
 };
