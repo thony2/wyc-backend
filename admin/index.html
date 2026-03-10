@@ -1998,7 +1998,7 @@ async function saveProduct() {
   if (!name) { showToast('Product name is required','error'); return; }
   const price = parseFloat(document.getElementById('p-price').value);
   if (isNaN(price)||price<0) { showToast('Valid price is required','error'); return; }
-  const rooms = [...document.querySelectorAll('.room-btn.active')].map(b=>b.dataset.room);
+  const rooms = JSON.stringify([...document.querySelectorAll('.room-btn.active')].map(b=>b.dataset.room));
   const payload = {
     name,
     category_slug:     document.getElementById('p-category').value,
