@@ -529,9 +529,10 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #product-modal .upload-spinner span{font-size:.78rem;color:var(--ps-grey)}
 #product-modal .pm-divider{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ps-grey);margin:20px 0 12px;padding-bottom:7px;border-bottom:1px solid var(--ps-border);display:flex;align-items:center;gap:7px}
 #product-modal .pm-divider i{color:var(--ps-red)}
-#product-modal .star-row{display:flex;gap:5px}
-#product-modal .star-btn{background:var(--ps-cream);border:1.5px solid var(--ps-border);border-radius:6px;width:34px;height:34px;font-size:.9rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;color:var(--ps-grey)}
-#product-modal .star-btn.active{background:#fef3c7;border-color:#f59e0b;color:#f59e0b}
+#product-modal .bar-rating{display:flex;gap:5px;align-items:center}
+#product-modal .bar-seg-btn{flex:1;height:28px;border-radius:5px;border:1.5px solid var(--ps-border);background:var(--ps-cream);cursor:pointer;transition:all .15s;position:relative}
+#product-modal .bar-seg-btn.active{background:#1B3A5C;border-color:#1B3A5C}
+#product-modal .bar-rating-val{font-size:.78rem;font-weight:700;color:#1B3A5C;width:28px;text-align:right;flex-shrink:0}
 #product-modal .flag-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
 #product-modal .flag-pill{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:100px;border:1.5px solid var(--ps-border);background:var(--ps-white);color:var(--ps-grey);font-size:.82rem;font-weight:500;cursor:pointer;transition:all .15s;font-family:inherit;user-select:none}
 #product-modal .flag-pill.active{background:var(--ps-red);border-color:var(--ps-red);color:white}
@@ -1868,9 +1869,11 @@ function removeUploadedImage() {
   document.getElementById('p-img-file').value = '';
 }
 
-function setStar(type, val) {
+function setBar(type, val) {
   document.getElementById('p-' + type).value = val;
-  document.querySelectorAll('#' + type + '-stars .star-btn').forEach((btn, i) => btn.classList.toggle('active', i < val));
+  document.querySelectorAll('#' + type + '-bars .bar-seg-btn').forEach((btn, i) => btn.classList.toggle('active', i < val));
+  const valEl = document.getElementById(type + '-val');
+  if (valEl) valEl.textContent = val + '/5';
 }
 
 function toggleRoom(btn) { btn.classList.toggle('active'); }
@@ -1901,8 +1904,8 @@ function openAddProduct() {
   document.getElementById('p-desc').value = '';
   document.getElementById('p-badge').value = '';
   document.getElementById('p-badge-type').value = '';
-  setStar('durability', 3);
-  setStar('softness', 3);
+  setBar('durability', 3);
+  setBar('softness', 3);
   document.querySelectorAll('.room-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('flag-featured').classList.remove('active');
   document.getElementById('flag-deal').classList.remove('active');
@@ -1929,8 +1932,8 @@ async function editProduct(id) {
   document.getElementById('p-desc').value = p.description||'';
   document.getElementById('p-badge').value = p.badge||'';
   document.getElementById('p-badge-type').value = p.badge_type||'';
-  setStar('durability', p.durability||3);
-  setStar('softness', p.softness||3);
+  setBar('durability', p.durability||3);
+  setBar('softness', p.softness||3);
   let rooms=[]; try{ const r=p.rooms?(typeof p.rooms==='string'?JSON.parse(p.rooms):p.rooms):[]; rooms=Array.isArray(r)?r:[]; }catch(e){ rooms=[]; }
   document.querySelectorAll('.room-btn').forEach(b => b.classList.toggle('active', rooms.includes(b.dataset.room)));
   document.getElementById('flag-featured').classList.toggle('active', !!p.is_featured);
@@ -2281,22 +2284,24 @@ if (TOKEN && USER) showApp();
     <div class="pm-divider"><i class="fa-solid fa-star"></i> Ratings</div>
     <div class="ratings-grid">
       <div class="field"><label>Durability</label>
-        <div class="star-row" id="durability-stars">
-          <button class="star-btn" type="button" onclick="setStar('durability',1)"><i class="fa-solid fa-star"></i></button>
-          <button class="star-btn" type="button" onclick="setStar('durability',2)"><i class="fa-solid fa-star"></i></button>
-          <button class="star-btn" type="button" onclick="setStar('durability',3)"><i class="fa-solid fa-star"></i></button>
-          <button class="star-btn" type="button" onclick="setStar('durability',4)"><i class="fa-solid fa-star"></i></button>
-          <button class="star-btn" type="button" onclick="setStar('durability',5)"><i class="fa-solid fa-star"></i></button>
+        <div class="bar-rating" id="durability-bars">
+          <button class="bar-seg-btn" type="button" onclick="setBar('durability',1)"></button>
+          <button class="bar-seg-btn" type="button" onclick="setBar('durability',2)"></button>
+          <button class="bar-seg-btn" type="button" onclick="setBar('durability',3)"></button>
+          <button class="bar-seg-btn" type="button" onclick="setBar('durability',4)"></button>
+          <button class="bar-seg-btn" type="button" onclick="setBar('durability',5)"></button>
+          <span class="bar-rating-val" id="durability-val">3/5</span>
         </div>
         <input type="hidden" id="p-durability" value="3">
       </div>
       <div class="field"><label>Softness</label>
-        <div class="star-row" id="softness-stars">
-          <button class="star-btn" type="button" onclick="setStar('softness',1)"><i class="fa-solid fa-star"></i></button>
-          <button class="star-btn" type="button" onclick="setStar('softness',2)"><i class="fa-solid fa-star"></i></button>
-          <button class="star-btn" type="button" onclick="setStar('softness',3)"><i class="fa-solid fa-star"></i></button>
-          <button class="star-btn" type="button" onclick="setStar('softness',4)"><i class="fa-solid fa-star"></i></button>
-          <button class="star-btn" type="button" onclick="setStar('softness',5)"><i class="fa-solid fa-star"></i></button>
+        <div class="bar-rating" id="softness-bars">
+          <button class="bar-seg-btn" type="button" onclick="setBar('softness',1)"></button>
+          <button class="bar-seg-btn" type="button" onclick="setBar('softness',2)"></button>
+          <button class="bar-seg-btn" type="button" onclick="setBar('softness',3)"></button>
+          <button class="bar-seg-btn" type="button" onclick="setBar('softness',4)"></button>
+          <button class="bar-seg-btn" type="button" onclick="setBar('softness',5)"></button>
+          <span class="bar-rating-val" id="softness-val">3/5</span>
         </div>
         <input type="hidden" id="p-softness" value="3">
       </div>
