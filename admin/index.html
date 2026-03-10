@@ -1921,7 +1921,8 @@ function openAddProduct() {
   document.getElementById('product-modal').classList.add('open');
 }
 async function editProduct(id) {
-  const p = allProducts.find(x=>x.id==id); if (!p) return;
+  const _res = await panelApi(`/products/${id}`); if (!_res) return;
+  const p = await _res.json(); if (!p || !p.id) return;
   document.getElementById('modal-title').textContent = 'Edit Product';
   document.getElementById('p-id').value = p.id;
   document.getElementById('p-name').value = p.name||'';

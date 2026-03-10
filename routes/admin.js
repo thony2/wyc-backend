@@ -113,6 +113,16 @@ module.exports = (db) => {
         }
     });
 
+    router.get('/products/:id', requireAuth, async (req, res) => {
+        try {
+            const result = await db.query('SELECT * FROM products WHERE id=$1', [req.params.id]);
+            if (!result.rows.length) return res.status(404).json({ error: 'Not found' });
+            res.json(result.rows[0]);
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    });
+
     router.get('/products', requireAuth, async (req, res) => {
         try {
             const result = await db.query('SELECT * FROM products ORDER BY created_at DESC');
