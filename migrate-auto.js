@@ -103,6 +103,7 @@ module.exports = async function(db) {
     await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS carpet_style TEXT DEFAULT ''`);
     await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS thickness TEXT DEFAULT ''`);
     await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS density TEXT DEFAULT ''`);
+    await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS softness_label TEXT DEFAULT ''`);
 
         const hash = bcrypt.hashSync('Admin@WYC2026!', 10);
         await db.query(`
