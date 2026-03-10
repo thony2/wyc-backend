@@ -157,6 +157,7 @@ module.exports = (db) => {
             await audit(db, req.user, 'CREATE', 'products', result.rows[0]?.id, req.body);
             res.status(201).json({ id: result.rows[0]?.id, success: true });
         } catch (e) {
+            console.error('[PRODUCT CREATE ERROR]', e);
             res.status(500).json({ error: e.message });
         }
     });
@@ -197,6 +198,7 @@ module.exports = (db) => {
             await audit(db, req.user, 'UPDATE', 'products', req.params.id, req.body);
             res.json({ success: true });
         } catch (e) {
+            console.error('[PRODUCT UPDATE ERROR]', e);
             res.status(500).json({ error: e.message });
         }
     });
