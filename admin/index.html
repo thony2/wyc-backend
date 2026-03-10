@@ -1906,6 +1906,8 @@ function openAddProduct() {
   document.getElementById('p-badge-type').value = '';
   setBar('durability', 3);
   setBar('softness', 3);
+  setBar('thickness', 3);
+  setBar('density', 3);
   document.querySelectorAll('.room-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('flag-featured').classList.remove('active');
   document.getElementById('flag-deal').classList.remove('active');
@@ -1934,6 +1936,8 @@ async function editProduct(id) {
   document.getElementById('p-badge-type').value = p.badge_type||'';
   setBar('durability', p.durability||3);
   setBar('softness', p.softness||3);
+  setBar('thickness', p.thickness_bar||3);
+  setBar('density', p.density_bar||3);
   let rooms=[]; try{ const r=p.rooms?(typeof p.rooms==='string'?JSON.parse(p.rooms):p.rooms):[]; rooms=Array.isArray(r)?r:[]; }catch(e){ rooms=[]; }
   document.querySelectorAll('.room-btn').forEach(b => b.classList.toggle('active', rooms.includes(b.dataset.room)));
   document.getElementById('flag-featured').classList.toggle('active', !!p.is_featured);
@@ -2304,6 +2308,30 @@ if (TOKEN && USER) showApp();
           <span class="bar-rating-val" id="softness-val">3/5</span>
         </div>
         <input type="hidden" id="p-softness" value="3">
+      </div>
+    </div>
+    <div class="ratings-grid" style="margin-top:12px">
+      <div class="field"><label>Thickness</label>
+        <div class="bar-rating" id="thickness-bars">
+          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',1)"></button>
+          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',2)"></button>
+          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',3)"></button>
+          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',4)"></button>
+          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',5)"></button>
+          <span class="bar-rating-val" id="thickness-val">3/5</span>
+        </div>
+        <input type="hidden" id="p-thickness-bar" value="3">
+      </div>
+      <div class="field"><label>Density</label>
+        <div class="bar-rating" id="density-bars">
+          <button class="bar-seg-btn" type="button" onclick="setBar('density',1)"></button>
+          <button class="bar-seg-btn" type="button" onclick="setBar('density',2)"></button>
+          <button class="bar-seg-btn" type="button" onclick="setBar('density',3)"></button>
+          <button class="bar-seg-btn" type="button" onclick="setBar('density',4)"></button>
+          <button class="bar-seg-btn" type="button" onclick="setBar('density',5)"></button>
+          <span class="bar-rating-val" id="density-val">3/5</span>
+        </div>
+        <input type="hidden" id="p-density-bar" value="3">
       </div>
     </div>
 
