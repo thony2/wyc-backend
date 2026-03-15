@@ -1,6 +1,7 @@
 'use strict';
 
 require('dotenv').config();
+require('./migrate-auto');
 
 const express      = require('express');
 const cookieParser = require('cookie-parser');

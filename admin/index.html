@@ -514,6 +514,116 @@ span.flatpickr-weekday{background:transparent!important;color:#6B7280!important;
 #product-modal .pm-pill i{font-size:.72rem}
 #product-modal .modal-x{background:var(--ps-cream);border:none;width:32px;height:32px;border-radius:50%;font-size:.9rem;cursor:pointer;color:var(--ps-grey);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
+/* ─────────────────────────────────────────────────────
+   PRODUCT MODAL — TABBED REDESIGN
+───────────────────────────────────────────────────── */
+#product-modal .modal { max-width: 800px; }
+
+/* Tab bar */
+#product-modal .pm-tabs {
+  display: flex; gap: 0; border-bottom: 2px solid var(--ps-border);
+  padding: 0 24px; background: var(--ps-cream); position: sticky;
+  top: 61px; z-index: 2; overflow-x: auto; scrollbar-width: none;
+}
+#product-modal .pm-tabs::-webkit-scrollbar { display: none; }
+#product-modal .pm-tab {
+  padding: 11px 18px; font-size: .82rem; font-weight: 600;
+  color: var(--ps-grey); border: none; border-bottom: 2px solid transparent;
+  background: none; cursor: pointer; white-space: nowrap;
+  margin-bottom: -2px; font-family: inherit; transition: color .15s;
+  display: flex; align-items: center; gap: 6px;
+}
+#product-modal .pm-tab i { font-size: .72rem; }
+#product-modal .pm-tab:hover { color: var(--ps-slate); }
+#product-modal .pm-tab.active { color: var(--ps-red); border-bottom-color: var(--ps-red); }
+#product-modal .pm-tab-badge {
+  background: var(--ps-red); color: #fff; font-size: .6rem;
+  font-weight: 700; padding: 1px 5px; border-radius: 20px; min-width: 16px;
+  text-align: center; line-height: 1.4;
+}
+
+/* Tab panels */
+#product-modal .pm-panel { display: none; padding: 20px 24px; }
+#product-modal .pm-panel.active { display: block; }
+
+/* Core tab 2-col layout */
+#product-modal .pm-core-grid {
+  display: grid; grid-template-columns: 220px 1fr; gap: 20px; align-items: start;
+}
+@media (max-width: 640px) {
+  #product-modal .pm-core-grid { grid-template-columns: 1fr; }
+}
+
+/* Section divider */
+#product-modal .pm-sec {
+  margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--ps-border);
+}
+#product-modal .pm-sec:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+#product-modal .pm-sec-title {
+  font-size: .68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--ps-grey); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 7px;
+}
+#product-modal .pm-sec-title i { color: var(--ps-red); font-size: .7rem; }
+
+/* Category attribute sections - hidden until category matches */
+#product-modal .cat-block { display: none; }
+#product-modal .cat-block.visible { display: block; }
+
+/* Inline number + unit inputs */
+#product-modal .pm-unit-wrap {
+  display: flex; align-items: stretch; border: 1.5px solid var(--ps-border);
+  border-radius: 8px; overflow: hidden; background: var(--ps-cream);
+  transition: border-color .2s;
+}
+#product-modal .pm-unit-wrap:focus-within { border-color: var(--ps-red); background: var(--ps-white); }
+#product-modal .pm-unit-wrap input {
+  flex: 1; border: none; background: transparent; padding: 11px 12px;
+  font-size: .92rem; font-family: inherit; color: var(--ps-slate); outline: none;
+  min-width: 0;
+}
+#product-modal .pm-unit-label {
+  padding: 0 12px; background: var(--ps-cream-mid); color: var(--ps-grey);
+  font-size: .78rem; font-weight: 600; display: flex; align-items: center;
+  border-left: 1px solid var(--ps-border); white-space: nowrap;
+}
+
+/* UFH / boolean toggle */
+#product-modal .pm-toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; background: var(--ps-cream); border-radius: 8px;
+  border: 1.5px solid var(--ps-border); cursor: pointer; margin-bottom: 8px;
+  transition: border-color .15s;
+}
+#product-modal .pm-toggle-row:hover { border-color: var(--ps-slate); }
+#product-modal .pm-toggle-row.active { border-color: var(--ps-red); background: #fff5f5; }
+#product-modal .pm-toggle-row span { font-size: .85rem; font-weight: 500; color: var(--ps-slate); display: flex; align-items: center; gap: 8px; }
+#product-modal .pm-toggle-dot {
+  width: 36px; height: 20px; border-radius: 20px; background: var(--ps-border);
+  position: relative; transition: background .2s; flex-shrink: 0;
+}
+#product-modal .pm-toggle-row.active .pm-toggle-dot { background: var(--ps-red); }
+#product-modal .pm-toggle-dot::after {
+  content: ''; position: absolute; width: 14px; height: 14px;
+  border-radius: 50%; background: #fff; top: 3px; left: 3px; transition: transform .2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+#product-modal .pm-toggle-row.active .pm-toggle-dot::after { transform: translateX(16px); }
+
+/* Colour tab note */
+#product-modal .pm-colour-note {
+  font-size: .75rem; color: var(--ps-grey); margin-top: 10px;
+  padding: 8px 12px; background: var(--ps-cream); border-radius: 6px;
+}
+
+/* Row grid helpers */
+#product-modal .pm-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+#product-modal .pm-row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+#product-modal .pm-row1 { margin-bottom: 14px; }
+@media (max-width: 560px) {
+  #product-modal .pm-row2, #product-modal .pm-row3 { grid-template-columns: 1fr; }
+}
+
 /* ── Upgraded Product Modal ── */
 #product-modal .upload-zone{border:2px dashed var(--ps-border);border-radius:10px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--ps-cream);position:relative;margin-bottom:0}
 #product-modal .upload-zone:hover,#product-modal .upload-zone.drag-over{border-color:var(--ps-red);background:#fff5f5}
@@ -1869,6 +1979,98 @@ function removeUploadedImage() {
   document.getElementById('p-img-file').value = '';
 }
 
+// ── Product Modal Tab System ────────────────────────────────────────────
+function pmTab(name, btn) {
+  document.querySelectorAll('#product-modal .pm-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('#product-modal .pm-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('pm-panel-' + name).classList.add('active');
+}
+
+// Show/hide category-specific attribute blocks
+function pmUpdateCatFields() {
+  const cat = document.getElementById('p-category').value;
+  document.querySelectorAll('#product-modal .cat-block').forEach(b => b.classList.remove('visible'));
+  const block = document.getElementById('cat-block-' + cat);
+  if (block) block.classList.add('visible');
+}
+
+// UFH toggle (boolean)
+function pmToggle(row, hiddenId) {
+  row.classList.toggle('active');
+  document.getElementById(hiddenId).value = row.classList.contains('active') ? '1' : '0';
+}
+
+function pmSetToggle(hiddenId, val) {
+  const v = parseInt(val) === 1;
+  document.getElementById(hiddenId).value = v ? '1' : '0';
+  // find the toggle row that controls this hidden input
+  const row = document.querySelector(`[onclick*="${hiddenId}"]`);
+  if (row) row.classList.toggle('active', v);
+}
+
+// Get the thickness_mm value from whichever category's input is active
+function pmGetThicknessMm() {
+  const cat = document.getElementById('p-category').value;
+  const map = { vinyl:'p-thickness-mm', laminate:'p-thickness-mm-lam', wood:'p-thickness-mm-wood' };
+  const id = map[cat];
+  return id ? parseFloat(document.getElementById(id)?.value) || null : null;
+}
+function pmGetPlankWidthMm() {
+  const cat = document.getElementById('p-category').value;
+  const map = { vinyl:'p-plank-width-mm', laminate:'p-plank-width-mm-lam', wood:'p-plank-width-mm-wood' };
+  const id = map[cat];
+  return id ? parseFloat(document.getElementById(id)?.value) || null : null;
+}
+function pmGetUfhValue() {
+  const cat = document.getElementById('p-category').value;
+  const map = { vinyl:'p-ufh-vinyl', laminate:'p-ufh-lam', wood:'p-ufh-wood' };
+  const id = map[cat];
+  return id ? parseInt(document.getElementById(id)?.value) || 0 : 0;
+}
+function pmSetThicknessMm(val, cat) {
+  const map = { vinyl:'p-thickness-mm', laminate:'p-thickness-mm-lam', wood:'p-thickness-mm-wood' };
+  const id = map[cat]; if (id) document.getElementById(id).value = val || '';
+}
+function pmSetPlankWidthMm(val, cat) {
+  const map = { vinyl:'p-plank-width-mm', laminate:'p-plank-width-mm-lam', wood:'p-plank-width-mm-wood' };
+  const id = map[cat]; if (id) document.getElementById(id).value = val || '';
+}
+
+// Reset all modal fields to blank/defaults
+function pmResetModal() {
+  ['p-id','p-img','p-sku','p-name','p-desc','p-badge','p-species-finish'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  ['p-category'].forEach(id => { const el = document.getElementById(id); if (el) el.value = 'carpets'; });
+  ['p-price','p-original-price','p-fitting-price','p-thickness-mm','p-wear-layer-mm',
+   'p-plank-width-mm','p-thickness-mm-lam','p-plank-width-mm-lam',
+   'p-thickness-mm-wood','p-plank-width-mm-wood'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.getElementById('p-stock').value = '0';
+  document.getElementById('p-fitting-price').value = '6.00';
+  document.getElementById('p-ac-rating').value = '';
+  ['p-ufh-vinyl','p-ufh-lam','p-ufh-wood'].forEach(id => pmSetToggle(id, 0));
+  setBar('durability', 3); setBar('softness', 3);
+  document.querySelectorAll('.room-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('flag-featured').classList.remove('active');
+  document.getElementById('flag-deal').classList.remove('active');
+  document.getElementById('flag-active').classList.add('active');
+  document.querySelectorAll('.feature-btn,.cf-btn,.attr-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('p-colour-family').value = '';
+  document.getElementById('p-fibre').value = '';
+  document.getElementById('p-carpet-style').value = '';
+  document.getElementById('p-softness-label').value = '';
+  document.getElementById('p-thickness').value = '';
+  document.getElementById('p-density').value = '';
+  loadColours([]);
+  removeUploadedImage();
+  // Reset to first tab
+  pmTab('core', document.querySelector('#product-modal .pm-tab'));
+  pmUpdateCatFields();
+}
+
 function setBar(type, val) {
   document.getElementById('p-' + type).value = val;
   document.querySelectorAll('#' + type + '-bars .bar-seg-btn').forEach((btn, i) => btn.classList.toggle('active', i < val));
@@ -1877,6 +2079,66 @@ function setBar(type, val) {
 }
 
 function toggleRoom(btn) { btn.classList.toggle('active'); }
+
+function setCF(btn) {
+  document.querySelectorAll('.cf-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('p-colour-family').value = btn.dataset.cf;
+}
+
+function setAttr(btn) {
+  const attr = btn.dataset.attr;
+  document.querySelectorAll(`.attr-btn[data-attr="${attr}"]`).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const map = {
+    fibre:'p-fibre', carpet_style:'p-carpet-style', softness_label:'p-softness-label',
+    thickness:'p-thickness', density:'p-density',
+    installation_method:'p-installation-method-hidden',
+    lay_pattern:'p-lay-pattern-hidden',
+    board_design:'p-board-design-hidden',
+    surface_finish:'p-surface-finish-hidden',
+  };
+  if (map[attr]) {
+    let el = document.getElementById(map[attr]);
+    if (el) el.value = btn.dataset.val;
+  }
+}
+
+function loadAttrs(p) {
+  document.querySelectorAll('.cf-btn').forEach(b => b.classList.remove('active'));
+  const cf = p.colour_family || '';
+  document.getElementById('p-colour-family').value = cf;
+  if (cf) { const b = document.querySelector(`.cf-btn[data-cf="${cf}"]`); if (b) b.classList.add('active'); }
+
+  const attrMap = {
+    fibre:'p-fibre', carpet_style:'p-carpet-style', softness_label:'p-softness-label',
+    thickness:'p-thickness', density:'p-density',
+  };
+  Object.entries(attrMap).forEach(([attr, hid]) => {
+    document.querySelectorAll(`.attr-btn[data-attr="${attr}"]`).forEach(b => b.classList.remove('active'));
+    const val = p[attr] || '';
+    const hidEl = document.getElementById(hid);
+    if (hidEl) hidEl.value = val;
+    if (val) { const b = document.querySelector(`.attr-btn[data-attr="${attr}"][data-val="${val}"]`); if (b) b.classList.add('active'); }
+  });
+
+  // Hard-floor attrs from hidden fields
+  const extraAttrs = ['installation_method','lay_pattern','board_design','surface_finish'];
+  const extraMap = {
+    installation_method:'p-installation-method-hidden',
+    lay_pattern:'p-lay-pattern-hidden',
+    board_design:'p-board-design-hidden',
+    surface_finish:'p-surface-finish-hidden',
+  };
+  extraAttrs.forEach(attr => {
+    document.querySelectorAll(`.attr-btn[data-attr="${attr}"]`).forEach(b => b.classList.remove('active'));
+    const val = p[attr] || '';
+    const hid = extraMap[attr];
+    const hidEl = hid ? document.getElementById(hid) : null;
+    if (hidEl) hidEl.value = val;
+    if (val) { const b = document.querySelector(`.attr-btn[data-attr="${attr}"][data-val="${val}"]`); if (b) b.classList.add('active'); }
+  });
+}
 
 function initUploadZone() {
   const zone = document.getElementById('upload-zone');
@@ -1893,70 +2155,63 @@ function initUploadZone() {
 
 function openAddProduct() {
   document.getElementById('modal-title').textContent = 'Add Product';
-  document.getElementById('p-id').value = '';
-  document.getElementById('p-name').value = '';
-  document.getElementById('p-sku').value = '';
-  document.getElementById('p-subcat').value = '';
-  document.getElementById('p-category').value = 'carpets';
-  document.getElementById('p-price').value = '';
-  document.getElementById('p-original-price').value = '';
-  document.getElementById('p-stock').value = '0';
-  document.getElementById('p-desc').value = '';
-  document.getElementById('p-badge').value = '';
-  document.getElementById('p-badge-type').value = '';
-  setBar('durability', 3);
-  setBar('softness', 3);
-  setBar('thickness', 3);
-  setBar('density', 3);
-  setBar('thickness', 3);
-  setBar('density', 3);
-  setBar('thickness', 3);
-  setBar('density', 3);
-  document.querySelectorAll('.room-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('flag-featured').classList.remove('active');
-  document.getElementById('flag-deal').classList.remove('active');
-  document.getElementById('flag-active').classList.add('active');
-  document.getElementById('p-fitting-price').value = '6.00';
-  loadColours([]);
-  document.querySelectorAll('.feature-btn').forEach(b => b.classList.remove('active'));
-  loadAttrs({});
-  removeUploadedImage();
+  pmResetModal();
   initUploadZone();
   document.getElementById('product-modal').classList.add('open');
 }
+
 async function editProduct(id) {
   const _res = await panelApi(`/products/${id}`); if (!_res) return;
   const p = await _res.json(); if (!p || !p.id) return;
   document.getElementById('modal-title').textContent = 'Edit Product';
+
   document.getElementById('p-id').value = p.id;
-  document.getElementById('p-name').value = p.name||'';
-  document.getElementById('p-sku').value = p.sku||'';
-  document.getElementById('p-subcat').value = p.subcategory||'';
-  document.getElementById('p-category').value = p.category_slug||'carpets';
-  document.getElementById('p-price').value = p.price||'';
-  document.getElementById('p-original-price').value = p.original_price||'';
-  document.getElementById('p-stock').value = p.stock_level||0;
-  document.getElementById('p-desc').value = p.description||'';
-  document.getElementById('p-badge').value = p.badge||'';
-  document.getElementById('p-badge-type').value = p.badge_type||'';
-  setBar('durability', p.durability||3);
-  setBar('softness', p.softness||3);
-  setBar('thickness', p.thickness_bar||3);
-  setBar('density', p.density_bar||3);
-  setBar('thickness', p.thickness_bar||3);
-  setBar('density', p.density_bar||3);
-  setBar('thickness', p.thickness_bar||3);
-  setBar('density', p.density_bar||3);
-  let rooms=[]; try{ const r=p.rooms?(typeof p.rooms==='string'?JSON.parse(p.rooms):p.rooms):[]; rooms=Array.isArray(r)?r:[]; }catch(e){ rooms=[]; }
+  document.getElementById('p-name').value = p.name || '';
+  document.getElementById('p-sku').value = p.sku || '';
+  document.getElementById('p-category').value = p.category_slug || 'carpets';
+  document.getElementById('p-price').value = p.price || '';
+  document.getElementById('p-original-price').value = p.original_price || '';
+  document.getElementById('p-stock').value = p.stock_level || 0;
+  document.getElementById('p-desc').value = p.description || '';
+  document.getElementById('p-badge').value = p.badge || '';
+  document.getElementById('p-badge-type').value = p.badge_type || '';
+  document.getElementById('p-fitting-price').value = p.fitting_price || '6.00';
+
+  setBar('durability', p.durability || 3);
+  setBar('softness', p.softness || 3);
+
+  let rooms = [];
+  try { rooms = p.rooms ? (typeof p.rooms === 'string' ? JSON.parse(p.rooms) : p.rooms) : []; if (!Array.isArray(rooms)) rooms = []; } catch(e) { rooms = []; }
   document.querySelectorAll('.room-btn').forEach(b => b.classList.toggle('active', rooms.includes(b.dataset.room)));
+
   document.getElementById('flag-featured').classList.toggle('active', !!p.is_featured);
   document.getElementById('flag-deal').classList.toggle('active', !!p.is_deal);
   document.getElementById('flag-active').classList.toggle('active', !!p.is_active);
-  document.getElementById('p-fitting-price').value = p.fitting_price || '6.00';
-  loadColours(p.colours);
-  let _feat=[]; try{_feat=p.features?(typeof p.features==='string'?JSON.parse(p.features):p.features):[];}catch(e){_feat=[];}
-  document.querySelectorAll('.feature-btn').forEach(b=>b.classList.toggle('active',_feat.includes(b.dataset.feature)));
+
+  let _feat = [];
+  try { _feat = p.features ? (typeof p.features === 'string' ? JSON.parse(p.features) : p.features) : []; } catch(e) { _feat = []; }
+  document.querySelectorAll('.feature-btn').forEach(b => b.classList.toggle('active', _feat.includes(b.dataset.feature)));
+
   loadAttrs(p);
+  loadColours(p.colours);
+
+  // Category-specific fields
+  const cat = p.category_slug || 'carpets';
+  pmUpdateCatFields();
+  pmSetThicknessMm(p.thickness_mm, cat);
+  pmSetPlankWidthMm(p.plank_width_mm, cat);
+
+  if (cat === 'vinyl') {
+    const wl = document.getElementById('p-wear-layer-mm'); if (wl) wl.value = p.wear_layer_mm || '';
+    pmSetToggle('p-ufh-vinyl', p.ufh_compatible);
+  } else if (cat === 'laminate') {
+    const acEl = document.getElementById('p-ac-rating'); if (acEl) acEl.value = p.ac_rating || '';
+    pmSetToggle('p-ufh-lam', p.ufh_compatible);
+  } else if (cat === 'wood') {
+    const sf = document.getElementById('p-species-finish'); if (sf) sf.value = p.species_finish || '';
+    pmSetToggle('p-ufh-wood', p.ufh_compatible);
+  }
+
   if (p.img_url) {
     document.getElementById('p-img').value = p.img_url;
     document.getElementById('img-preview').src = p.img_url;
@@ -1966,89 +2221,75 @@ async function editProduct(id) {
   } else {
     removeUploadedImage();
   }
+
   initUploadZone();
+  // Reset to first tab
+  pmTab('core', document.querySelector('#product-modal .pm-tab'));
   document.getElementById('product-modal').classList.add('open');
-}
-function previewImg(url) {}
-function togglePmPill(btn) { btn.classList.toggle('pm-pill-active'); }
-function togglePmFlag(btn) { btn.classList.toggle('pm-pill-active'); }
-function togglePmPill(btn) { btn.classList.toggle('pm-pill-active'); }
-function togglePmFlag(btn) { btn.classList.toggle('pm-pill-active'); }
-function setCF(btn) {
-    document.querySelectorAll('.cf-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('p-colour-family').value = btn.dataset.cf;
-}
-function setAttr(btn) {
-    const attr = btn.dataset.attr;
-    document.querySelectorAll(`.attr-btn[data-attr="${attr}"]`).forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const map = {fibre:'p-fibre',carpet_style:'p-carpet-style',softness_label:'p-softness-label',thickness:'p-thickness',density:'p-density'};
-    if (map[attr]) document.getElementById(map[attr]).value = btn.dataset.val;
-}
-function loadAttrs(p) {
-    document.querySelectorAll('.cf-btn').forEach(b => b.classList.remove('active'));
-    const cf = p.colour_family || '';
-    document.getElementById('p-colour-family').value = cf;
-    if (cf) { const b = document.querySelector(`.cf-btn[data-cf="${cf}"]`); if (b) b.classList.add('active'); }
-    const attrMap = {fibre:'p-fibre',carpet_style:'p-carpet-style',softness_label:'p-softness-label',thickness:'p-thickness',density:'p-density'};
-    Object.entries(attrMap).forEach(([attr, hid]) => {
-        document.querySelectorAll(`.attr-btn[data-attr="${attr}"]`).forEach(b => b.classList.remove('active'));
-        const val = p[attr] || '';
-        document.getElementById(hid).value = val;
-        if (val) { const b = document.querySelector(`.attr-btn[data-attr="${attr}"][data-val="${val}"]`); if (b) b.classList.add('active'); }
-    });
 }
 
 async function saveProduct() {
   const id   = document.getElementById('p-id').value;
   const name = document.getElementById('p-name').value.trim();
-  if (!name) { showToast('Product name is required','error'); return; }
+  if (!name) { showToast('Product name is required', 'error'); return; }
   const price = parseFloat(document.getElementById('p-price').value);
-  if (isNaN(price)||price<0) { showToast('Valid price is required','error'); return; }
-  const rooms = JSON.stringify([...document.querySelectorAll('.room-btn.active')].map(b=>b.dataset.room));
+  if (isNaN(price) || price < 0) { showToast('Valid price is required', 'error'); return; }
+
+  const cat = document.getElementById('p-category').value;
+  const rooms = JSON.stringify([...document.querySelectorAll('.room-btn.active')].map(b => b.dataset.room));
+
   const payload = {
     name,
-    category_slug:     document.getElementById('p-category').value,
-    sku:               document.getElementById('p-sku').value||null,
-    subcategory:       document.getElementById('p-subcat').value||null,
+    category_slug:     cat,
+    sku:               document.getElementById('p-sku').value || null,
+    subcategory:       null,
     price,
-    original_price:    parseFloat(document.getElementById('p-original-price').value)||null,
-    stock_level:       parseInt(document.getElementById('p-stock').value)||0,
-    description:       document.getElementById('p-desc').value||null,
-    img_url:           document.getElementById('p-img').value||null,
-    badge:             document.getElementById('p-badge').value||null,
-    badge_type:        document.getElementById('p-badge-type').value||null,
-    durability:        parseInt(document.getElementById('p-durability').value)||3,
-    softness:          parseInt(document.getElementById('p-softness').value)||3,
+    original_price:    parseFloat(document.getElementById('p-original-price').value) || null,
+    stock_level:       parseInt(document.getElementById('p-stock').value) || 0,
+    description:       document.getElementById('p-desc').value || null,
+    img_url:           document.getElementById('p-img').value || null,
+    badge:             document.getElementById('p-badge').value || null,
+    badge_type:        document.getElementById('p-badge-type').value || null,
+    durability:        parseInt(document.getElementById('p-durability').value) || 3,
+    softness:          parseInt(document.getElementById('p-softness').value) || 3,
     rooms,
-    is_featured: document.getElementById('flag-featured').classList.contains('active')?1:0,
-    is_deal:     document.getElementById('flag-deal').classList.contains('active')?1:0,
-    is_active:   document.getElementById('flag-active').classList.contains('active')?1:0,
-    fitting_price: parseFloat(document.getElementById('p-fitting-price').value)||6.00,
-    colours: document.getElementById('p-colours').value || '[]',
-    features: JSON.stringify([...document.querySelectorAll('.feature-btn.active')].map(b=>b.dataset.feature)),
-    colour_family: document.getElementById('p-colour-family').value || '',
-    fibre: document.getElementById('p-fibre').value || '',
-    carpet_style: document.getElementById('p-carpet-style').value || '',
-    softness_label: document.getElementById('p-softness-label').value || '',
-    thickness: document.getElementById('p-thickness').value || '',
-    density: document.getElementById('p-density').value || '',
+    is_featured:       document.getElementById('flag-featured').classList.contains('active') ? 1 : 0,
+    is_deal:           document.getElementById('flag-deal').classList.contains('active') ? 1 : 0,
+    is_active:         document.getElementById('flag-active').classList.contains('active') ? 1 : 0,
+    fitting_price:     parseFloat(document.getElementById('p-fitting-price').value) || 6.00,
+    colours:           document.getElementById('p-colours').value || '[]',
+    features:          JSON.stringify([...document.querySelectorAll('.feature-btn.active')].map(b => b.dataset.feature)),
+    colour_family:     document.getElementById('p-colour-family').value || '',
+    fibre:             document.getElementById('p-fibre').value || '',
+    carpet_style:      document.getElementById('p-carpet-style').value || '',
+    softness_label:    document.getElementById('p-softness-label').value || '',
+    thickness:         document.getElementById('p-thickness').value || '',
+    density:           document.getElementById('p-density').value || '',
+    // Category-specific
+    thickness_mm:      pmGetThicknessMm(),
+    wear_layer_mm:     cat === 'vinyl' ? parseFloat(document.getElementById('p-wear-layer-mm')?.value) || null : null,
+    ac_rating:         cat === 'laminate' ? document.getElementById('p-ac-rating')?.value || '' : '',
+    board_design:      document.getElementById('p-board-design-hidden')?.value || '',
+    plank_width_mm:    pmGetPlankWidthMm(),
+    species_finish:    cat === 'wood' ? document.getElementById('p-species-finish')?.value || '' : '',
+    surface_finish:    document.getElementById('p-surface-finish-hidden')?.value || '',
+    lay_pattern:       document.getElementById('p-lay-pattern-hidden')?.value || '',
+    installation_method: document.getElementById('p-installation-method-hidden')?.value || '',
+    ufh_compatible:    pmGetUfhValue(),
   };
-  const res  = await panelApi(id?`/products/${id}`:'/products', {method:id?'PUT':'POST', body:JSON.stringify(payload)});
+
+  const res  = await panelApi(id ? `/products/${id}` : '/products', { method: id ? 'PUT' : 'POST', body: JSON.stringify(payload) });
   if (!res) return;
   const data = await res.json();
-  if (!res.ok) { showToast(data.error||'Error saving','error'); return; }
+  if (!res.ok) { showToast(data.error || 'Error saving', 'error'); return; }
   showToast(id ? `"${name}" updated ✓` : `"${name}" added ✓`);
-  closeProdModal(); await renderProducts(); loadProductsStats();
+  closeProdModal();
+  await renderProducts();
+  loadProductsStats();
 }
-async function deleteProduct(id, name) {
-  if (!confirm(`Remove "${name}" from the website?`)) return;
-  const res = await panelApi(`/products/${id}`, {method:'DELETE'}); if (!res) return;
-  showToast(`"${name}" removed ✓`);
-  await renderProducts(); loadProductsStats();
-}
+
 function closeProdModal() { document.getElementById('product-modal').classList.remove('open'); }
+
 
 async function renderDeals() {
   document.getElementById('page-content').innerHTML =
@@ -2244,281 +2485,387 @@ if (TOKEN && USER) showApp();
 
 
 <div id="product-modal" onclick="if(event.target===this)closeProdModal()">
-<div class="modal" style="max-width:680px">
+<div class="modal">
   <div class="modal-head">
     <h3 id="modal-title">Add Product</h3>
-    <button class="modal-x" onclick="closeProdModal()">×</button>
+    <button class="modal-x" onclick="closeProdModal()"><i class="fa-solid fa-xmark"></i></button>
   </div>
-  <div class="modal-body">
-    <input type="hidden" id="p-id">
-    <input type="hidden" id="p-img">
+  <!-- Hidden inputs -->
+  <input type="hidden" id="p-id">
+  <input type="hidden" id="p-img">
+  <input type="hidden" id="p-colours">
+  <input type="hidden" id="p-colour-family">
+  <input type="hidden" id="p-fibre">
+  <input type="hidden" id="p-carpet-style">
+  <input type="hidden" id="p-softness-label">
+  <input type="hidden" id="p-thickness">
+  <input type="hidden" id="p-density">
+  <input type="hidden" id="p-durability" value="3">
+  <input type="hidden" id="p-softness" value="3">
 
-    <div class="pm-divider"><i class="fa-solid fa-image"></i> Product Image</div>
-    <div id="upload-zone" class="upload-zone">
-      <input type="file" id="p-img-file" accept="image/*" onchange="handleFileSelect(this.files[0])">
-      <div class="upload-zone-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-      <div class="upload-zone-text"><strong>Drag & drop or click to browse</strong><span>JPG, PNG, WEBP up to 10MB</span></div>
-    </div>
-    <div id="upload-spinner" class="upload-spinner">
-      <div class="spin"></div><span>Uploading…</span>
-    </div>
-    <div id="upload-preview" class="upload-preview">
-      <img id="img-preview" alt="preview">
-      <button class="upload-preview-remove" onclick="removeUploadedImage()" type="button"><i class="fa-solid fa-xmark"></i></button>
-    </div>
+  <!-- Tabs -->
+  <div class="pm-tabs">
+    <button class="pm-tab active" onclick="pmTab('core',this)"><i class="fa-solid fa-tag"></i> Core</button>
+    <button class="pm-tab" onclick="pmTab('attrs',this)"><i class="fa-solid fa-sliders"></i> Attributes</button>
+    <button class="pm-tab" onclick="pmTab('colours',this)"><i class="fa-solid fa-palette"></i> Colours</button>
+    <button class="pm-tab" onclick="pmTab('publish',this)"><i class="fa-solid fa-eye"></i> Publish</button>
+  </div>
 
-    <div class="pm-divider"><i class="fa-solid fa-tag"></i> Basic Information</div>
-    <div class="row2">
-      <div class="field"><label>Product Name *</label><input type="text" id="p-name" placeholder="e.g. Prestige Saxony"></div>
-      <div class="field"><label>Category *</label><select id="p-category"><option value="carpets">Carpets</option><option value="vinyl">Vinyl</option><option value="laminate">Laminate</option><option value="wood">Wood</option></select></div>
+  <!-- ── TAB 1: CORE ──────────────────────────────── -->
+  <div class="pm-panel active" id="pm-panel-core">
+    <div class="pm-core-grid">
+      <!-- Left: image -->
+      <div>
+        <div class="pm-sec-title"><i class="fa-solid fa-image"></i> Product Image</div>
+        <div id="upload-zone" class="upload-zone">
+          <input type="file" id="p-img-file" accept="image/*" onchange="handleFileSelect(this.files[0])">
+          <div class="upload-zone-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+          <div class="upload-zone-text"><strong>Click or drag</strong><span>JPG, PNG, WEBP · max 10MB</span></div>
+        </div>
+        <div id="upload-spinner" class="upload-spinner"><div class="spin"></div><span>Uploading…</span></div>
+        <div id="upload-preview" class="upload-preview">
+          <img id="img-preview" alt="preview">
+          <button class="upload-preview-remove" onclick="removeUploadedImage()" type="button"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+      <!-- Right: info -->
+      <div>
+        <div class="pm-row2">
+          <div class="field"><label>Product Name *</label><input type="text" id="p-name" placeholder="e.g. Prestige Saxony"></div>
+          <div class="field"><label>Category *</label>
+            <select id="p-category" onchange="pmUpdateCatFields()">
+              <option value="carpets">Carpets</option>
+              <option value="vinyl">Vinyl</option>
+              <option value="laminate">Laminate</option>
+              <option value="wood">Real Wood</option>
+            </select>
+          </div>
+        </div>
+        <div class="pm-row3">
+          <div class="field"><label>Price (£/m²) *</label><input type="number" id="p-price" min="0" step="0.01" placeholder="0.00"></div>
+          <div class="field"><label>Was Price (£/m²)</label><input type="number" id="p-original-price" min="0" step="0.01" placeholder="—"></div>
+          <div class="field"><label>Fitting (£/m²)</label><input type="number" id="p-fitting-price" min="0" step="0.01" placeholder="6.00"></div>
+        </div>
+        <div class="pm-row1 field"><label>Description</label><textarea id="p-desc" placeholder="Describe the product…" style="min-height:90px"></textarea></div>
+        <div class="pm-row2">
+          <div class="field"><label>Badge Text</label><input type="text" id="p-badge" placeholder="e.g. Best Seller"></div>
+          <div class="field"><label>Badge Style</label>
+            <select id="p-badge-type">
+              <option value="">No Badge</option>
+              <option value="seller">Best Seller (Dark)</option>
+              <option value="sale">Sale (Red)</option>
+              <option value="new">New In (Green)</option>
+              <option value="premium">Premium (Purple)</option>
+            </select>
+          </div>
+        </div>
+        <div class="pm-row2">
+          <div class="field"><label>SKU / Reference</label><input type="text" id="p-sku" placeholder="e.g. C-001"></div>
+          <div class="field"><label>Stock Level</label><input type="number" id="p-stock" min="0" value="0"></div>
+        </div>
+      </div>
     </div>
-    <div class="row2">
-      <div class="field"><label>SKU / Code</label><input type="text" id="p-sku" placeholder="e.g. C-001"></div>
-      <div class="field"><label>Subcategory</label><input type="text" id="p-subcat" placeholder="e.g. Saxony, LVT"></div>
-    </div>
-    <div class="field" style="margin-bottom:14px"><label>Description</label><textarea id="p-desc" placeholder="Describe the product…"></textarea></div>
+  </div>
 
-    <div class="pm-divider"><i class="fa-solid fa-sterling-sign"></i> Pricing & Stock</div>
-    <div class="row3">
-      <div class="field"><label>Price (£/m²) *</label><input type="number" id="p-price" min="0" step="0.01" placeholder="0.00"></div>
-      <div class="field"><label>Was Price (£/m²)</label><input type="number" id="p-original-price" min="0" step="0.01" placeholder="Optional"></div>
-      <div class="field"><label>Stock Level</label><input type="number" id="p-stock" min="0" value="0"></div>
-    </div>
-    <div class="row2" style="margin-top:0">
-      <div class="field"><label>Fitting Price (£/m²)</label><input type="number" id="p-fitting-price" min="0" step="0.01" placeholder="6.00"></div>
-    </div>
+  <!-- ── TAB 2: ATTRIBUTES ────────────────────────── -->
+  <div class="pm-panel" id="pm-panel-attrs">
 
-    <div class="pm-divider"><i class="fa-solid fa-certificate"></i> Badge</div>
-    <div class="row2">
-      <div class="field"><label>Badge Text</label><input type="text" id="p-badge" placeholder="e.g. Best Seller"></div>
-      <div class="field"><label>Badge Style</label><select id="p-badge-type"><option value="">No Badge</option><option value="seller">Best Seller (Dark)</option><option value="sale">Sale (Red)</option><option value="premium">Premium (Purple)</option><option value="new">New In (Green)</option></select></div>
-    </div>
-
-    <div class="pm-divider"><i class="fa-solid fa-star"></i> Ratings</div>
-    <div class="ratings-grid">
-      <div class="field"><label>Durability</label>
-        <div class="bar-rating" id="durability-bars">
-          <button class="bar-seg-btn" type="button" onclick="setBar('durability',1)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('durability',2)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('durability',3)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('durability',4)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('durability',5)"></button>
-          <span class="bar-rating-val" id="durability-val">3/5</span>
+    <!-- Performance bars — all categories -->
+    <div class="pm-sec">
+      <div class="pm-sec-title"><i class="fa-solid fa-star"></i> Performance</div>
+      <div class="pm-row2">
+        <div class="field"><label>Durability</label>
+          <div class="bar-rating" id="durability-bars">
+            <button class="bar-seg-btn" type="button" onclick="setBar('durability',1)"></button>
+            <button class="bar-seg-btn" type="button" onclick="setBar('durability',2)"></button>
+            <button class="bar-seg-btn" type="button" onclick="setBar('durability',3)"></button>
+            <button class="bar-seg-btn" type="button" onclick="setBar('durability',4)"></button>
+            <button class="bar-seg-btn" type="button" onclick="setBar('durability',5)"></button>
+            <span class="bar-rating-val" id="durability-val">3/5</span>
+          </div>
         </div>
-        <input type="hidden" id="p-durability" value="3">
-      </div>
-      <div class="field"><label>Softness</label>
-        <div class="bar-rating" id="softness-bars">
-          <button class="bar-seg-btn" type="button" onclick="setBar('softness',1)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('softness',2)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('softness',3)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('softness',4)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('softness',5)"></button>
-          <span class="bar-rating-val" id="softness-val">3/5</span>
+        <div class="field"><label>Softness</label>
+          <div class="bar-rating" id="softness-bars">
+            <button class="bar-seg-btn" type="button" onclick="setBar('softness',1)"></button>
+            <button class="bar-seg-btn" type="button" onclick="setBar('softness',2)"></button>
+            <button class="bar-seg-btn" type="button" onclick="setBar('softness',3)"></button>
+            <button class="bar-seg-btn" type="button" onclick="setBar('softness',4)"></button>
+            <button class="bar-seg-btn" type="button" onclick="setBar('softness',5)"></button>
+            <span class="bar-rating-val" id="softness-val">3/5</span>
+          </div>
         </div>
-        <input type="hidden" id="p-softness" value="3">
-      </div>
-    </div>
-    <div class="ratings-grid" style="margin-top:12px">
-      <div class="field"><label>Thickness</label>
-        <div class="bar-rating" id="thickness-bars">
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',1)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',2)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',3)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',4)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',5)"></button>
-          <span class="bar-rating-val" id="thickness-val">3/5</span>
-        </div>
-        <input type="hidden" id="p-thickness-bar" value="3">
-      </div>
-      <div class="field"><label>Density</label>
-        <div class="bar-rating" id="density-bars">
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',1)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',2)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',3)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',4)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',5)"></button>
-          <span class="bar-rating-val" id="density-val">3/5</span>
-        </div>
-        <input type="hidden" id="p-density-bar" value="3">
-      </div>
-    </div>
-    <div class="ratings-grid" style="margin-top:12px">
-      <div class="field"><label>Thickness</label>
-        <div class="bar-rating" id="thickness-bars">
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',1)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',2)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',3)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',4)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',5)"></button>
-          <span class="bar-rating-val" id="thickness-val">3/5</span>
-        </div>
-        <input type="hidden" id="p-thickness-bar" value="3">
-      </div>
-      <div class="field"><label>Density</label>
-        <div class="bar-rating" id="density-bars">
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',1)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',2)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',3)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',4)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',5)"></button>
-          <span class="bar-rating-val" id="density-val">3/5</span>
-        </div>
-        <input type="hidden" id="p-density-bar" value="3">
-      </div>
-    </div>
-    <div class="ratings-grid" style="margin-top:12px">
-      <div class="field"><label>Thickness</label>
-        <div class="bar-rating" id="thickness-bars">
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',1)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',2)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',3)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',4)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',5)"></button>
-          <span class="bar-rating-val" id="thickness-val">3/5</span>
-        </div>
-        <input type="hidden" id="p-thickness-bar" value="3">
-      </div>
-      <div class="field"><label>Density</label>
-        <div class="bar-rating" id="density-bars">
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',1)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',2)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',3)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',4)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',5)"></button>
-          <span class="bar-rating-val" id="density-val">3/5</span>
-        </div>
-        <input type="hidden" id="p-density-bar" value="3">
       </div>
     </div>
 
-    <div class="pm-divider"><i class="fa-solid fa-house"></i> Room Suitability</div>
-    <div class="room-grid">
-      <button class="room-btn" type="button" data-room="living" onclick="toggleRoom(this)"><i class="fa-solid fa-couch"></i>Living Room</button>
-      <button class="room-btn" type="button" data-room="bedroom" onclick="toggleRoom(this)"><i class="fa-solid fa-bed"></i>Bedroom</button>
-      <button class="room-btn" type="button" data-room="hallway" onclick="toggleRoom(this)"><i class="fa-solid fa-door-open"></i>Hallway</button>
-      <button class="room-btn" type="button" data-room="stairs" onclick="toggleRoom(this)"><i class="fa-solid fa-stairs"></i>Stairs</button>
-      <button class="room-btn" type="button" data-room="kitchen" onclick="toggleRoom(this)"><i class="fa-solid fa-utensils"></i>Kitchen</button>
-      <button class="room-btn" type="button" data-room="bathroom" onclick="toggleRoom(this)"><i class="fa-solid fa-shower"></i>Bathroom</button>
+    <!-- Room Suitability — all categories -->
+    <div class="pm-sec">
+      <div class="pm-sec-title"><i class="fa-solid fa-house"></i> Perfect For</div>
+      <div class="room-grid">
+        <button class="room-btn" type="button" data-room="living" onclick="toggleRoom(this)"><i class="fa-solid fa-couch"></i>Living Room</button>
+        <button class="room-btn" type="button" data-room="bedroom" onclick="toggleRoom(this)"><i class="fa-solid fa-bed"></i>Bedroom</button>
+        <button class="room-btn" type="button" data-room="kitchen" onclick="toggleRoom(this)"><i class="fa-solid fa-utensils"></i>Kitchen</button>
+        <button class="room-btn" type="button" data-room="bathroom" onclick="toggleRoom(this)"><i class="fa-solid fa-shower"></i>Bathroom</button>
+        <button class="room-btn" type="button" data-room="hallway" onclick="toggleRoom(this)"><i class="fa-solid fa-door-open"></i>Hallway</button>
+        <button class="room-btn" type="button" data-room="stairs" onclick="toggleRoom(this)"><i class="fa-solid fa-stairs"></i>Stairs</button>
+      </div>
     </div>
 
-    <div class="pm-divider"><i class="fa-solid fa-shield-halved"></i> Product Features</div>
-    <div class="flag-row">
-      <button class="flag-pill feature-btn" type="button" data-feature="stain" onclick="this.classList.toggle('active')"><i class="fa-solid fa-droplet-slash"></i> Stain Resistant</button>
-      <button class="flag-pill feature-btn" type="button" data-feature="pet" onclick="this.classList.toggle('active')"><i class="fa-solid fa-paw"></i> Pet Friendly</button>
-      <button class="flag-pill feature-btn" type="button" data-feature="bleach" onclick="this.classList.toggle('active')"><i class="fa-solid fa-spray-can"></i> Bleach Cleanable</button>
-      <button class="flag-pill feature-btn" type="button" data-feature="waterproof" onclick="this.classList.toggle('active')"><i class="fa-solid fa-shield-halved"></i> Waterproof</button>
-      <button class="flag-pill feature-btn" type="button" data-feature="scratch" onclick="this.classList.toggle('active')"><i class="fa-solid fa-shield"></i> Scratch Resistant</button>
-      <button class="flag-pill feature-btn" type="button" data-feature="easyClean" onclick="this.classList.toggle('active')"><i class="fa-solid fa-broom"></i> Easy Clean</button>
-      <button class="flag-pill feature-btn" type="button" data-feature="soft" onclick="this.classList.toggle('active')"><i class="fa-solid fa-feather"></i> Ultra Soft</button>
-      <button class="flag-pill feature-btn" type="button" data-feature="insulation" onclick="this.classList.toggle('active')"><i class="fa-solid fa-temperature-low"></i> Warm Underfoot</button>
+    <!-- Product Features — all categories -->
+    <div class="pm-sec">
+      <div class="pm-sec-title"><i class="fa-solid fa-shield-halved"></i> Features</div>
+      <div class="flag-row">
+        <button class="flag-pill feature-btn" type="button" data-feature="stain" onclick="this.classList.toggle('active')"><i class="fa-solid fa-droplet-slash"></i> Stain Resistant</button>
+        <button class="flag-pill feature-btn" type="button" data-feature="pet" onclick="this.classList.toggle('active')"><i class="fa-solid fa-paw"></i> Pet Friendly</button>
+        <button class="flag-pill feature-btn" type="button" data-feature="bleach" onclick="this.classList.toggle('active')"><i class="fa-solid fa-spray-can"></i> Bleach Cleanable</button>
+        <button class="flag-pill feature-btn" type="button" data-feature="waterproof" onclick="this.classList.toggle('active')"><i class="fa-solid fa-shield-halved"></i> Waterproof</button>
+        <button class="flag-pill feature-btn" type="button" data-feature="scratch" onclick="this.classList.toggle('active')"><i class="fa-solid fa-shield"></i> Scratch Resistant</button>
+        <button class="flag-pill feature-btn" type="button" data-feature="easyClean" onclick="this.classList.toggle('active')"><i class="fa-solid fa-broom"></i> Easy Clean</button>
+        <button class="flag-pill feature-btn" type="button" data-feature="soft" onclick="this.classList.toggle('active')"><i class="fa-solid fa-feather"></i> Ultra Soft</button>
+        <button class="flag-pill feature-btn" type="button" data-feature="insulation" onclick="this.classList.toggle('active')"><i class="fa-solid fa-temperature-low"></i> Warm Underfoot</button>
+      </div>
     </div>
 
-    <div class="pm-divider"><i class="fa-solid fa-circle-half-stroke"></i> Colour Family</div>
-    <div class="flag-row" id="colour-family-row">
-      <button class="flag-pill cf-btn" type="button" data-cf="greys" onclick="setCF(this)"><span class="cf-dot" style="background:#9B9B9B"></span>Greys</button>
-      <button class="flag-pill cf-btn" type="button" data-cf="beiges" onclick="setCF(this)"><span class="cf-dot" style="background:#C9B99A"></span>Beiges</button>
-      <button class="flag-pill cf-btn" type="button" data-cf="browns" onclick="setCF(this)"><span class="cf-dot" style="background:#8B5E3C"></span>Browns</button>
-      <button class="flag-pill cf-btn" type="button" data-cf="creams" onclick="setCF(this)"><span class="cf-dot" style="background:#F5F0E8"></span>Creams</button>
-      <button class="flag-pill cf-btn" type="button" data-cf="blacks" onclick="setCF(this)"><span class="cf-dot" style="background:#1A1A1A"></span>Blacks</button>
-      <button class="flag-pill cf-btn" type="button" data-cf="blues" onclick="setCF(this)"><span class="cf-dot" style="background:#2B5EA7"></span>Blues</button>
-      <button class="flag-pill cf-btn" type="button" data-cf="golds" onclick="setCF(this)"><span class="cf-dot" style="background:#C49A3C"></span>Golds</button>
-      <button class="flag-pill cf-btn" type="button" data-cf="greens" onclick="setCF(this)"><span class="cf-dot" style="background:#2D6A4F"></span>Greens</button>
-      <button class="flag-pill cf-btn" type="button" data-cf="multicolour" onclick="setCF(this)"><span class="cf-dot" style="background:linear-gradient(135deg,#E03040,#C49A3C,#2B5EA7)"></span>Multicolour</button>
-      <button class="flag-pill cf-btn" type="button" data-cf="oranges" onclick="setCF(this)"><span class="cf-dot" style="background:#E87722"></span>Oranges</button>
-      <button class="flag-pill cf-btn" type="button" data-cf="reds" onclick="setCF(this)"><span class="cf-dot" style="background:#E03040"></span>Reds</button>
-      <button class="flag-pill cf-btn" type="button" data-cf="silvers" onclick="setCF(this)"><span class="cf-dot" style="background:#C0C0C0"></span>Silvers</button>
-      <button class="flag-pill cf-btn" type="button" data-cf="yellows" onclick="setCF(this)"><span class="cf-dot" style="background:#F5C518"></span>Yellows</button>
+    <!-- Colour Family — all categories -->
+    <div class="pm-sec">
+      <div class="pm-sec-title"><i class="fa-solid fa-circle-half-stroke"></i> Colour Family</div>
+      <div class="flag-row">
+        <button class="flag-pill cf-btn" type="button" data-cf="greys" onclick="setCF(this)"><span class="cf-dot" style="background:#9B9B9B;width:10px;height:10px;border-radius:50%;display:inline-block"></span> Greys</button>
+        <button class="flag-pill cf-btn" type="button" data-cf="beiges" onclick="setCF(this)"><span class="cf-dot" style="background:#C9B99A;width:10px;height:10px;border-radius:50%;display:inline-block"></span> Beiges</button>
+        <button class="flag-pill cf-btn" type="button" data-cf="browns" onclick="setCF(this)"><span class="cf-dot" style="background:#8B5E3C;width:10px;height:10px;border-radius:50%;display:inline-block"></span> Browns</button>
+        <button class="flag-pill cf-btn" type="button" data-cf="creams" onclick="setCF(this)"><span class="cf-dot" style="background:#F0E8D8;width:10px;height:10px;border-radius:50%;border:1px solid #ddd;display:inline-block"></span> Creams</button>
+        <button class="flag-pill cf-btn" type="button" data-cf="blacks" onclick="setCF(this)"><span class="cf-dot" style="background:#1A1A1A;width:10px;height:10px;border-radius:50%;display:inline-block"></span> Blacks</button>
+        <button class="flag-pill cf-btn" type="button" data-cf="blues" onclick="setCF(this)"><span class="cf-dot" style="background:#2B5EA7;width:10px;height:10px;border-radius:50%;display:inline-block"></span> Blues</button>
+        <button class="flag-pill cf-btn" type="button" data-cf="greens" onclick="setCF(this)"><span class="cf-dot" style="background:#2D6A4F;width:10px;height:10px;border-radius:50%;display:inline-block"></span> Greens</button>
+        <button class="flag-pill cf-btn" type="button" data-cf="golds" onclick="setCF(this)"><span class="cf-dot" style="background:#C49A3C;width:10px;height:10px;border-radius:50%;display:inline-block"></span> Golds</button>
+        <button class="flag-pill cf-btn" type="button" data-cf="reds" onclick="setCF(this)"><span class="cf-dot" style="background:#E03040;width:10px;height:10px;border-radius:50%;display:inline-block"></span> Reds</button>
+        <button class="flag-pill cf-btn" type="button" data-cf="silvers" onclick="setCF(this)"><span class="cf-dot" style="background:#C0C0C0;width:10px;height:10px;border-radius:50%;display:inline-block"></span> Silvers</button>
+        <button class="flag-pill cf-btn" type="button" data-cf="multicolour" onclick="setCF(this)">Multicolour</button>
+      </div>
     </div>
-    <input type="hidden" id="p-colour-family">
 
-    <div class="pm-divider"><i class="fa-solid fa-layer-group"></i> Carpet Attributes</div>
-    <div class="pm-attr-grid">
-      <div class="pm-attr-group">
-        <div class="pm-attr-label">Fibre</div>
-        <div class="flag-row">
-          <button class="flag-pill attr-btn" type="button" data-attr="fibre" data-val="100% Recycled Polyester" onclick="setAttr(this)">100% Recycled Polyester</button>
-          <button class="flag-pill attr-btn" type="button" data-attr="fibre" data-val="100% Polyester" onclick="setAttr(this)">100% Polyester</button>
-          <button class="flag-pill attr-btn" type="button" data-attr="fibre" data-val="100% Polypropylene" onclick="setAttr(this)">100% Polypropylene</button>
-          <button class="flag-pill attr-btn" type="button" data-attr="fibre" data-val="100% Wool" onclick="setAttr(this)">100% Wool</button>
-          <button class="flag-pill attr-btn" type="button" data-attr="fibre" data-val="Mixed Fibres" onclick="setAttr(this)">Mixed Fibres</button>
-          <button class="flag-pill attr-btn" type="button" data-attr="fibre" data-val="Natural Fibre" onclick="setAttr(this)">Natural Fibre</button>
+    <!-- ── CARPET ATTRIBUTES ── -->
+    <div class="pm-sec cat-block" id="cat-block-carpets">
+      <div class="pm-sec-title"><i class="fa-solid fa-layer-group"></i> Carpet Attributes</div>
+      <div class="pm-row2">
+        <div class="field"><label>Pile Style</label>
+          <div class="flag-row">
+            <button class="flag-pill attr-btn" type="button" data-attr="carpet_style" data-val="Saxony" onclick="setAttr(this)">Saxony</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="carpet_style" data-val="Twist" onclick="setAttr(this)">Twist</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="carpet_style" data-val="Loop Pile" onclick="setAttr(this)">Loop Pile</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="carpet_style" data-val="Berber" onclick="setAttr(this)">Berber</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="carpet_style" data-val="Velvet" onclick="setAttr(this)">Velvet</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="carpet_style" data-val="Herringbone" onclick="setAttr(this)">Herringbone</button>
+          </div>
+        </div>
+        <div class="field"><label>Fibre</label>
+          <div class="flag-row">
+            <button class="flag-pill attr-btn" type="button" data-attr="fibre" data-val="100% Polyester" onclick="setAttr(this)">Polyester</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="fibre" data-val="100% Polypropylene" onclick="setAttr(this)">Polypropylene</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="fibre" data-val="100% Wool" onclick="setAttr(this)">Wool</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="fibre" data-val="100% Recycled Polyester" onclick="setAttr(this)">Recycled Polyester</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="fibre" data-val="Mixed Fibres" onclick="setAttr(this)">Mixed Fibres</button>
+          </div>
         </div>
       </div>
-      <div class="pm-attr-group">
-        <div class="pm-attr-label">Style</div>
-        <div class="flag-row">
-          <button class="flag-pill attr-btn" type="button" data-attr="carpet_style" data-val="Herringbone" onclick="setAttr(this)">Herringbone</button>
-          <button class="flag-pill attr-btn" type="button" data-attr="carpet_style" data-val="Loop Pile" onclick="setAttr(this)">Loop Pile</button>
-          <button class="flag-pill attr-btn" type="button" data-attr="carpet_style" data-val="Velvet" onclick="setAttr(this)">Velvet</button>
-          <button class="flag-pill attr-btn" type="button" data-attr="carpet_style" data-val="Twist" onclick="setAttr(this)">Twist</button>
-          <button class="flag-pill attr-btn" type="button" data-attr="carpet_style" data-val="Saxony" onclick="setAttr(this)">Saxony</button>
-          <button class="flag-pill attr-btn" type="button" data-attr="carpet_style" data-val="Berber" onclick="setAttr(this)">Berber</button>
+      <div class="pm-row2">
+        <div class="field"><label>Pile Height</label>
+          <div class="flag-row">
+            <button class="flag-pill attr-btn" type="button" data-attr="thickness" data-val="Extra Short" onclick="setAttr(this)">Extra Short</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="thickness" data-val="Short" onclick="setAttr(this)">Short</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="thickness" data-val="Medium" onclick="setAttr(this)">Medium</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="thickness" data-val="Deep" onclick="setAttr(this)">Deep</button>
+          </div>
+        </div>
+        <div class="field"><label>Density</label>
+          <div class="flag-row">
+            <button class="flag-pill attr-btn" type="button" data-attr="density" data-val="Loose" onclick="setAttr(this)">Loose</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="density" data-val="Medium" onclick="setAttr(this)">Medium</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="density" data-val="Compact" onclick="setAttr(this)">Compact</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="density" data-val="Extra Compact" onclick="setAttr(this)">Extra Compact</button>
+          </div>
         </div>
       </div>
-      <div class="pm-attr-group">
-        <div class="pm-attr-label">Softness</div>
+      <div class="field"><label>Softness Feel</label>
         <div class="flag-row">
           <button class="flag-pill attr-btn" type="button" data-attr="softness_label" data-val="Firm" onclick="setAttr(this)">Firm</button>
           <button class="flag-pill attr-btn" type="button" data-attr="softness_label" data-val="Soft" onclick="setAttr(this)">Soft</button>
-        </div>
-      </div>
-      <div class="pm-attr-group">
-        <div class="pm-attr-label">Thickness</div>
-        <div class="flag-row">
-          <button class="flag-pill attr-btn" type="button" data-attr="thickness" data-val="Extra Short" onclick="setAttr(this)">Extra Short</button>
-          <button class="flag-pill attr-btn" type="button" data-attr="thickness" data-val="Short" onclick="setAttr(this)">Short</button>
-          <button class="flag-pill attr-btn" type="button" data-attr="thickness" data-val="Medium" onclick="setAttr(this)">Medium</button>
-        </div>
-      </div>
-      <div class="pm-attr-group">
-        <div class="pm-attr-label">Density</div>
-        <div class="flag-row">
-          <button class="flag-pill attr-btn" type="button" data-attr="density" data-val="Extra Loose" onclick="setAttr(this)">Extra Loose</button>
-          <button class="flag-pill attr-btn" type="button" data-attr="density" data-val="Loose" onclick="setAttr(this)">Loose</button>
-          <button class="flag-pill attr-btn" type="button" data-attr="density" data-val="Medium" onclick="setAttr(this)">Medium</button>
-          <button class="flag-pill attr-btn" type="button" data-attr="density" data-val="Compact" onclick="setAttr(this)">Compact</button>
-          <button class="flag-pill attr-btn" type="button" data-attr="density" data-val="Extra Compact" onclick="setAttr(this)">Extra Compact</button>
+          <button class="flag-pill attr-btn" type="button" data-attr="softness_label" data-val="Ultra Soft" onclick="setAttr(this)">Ultra Soft</button>
         </div>
       </div>
     </div>
-    <input type="hidden" id="p-fibre">
-    <input type="hidden" id="p-carpet-style">
-    <input type="hidden" id="p-softness-label">
-    <input type="hidden" id="p-thickness">
-    <input type="hidden" id="p-density">
 
-    <div class="pm-divider"><i class="fa-solid fa-palette"></i> Colour Variants</div>
-    <div class="field">
-      <label>Add Colour</label>
-      <div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:10px;flex-wrap:wrap">
-        <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px">
-          <span style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ps-grey)">Name</span>
-          <input type="text" id="colour-name-input" placeholder="e.g. Linen">
+    <!-- ── VINYL ATTRIBUTES ── -->
+    <div class="pm-sec cat-block" id="cat-block-vinyl">
+      <div class="pm-sec-title"><i class="fa-solid fa-layer-group"></i> Vinyl Attributes</div>
+      <div class="pm-row3">
+        <div class="field"><label>Board Thickness</label>
+          <div class="pm-unit-wrap"><input type="number" id="p-thickness-mm" min="0" step="0.1" placeholder="5.0"><span class="pm-unit-label">mm</span></div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:4px">
-          <span style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ps-grey)">Tint</span>
-          <input type="color" id="colour-hex-input" value="#9B8E82" style="width:46px;height:46px;border:1.5px solid var(--ps-border);border-radius:8px;cursor:pointer;padding:3px;background:var(--ps-cream)">
+        <div class="field"><label>Wear Layer</label>
+          <div class="pm-unit-wrap"><input type="number" id="p-wear-layer-mm" min="0" step="0.1" placeholder="0.5"><span class="pm-unit-label">mm</span></div>
         </div>
-        <button type="button" onclick="addColourSwatch()" style="padding:12px 18px;background:var(--ps-red);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:.83rem;cursor:pointer;white-space:nowrap;height:46px">+ Add</button>
+        <div class="field"><label>Plank Width</label>
+          <div class="pm-unit-wrap"><input type="number" id="p-plank-width-mm" min="0" step="1" placeholder="180"><span class="pm-unit-label">mm</span></div>
+        </div>
       </div>
-      <div id="colour-swatches-list" style="display:flex;flex-direction:column;gap:10px;min-height:10px"></div>
-      <input type="hidden" id="p-colours">
-      <p style="font-size:.72rem;color:var(--ps-grey);margin:8px 0 0">Each colour can have a sample photo — drag &amp; drop or click the image zone.</p>
+      <div class="pm-row2">
+        <div class="field"><label>Installation Method</label>
+          <div class="flag-row">
+            <button class="flag-pill attr-btn" type="button" data-attr="installation_method" data-val="Click" onclick="setAttr(this)">Click</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="installation_method" data-val="Glue Down" onclick="setAttr(this)">Glue Down</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="installation_method" data-val="Loose Lay" onclick="setAttr(this)">Loose Lay</button>
+          </div>
+        </div>
+        <div class="field"><label>Lay Pattern</label>
+          <div class="flag-row">
+            <button class="flag-pill attr-btn" type="button" data-attr="lay_pattern" data-val="Straight" onclick="setAttr(this)">Straight</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="lay_pattern" data-val="Herringbone" onclick="setAttr(this)">Herringbone</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="lay_pattern" data-val="Chevron" onclick="setAttr(this)">Chevron</button>
+          </div>
+        </div>
+      </div>
+      <div class="pm-toggle-row" id="toggle-ufh-vinyl" onclick="pmToggle(this,'p-ufh-vinyl')">
+        <span><i class="fa-solid fa-fire" style="color:var(--ps-red)"></i> Underfloor Heating Compatible</span>
+        <div class="pm-toggle-dot"></div>
+      </div>
+      <input type="hidden" id="p-ufh-vinyl" value="0">
     </div>
 
-    <div class="pm-divider"><i class="fa-solid fa-flag"></i> Visibility & Flags</div>
-    <div class="flag-row">
-      <button class="flag-pill" type="button" id="flag-featured" onclick="this.classList.toggle('active')"><i class="fa-solid fa-star"></i> Featured</button>
-      <button class="flag-pill" type="button" id="flag-deal" onclick="this.classList.toggle('active')"><i class="fa-solid fa-fire"></i> Weekly Deal</button>
-      <button class="flag-pill active" type="button" id="flag-active" onclick="this.classList.toggle('active')"><i class="fa-solid fa-eye"></i> Visible on Website</button>
+    <!-- ── LAMINATE ATTRIBUTES ── -->
+    <div class="pm-sec cat-block" id="cat-block-laminate">
+      <div class="pm-sec-title"><i class="fa-solid fa-layer-group"></i> Laminate Attributes</div>
+      <div class="pm-row3">
+        <div class="field"><label>Board Thickness</label>
+          <div class="pm-unit-wrap"><input type="number" id="p-thickness-mm-lam" min="0" step="1" placeholder="8"><span class="pm-unit-label">mm</span></div>
+        </div>
+        <div class="field"><label>Plank Width</label>
+          <div class="pm-unit-wrap"><input type="number" id="p-plank-width-mm-lam" min="0" step="1" placeholder="190"><span class="pm-unit-label">mm</span></div>
+        </div>
+        <div class="field"><label>AC Rating</label>
+          <select id="p-ac-rating">
+            <option value="">— Select —</option>
+            <option value="AC3">AC3 — Medium Commercial</option>
+            <option value="AC4">AC4 — General Commercial</option>
+            <option value="AC5">AC5 — Heavy Commercial</option>
+          </select>
+        </div>
+      </div>
+      <div class="pm-row2">
+        <div class="field"><label>Board Design</label>
+          <div class="flag-row">
+            <button class="flag-pill attr-btn" type="button" data-attr="board_design" data-val="Wood Effect" onclick="setAttr(this)">Wood Effect</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="board_design" data-val="Stone Effect" onclick="setAttr(this)">Stone Effect</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="board_design" data-val="Tile Effect" onclick="setAttr(this)">Tile Effect</button>
+          </div>
+        </div>
+        <div class="field"><label>Installation Method</label>
+          <div class="flag-row">
+            <button class="flag-pill attr-btn" type="button" data-attr="installation_method" data-val="Click" onclick="setAttr(this)">Click</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="installation_method" data-val="Glue Down" onclick="setAttr(this)">Glue Down</button>
+          </div>
+        </div>
+      </div>
+      <div class="pm-toggle-row" id="toggle-ufh-lam" onclick="pmToggle(this,'p-ufh-lam')">
+        <span><i class="fa-solid fa-fire" style="color:var(--ps-red)"></i> Underfloor Heating Compatible</span>
+        <div class="pm-toggle-dot"></div>
+      </div>
+      <input type="hidden" id="p-ufh-lam" value="0">
+    </div>
+
+    <!-- ── WOOD ATTRIBUTES ── -->
+    <div class="pm-sec cat-block" id="cat-block-wood">
+      <div class="pm-sec-title"><i class="fa-solid fa-layer-group"></i> Wood Attributes</div>
+      <div class="pm-row2">
+        <div class="field"><label>Species &amp; Finish</label>
+          <input type="text" id="p-species-finish" placeholder="e.g. Oak Brushed and Oiled">
+        </div>
+        <div class="field"><label>Surface Finish</label>
+          <div class="flag-row">
+            <button class="flag-pill attr-btn" type="button" data-attr="surface_finish" data-val="Oiled" onclick="setAttr(this)">Oiled</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="surface_finish" data-val="Lacquered" onclick="setAttr(this)">Lacquered</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="surface_finish" data-val="Brushed" onclick="setAttr(this)">Brushed</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="surface_finish" data-val="Smoked" onclick="setAttr(this)">Smoked</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="surface_finish" data-val="Matt" onclick="setAttr(this)">Matt</button>
+          </div>
+        </div>
+      </div>
+      <div class="pm-row3">
+        <div class="field"><label>Board Thickness</label>
+          <div class="pm-unit-wrap"><input type="number" id="p-thickness-mm-wood" min="0" step="1" placeholder="14"><span class="pm-unit-label">mm</span></div>
+        </div>
+        <div class="field"><label>Plank Width</label>
+          <div class="pm-unit-wrap"><input type="number" id="p-plank-width-mm-wood" min="0" step="1" placeholder="190"><span class="pm-unit-label">mm</span></div>
+        </div>
+        <div class="field"><label>Lay Pattern</label>
+          <div class="flag-row">
+            <button class="flag-pill attr-btn" type="button" data-attr="lay_pattern" data-val="Straight" onclick="setAttr(this)">Straight</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="lay_pattern" data-val="Herringbone" onclick="setAttr(this)">Herringbone</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="lay_pattern" data-val="Chevron" onclick="setAttr(this)">Chevron</button>
+          </div>
+        </div>
+      </div>
+      <div class="pm-row1">
+        <div class="field"><label>Installation Method</label>
+          <div class="flag-row">
+            <button class="flag-pill attr-btn" type="button" data-attr="installation_method" data-val="Click" onclick="setAttr(this)">Click</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="installation_method" data-val="Nail Down" onclick="setAttr(this)">Nail Down</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="installation_method" data-val="Glue Down" onclick="setAttr(this)">Glue Down</button>
+            <button class="flag-pill attr-btn" type="button" data-attr="installation_method" data-val="Float" onclick="setAttr(this)">Float</button>
+          </div>
+        </div>
+      </div>
+      <div class="pm-toggle-row" id="toggle-ufh-wood" onclick="pmToggle(this,'p-ufh-wood')">
+        <span><i class="fa-solid fa-fire" style="color:var(--ps-red)"></i> Underfloor Heating Compatible</span>
+        <div class="pm-toggle-dot"></div>
+      </div>
+      <input type="hidden" id="p-ufh-wood" value="0">
+    </div>
+
+  </div><!-- /pm-panel-attrs -->
+
+  <!-- ── TAB 3: COLOURS ───────────────────────────── -->
+  <div class="pm-panel" id="pm-panel-colours">
+    <div class="pm-sec-title"><i class="fa-solid fa-palette"></i> Colour Variants</div>
+    <div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:140px" class="field" style="margin:0">
+        <label>Colour Name</label>
+        <input type="text" id="colour-name-input" placeholder="e.g. Linen">
+      </div>
+      <div class="field" style="margin:0">
+        <label>Tint</label>
+        <input type="color" id="colour-hex-input" value="#9B8E82" style="width:46px;height:46px;border:1.5px solid var(--ps-border);border-radius:8px;cursor:pointer;padding:3px;background:var(--ps-cream)">
+      </div>
+      <button type="button" onclick="addColourSwatch()" style="padding:12px 18px;background:var(--ps-red);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:.83rem;cursor:pointer;white-space:nowrap;height:46px;align-self:flex-end">+ Add Colour</button>
+    </div>
+    <div id="colour-swatches-list" style="display:flex;flex-direction:column;gap:10px;min-height:20px"></div>
+    <p class="pm-colour-note">Each colour can have its own sample photo — click the image zone on any colour row to upload one.</p>
+  </div>
+
+  <!-- ── TAB 4: PUBLISH ───────────────────────────── -->
+  <div class="pm-panel" id="pm-panel-publish">
+    <div class="pm-sec">
+      <div class="pm-sec-title"><i class="fa-solid fa-flag"></i> Visibility &amp; Flags</div>
+      <div class="flag-row" style="margin-bottom:16px">
+        <button class="flag-pill active" type="button" id="flag-active" onclick="this.classList.toggle('active')"><i class="fa-solid fa-eye"></i> Visible on Website</button>
+        <button class="flag-pill" type="button" id="flag-featured" onclick="this.classList.toggle('active')"><i class="fa-solid fa-star"></i> Featured</button>
+        <button class="flag-pill" type="button" id="flag-deal" onclick="this.classList.toggle('active')"><i class="fa-solid fa-fire"></i> Weekly Deal</button>
+      </div>
+      <p style="font-size:.78rem;color:var(--ps-grey);margin:0">
+        <strong>Visible on Website</strong> — product appears in the catalogue.<br>
+        <strong>Featured</strong> — shown first in its category.<br>
+        <strong>Weekly Deal</strong> — appears in the Deals tab with the fire icon.
+      </p>
     </div>
   </div>
+
+  <!-- Sticky footer -->
   <div class="modal-foot">
     <button class="btn btn-secondary" onclick="closeProdModal()">Cancel</button>
     <button class="btn btn-primary" onclick="saveProduct()"><i class="fa-solid fa-floppy-disk"></i> Save Product</button>
   </div>
-</div></div>
+</div>
+</div>
+
 <div id="offer-modal" onclick="if(event.target===this)closeOfferModal()">
 <div class="modal">
   <div class="modal-head">
@@ -2639,5 +2986,11 @@ function loadColours(data) {
   renderColourSwatches();
 }
 </script>
+
+<!-- Hidden inputs for category-specific attrs (populated by setAttr/JS) -->
+<input type="hidden" id="p-installation-method-hidden" value="">
+<input type="hidden" id="p-lay-pattern-hidden" value="">
+<input type="hidden" id="p-board-design-hidden" value="">
+<input type="hidden" id="p-surface-finish-hidden" value="">
 </body>
 <!-- v3 --></html>

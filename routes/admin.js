@@ -140,6 +140,9 @@ module.exports = (db) => {
                 durability, softness, is_featured, is_deal, is_active,
                 fitting_price, colours, features,
                 colour_family, fibre, carpet_style, softness_label, thickness, density,
+                thickness_mm, wear_layer_mm, ac_rating, board_design,
+                plank_width_mm, species_finish, surface_finish, lay_pattern,
+                installation_method, ufh_compatible,
             } = req.body;
 
             if (!name || price == null) return res.status(400).json({ error: 'Name and price required' });
@@ -150,8 +153,12 @@ module.exports = (db) => {
                      stock_level, description, img_url, badge, badge_type, rooms,
                      durability, softness, is_featured, is_deal, is_active,
                      fitting_price, colours, features,
-                     colour_family, fibre, carpet_style, softness_label, thickness, density)
-                 VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)
+                     colour_family, fibre, carpet_style, softness_label, thickness, density,
+                     thickness_mm, wear_layer_mm, ac_rating, board_design,
+                     plank_width_mm, species_finish, surface_finish, lay_pattern,
+                     installation_method, ufh_compatible)
+                 VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,
+                         $21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36)
                  RETURNING id`,
                 [
                     name, category_slug, subcategory || null, sku || null, price, original_price || null,
@@ -161,6 +168,10 @@ module.exports = (db) => {
                     fitting_price || 6.00, colours || '[]', features || '[]',
                     colour_family || '', fibre || '', carpet_style || '',
                     softness_label || '', thickness || '', density || '',
+                    thickness_mm || null, wear_layer_mm || null, ac_rating || '',
+                    board_design || '', plank_width_mm || null, species_finish || '',
+                    surface_finish || '', lay_pattern || '', installation_method || '',
+                    ufh_compatible || 0,
                 ]
             );
 
@@ -180,6 +191,9 @@ module.exports = (db) => {
                 durability, softness, is_featured, is_deal, is_active,
                 fitting_price, colours, features,
                 colour_family, fibre, carpet_style, softness_label, thickness, density,
+                thickness_mm, wear_layer_mm, ac_rating, board_design,
+                plank_width_mm, species_finish, surface_finish, lay_pattern,
+                installation_method, ufh_compatible,
             } = req.body;
 
             await db.query(
@@ -191,8 +205,11 @@ module.exports = (db) => {
                     fitting_price=$18, colours=$19, features=$20,
                     colour_family=$21, fibre=$22, carpet_style=$23,
                     softness_label=$24, thickness=$25, density=$26,
+                    thickness_mm=$27, wear_layer_mm=$28, ac_rating=$29, board_design=$30,
+                    plank_width_mm=$31, species_finish=$32, surface_finish=$33,
+                    lay_pattern=$34, installation_method=$35, ufh_compatible=$36,
                     updated_at=NOW()
-                 WHERE id=$27`,
+                 WHERE id=$37`,
                 [
                     name, category_slug, subcategory || null, sku || null, price,
                     original_price || null, stock_level || 0, description || null, img_url || null,
@@ -201,6 +218,10 @@ module.exports = (db) => {
                     fitting_price || 6.00, colours || '[]', features || '[]',
                     colour_family || '', fibre || '', carpet_style || '',
                     softness_label || '', thickness || '', density || '',
+                    thickness_mm || null, wear_layer_mm || null, ac_rating || '',
+                    board_design || '', plank_width_mm || null, species_finish || '',
+                    surface_finish || '', lay_pattern || '', installation_method || '',
+                    ufh_compatible || 0,
                     req.params.id,
                 ]
             );

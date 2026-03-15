@@ -105,6 +105,28 @@ module.exports = async function(db) {
     await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS density TEXT DEFAULT ''`);
     await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS softness_label TEXT DEFAULT ''`);
 
+    // ── Phase 2: category-specific product attributes ────────────────────────
+    // Hard floor: board thickness (vinyl/laminate/wood)
+    await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS thickness_mm REAL DEFAULT NULL`);
+    // Vinyl: wear layer thickness
+    await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS wear_layer_mm REAL DEFAULT NULL`);
+    // Laminate: AC wear rating (AC3/AC4/AC5)
+    await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS ac_rating TEXT DEFAULT ''`);
+    // Laminate: board design (Wood Effect / Stone Effect)
+    await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS board_design TEXT DEFAULT ''`);
+    // Hard floor: plank width in mm
+    await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS plank_width_mm REAL DEFAULT NULL`);
+    // Wood: species and finish description
+    await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS species_finish TEXT DEFAULT ''`);
+    // Wood: surface finish (Oiled/Lacquered/Brushed/Smoked)
+    await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS surface_finish TEXT DEFAULT ''`);
+    // Wood/Vinyl: lay pattern (Straight/Herringbone/Chevron)
+    await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS lay_pattern TEXT DEFAULT ''`);
+    // Hard floor: installation method (Click/Glue/Nail/Loose Lay)
+    await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS installation_method TEXT DEFAULT ''`);
+    // Hard floor: underfloor heating compatible
+    await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS ufh_compatible INTEGER DEFAULT 0`);
+
         const hash = bcrypt.hashSync('Admin@WYC2026!', 10);
         await db.query(`
             INSERT INTO admin_users (username, password_hash, role)
