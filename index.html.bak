@@ -12,9 +12,10 @@
     <title>West Yorkshire Carpets</title>
     <meta name="description" content="Unbeatable local prices on carpets, vinyl, laminate, and wood flooring in West Yorkshire. Free measure & quote. Professional fitting team.">
     <meta name="keywords" content="carpets near me, cheap carpets West Yorkshire, vinyl flooring, laminate flooring UK">
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="./css/styles.css">
     <link rel="stylesheet" href="./css/catalogue.css">
 </head>
@@ -25,7 +26,6 @@
             <div class="logo">
             <a href="/" class="logo" aria-label="Go to homepage">
                 <img 
-                    id="site-logo"
                     src="images/logo.svg" 
                     alt="West Yorkshire Carpets logo"
                     class="h-10 w-auto object-contain"
@@ -57,6 +57,7 @@
             <a href="#" data-catalogue="laminate">Laminate</a>
             <a href="#" data-catalogue="wood">Wood</a>
             <a href="#" data-catalogue="deals">Weekly Deals</a>
+            <a href="#quote" class="mobile-nav-cta">Free Quote</a>
         </div>
     </header>
 
@@ -222,11 +223,6 @@
                 <h2 class="section-heading">Instant Cost Estimate</h2>
                 <p class="section-sub">Get a rough idea of costs in seconds. For a precise quote, book your free in-home measure.</p>
             </div>
-            <div class="calc-product-hint reveal">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <span>Want a price for a <strong>specific product</strong>? Browse our range and calculate directly from any product card.</span>
-                <button class="calc-hint-btn" onclick="if(window.WYCCatalogue)window.WYCCatalogue.open('all')">Browse Products</button>
-            </div>
             <div class="calculator reveal">
                <div class="calc-left">
     <h3>Your Room</h3>
@@ -263,8 +259,7 @@
     <select id="calc-type" style="display:none;" aria-hidden="true" tabindex="-1">
         <option value="carpet_budget">Budget Carpet</option>
         <option value="carpet_premium">Premium Carpet</option>
-        <option value="vinyl_standard">Vinyl Flooring Standard</option>
-        <option value="vinyl_premium">Vinyl Flooring Premium</option>
+        <option value="vinyl">Vinyl Flooring</option>
         <option value="laminate">Laminate</option>
         <option value="wood">Real Wood</option>
     </select>
@@ -279,8 +274,7 @@
         <ul class="calc-dropdown-list" role="listbox" id="calc-dropdown-list">
             <li class="calc-dropdown-item is-selected" role="option" data-value="carpet_budget" aria-selected="true">Budget Carpet — from £5.99/m²</li>
             <li class="calc-dropdown-item" role="option" data-value="carpet_premium" aria-selected="false">Premium Carpet — from £25/m²</li>
-            <li class="calc-dropdown-item" role="option" data-value="vinyl_standard" aria-selected="false">Vinyl Flooring Standard — from £8.50/m²</li>
-            <li class="calc-dropdown-item" role="option" data-value="vinyl_premium" aria-selected="false">Vinyl Flooring Premium — from £16/m²</li>
+            <li class="calc-dropdown-item" role="option" data-value="vinyl" aria-selected="false">Vinyl Flooring — from £15/m²</li>
             <li class="calc-dropdown-item" role="option" data-value="laminate" aria-selected="false">Laminate — from £20/m²</li>
             <li class="calc-dropdown-item" role="option" data-value="wood" aria-selected="false">Real Wood — from £45/m²</li>
         </ul>
@@ -334,7 +328,7 @@
                 <div class="section-tag">Portfolio</div>
                 <h2 class="section-heading">Recent Installations</h2>
             </div>
-            <div class="gallery-grid reveal">
+            <div class="gallery-grid">
                 <div class="gallery-item gallery-item--tall">
                     <img src="https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?auto=format&fit=crop&w=600&q=80" alt="Installation">
                     <div class="gallery-overlay"><span>Living Room</span></div>
@@ -391,6 +385,10 @@
                         <label for="f-name">Full Name *</label>
                         <input type="text" id="f-name" name="name" placeholder="John Smith" required>
                     </div>
+                    <div class="form-group">
+                        <label for="f-email">Email Address</label>
+                        <input type="email" id="f-email" name="email" placeholder="john@example.com" autocomplete="email">
+                    </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="f-phone">Phone *</label>
@@ -400,10 +398,6 @@
                             <label for="f-postcode">Postcode *</label>
                             <input type="text" id="f-postcode" name="postcode" placeholder="LS1 1AA" required>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="f-email">Email <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-3)">(optional — we'll send your written quote here)</span></label>
-                        <input type="email" id="f-email" name="email" placeholder="john@example.com">
                     </div>
                     <div class="form-group">
     <label>Service Needed</label>
@@ -462,12 +456,17 @@
                 <div class="section-tag">Follow Our Work</div>
                 <h2 class="insta-headline">Fresh Installs,<br><em>Every Week</em></h2>
             </div>
-            <a href="https://www.tiktok.com/@14northgateroad"
-               target="_blank" rel="noopener noreferrer"
-               class="insta-handle">
-                <i class="fa-brands fa-tiktok"></i>
-                @14northgateroad
-            </a>
+            <div class="social-handles">
+                <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" class="insta-handle" aria-label="Instagram">
+                    <i class="fa-brands fa-instagram"></i> Instagram
+                </a>
+                <a href="https://www.facebook.com/14northgateroad" target="_blank" rel="noopener noreferrer" class="insta-handle" aria-label="Facebook">
+                    <i class="fa-brands fa-facebook-f"></i> Facebook
+                </a>
+                <a href="https://www.tiktok.com/@14northgateroad" target="_blank" rel="noopener noreferrer" class="insta-handle" aria-label="TikTok">
+                    <i class="fa-brands fa-tiktok"></i> TikTok
+                </a>
+            </div>
         </div>
 
         <div class="insta-grid reveal">
@@ -501,13 +500,6 @@
             </a>
             <a href="https://www.tiktok.com/@14northgateroad" target="_blank" rel="noopener noreferrer" class="insta-item">
                 <img src="https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?auto=format&fit=crop&w=400&q=80" alt="Living room carpet" loading="lazy">
-                <div class="insta-item-overlay">
-                    <i class="fa-brands fa-tiktok"></i>
-                    <span>View</span>
-                </div>
-            </a>
-            <a href="https://www.tiktok.com/@14northgateroad" target="_blank" rel="noopener noreferrer" class="insta-item">
-                <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=400&q=80" alt="Modern hallway flooring" loading="lazy">
                 <div class="insta-item-overlay">
                     <i class="fa-brands fa-tiktok"></i>
                     <span>View</span>
@@ -579,6 +571,9 @@
         </a>
     </div>
 
+    <script src="./js/script.js"></script>
+    <script src="./js/form-handler.js"></script>
+    <script src="./js/catalogue.js"></script>
     <div id="cat-overlay"
          role="dialog"
          aria-modal="true"
@@ -605,7 +600,7 @@
                         </div>
                     </div>
                     <div class="cat-header-right">
-    <span aria-live="polite" aria-atomic="true"></span>
+    <span id="cat-count" aria-live="polite" aria-atomic="true"></span>
 
     <select id="cat-sort" aria-hidden="true" tabindex="-1" style="display:none;">
         <option value="default">Featured</option>
@@ -650,178 +645,11 @@
                         <button class="cat-price-btn"           data-price="premium" type="button">Premium £40+</button>
                     </div>
 
-                    <div class="cat-toolbar-right">
-                        <button class="cat-filter-btn" id="cat-filter-btn" type="button" aria-expanded="false" aria-controls="cat-filter-drawer">
-                            <i class="fa-solid fa-sliders"></i> Filters
-                            <span class="cat-filter-count" id="cat-filter-count" hidden>0</span>
-                        </button>
-                    </div>
                 </div>
             </div>
 
         <div id="cat-body" role="main">
     
-        <!-- Filter Drawer -->
-        <div id="cat-filter-drawer" aria-label="Filter products" hidden>
-            <div class="cfd-header">
-                <span class="cfd-title">Filters</span>
-                <button class="cfd-close" id="cat-filter-close" type="button" aria-label="Close filters"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="cfd-body">
-
-                <!-- Price — all categories -->
-                <div class="cfd-group">
-                    <div class="cfd-group-title">Price Range</div>
-                    <div class="cfd-chips">
-                        <button class="cfd-chip is-selected" data-filter="price" data-value="all">All Prices</button>
-                        <button class="cfd-chip" data-filter="price" data-value="budget">Under £20</button>
-                        <button class="cfd-chip" data-filter="price" data-value="mid">£20 – £40</button>
-                        <button class="cfd-chip" data-filter="price" data-value="premium">£40+</button>
-                    </div>
-                </div>
-
-                <!-- Room — all categories -->
-                <div class="cfd-group">
-                    <div class="cfd-group-title">Room</div>
-                    <div class="cfd-chips" id="cfd-rooms">
-                        <button class="cfd-chip is-selected" data-filter="room" data-value="all">All Rooms</button>
-                        <button class="cfd-chip" data-filter="room" data-value="living">Living Room<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="room" data-value="bedroom">Bedroom<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="room" data-value="kitchen">Kitchen<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="room" data-value="bathroom">Bathroom<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="room" data-value="hallway">Hallway<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="room" data-value="stairs">Stairs<span class="chip-count"></span></button>
-                    </div>
-                </div>
-
-                <!-- Features — all categories (relevant ones surface per cat in counts) -->
-                <div class="cfd-group">
-                    <div class="cfd-group-title">Features</div>
-                    <div class="cfd-chips">
-                        <button class="cfd-chip" data-filter="feature" data-value="waterproof">Waterproof<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="feature" data-value="pet">Pet Friendly<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="feature" data-value="stain">Stain Resistant<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="feature" data-value="scratch">Scratch Resistant<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="feature" data-value="easyClean">Easy Clean<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="feature" data-value="soft">Ultra Soft<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="feature" data-value="insulation">Warm Underfoot<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="feature" data-value="bleach">Bleach Cleanable<span class="chip-count"></span></button>
-                    </div>
-                </div>
-
-                <!-- Colour — all categories -->
-                <div class="cfd-group">
-                    <div class="cfd-group-title">Colour</div>
-                    <div class="cfd-chips" id="cfd-colours">
-                        <button class="cfd-chip cfd-colour-chip" data-filter="colour_family" data-value="greys"><span class="cfd-dot" style="background:#A0A0A0"></span>Greys<span class="chip-count"></span></button>
-                        <button class="cfd-chip cfd-colour-chip" data-filter="colour_family" data-value="beiges"><span class="cfd-dot" style="background:#C4A882"></span>Beiges<span class="chip-count"></span></button>
-                        <button class="cfd-chip cfd-colour-chip" data-filter="colour_family" data-value="browns"><span class="cfd-dot" style="background:#8B6340"></span>Browns<span class="chip-count"></span></button>
-                        <button class="cfd-chip cfd-colour-chip" data-filter="colour_family" data-value="creams"><span class="cfd-dot" style="background:#F0E6D0;border-color:rgba(0,0,0,.12)"></span>Creams<span class="chip-count"></span></button>
-                        <button class="cfd-chip cfd-colour-chip" data-filter="colour_family" data-value="blacks"><span class="cfd-dot" style="background:#222222"></span>Blacks<span class="chip-count"></span></button>
-                        <button class="cfd-chip cfd-colour-chip cfd-colour-more" data-filter="colour_family" data-value="blues" hidden><span class="cfd-dot" style="background:#4A6FA5"></span>Blues<span class="chip-count"></span></button>
-                        <button class="cfd-chip cfd-colour-chip cfd-colour-more" data-filter="colour_family" data-value="golds" hidden><span class="cfd-dot" style="background:#C49A3C"></span>Golds<span class="chip-count"></span></button>
-                        <button class="cfd-chip cfd-colour-chip cfd-colour-more" data-filter="colour_family" data-value="greens" hidden><span class="cfd-dot" style="background:#5A8A6A"></span>Greens<span class="chip-count"></span></button>
-                        <button class="cfd-chip cfd-colour-chip cfd-colour-more" data-filter="colour_family" data-value="multicolour" hidden><span class="cfd-dot" style="background:linear-gradient(135deg,#E03040 33%,#C49A3C 66%,#2B5EA7)"></span>Multicolour<span class="chip-count"></span></button>
-                        <button class="cfd-chip cfd-colour-chip cfd-colour-more" data-filter="colour_family" data-value="reds" hidden><span class="cfd-dot" style="background:#C0443A"></span>Reds<span class="chip-count"></span></button>
-                        <button class="cfd-chip cfd-colour-chip cfd-colour-more" data-filter="colour_family" data-value="silvers" hidden><span class="cfd-dot" style="background:#C0C0C0"></span>Silvers<span class="chip-count"></span></button>
-                        <button class="cfd-show-more" id="cfd-colour-toggle" type="button">+ Show more</button>
-                    </div>
-                </div>
-
-                <!-- CARPET-ONLY filters -->
-                <div class="cfd-group cfd-cat-group" data-cat="carpets">
-                    <div class="cfd-group-title">Pile Style</div>
-                    <div class="cfd-chips">
-                        <button class="cfd-chip" data-filter="carpet_style" data-value="Saxony">Saxony<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="carpet_style" data-value="Twist">Twist<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="carpet_style" data-value="Loop Pile">Loop Pile<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="carpet_style" data-value="Berber">Berber<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="carpet_style" data-value="Velvet">Velvet<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="carpet_style" data-value="Herringbone">Herringbone<span class="chip-count"></span></button>
-                    </div>
-                </div>
-                <div class="cfd-group cfd-cat-group" data-cat="carpets">
-                    <div class="cfd-group-title">Fibre</div>
-                    <div class="cfd-chips">
-                        <button class="cfd-chip" data-filter="fibre" data-value="100% Wool">100% Wool<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="fibre" data-value="100% Polyester">Polyester<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="fibre" data-value="100% Polypropylene">Polypropylene<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="fibre" data-value="100% Recycled Polyester">Recycled Polyester<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="fibre" data-value="Mixed Fibres">Mixed Fibres<span class="chip-count"></span></button>
-                    </div>
-                </div>
-                <div class="cfd-group cfd-cat-group" data-cat="carpets">
-                    <div class="cfd-group-title">Pile Height</div>
-                    <div class="cfd-chips">
-                        <button class="cfd-chip" data-filter="thickness" data-value="Extra Short">Extra Short<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="thickness" data-value="Short">Short<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="thickness" data-value="Medium">Medium<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="thickness" data-value="Deep">Deep<span class="chip-count"></span></button>
-                    </div>
-                </div>
-
-                <!-- VINYL-ONLY filters -->
-                <div class="cfd-group cfd-cat-group" data-cat="vinyl">
-                    <div class="cfd-group-title">Installation</div>
-                    <div class="cfd-chips">
-                        <button class="cfd-chip" data-filter="installation_method" data-value="Click">Click<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="installation_method" data-value="Glue Down">Glue Down<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="installation_method" data-value="Loose Lay">Loose Lay<span class="chip-count"></span></button>
-                    </div>
-                </div>
-                <div class="cfd-group cfd-cat-group" data-cat="vinyl">
-                    <div class="cfd-group-title">Lay Pattern</div>
-                    <div class="cfd-chips">
-                        <button class="cfd-chip" data-filter="lay_pattern" data-value="Straight">Straight<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="lay_pattern" data-value="Herringbone">Herringbone<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="lay_pattern" data-value="Chevron">Chevron<span class="chip-count"></span></button>
-                    </div>
-                </div>
-
-                <!-- LAMINATE-ONLY filters -->
-                <div class="cfd-group cfd-cat-group" data-cat="laminate">
-                    <div class="cfd-group-title">AC Rating</div>
-                    <div class="cfd-chips">
-                        <button class="cfd-chip" data-filter="ac_rating" data-value="AC3">AC3<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="ac_rating" data-value="AC4">AC4<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="ac_rating" data-value="AC5">AC5<span class="chip-count"></span></button>
-                    </div>
-                </div>
-                <div class="cfd-group cfd-cat-group" data-cat="laminate">
-                    <div class="cfd-group-title">Design</div>
-                    <div class="cfd-chips">
-                        <button class="cfd-chip" data-filter="board_design" data-value="Wood Effect">Wood Effect<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="board_design" data-value="Stone Effect">Stone Effect<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="board_design" data-value="Tile Effect">Tile Effect<span class="chip-count"></span></button>
-                    </div>
-                </div>
-
-                <!-- WOOD-ONLY filters -->
-                <div class="cfd-group cfd-cat-group" data-cat="wood">
-                    <div class="cfd-group-title">Surface Finish</div>
-                    <div class="cfd-chips">
-                        <button class="cfd-chip" data-filter="surface_finish" data-value="Oiled">Oiled<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="surface_finish" data-value="Lacquered">Lacquered<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="surface_finish" data-value="Brushed">Brushed<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="surface_finish" data-value="Smoked">Smoked<span class="chip-count"></span></button>
-                    </div>
-                </div>
-                <div class="cfd-group cfd-cat-group" data-cat="wood">
-                    <div class="cfd-group-title">Lay Pattern</div>
-                    <div class="cfd-chips">
-                        <button class="cfd-chip" data-filter="lay_pattern" data-value="Straight">Straight<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="lay_pattern" data-value="Herringbone">Herringbone<span class="chip-count"></span></button>
-                        <button class="cfd-chip" data-filter="lay_pattern" data-value="Chevron">Chevron<span class="chip-count"></span></button>
-                    </div>
-                </div>
-
-            </div>
-            <div class="cfd-footer">
-                <button class="cfd-reset" id="cfd-reset" type="button">Clear All</button>
-                <button class="cfd-apply" id="cfd-apply" type="button">Show Results</button>
-            </div>
-        </div>
-
         <div id="cat-grid"
                 role="list"
                 aria-label="Flooring products"
@@ -868,8 +696,6 @@
         </div>
         </div>
     </div>
-    <script src="./js/script.js"></script>
-    <script src="./js/form-handler.js"></script>
-    <script src="./js/catalogue.js"></script>
+
 </body>
 </html>

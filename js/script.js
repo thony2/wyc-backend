@@ -2,6 +2,8 @@ const PRICING = {
     flooring: {
         carpet_budget:  { rate: 5.99 },
         carpet_premium: { rate: 25  },
+        vinyl_standard: { rate: 8.50 },
+        vinyl_premium:  { rate: 16   },
         vinyl:          { rate: 15  },
         laminate:       { rate: 20  },
         wood:           { rate: 45  },
@@ -11,8 +13,13 @@ const PRICING = {
 };
 
 const header = document.getElementById('site-header');
+const siteLogo = document.getElementById('site-logo');
 window.addEventListener('scroll', () => {
-    header.classList.toggle('scrolled', window.scrollY > 60);
+    const isScrolled = window.scrollY > 60;
+    header.classList.toggle('scrolled', isScrolled);
+    if (siteLogo) {
+        siteLogo.src = isScrolled ? 'images/logo2.svg' : 'images/logo.svg';
+    }
 }, { passive: true });
 
 const hamburger = document.getElementById('hamburger');
@@ -21,6 +28,11 @@ hamburger.addEventListener('click', () => {
     hamburger.classList.toggle('open');
     mobileNav.classList.toggle('open');
 });
+
+window.closeNavMenu = function() {
+    hamburger.classList.remove('open');
+    mobileNav.classList.remove('open');
+};
 
 const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -235,15 +247,14 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     if (!overlay) return;
 
     let items = [];
-    let idx   = 0;
+    let current = 0;
 
-    function open(i) {
-        idx = ((i % items.length) + items.length) % items.length;
-        const item = items[idx];
-        lbImg.src  = item.src;
-        lbImg.alt  = item.alt;
-        lbCap.textContent   = item.caption;
-        lbCount.textContent = `${idx + 1} / ${items.length}`;
+    function lbOpen(i) {
+        current = ((i % items.length) + items.length) % items.length;
+        lbImg.src  = items[current].src;
+        lbImg.alt  = items[current].alt;
+        lbCap.textContent   = items[current].caption;
+        lbCount.textContent = (current + 1) + ' / ' + items.length;
         prevBtn.hidden = nextBtn.hidden = items.length < 2;
         overlay.removeAttribute('hidden');
         requestAnimationFrame(() => overlay.classList.add('open'));
@@ -251,41 +262,39 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         closeBtn.focus();
     }
 
-    function close() {
+    function lbClose() {
         overlay.classList.remove('open');
         overlay.addEventListener('transitionend', () =>
             overlay.setAttribute('hidden', ''), { once: true });
         document.body.style.overflow = '';
-        items[idx]?.el?.focus();
     }
 
-    document.querySelectorAll('.gallery-item').forEach((el, i) => {
-        const imgEl  = el.querySelector('img');
-        const capEl  = el.querySelector('.gallery-overlay span');
-        items.push({
-            src:     imgEl?.getAttribute('src') || '',
-            alt:     imgEl?.alt || '',
-            caption: capEl?.textContent?.trim() || '',
-            el
+    function bindGallery() {
+        items = [];
+        document.querySelectorAll('.gallery-item').forEach(function(el, i) {
+            const imgEl = el.querySelector('img');
+            const capEl = el.querySelector('.gallery-overlay span');
+            items.push({
+                src:     imgEl ? imgEl.getAttribute('src') : '',
+                alt:     imgEl ? imgEl.alt : '',
+                caption: capEl ? capEl.textContent.trim() : ''
+            });
+            el.style.cursor = 'pointer';
+            el.setAttribute('tabindex', '0');
+            el.onclick = function() { lbOpen(i); };
         });
-        el.setAttribute('tabindex', '0');
-        el.setAttribute('role', 'button');
-        el.setAttribute('aria-label', `View ${items[i].caption} — opens full image`);
-        el.addEventListener('click',   () => open(i));
-        el.addEventListener('keydown', e => {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(i); }
-        });
-    });
+    }
 
-    closeBtn.addEventListener('click', close);
-    prevBtn.addEventListener('click',  () => open(idx - 1));
-    nextBtn.addEventListener('click',  () => open(idx + 1));
-    overlay.addEventListener('click',  e => { if (e.target === overlay) close(); });
-
-    document.addEventListener('keydown', e => {
+    closeBtn.addEventListener('click', lbClose);
+    prevBtn.addEventListener('click',  function() { lbOpen(current - 1); });
+    nextBtn.addEventListener('click',  function() { lbOpen(current + 1); });
+    overlay.addEventListener('click',  function(e) { if (e.target === overlay) lbClose(); });
+    document.addEventListener('keydown', function(e) {
         if (!overlay.classList.contains('open')) return;
-        if (e.key === 'Escape')     close();
-        if (e.key === 'ArrowLeft')  open(idx - 1);
-        if (e.key === 'ArrowRight') open(idx + 1);
+        if (e.key === 'Escape')     lbClose();
+        if (e.key === 'ArrowLeft')  lbOpen(current - 1);
+        if (e.key === 'ArrowRight') lbOpen(current + 1);
     });
+
+    bindGallery();
 })();

@@ -1,17 +1,24 @@
 :root {
-    --red:       #DE3848;
+    /* ── Palette — shared with catalogue ── */
+    --red:       #E03040;
     --red-dark:  #C02535;
+    --navy:      #1B3A5C;
+    --navy-mid:  #2A4F75;
+    --gold:      #C49A3C;
+    --ink:       #1A1714;
+    --ink-2:     #5C574F;
+    --ink-3:     #9C9589;
     --slate:     #2E2F36;
     --slate-mid: #3D3E47;
-    --cream:     #F0EEE4;
-    --cream-mid: #E8E5D8;
-    --grey:      #A2A8B0;
-    --grey-light:#D4D8DC;
+    --cream:     #FFFFFF;
+    --cream-mid: #F8F9FA;
+    --grey:      #9C9589;
+    --grey-light:#E8E3D9;
     --white:     #FFFFFF;
     --black:     #0F0F0F;
 
-    --font-display: 'Cormorant Garamond', Georgia, serif;
-    --font-body:    'DM Sans', system-ui, sans-serif;
+    --font-display: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-body:    "Helvetica Neue", Helvetica, Arial, sans-serif;
 
     --radius-sm: 4px;
     --radius-md: 8px;
@@ -38,7 +45,7 @@ html {
 body {
     font-family: var(--font-body);
     background-color: var(--cream);
-    color: var(--slate);
+    color: var(--ink);
     line-height: 1.6;
     overflow-x: hidden;
 }
@@ -82,7 +89,7 @@ input, select, textarea { font-family: inherit; }
     font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 500;
     line-height: 1.15;
-    color: var(--slate);
+    color: var(--ink);
 }
 .section-heading em {
     font-style: italic;
@@ -97,7 +104,7 @@ input, select, textarea { font-family: inherit; }
 }
 
 .section-header {
-    margin-bottom: 56px;
+    margin-bottom: 24px;
 }
 
 .btn-primary {
@@ -149,9 +156,16 @@ input, select, textarea { font-family: inherit; }
 }
 
 #site-header.scrolled {
-    background: var(--slate);
-    box-shadow: 0 2px 24px rgba(0,0,0,0.25);
+    background: var(--white);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.08);
 }
+#site-header.scrolled .desktop-nav a { color: var(--ink-2); }
+#site-header.scrolled .desktop-nav a:hover { color: var(--ink); }
+#site-header.scrolled .desktop-nav a::after { background: var(--red); }
+#site-header.scrolled .logo,
+#site-header.scrolled .logo a { color: var(--ink); }
+#site-header.scrolled .btn-phone { color: var(--ink-2); }
+#site-header.scrolled .hamburger span { background: var(--ink); }
 
 .header-inner {
     display: flex;
@@ -239,8 +253,8 @@ input, select, textarea { font-family: inherit; }
 .mobile-nav {
     display: none;
     flex-direction: column;
-    background: var(--slate);
-    border-top: 1px solid rgba(255,255,255,0.08);
+    background: var(--white);
+    border-top: 1px solid var(--grey-light);
 }
 
 .mobile-nav.open {
@@ -250,24 +264,26 @@ input, select, textarea { font-family: inherit; }
 .mobile-nav a {
     padding: 14px 5%;
     font-size: 0.9rem;
-    color: rgba(255,255,255,0.8);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    color: var(--ink-2);
+    border-bottom: 1px solid var(--grey-light);
     transition: background var(--transition), color var(--transition);
 }
 
 .mobile-nav a:hover {
-    background: rgba(255,255,255,0.05);
-    color: var(--white);
+    background: var(--cream-mid);
+    color: var(--ink);
 }
 
 .mobile-nav-cta {
-    margin: 16px 5%;
-    background: var(--red) !important;
+    margin: 12px 5% 16px;
+    background: var(--gold) !important;
     color: var(--white) !important;
     border-radius: var(--radius-sm) !important;
     text-align: center !important;
     border-bottom: none !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
+    letter-spacing: .02em !important;
+    padding: 14px 5% !important;
 }
 
 .hero {
@@ -413,7 +429,7 @@ input, select, textarea { font-family: inherit; }
 }
 
 .features-strip {
-    background: var(--slate);
+    background: #F8F9FA;
     padding: 0;
 }
 
@@ -435,7 +451,7 @@ input, select, textarea { font-family: inherit; }
 
 .feature-sep {
     width: 1px;
-    background: rgba(255,255,255,0.07);
+    background: var(--grey-light);
     margin: 28px 0;
 }
 
@@ -457,7 +473,7 @@ input, select, textarea { font-family: inherit; }
     font-family: var(--font-display);
     font-size: 1.15rem;
     font-weight: 600;
-    color: var(--white);
+    color: var(--ink);
     margin-bottom: 4px;
 }
 .feature-text p {
@@ -480,6 +496,7 @@ input, select, textarea { font-family: inherit; }
 .flooring-card {
     background: var(--white);
     border-radius: var(--radius-md);
+    border: 1.5px solid var(--grey-light);
     overflow: hidden;
     transition: transform var(--transition), box-shadow var(--transition);
 }
@@ -509,7 +526,7 @@ input, select, textarea { font-family: inherit; }
     font-family: var(--font-display);
     font-size: 1.5rem;
     font-weight: 600;
-    color: var(--slate);
+    color: var(--ink);
     margin-bottom: 8px;
 }
 .flooring-card-body p {
@@ -530,7 +547,7 @@ input, select, textarea { font-family: inherit; }
 .card-link:hover { gap: 10px; }
 
 .deals-section {
-    background: var(--slate);
+    background: #F8F9FA;
     padding: 0;
     overflow: hidden;
 }
@@ -572,7 +589,7 @@ input, select, textarea { font-family: inherit; }
     font-family: var(--font-display);
     font-size: clamp(2rem, 4vw, 3.2rem);
     font-weight: 400;
-    color: var(--white);
+    color: var(--ink);
     line-height: 1.15;
     margin-bottom: 28px;
 }
@@ -583,9 +600,9 @@ input, select, textarea { font-family: inherit; }
 }
 .deals-list li {
     font-size: 0.92rem;
-    color: rgba(255,255,255,0.7);
+    color: var(--ink-2);
     padding: 8px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
+    border-bottom: 1px solid var(--grey-light);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -644,7 +661,7 @@ input, select, textarea { font-family: inherit; }
 
 .quote-section {
     background: var(--cream-mid);
-    padding: 100px 0;
+    padding: 60px 0 80px;
 }
 
 .calculator {
@@ -657,14 +674,14 @@ input, select, textarea { font-family: inherit; }
 .calc-left {
     background: var(--white);
     border-radius: var(--radius-md);
-    padding: 36px;
+    padding: 28px;
     box-shadow: var(--shadow-soft);
 }
 
 .calc-left h3 {
     font-family: var(--font-display);
     font-size: 1.5rem;
-    color: var(--slate);
+    color: var(--ink);
     margin-bottom: 24px;
 }
 
@@ -695,13 +712,13 @@ input, select, textarea { font-family: inherit; }
 }
 
 .calc-mode-btn.active {
-    background: var(--slate);
+    background: var(--navy);
     color: var(--white);
 }
 
 .calc-mode-btn:not(.active):hover {
     background: var(--cream-mid);
-    color: var(--slate);
+    color: var(--ink);
 }
 
 .calc-switcher-wrap {
@@ -753,7 +770,7 @@ input, select, textarea { font-family: inherit; }
     border: 1.5px solid var(--cream-mid);
     border-radius: var(--radius-sm);
     font-size: 0.92rem;
-    color: var(--slate);
+    color: var(--ink);
     font-family: var(--font-body);
     transition: border-color var(--transition), background var(--transition);
     appearance: none;
@@ -817,6 +834,7 @@ input, select, textarea { font-family: inherit; }
     width: 100%;
     cursor: pointer;
     outline: none;
+    overflow: visible;
 }
 
 .calc-dropdown-selected {
@@ -828,7 +846,7 @@ input, select, textarea { font-family: inherit; }
     border: 1.5px solid var(--cream-mid);
     border-radius: var(--radius-sm);
     font-size: 0.92rem;
-    color: var(--slate);
+    color: var(--ink);
     font-family: var(--font-body);
     transition: border-color var(--transition), background var(--transition);
     user-select: none;
@@ -862,7 +880,7 @@ input, select, textarea { font-family: inherit; }
     border-radius: var(--radius-sm);
     overflow: hidden;
     list-style: none;
-    z-index: 100;
+    z-index: 500;
     box-shadow: var(--shadow-card);
 }
 
@@ -873,7 +891,7 @@ input, select, textarea { font-family: inherit; }
 .calc-dropdown-item {
     padding: 11px 14px;
     font-size: 0.92rem;
-    color: var(--slate);
+    color: var(--ink);
     font-family: var(--font-body);
     cursor: pointer;
     transition: background 0.15s ease;
@@ -907,7 +925,7 @@ input, select, textarea { font-family: inherit; }
     gap: 12px;
     cursor: pointer;
     font-size: 0.88rem;
-    color: var(--slate);
+    color: var(--ink);
     user-select: none;
 }
 
@@ -960,10 +978,11 @@ input, select, textarea { font-family: inherit; }
 }
 
 .calc-result-box {
-    background: var(--slate);
+    background: var(--white);
     border-radius: var(--radius-md);
     padding: 36px;
-    color: var(--white);
+    border: 1.5px solid var(--grey-light);
+    color: var(--ink);
 }
 
 .calc-label {
@@ -992,7 +1011,7 @@ input, select, textarea { font-family: inherit; }
 }
 
 .calc-breakdown {
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid var(--grey-light);
     padding-top: 20px;
     margin-bottom: 24px;
 }
@@ -1003,15 +1022,60 @@ input, select, textarea { font-family: inherit; }
     align-items: center;
     font-size: 0.88rem;
     padding: 8px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    color: rgba(255,255,255,0.65);
+    border-bottom: 1px solid var(--grey-light);
+    color: var(--ink-2);
 }
 
 .breakdown-row:last-child { border-bottom: none; }
 
 .breakdown-row span:last-child {
     font-weight: 600;
-    color: var(--white);
+    color: var(--ink);
+}
+
+.calc-product-hint {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding: 14px 18px;
+    background: var(--white, #fff);
+    border: 1.5px solid var(--border, #E8E3D9);
+    border-left: 3px solid var(--red, #E03040);
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    color: var(--ink-2, #5C574F);
+    flex-wrap: wrap;
+}
+.calc-product-hint i {
+    color: var(--red);
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+.calc-product-hint span { flex: 1; min-width: 160px; line-height: 1.5; }
+.calc-product-hint strong { color: var(--ink); }
+.calc-hint-btn {
+    flex-shrink: 0;
+    padding: 8px 18px;
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    transition: background 0.15s, transform 0.15s;
+}
+.calc-hint-btn:hover {
+    background: #c02030;
+    transform: translateY(-1px);
+}
+@media (max-width: 640px) {
+    .calc-product-hint { flex-direction: column; align-items: flex-start; gap: 10px; margin-bottom: 20px; }
+    .calc-hint-btn { width: 100%; text-align: center; padding: 11px 16px; }
 }
 
 .calc-disclaimer {
@@ -1060,6 +1124,7 @@ input, select, textarea { font-family: inherit; }
 .gallery-overlay {
     position: absolute;
     inset: 0;
+    pointer-events: none;
     background: linear-gradient(to top, rgba(46,47,54,0.7) 0%, transparent 50%);
     display: flex;
     align-items: flex-end;
@@ -1083,7 +1148,7 @@ input, select, textarea { font-family: inherit; }
 }
 
 .contact-section {
-    background: var(--slate);
+    background: #F8F9FA;
     padding: 0;
 }
 
@@ -1102,7 +1167,7 @@ input, select, textarea { font-family: inherit; }
     font-family: var(--font-display);
     font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 400;
-    color: var(--white);
+    color: var(--ink);
     line-height: 1.15;
     margin-bottom: 16px;
 }
@@ -1128,14 +1193,14 @@ input, select, textarea { font-family: inherit; }
     align-items: center;
     gap: 16px;
     padding: 18px 20px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.07);
+    background: var(--white);
+    border: 1px solid var(--grey-light);
     border-radius: var(--radius-md);
     transition: background var(--transition), border-color var(--transition);
 }
 .contact-method:hover {
-    background: rgba(255,255,255,0.07);
-    border-color: rgba(255,255,255,0.14);
+    background: var(--cream-mid);
+    border-color: #d0d3d6;
 }
 .method-icon {
     width: 42px;
@@ -1162,7 +1227,7 @@ input, select, textarea { font-family: inherit; }
 }
 .method-text strong {
     font-size: 0.95rem;
-    color: var(--white);
+    color: var(--ink);
     font-weight: 500;
     margin-top: 2px;
 }
@@ -1335,8 +1400,8 @@ footer {
     left: 0;
     right: 0;
     z-index: 999;
-    background: var(--slate);
-    border-top: 1px solid rgba(255,255,255,0.08);
+    background: var(--white);
+    border-top: 1px solid var(--grey-light);
     padding: 10px 20px;
     gap: 12px;
     align-items: center;
@@ -1354,11 +1419,11 @@ footer {
     transition: all var(--transition);
 }
 .mcta-phone {
-    background: rgba(255,255,255,0.08);
-    color: var(--white);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--cream-mid);
+    color: var(--ink);
+    border: 1px solid var(--grey-light);
 }
-.mcta-phone:hover { background: rgba(255,255,255,0.14); }
+.mcta-phone:hover { background: #e8eaec; }
 .mcta-quote {
     background: var(--red);
     color: var(--white);
@@ -1543,12 +1608,6 @@ footer {
 }
 
 /* GDPR checkbox text is smaller — keep aligned */
-.form-group--consent .checkbox-label {
-    align-items: flex-start;
-    font-size: 0.82rem;
-    color: var(--grey);
-    line-height: 1.55;
-}
 .form-group--consent .checkbox-label .checkmark {
     margin-top: 1px;
 }
@@ -1698,12 +1757,17 @@ footer {
     font-family: var(--font-display);
     font-size: clamp(1.6rem, 3vw, 2.2rem);
     font-weight: 500;
-    color: var(--slate);
+    color: var(--ink);
     line-height: 1.2;
 }
 .insta-headline em {
     font-style: italic;
     color: var(--red);
+}
+.social-handles {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 .insta-handle {
     display: inline-flex;
@@ -1711,8 +1775,8 @@ footer {
     gap: 8px;
     font-size: 0.85rem;
     font-weight: 600;
-    color: var(--slate);
-    border: 1.5px solid var(--slate);
+    color: var(--navy);
+    border: 1.5px solid var(--navy);
     border-radius: var(--radius-sm);
     padding: 9px 18px;
     transition: background var(--transition), color var(--transition);
@@ -1720,7 +1784,7 @@ footer {
 }
 .insta-handle i { font-size: 1rem; }
 .insta-handle:hover {
-    background: var(--slate);
+    background: var(--navy);
     color: var(--white);
 }
 
@@ -1729,6 +1793,8 @@ footer {
     grid-template-columns: repeat(5, 1fr);
     gap: 10px;
     margin-bottom: 32px;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .insta-item {
@@ -1782,7 +1848,7 @@ footer {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    background: var(--slate);
+    background: var(--ink);
     color: var(--white);
     padding: 14px 28px;
     border-radius: 50px;
@@ -1798,12 +1864,17 @@ footer {
 
 @media (max-width: 900px) {
     .insta-grid { grid-template-columns: repeat(3, 1fr); }
-    .insta-item:nth-child(n+4) { display: none; }
+    .insta-item:nth-child(n+7) { display: none; }
 }
 @media (max-width: 640px) {
-    .insta-grid { grid-template-columns: repeat(2, 1fr); }
-    .insta-item:nth-child(n+3) { display: none; }
-    .insta-header { flex-direction: column; align-items: flex-start; }
+    .insta-section { padding: 48px 0 56px; }
+    .insta-header { flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: nowrap; }
+    .insta-headline { font-size: 1.35rem; }
+    .insta-handle { padding: 6px 12px; font-size: 0.78rem; gap: 6px; }
+    .insta-handle i { font-size: 0.85rem; }
+    .insta-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 20px; }
+    .insta-item:nth-child(n+7) { display: none; }
+    .insta-offer-pill { padding: 11px 18px; font-size: 0.8rem; gap: 8px; }
 }
 
 .form-dropdown {
@@ -1823,7 +1894,7 @@ footer {
     border: 1.5px solid var(--cream-mid);
     border-radius: var(--radius-sm);
     font-size: 0.92rem;
-    color: var(--slate);
+    color: var(--ink);
     font-family: var(--font-body);
     transition: border-color var(--transition), background var(--transition);
     user-select: none;
@@ -1868,7 +1939,7 @@ footer {
 .form-dropdown-item {
     padding: 12px 14px;
     font-size: 0.92rem;
-    color: var(--slate);
+    color: var(--ink);
     font-family: var(--font-body);
     cursor: pointer;
     transition: background 0.15s ease;
@@ -1947,3 +2018,38 @@ footer {
         grid-template-columns: 1fr 1fr;
     }
 }
+
+/* ── Horizontal overflow fix ── */
+html, body { overflow-x: clip; }
+.flooring-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.insta-grid    { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+html { overscroll-behavior: none; }
+
+
+/* ── Catalogue nudge in calculator section ── */
+.calc-catalogue-nudge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border: 1.5px solid #C49A3C;
+    border-radius: 10px;
+    padding: 12px 18px;
+    margin-top: 12px;
+    font-size: .85rem;
+    color: #5C574F;
+    max-width: 600px;
+}
+.calc-catalogue-nudge i {
+    color: #C49A3C;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+.calc-catalogue-nudge a {
+    color: #1B3A5C;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+.calc-catalogue-nudge a:hover { color: #C49A3C; }
