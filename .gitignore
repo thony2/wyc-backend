@@ -1,26 +1,31 @@
-# Environment files
-.env
-.env.*
+# ============================================================
+# West Yorkshire Carpets — Git Ignore Rules
+# Files listed here will NEVER be uploaded to GitHub or any
+# version control system. This protects secrets and data.
+# ============================================================
 
-# Database
+# Secret environment variables — NEVER upload this
+.env
+.env.local
+.env.production
+
+# Database files — contains real customer data
+data/
 *.db
 *.sqlite
-data/
+*.sqlite3
 
-# Dependencies
-node_modules/
-
-# Logs
+# Log files — not needed in version control
 logs/
 *.log
 
-# Mac files
+# Node dependencies — always reinstalled fresh on the server
+node_modules/
+
+# Mac system files — irrelevant to the project
 .DS_Store
+Thumbs.db
 
-# Frontend build artifacts (if added later)
-dist/
-build/
-
-# Local Netlify folder
-.netlify
-.vercel
+# Editor folders
+.vscode/settings.json
+.idea/
