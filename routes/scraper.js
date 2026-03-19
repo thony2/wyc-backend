@@ -161,6 +161,94 @@ function dominantColourFamily(colours) {
   return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'neutrals';
 }
 
+// ─── Dominant colour extraction ───────────────────────────────────────────────
+
+/**
+ * Extract the dominant colour from an image buffer using sharp.
+ * Resizes to 50x50, gets the average colour of each quadrant,
+ * then picks the most saturated one as the representative swatch.
+ * Falls back to keyword-based hex if sharp is unavailable or fails.
+ */
+async function extractDominantColour(imgBuffer) {
+  let sharp;
+  try { sharp = require('sharp'); } catch {
+    return null; // sharp not installed — caller falls back to keyword hex
+  }
+  try {
+    // Resize to small sample for speed, remove alpha
+    const { data, info } = await sharp(imgBuffer)
+      .resize(50, 50, { fit: 'cover' })
+      .removeAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+
+    // Calculate average R, G, B across all pixels
+    let r = 0, g = 0, b = 0;
+    const pixels = info.width * info.height;
+    for (let i = 0; i < data.length; i += 3) {
+      r += data[i];
+      g += data[i + 1];
+      b += data[i + 2];
+    }
+    r = Math.round(r / pixels);
+    g = Math.round(g / pixels);
+    b = Math.round(b / pixels);
+
+    return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+  } catch (err) {
+    console.warn('[scraper] colour extract failed:', err.message);
+    return null;
+  }
+}
+
+/**
+ * Map an extracted hex colour to a WYC colour family slug.
+ * Uses HSL conversion to determine the family.
+ */
+function hexToColourFamily(hex) {
+  if (!hex) return 'neutrals';
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const l   = (max + min) / 2;
+  const d   = max - min;
+  const s   = d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1));
+
+  // Low saturation = neutral
+  if (s < 0.1) {
+    if (l > 0.85) return 'creams';
+    if (l > 0.6)  return 'greys';
+    if (l > 0.35) return 'greys';
+    return 'blacks';
+  }
+
+  // Has colour — determine hue
+  let h = 0;
+  if (d !== 0) {
+    if (max === r) h = ((g - b) / d + 6) % 6;
+    else if (max === g) h = (b - r) / d + 2;
+    else h = (r - g) / d + 4;
+    h = h * 60;
+  }
+
+  // Low lightness with low saturation
+  if (l < 0.25 && s < 0.25) return 'browns';
+
+  if (h < 20)   return 'reds';
+  if (h < 40)   return l < 0.45 ? 'browns' : 'golds';
+  if (h < 65)   return l < 0.6  ? 'golds'  : 'creams';
+  if (h < 80)   return 'greens';
+  if (h < 165)  return 'greens';
+  if (h < 195)  return 'blues';
+  if (h < 260)  return 'blues';
+  if (h < 290)  return 'greys';
+  if (h < 340)  return 'reds';
+  return 'reds';
+}
+
 // ─── PDF fetch helper ─────────────────────────────────────────────────────────
 
 async function fetchAndParsePdf(pdfUrl) {
@@ -308,12 +396,33 @@ router.post('/scrape-family', async (req, res) => {
     });
   }
 
-  const enrichedColours = colours.map(c => ({
-    supplierName: c.supplierName,
-    wycName:      c.supplierName,
-    imgUrl:       c.imgUrl,
-    hex:          hexFromName(c.supplierName),
-    colourFamily: colourFamilyFromName(c.supplierName),
+  // Extract dominant colour from each image (best effort — falls back to keyword hex)
+  const enrichedColours = await Promise.all(colours.map(async c => {
+    let hex         = hexFromName(c.supplierName);       // keyword fallback
+    let colourFamily = colourFamilyFromName(c.supplierName);
+
+    try {
+      const imgResp = await axios.get(c.imgUrl, {
+        responseType: 'arraybuffer',
+        timeout: 10000,
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible)' },
+      });
+      const extracted = await extractDominantColour(Buffer.from(imgResp.data));
+      if (extracted) {
+        hex          = extracted;
+        colourFamily = hexToColourFamily(extracted);
+      }
+    } catch {
+      // Image fetch failed — keyword fallback already set above
+    }
+
+    return {
+      supplierName: c.supplierName,
+      wycName:      c.supplierName,
+      imgUrl:       c.imgUrl,
+      hex,
+      colourFamily,
+    };
   }));
 
   const suitStr     = suitability || 'General Domestic';

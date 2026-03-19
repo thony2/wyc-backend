@@ -3218,15 +3218,24 @@ function loadColours(data) {
 
     // Colour rows
     el('impColourBody').innerHTML = data.colours.map(function (c, i) {
+      var families = ['greys','beiges','browns','creams','blacks','blues','greens','golds','reds','neutrals'];
+      var opts = families.map(function(f) {
+        return '<option value="' + f + '"' + (f === c.colourFamily ? ' selected' : '') + '>' + f.charAt(0).toUpperCase() + f.slice(1) + '</option>';
+      }).join('');
       return '<tr>' +
-        '<td style="width:72px;"><img src="' + esc(c.imgUrl) + '" style="width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid #e5e7eb;display:block;" alt="' + esc(c.supplierName) + '" ' +
-          'onerror="this.style.opacity=\'0.25\'" /></td>' +
-        '<td class="imp-sup-name">' + esc(c.supplierName) + '</td>' +
-        '<td><input type="text" class="imp-colour-input" data-ci="' + i + '" value="" placeholder="Type your WYC name" /></td>' +
-        '<td><div style="display:flex;align-items:center;gap:6px;"><span style="width:20px;height:20px;border-radius:50%;border:1px solid rgba(0,0,0,.12);flex-shrink:0;display:inline-block;background:' + esc(c.hex) + '"></span><span style="font-size:12px;color:#9ca3af;font-family:monospace;">' + esc(c.hex) + '</span></div></td>' +
-        '<td><span class="imp-family-tag">' + esc(c.colourFamily) + '</span></td>' +
+        '<td style="width:72px;"><img src="' + esc(c.imgUrl) + '" style="width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid #e5e7eb;display:block;" alt="' + esc(c.supplierName) + '" onerror="this.style.opacity=\'0.25\'" /></td>' +
+        '<td style="color:#9ca3af;font-size:13px;">' + esc(c.supplierName) + '</td>' +
+        '<td><input type="text" data-ci="' + i + '" value="" placeholder="Type WYC name" style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;color:#1a2332;background:#fff;outline:none;box-sizing:border-box;" /></td>' +
+        '<td style="width:120px;"><div style="display:flex;align-items:center;gap:6px;"><input type="color" data-hex="' + i + '" value="' + esc(c.hex) + '" style="width:32px;height:32px;border:1px solid #e5e7eb;border-radius:6px;cursor:pointer;padding:2px;" /><span data-hexlabel="' + i + '" style="font-size:11px;color:#9ca3af;font-family:monospace;">' + esc(c.hex) + '</span></div></td>' +
+        '<td style="width:130px;"><select data-family="' + i + '" style="width:100%;padding:6px 8px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;color:#1a2332;background:#fff;outline:none;">' + opts + '</select></td>' +
         '</tr>';
     }).join('');
+    el('impColourBody').querySelectorAll('input[type=color]').forEach(function(picker) {
+      picker.addEventListener('input', function() {
+        var label = el('impColourBody').querySelector('[data-hexlabel="' + this.dataset.hex + '"]');
+        if (label) label.textContent = this.value;
+      });
+    });
 
     // Reset action area state
     clearErr('impStep2Error');
@@ -3279,11 +3288,15 @@ function loadColours(data) {
       return;
     }
 
-    // Collect colour names from editable inputs
+    // Collect colour names, hex and family from editable inputs
     var colours = impData.colours.map(function (c, i) {
-      var inp = document.querySelector('input[data-ci="' + i + '"]');
-      var name = inp && inp.value.trim() ? inp.value.trim() : c.supplierName;
-      return Object.assign({}, c, { wycName: name });
+      var nameInp   = document.querySelector('input[data-ci="' + i + '"]');
+      var hexInp    = document.querySelector('input[data-hex="' + i + '"]');
+      var familySel = document.querySelector('select[data-family="' + i + '"]');
+      var name   = nameInp   && nameInp.value.trim()   ? nameInp.value.trim()   : c.supplierName;
+      var hex    = hexInp    ? hexInp.value            : c.hex;
+      var family = familySel ? familySel.value         : c.colourFamily;
+      return Object.assign({}, c, { wycName: name, hex: hex, colourFamily: family });
     });
 
     var payload = {
