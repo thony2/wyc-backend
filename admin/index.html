@@ -3216,35 +3216,33 @@ function loadColours(data) {
 })();
 </script>
 
-</div>
-
 <div id="import-section" class="section" style="display:none">
 
   <style>
     .imp-page-header { margin-bottom: 24px; }
-    .imp-page-header h1 { font-size: 22px; font-weight: 700; color: var(--ink); margin: 0 0 4px; }
-    .imp-page-header p  { font-size: 14px; color: var(--ink-3); margin: 0; }
+    .imp-page-header h1 { font-size: 22px; font-weight: 700; color: var(--ps-slate); margin: 0 0 4px; }
+    .imp-page-header p  { font-size: 14px; color: var(--ps-grey); margin: 0; }
 
     .imp-card {
       background: #fff;
-      border: 1px solid var(--border);
+      border: 1px solid var(--ps-border);
       border-radius: 12px;
       padding: 24px;
       margin-bottom: 20px;
     }
-    .imp-card-title { font-size: 15px; font-weight: 700; color: var(--ink); margin: 0 0 6px; }
-    .imp-hint { font-size: 13px; color: var(--ink-3); margin: 0 0 20px; }
+    .imp-card-title { font-size: 15px; font-weight: 700; color: var(--ps-slate); margin: 0 0 6px; }
+    .imp-hint { font-size: 13px; color: var(--ps-grey); margin: 0 0 20px; }
 
     .imp-source-pill {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       padding: 4px 10px;
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: var(--ps-cream);
+      border: 1px solid var(--ps-border);
       border-radius: 20px;
       font-size: 12px;
-      color: var(--ink-3);
+      color: var(--ps-grey);
       margin-bottom: 20px;
       max-width: 100%;
       overflow: hidden;
@@ -3252,21 +3250,21 @@ function loadColours(data) {
       white-space: nowrap;
     }
 
-    .imp-req { color: var(--red); margin-left: 2px; }
-    .imp-opt { font-size: 11px; color: var(--ink-3); font-weight: 400; margin-left: 4px; }
+    .imp-req { color: var(--ps-red); margin-left: 2px; }
+    .imp-opt { font-size: 11px; color: var(--ps-grey); font-weight: 400; margin-left: 4px; }
 
     .imp-url-row { display: flex; gap: 10px; align-items: stretch; }
     .imp-url-input {
       flex: 1;
       padding: 10px 14px;
-      border: 1px solid var(--border);
+      border: 1px solid var(--ps-border);
       border-radius: 8px;
       font-size: 14px;
-      color: var(--ink);
+      color: var(--ps-slate);
       outline: none;
       transition: border-color .15s, box-shadow .15s;
     }
-    .imp-url-input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(224,48,64,.1); }
+    .imp-url-input:focus { border-color: var(--ps-red); box-shadow: 0 0 0 3px rgba(224,48,64,.1); }
 
     .imp-btn {
       display: inline-flex;
@@ -3283,10 +3281,10 @@ function loadColours(data) {
       white-space: nowrap;
     }
     .imp-btn:disabled           { opacity: .5; cursor: not-allowed; }
-    .imp-btn-primary            { background: var(--red); color: #fff; border-color: var(--red); }
+    .imp-btn-primary            { background: var(--ps-red); color: #fff; border-color: var(--ps-red); }
     .imp-btn-primary:hover:not(:disabled) { opacity: .88; }
-    .imp-btn-ghost              { background: transparent; color: var(--ink-2); border-color: var(--border); }
-    .imp-btn-ghost:hover:not(:disabled)   { background: var(--surface); }
+    .imp-btn-ghost              { background: transparent; color: var(--ps-grey); border-color: var(--ps-border); }
+    .imp-btn-ghost:hover:not(:disabled)   { background: var(--ps-cream); }
     .imp-btn-large              { padding: 14px 32px; font-size: 15px; border-radius: 10px; }
 
     .imp-error {
@@ -3304,13 +3302,13 @@ function loadColours(data) {
       align-items: center;
       gap: 14px;
       padding: 28px 24px;
-      color: var(--ink-2);
+      color: var(--ps-grey);
       font-size: 14px;
     }
     .imp-spinner {
       width: 26px; height: 26px;
-      border: 3px solid var(--border);
-      border-top-color: var(--red);
+      border: 3px solid var(--ps-border);
+      border-top-color: var(--ps-red);
       border-radius: 50%;
       animation: impSpin .7s linear infinite;
       flex-shrink: 0;
@@ -3322,59 +3320,59 @@ function loadColours(data) {
 
     .imp-field  { display: flex; flex-direction: column; gap: 6px; }
     .imp-label  {
-      font-size: 11px; font-weight: 700; color: var(--ink-2);
+      font-size: 11px; font-weight: 700; color: var(--ps-grey);
       text-transform: uppercase; letter-spacing: .05em;
     }
 
     .imp-input, .imp-select {
       padding: 9px 12px;
-      border: 1px solid var(--border);
+      border: 1px solid var(--ps-border);
       border-radius: 8px;
       font-size: 14px;
-      color: var(--ink);
+      color: var(--ps-slate);
       background: #fff;
       outline: none;
       transition: border-color .15s, box-shadow .15s;
     }
     .imp-input:focus, .imp-select:focus {
-      border-color: var(--red);
+      border-color: var(--ps-red);
       box-shadow: 0 0 0 3px rgba(224,48,64,.1);
     }
-    .imp-input-ro { background: var(--surface); color: var(--ink-2); cursor: default; }
+    .imp-input-ro { background: var(--ps-cream); color: var(--ps-grey); cursor: default; }
 
     .imp-specs-list { display: grid; gap: 0; }
     .imp-spec-row {
       display: flex; align-items: baseline; gap: 10px;
-      padding: 9px 0; border-bottom: 1px solid var(--border);
+      padding: 9px 0; border-bottom: 1px solid var(--ps-border);
     }
     .imp-spec-row:last-child { border-bottom: none; }
     .imp-spec-key {
       font-size: 11px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .05em; color: var(--ink-3);
+      letter-spacing: .05em; color: var(--ps-grey);
       min-width: 120px; flex-shrink: 0;
     }
-    .imp-spec-val  { font-size: 14px; color: var(--ink); }
-    .imp-stars     { color: var(--gold); letter-spacing: 1px; }
+    .imp-spec-val  { font-size: 14px; color: var(--ps-slate); }
+    .imp-stars     { color: #c49a3c; letter-spacing: 1px; }
 
     .imp-checks { display: flex; flex-direction: column; gap: 7px; margin-top: 6px; }
     .imp-check-label {
       display: flex; align-items: center; gap: 8px;
-      font-size: 14px; color: var(--ink);
+      font-size: 14px; color: var(--ps-slate);
       cursor: pointer; user-select: none;
     }
     .imp-check-label input[type=checkbox] {
-      accent-color: var(--red);
+      accent-color: var(--ps-red);
       width: 15px; height: 15px; cursor: pointer;
     }
 
     .imp-colour-count {
       display: inline-block;
       padding: 4px 12px;
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: var(--ps-cream);
+      border: 1px solid var(--ps-border);
       border-radius: 20px;
       font-size: 13px; font-weight: 600;
-      color: var(--ink-2);
+      color: var(--ps-grey);
       margin-bottom: 16px;
     }
 
@@ -3385,31 +3383,31 @@ function loadColours(data) {
       padding: 10px 12px;
       font-size: 11px; font-weight: 700;
       text-transform: uppercase; letter-spacing: .05em;
-      color: var(--ink-3);
-      border-bottom: 2px solid var(--border);
+      color: var(--ps-grey);
+      border-bottom: 2px solid var(--ps-border);
       white-space: nowrap;
     }
-    .imp-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .imp-table td { padding: 10px 12px; border-bottom: 1px solid var(--ps-border); vertical-align: middle; }
     .imp-table tr:last-child td { border-bottom: none; }
-    .imp-table tr:hover td { background: var(--surface); }
+    .imp-table tr:hover td { background: var(--ps-cream); }
 
     .imp-thumb {
       width: 52px; height: 52px;
       object-fit: cover;
       border-radius: 6px;
-      border: 1px solid var(--border);
+      border: 1px solid var(--ps-border);
       display: block;
     }
-    .imp-sup-name { color: var(--ink-3); font-size: 13px; }
+    .imp-sup-name { color: var(--ps-grey); font-size: 13px; }
     .imp-colour-input {
       width: 100%; min-width: 160px;
       padding: 7px 10px;
-      border: 1px solid var(--border);
+      border: 1px solid var(--ps-border);
       border-radius: 6px;
-      font-size: 13px; color: var(--ink);
+      font-size: 13px; color: var(--ps-slate);
       background: #fff; outline: none;
     }
-    .imp-colour-input:focus { border-color: var(--red); box-shadow: 0 0 0 2px rgba(224,48,64,.1); }
+    .imp-colour-input:focus { border-color: var(--ps-red); box-shadow: 0 0 0 2px rgba(224,48,64,.1); }
     .imp-swatch-cell { display: flex; align-items: center; gap: 7px; }
     .imp-swatch-dot  {
       width: 20px; height: 20px;
@@ -3417,24 +3415,24 @@ function loadColours(data) {
       border: 1px solid rgba(0,0,0,.12);
       flex-shrink: 0;
     }
-    .imp-hex-text    { font-size: 12px; color: var(--ink-3); font-family: 'Courier New', monospace; }
+    .imp-hex-text    { font-size: 12px; color: var(--ps-grey); font-family: 'Courier New', monospace; }
     .imp-family-tag  {
       display: inline-block;
       padding: 2px 10px;
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: var(--ps-cream);
+      border: 1px solid var(--ps-border);
       border-radius: 20px;
-      font-size: 12px; color: var(--ink-2);
+      font-size: 12px; color: var(--ps-grey);
       text-transform: capitalize; white-space: nowrap;
     }
 
     .imp-action-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
 
     .imp-progress-wrap  { width: 100%; margin-bottom: 16px; }
-    .imp-progress-label { font-size: 13px; color: var(--ink-2); margin-bottom: 8px; }
-    .imp-progress-track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .imp-progress-label { font-size: 13px; color: var(--ps-grey); margin-bottom: 8px; }
+    .imp-progress-track { height: 6px; background: var(--ps-border); border-radius: 3px; overflow: hidden; }
     .imp-progress-fill  {
-      height: 100%; background: var(--red);
+      height: 100%; background: var(--ps-red);
       border-radius: 3px;
       transition: width .4s ease;
       width: 0%;
@@ -3449,13 +3447,13 @@ function loadColours(data) {
       display: flex; align-items: center; justify-content: center;
       margin: 0 auto 20px;
     }
-    .imp-success-card h3  { font-size: 20px; font-weight: 700; color: var(--ink); margin: 0 0 8px; }
-    .imp-success-card p   { font-size: 14px; color: var(--ink-2); max-width: 480px; margin: 0 auto; line-height: 1.6; }
+    .imp-success-card h3  { font-size: 20px; font-weight: 700; color: var(--ps-slate); margin: 0 0 8px; }
+    .imp-success-card p   { font-size: 14px; color: var(--ps-grey); max-width: 480px; margin: 0 auto; line-height: 1.6; }
     .imp-success-stats    { list-style: none; padding: 0; margin: 16px auto 0; max-width: 380px; text-align: left; }
     .imp-success-stats li {
       padding: 7px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 13px; color: var(--ink-2);
+      border-bottom: 1px solid var(--ps-border);
+      font-size: 13px; color: var(--ps-grey);
       display: flex; gap: 8px; align-items: flex-start;
     }
     .imp-success-stats li:last-child { border-bottom: none; }
@@ -3569,7 +3567,7 @@ function loadColours(data) {
         </div>
         <div class="imp-spec-row">
           <span class="imp-spec-key">Description</span>
-          <span id="impSpecDesc" class="imp-spec-val" style="font-style:italic;color:var(--ink-2)"></span>
+          <span id="impSpecDesc" class="imp-spec-val" style="font-style:italic;color:var(--ps-grey)"></span>
         </div>
       </div>
       <div class="imp-grid-2" style="margin-top:24px">
@@ -3639,6 +3637,9 @@ function loadColours(data) {
   </div>
 
 </div><!-- /importSection -->
+
+</div>
+
 
 <div id="bulk-import-modal">
 <div class="bim">
