@@ -3216,425 +3216,126 @@ function loadColours(data) {
 })();
 </script>
 
-<div id="import-section" class="section" style="display:none;background:#f5f0eb;min-height:100vh;padding:32px;box-sizing:border-box;">
+<div id="import-section" style="display:none;background:#f5f0eb;min-height:100vh;padding:32px;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
 
-  <style>
-    .imp-page-header { margin-bottom: 24px; }
-    .imp-page-header h1 { font-size: 22px; font-weight: 700; color: var(--ps-slate); margin: 0 0 4px; }
-    .imp-page-header p  { font-size: 14px; color: var(--ps-grey); margin: 0; }
+<h1 style="font-size:22px;font-weight:700;color:#1a2332;margin:0 0 4px;">Import Catalogue</h1>
+<p style="font-size:14px;color:#6b7280;margin:0 0 24px;">Paste a Carpet Line Direct family URL to scrape, review, and import it to your website.</p>
 
-    .imp-card {
-      background: #fff;
-      border: 1px solid var(--ps-border);
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 20px;
-    }
-    .imp-card-title { font-size: 15px; font-weight: 700; color: var(--ps-slate); margin: 0 0 6px; }
-    .imp-hint { font-size: 13px; color: var(--ps-grey); margin: 0 0 20px; }
-
-    .imp-source-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      background: var(--ps-cream);
-      border: 1px solid var(--ps-border);
-      border-radius: 20px;
-      font-size: 12px;
-      color: var(--ps-grey);
-      margin-bottom: 20px;
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .imp-req { color: var(--ps-red); margin-left: 2px; }
-    .imp-opt { font-size: 11px; color: var(--ps-grey); font-weight: 400; margin-left: 4px; }
-
-    .imp-url-row { display: flex; gap: 10px; align-items: stretch; }
-    .imp-url-input {
-      flex: 1;
-      padding: 10px 14px;
-      border: 1px solid var(--ps-border);
-      border-radius: 8px;
-      font-size: 14px;
-      color: var(--ps-slate);
-      outline: none;
-      transition: border-color .15s, box-shadow .15s;
-    }
-    .imp-url-input:focus { border-color: var(--ps-red); box-shadow: 0 0 0 3px rgba(224,48,64,.1); }
-
-    .imp-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 10px 20px;
-      border: 1px solid transparent;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity .15s, background .15s;
-      white-space: nowrap;
-    }
-    .imp-btn:disabled           { opacity: .5; cursor: not-allowed; }
-    .imp-btn-primary            { background: var(--ps-red); color: #fff; border-color: var(--ps-red); }
-    .imp-btn-primary:hover:not(:disabled) { opacity: .88; }
-    .imp-btn-ghost              { background: transparent; color: var(--ps-grey); border-color: var(--ps-border); }
-    .imp-btn-ghost:hover:not(:disabled)   { background: var(--ps-cream); }
-    .imp-btn-large              { padding: 14px 32px; font-size: 15px; border-radius: 10px; }
-
-    .imp-error {
-      margin-top: 12px;
-      padding: 11px 14px;
-      background: #fff3f4;
-      border: 1px solid #fcc;
-      border-radius: 8px;
-      color: #c0392b;
-      font-size: 13px;
-    }
-
-    .imp-loading {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 28px 24px;
-      color: var(--ps-grey);
-      font-size: 14px;
-    }
-    .imp-spinner {
-      width: 26px; height: 26px;
-      border: 3px solid var(--ps-border);
-      border-top-color: var(--ps-red);
-      border-radius: 50%;
-      animation: impSpin .7s linear infinite;
-      flex-shrink: 0;
-    }
-    @keyframes impSpin { to { transform: rotate(360deg); } }
-
-    .imp-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    @media (max-width: 640px) { .imp-grid-2 { grid-template-columns: 1fr; } }
-
-    .imp-field  { display: flex; flex-direction: column; gap: 6px; }
-    .imp-label  {
-      font-size: 11px; font-weight: 700; color: var(--ps-grey);
-      text-transform: uppercase; letter-spacing: .05em;
-    }
-
-    .imp-input, .imp-select {
-      padding: 9px 12px;
-      border: 1px solid var(--ps-border);
-      border-radius: 8px;
-      font-size: 14px;
-      color: var(--ps-slate);
-      background: #fff;
-      outline: none;
-      transition: border-color .15s, box-shadow .15s;
-    }
-    .imp-input:focus, .imp-select:focus {
-      border-color: var(--ps-red);
-      box-shadow: 0 0 0 3px rgba(224,48,64,.1);
-    }
-    .imp-input-ro { background: var(--ps-cream); color: var(--ps-grey); cursor: default; }
-
-    .imp-specs-list { display: grid; gap: 0; }
-    .imp-spec-row {
-      display: flex; align-items: baseline; gap: 10px;
-      padding: 9px 0; border-bottom: 1px solid var(--ps-border);
-    }
-    .imp-spec-row:last-child { border-bottom: none; }
-    .imp-spec-key {
-      font-size: 11px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .05em; color: var(--ps-grey);
-      min-width: 120px; flex-shrink: 0;
-    }
-    .imp-spec-val  { font-size: 14px; color: var(--ps-slate); }
-    .imp-stars     { color: #c49a3c; letter-spacing: 1px; }
-
-    .imp-checks { display: flex; flex-direction: column; gap: 7px; margin-top: 6px; }
-    .imp-check-label {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 14px; color: var(--ps-slate);
-      cursor: pointer; user-select: none;
-    }
-    .imp-check-label input[type=checkbox] {
-      accent-color: var(--ps-red);
-      width: 15px; height: 15px; cursor: pointer;
-    }
-
-    .imp-colour-count {
-      display: inline-block;
-      padding: 4px 12px;
-      background: var(--ps-cream);
-      border: 1px solid var(--ps-border);
-      border-radius: 20px;
-      font-size: 13px; font-weight: 600;
-      color: var(--ps-grey);
-      margin-bottom: 16px;
-    }
-
-    .imp-table-wrap { overflow-x: auto; }
-    .imp-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    .imp-table th {
-      text-align: left;
-      padding: 10px 12px;
-      font-size: 11px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .05em;
-      color: var(--ps-grey);
-      border-bottom: 2px solid var(--ps-border);
-      white-space: nowrap;
-    }
-    .imp-table td { padding: 10px 12px; border-bottom: 1px solid var(--ps-border); vertical-align: middle; }
-    .imp-table tr:last-child td { border-bottom: none; }
-    .imp-table tr:hover td { background: var(--ps-cream); }
-
-    .imp-thumb {
-      width: 52px; height: 52px;
-      object-fit: cover;
-      border-radius: 6px;
-      border: 1px solid var(--ps-border);
-      display: block;
-    }
-    .imp-sup-name { color: var(--ps-grey); font-size: 13px; }
-    .imp-colour-input {
-      width: 100%; min-width: 160px;
-      padding: 7px 10px;
-      border: 1px solid var(--ps-border);
-      border-radius: 6px;
-      font-size: 13px; color: var(--ps-slate);
-      background: #fff; outline: none;
-    }
-    .imp-colour-input:focus { border-color: var(--ps-red); box-shadow: 0 0 0 2px rgba(224,48,64,.1); }
-    .imp-swatch-cell { display: flex; align-items: center; gap: 7px; }
-    .imp-swatch-dot  {
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      border: 1px solid rgba(0,0,0,.12);
-      flex-shrink: 0;
-    }
-    .imp-hex-text    { font-size: 12px; color: var(--ps-grey); font-family: 'Courier New', monospace; }
-    .imp-family-tag  {
-      display: inline-block;
-      padding: 2px 10px;
-      background: var(--ps-cream);
-      border: 1px solid var(--ps-border);
-      border-radius: 20px;
-      font-size: 12px; color: var(--ps-grey);
-      text-transform: capitalize; white-space: nowrap;
-    }
-
-    .imp-action-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
-
-    .imp-progress-wrap  { width: 100%; margin-bottom: 16px; }
-    .imp-progress-label { font-size: 13px; color: var(--ps-grey); margin-bottom: 8px; }
-    .imp-progress-track { height: 6px; background: var(--ps-border); border-radius: 3px; overflow: hidden; }
-    .imp-progress-fill  {
-      height: 100%; background: var(--ps-red);
-      border-radius: 3px;
-      transition: width .4s ease;
-      width: 0%;
-    }
-
-    .imp-success-card { text-align: center; padding: 56px 24px; }
-    .imp-success-icon {
-      width: 60px; height: 60px;
-      border-radius: 50%;
-      background: #e6f9f0; color: #27ae60;
-      font-size: 26px; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 20px;
-    }
-    .imp-success-card h3  { font-size: 20px; font-weight: 700; color: var(--ps-slate); margin: 0 0 8px; }
-    .imp-success-card p   { font-size: 14px; color: var(--ps-grey); max-width: 480px; margin: 0 auto; line-height: 1.6; }
-    .imp-success-stats    { list-style: none; padding: 0; margin: 16px auto 0; max-width: 380px; text-align: left; }
-    .imp-success-stats li {
-      padding: 7px 0;
-      border-bottom: 1px solid var(--ps-border);
-      font-size: 13px; color: var(--ps-grey);
-      display: flex; gap: 8px; align-items: flex-start;
-    }
-    .imp-success-stats li:last-child { border-bottom: none; }
-    .imp-ok   { color: #27ae60; }
-    .imp-warn { color: #e67e22; }
-  </style>
-
-  <!-- Page header -->
-  <div class="imp-page-header">
-    <h1>Import Catalogue</h1>
-    <p>Paste a Carpet Line Direct family URL to scrape, review, and import it to your website.</p>
-  </div>
-
-  <!-- STEP 1 — URL input ─────────────────────────────────────────────────── -->
-  <div id="impStep1" class="imp-card">
-    <h3 class="imp-card-title">Enter a product family URL</h3>
-    <p class="imp-hint">
-      Go to <strong>carpetlinedirect.co.uk</strong>, open any carpet family page,
-      and paste the URL here. Example:
-      <code style="font-size:12px">https://www.carpetlinedirect.co.uk/abyss/</code>
-    </p>
-    <div class="imp-url-row">
-      <input
-        type="url"
-        id="impUrlInput"
-        class="imp-url-input"
-        placeholder="https://www.carpetlinedirect.co.uk/abyss/"
-        onkeydown="if(event.key==='Enter') impScrape()"
-      />
-      <button class="imp-btn imp-btn-primary" onclick="impScrape()" id="impScrapeBtn">
-        Scrape Family
-      </button>
-    </div>
-    <div id="impStep1Error" class="imp-error" style="display:none"></div>
-  </div>
-
-  <!-- Loading ────────────────────────────────────────────────────────────── -->
-  <div id="impLoading" class="imp-card imp-loading" style="display:none">
-    <div class="imp-spinner"></div>
-    <span>Reading supplier page — this usually takes 3–5 seconds…</span>
-  </div>
-
-  <!-- STEP 2 — Review ────────────────────────────────────────────────────── -->
-  <div id="impStep2" style="display:none">
-
-    <div id="impSourcePill" class="imp-source-pill" style="display:none">
-      🔗 <span id="impSourceUrl"></span>
-    </div>
-
-    <!-- 2a. Name & pricing -->
-    <div class="imp-card">
-      <h3 class="imp-card-title">1 — Family name &amp; pricing</h3>
-      <p class="imp-hint">Rename to your WYC branding and set the selling price before importing.</p>
-      <div class="imp-grid-2">
-        <div class="imp-field">
-          <label class="imp-label">Supplier name</label>
-          <input type="text" id="impSupplierName" class="imp-input imp-input-ro" readonly />
-        </div>
-        <div class="imp-field">
-          <label class="imp-label">WYC product name <span class="imp-req">*</span></label>
-          <input type="text" id="impWycName" class="imp-input" placeholder="Your branded family name" />
-        </div>
-        <div class="imp-field">
-          <label class="imp-label">Price per m² (£) <span class="imp-req">*</span></label>
-          <input type="number" id="impPrice" class="imp-input" placeholder="0.00" step="0.01" min="0.01" />
-        </div>
-        <div class="imp-field">
-          <label class="imp-label">Was price per m² (£) <span class="imp-opt">optional — shows strikethrough</span></label>
-          <input type="number" id="impWasPrice" class="imp-input" placeholder="Leave blank if not on sale" step="0.01" min="0" />
-        </div>
-        <div class="imp-field">
-          <label class="imp-label">Badge <span class="imp-opt">optional</span></label>
-          <select id="impBadge" class="imp-select">
-            <option value="">No badge</option>
-            <option value="new">New In</option>
-            <option value="seller">Best Seller</option>
-            <option value="sale">Sale</option>
-            <option value="premium">Premium</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2b. Auto-mapped specs -->
-    <div class="imp-card">
-      <h3 class="imp-card-title">2 — Auto-mapped specs</h3>
-      <p class="imp-hint">
-        Read from the supplier page and mapped to your website's fields.
-        These apply to every colour in the family. Tick or untick features and rooms as needed.
-      </p>
-      <div class="imp-specs-list">
-        <div class="imp-spec-row">
-          <span class="imp-spec-key">Fibre</span>
-          <span id="impSpecFibre" class="imp-spec-val"></span>
-        </div>
-        <div class="imp-spec-row">
-          <span class="imp-spec-key">Carpet style</span>
-          <span id="impSpecStyle" class="imp-spec-val"></span>
-        </div>
-        <div class="imp-spec-row">
-          <span class="imp-spec-key">Suitability</span>
-          <span id="impSpecSuitability" class="imp-spec-val"></span>
-        </div>
-        <div class="imp-spec-row">
-          <span class="imp-spec-key">Durability</span>
-          <span id="impSpecDurability" class="imp-spec-val"></span>
-        </div>
-        <div class="imp-spec-row">
-          <span class="imp-spec-key">Softness</span>
-          <span id="impSpecSoftness" class="imp-spec-val"></span>
-        </div>
-        <div class="imp-spec-row">
-          <span class="imp-spec-key">Description</span>
-          <span id="impSpecDesc" class="imp-spec-val" style="font-style:italic;color:var(--ps-grey)"></span>
-        </div>
-      </div>
-      <div class="imp-grid-2" style="margin-top:24px">
-        <div>
-          <div class="imp-label">Features</div>
-          <div id="impFeaturesChecks" class="imp-checks"></div>
-        </div>
-        <div>
-          <div class="imp-label">Room suitability</div>
-          <div id="impRoomsChecks" class="imp-checks"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2c. Colour variants -->
-    <div class="imp-card">
-      <h3 class="imp-card-title">3 — Colour variants</h3>
-      <p class="imp-hint">
-        Rename any colour to your WYC branding. The WYC name is what customers see.
-        Hex swatches are auto-detected from the colour name.
-      </p>
-      <span id="impColourCount" class="imp-colour-count"></span>
-      <div class="imp-table-wrap">
-        <table class="imp-table">
-          <thead>
-            <tr>
-              <th>Preview</th>
-              <th>Supplier name</th>
-              <th>WYC name (editable)</th>
-              <th>Swatch</th>
-              <th>Colour family</th>
-            </tr>
-          </thead>
-          <tbody id="impColourBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- 2d. Import action -->
-    <div class="imp-card">
-      <div id="impStep2Error" class="imp-error" style="display:none"></div>
-      <div id="impProgress" class="imp-progress-wrap" style="display:none">
-        <p id="impProgressLabel" class="imp-progress-label"></p>
-        <div class="imp-progress-track">
-          <div id="impProgressFill" class="imp-progress-fill"></div>
-        </div>
-      </div>
-      <div class="imp-action-row">
-        <button class="imp-btn imp-btn-primary imp-btn-large" id="impImportBtn" onclick="impImport()">
-          Import Family to Website
-        </button>
-        <button class="imp-btn imp-btn-ghost" onclick="impReset()">← Start over</button>
-      </div>
-    </div>
-
-  </div><!-- /impStep2 -->
-
-  <!-- STEP 3 — Success ───────────────────────────────────────────────────── -->
-  <div id="impStep3" class="imp-card imp-success-card" style="display:none">
-    <div class="imp-success-icon">✓</div>
-    <h3 id="impSuccessTitle"></h3>
-    <p id="impSuccessDetail"></p>
-    <ul id="impSuccessStats" class="imp-success-stats"></ul>
-    <button class="imp-btn imp-btn-primary" onclick="impReset()" style="margin-top:28px">
-      Import Another Family
+<div id="impStep1" style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:20px;">
+  <h3 style="font-size:15px;font-weight:700;color:#1a2332;margin:0 0 6px;">Enter a product family URL</h3>
+  <p style="font-size:13px;color:#6b7280;margin:0 0 20px;">Go to <strong>carpetlinedirect.co.uk</strong>, open any carpet family page, and paste the URL here. Example: <code style="font-size:12px;">https://www.carpetlinedirect.co.uk/abyss/</code></p>
+  <div style="display:flex;gap:10px;">
+    <input type="url" id="impUrlInput" placeholder="https://www.carpetlinedirect.co.uk/abyss/" onkeydown="if(event.key==='Enter') impScrape()"
+      style="flex:1;padding:10px 14px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;color:#1a2332;outline:none;" />
+    <button onclick="impScrape()" id="impScrapeBtn"
+      style="padding:10px 20px;background:#c8102e;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;">
+      Scrape Family
     </button>
   </div>
+  <div id="impStep1Error" style="display:none;margin-top:12px;padding:11px 14px;background:#fff3f4;border:1px solid #fcc;border-radius:8px;color:#c0392b;font-size:13px;"></div>
+</div>
+
+<div id="impLoading" style="display:none;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:28px 24px;margin-bottom:20px;align-items:center;gap:14px;color:#6b7280;font-size:14px;">
+  <div style="width:26px;height:26px;border:3px solid #e5e7eb;border-top-color:#c8102e;border-radius:50%;animation:impSpin .7s linear infinite;flex-shrink:0;"></div>
+  <span>Reading supplier page — this usually takes 3-5 seconds...</span>
+</div>
+
+<div id="impStep2" style="display:none;">
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:20px;">
+    <h3 style="font-size:15px;font-weight:700;color:#1a2332;margin:0 0 6px;">1 — Family name &amp; pricing</h3>
+    <p style="font-size:13px;color:#6b7280;margin:0 0 20px;">Rename to your WYC branding and set the selling price before importing.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Supplier name</label>
+        <input type="text" id="impSupplierName" readonly style="padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;color:#6b7280;background:#f5f0eb;" />
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">WYC product name <span style="color:#c8102e;">*</span></label>
+        <input type="text" id="impWycName" placeholder="Your branded family name" style="padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;color:#1a2332;background:#fff;outline:none;" />
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Price per m2 (£) <span style="color:#c8102e;">*</span></label>
+        <input type="number" id="impPrice" placeholder="0.00" step="0.01" min="0.01" style="padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;color:#1a2332;background:#fff;outline:none;" />
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Was price (£) <span style="font-size:11px;color:#6b7280;font-weight:400;">optional</span></label>
+        <input type="number" id="impWasPrice" placeholder="Leave blank if not on sale" step="0.01" min="0" style="padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;color:#1a2332;background:#fff;outline:none;" />
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Badge <span style="font-size:11px;color:#6b7280;font-weight:400;">optional</span></label>
+        <select id="impBadge" style="padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;color:#1a2332;background:#fff;outline:none;">
+          <option value="">No badge</option>
+          <option value="new">New In</option>
+          <option value="seller">Best Seller</option>
+          <option value="sale">Sale</option>
+          <option value="premium">Premium</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:20px;">
+    <h3 style="font-size:15px;font-weight:700;color:#1a2332;margin:0 0 6px;">2 — Auto-mapped specs</h3>
+    <p style="font-size:13px;color:#6b7280;margin:0 0 20px;">Read from the supplier page. These apply to every colour in the family. Tick or untick as needed.</p>
+    <div id="impSpecsTable" style="margin-bottom:20px;"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Features</div>
+        <div id="impFeaturesChecks" style="display:flex;flex-direction:column;gap:7px;"></div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Room suitability</div>
+        <div id="impRoomsChecks" style="display:flex;flex-direction:column;gap:7px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:20px;">
+    <h3 style="font-size:15px;font-weight:700;color:#1a2332;margin:0 0 6px;">3 — Colour variants</h3>
+    <p style="font-size:13px;color:#6b7280;margin:0 0 16px;">Rename any colour to your WYC branding. The WYC name is what customers see.</p>
+    <div id="impColourCount" style="display:inline-block;padding:4px 12px;background:#f5f0eb;border:1px solid #e5e7eb;border-radius:20px;font-size:13px;font-weight:600;color:#6b7280;margin-bottom:16px;"></div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:14px;">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:10px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:2px solid #e5e7eb;">Preview</th>
+            <th style="text-align:left;padding:10px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:2px solid #e5e7eb;">Supplier name</th>
+            <th style="text-align:left;padding:10px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:2px solid #e5e7eb;">WYC name (editable)</th>
+            <th style="text-align:left;padding:10px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:2px solid #e5e7eb;">Swatch</th>
+            <th style="text-align:left;padding:10px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:2px solid #e5e7eb;">Colour family</th>
+          </tr>
+        </thead>
+        <tbody id="impColourBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:20px;">
+    <div id="impStep2Error" style="display:none;margin-bottom:12px;padding:11px 14px;background:#fff3f4;border:1px solid #fcc;border-radius:8px;color:#c0392b;font-size:13px;"></div>
+    <div id="impProgress" style="display:none;margin-bottom:16px;">
+      <p id="impProgressLabel" style="font-size:13px;color:#6b7280;margin-bottom:8px;"></p>
+      <div style="height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden;">
+        <div id="impProgressFill" style="height:100%;background:#c8102e;border-radius:3px;transition:width .4s ease;width:0%;"></div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <button onclick="impImport()" id="impImportBtn" style="padding:14px 32px;background:#c8102e;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">
+        Import Family to Website
+      </button>
+      <button onclick="impReset()" style="padding:10px 20px;background:transparent;color:#6b7280;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">
+        &larr; Start over
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="impStep3" style="display:none;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:56px 24px;text-align:center;">
+  <div style="width:60px;height:60px;border-radius:50%;background:#e6f9f0;color:#27ae60;font-size:26px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">&#x2713;</div>
+  <h3 id="impSuccessTitle" style="font-size:20px;font-weight:700;color:#1a2332;margin:0 0 8px;"></h3>
+  <p id="impSuccessDetail" style="font-size:14px;color:#6b7280;max-width:480px;margin:0 auto 16px;line-height:1.6;"></p>
+  <ul id="impSuccessStats" style="list-style:none;padding:0;margin:0 auto 28px;max-width:380px;text-align:left;"></ul>
+  <button onclick="impReset()" style="padding:14px 32px;background:#c8102e;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">Import Another Family</button>
+</div>
 
 </div><!-- /importSection -->
 
