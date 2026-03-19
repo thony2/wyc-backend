@@ -3219,14 +3219,11 @@ function loadColours(data) {
     // Colour rows
     el('impColourBody').innerHTML = data.colours.map(function (c, i) {
       return '<tr>' +
-        '<td><img src="' + esc(c.imgUrl) + '" class="imp-thumb" alt="' + esc(c.supplierName) + '" ' +
+        '<td style="width:72px;"><img src="' + esc(c.imgUrl) + '" style="width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid #e5e7eb;display:block;" alt="' + esc(c.supplierName) + '" ' +
           'onerror="this.style.opacity=\'0.25\'" /></td>' +
         '<td class="imp-sup-name">' + esc(c.supplierName) + '</td>' +
         '<td><input type="text" class="imp-colour-input" data-ci="' + i + '" value="" placeholder="Type your WYC name" /></td>' +
-        '<td><div class="imp-swatch-cell">' +
-          '<span class="imp-swatch-dot" style="background:' + esc(c.hex) + '"></span>' +
-          '<span class="imp-hex-text">' + esc(c.hex) + '</span>' +
-        '</div></td>' +
+        '<td><div style="display:flex;align-items:center;gap:6px;"><span style="width:20px;height:20px;border-radius:50%;border:1px solid rgba(0,0,0,.12);flex-shrink:0;display:inline-block;background:' + esc(c.hex) + '"></span><span style="font-size:12px;color:#9ca3af;font-family:monospace;">' + esc(c.hex) + '</span></div></td>' +
         '<td><span class="imp-family-tag">' + esc(c.colourFamily) + '</span></td>' +
         '</tr>';
     }).join('');
