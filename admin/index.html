@@ -2912,6 +2912,312 @@ function loadColours(data) {
         for a single-file admin panel
      ═══════════════════════════════════════════════════════════════════════════ -->
 
+
+
+<script>
+(function () {
+  'use strict';
+
+  // ── Lookup tables ────────────────────────────────────────────────────────
+
+  var IMP_FEATURES = [
+    { key: 'bleach',     label: 'Bleach Cleanable' },
+    { key: 'stain',      label: 'Stain Resistant'  },
+    { key: 'easyClean',  label: 'Easy Clean'        },
+    { key: 'pet',        label: 'Pet Friendly'      },
+    { key: 'waterproof', label: 'Waterproof'        },
+    { key: 'soft',       label: 'Ultra Soft'        },
+    { key: 'insulation', label: 'Warm Underfoot'    },
+    { key: 'scratch',    label: 'Scratch Resistant' },
+  ];
+
+  var IMP_ROOMS = [
+    { key: 'living',   label: 'Living Room' },
+    { key: 'bedroom',  label: 'Bedroom'     },
+    { key: 'kitchen',  label: 'Kitchen'     },
+    { key: 'bathroom', label: 'Bathroom'    },
+    { key: 'hallway',  label: 'Hallway'     },
+    { key: 'stairs',   label: 'Stairs'      },
+  ];
+
+  var IMP_BADGE_LABELS = {
+    new:     'New In',
+    seller:  'Best Seller',
+    sale:    'Sale',
+    premium: 'Premium',
+  };
+
+  // ── State ────────────────────────────────────────────────────────────────
+  var impData = null;
+
+  // ── DOM helpers ──────────────────────────────────────────────────────────
+  function el(id)      { return document.getElementById(id); }
+  function hide(id)    { el(id).style.display = 'none';  }
+  function show(id)    { el(id).style.display = '';       }
+  function block(id)   { el(id).style.display = 'block'; }
+  function flex(id)    { el(id).style.display = 'flex';  }
+
+  function setErr(id, msg)  { var e = el(id); e.textContent = msg; e.style.display = 'block'; }
+  function clearErr(id)     { var e = el(id); e.textContent = '';  e.style.display = 'none';  }
+
+  function authHeader() {
+    var t = localStorage.getItem('wyc_token');
+    return t ? { 'Authorization': 'Bearer ' + t } : {};
+  }
+
+  function esc(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+      .replace(/'/g, '&#x27;');
+  }
+
+  function stars(n, max) {
+    return '<span class="imp-stars">' + '★'.repeat(n) +
+      '<span style="opacity:.25">' + '★'.repeat(max - n) + '</span></span> ' +
+      n + '/' + max;
+  }
+
+  function setProgress(pct, label) {
+    el('impProgressFill').style.width = pct + '%';
+    if (label !== undefined) el('impProgressLabel').textContent = label;
+  }
+
+  // ── SCRAPE ───────────────────────────────────────────────────────────────
+  window.impScrape = async function () {
+    var url = el('impUrlInput').value.trim();
+    clearErr('impStep1Error');
+
+    if (!url) {
+      setErr('impStep1Error', 'Please paste a Carpet Line Direct URL.');
+      el('impUrlInput').focus();
+      return;
+    }
+    if (!url.includes('carpetlinedirect.co.uk')) {
+      setErr('impStep1Error', "That doesn't look like a Carpet Line Direct URL — please check and try again.");
+      el('impUrlInput').focus();
+      return;
+    }
+
+    el('impScrapeBtn').disabled = true;
+    hide('impStep2');
+    hide('impStep3');
+    flex('impLoading');
+
+    try {
+      var res  = await fetch('/api/panel/scrape-family', {
+        method:  'POST',
+        headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
+        body:    JSON.stringify({ url: url }),
+      });
+      var data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Scrape failed — please try again.');
+
+      impData = data;
+      renderReview(data);
+    } catch (err) {
+      setErr('impStep1Error', err.message);
+    } finally {
+      hide('impLoading');
+      el('impScrapeBtn').disabled = false;
+    }
+  };
+
+  // ── RENDER REVIEW ────────────────────────────────────────────────────────
+  function renderReview(data) {
+    // Source pill
+    el('impSourceUrl').textContent = data.url;
+    block('impSourcePill');
+
+    // Names
+    el('impSupplierName').value = data.supplierName;
+    el('impWycName').value      = data.wycName;
+
+    // Specs
+    el('impSpecFibre').textContent       = data.specs.fibre;
+    el('impSpecStyle').textContent       = data.specs.carpetStyle;
+    el('impSpecSuitability').textContent = data.specs.suitability;
+    el('impSpecDurability').innerHTML    = stars(data.specs.durability, 5);
+    el('impSpecSoftness').innerHTML      = stars(data.specs.softness, 5);
+    el('impSpecDesc').textContent        = data.specs.description;
+
+    // Feature checkboxes
+    el('impFeaturesChecks').innerHTML = IMP_FEATURES.map(function (f) {
+      return '<label class="imp-check-label"><input type="checkbox" data-feat="' + f.key + '" ' +
+        (data.specs.features.indexOf(f.key) !== -1 ? 'checked' : '') + ' />' + f.label + '</label>';
+    }).join('');
+
+    // Room checkboxes
+    el('impRoomsChecks').innerHTML = IMP_ROOMS.map(function (r) {
+      return '<label class="imp-check-label"><input type="checkbox" data-room="' + r.key + '" ' +
+        (data.specs.rooms.indexOf(r.key) !== -1 ? 'checked' : '') + ' />' + r.label + '</label>';
+    }).join('');
+
+    // Colour count
+    el('impColourCount').textContent =
+      data.colours.length + ' colour variant' + (data.colours.length !== 1 ? 's' : '') + ' found';
+
+    // Colour rows
+    el('impColourBody').innerHTML = data.colours.map(function (c, i) {
+      return '<tr>' +
+        '<td><img src="' + esc(c.imgUrl) + '" class="imp-thumb" alt="' + esc(c.supplierName) + '" ' +
+          'onerror="this.style.opacity=\'0.25\'" /></td>' +
+        '<td class="imp-sup-name">' + esc(c.supplierName) + '</td>' +
+        '<td><input type="text" class="imp-colour-input" data-ci="' + i + '" value="' + esc(c.wycName) + '" placeholder="WYC name" /></td>' +
+        '<td><div class="imp-swatch-cell">' +
+          '<span class="imp-swatch-dot" style="background:' + esc(c.hex) + '"></span>' +
+          '<span class="imp-hex-text">' + esc(c.hex) + '</span>' +
+        '</div></td>' +
+        '<td><span class="imp-family-tag">' + esc(c.colourFamily) + '</span></td>' +
+        '</tr>';
+    }).join('');
+
+    // Reset action area state
+    clearErr('impStep2Error');
+    hide('impProgress');
+    el('impImportBtn').disabled = false;
+    setProgress(0);
+
+    // Price + badge reset
+    el('impPrice').value    = '';
+    el('impWasPrice').value = '';
+    el('impBadge').value    = '';
+
+    block('impStep2');
+    el('impStep2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ── IMPORT ───────────────────────────────────────────────────────────────
+  window.impImport = async function () {
+    clearErr('impStep2Error');
+
+    var wycName  = el('impWycName').value.trim();
+    var priceRaw = el('impPrice').value;
+    var wasRaw   = el('impWasPrice').value;
+    var badgeKey = el('impBadge').value;
+
+    if (!wycName) {
+      setErr('impStep2Error', 'Please enter a WYC product name.');
+      el('impWycName').focus();
+      return;
+    }
+    var price = parseFloat(priceRaw);
+    if (!priceRaw || isNaN(price) || price <= 0) {
+      setErr('impStep2Error', 'Please enter a valid selling price.');
+      el('impPrice').focus();
+      return;
+    }
+
+    // Collect checked features
+    var features = [];
+    document.querySelectorAll('#impFeaturesChecks input[data-feat]:checked')
+      .forEach(function (e) { features.push(e.dataset.feat); });
+
+    // Collect checked rooms
+    var rooms = [];
+    document.querySelectorAll('#impRoomsChecks input[data-room]:checked')
+      .forEach(function (e) { rooms.push(e.dataset.room); });
+
+    if (rooms.length === 0) {
+      setErr('impStep2Error', 'Please tick at least one room suitability option.');
+      return;
+    }
+
+    // Collect colour names from editable inputs
+    var colours = impData.colours.map(function (c, i) {
+      var inp = document.querySelector('input[data-ci="' + i + '"]');
+      var name = inp && inp.value.trim() ? inp.value.trim() : c.supplierName;
+      return Object.assign({}, c, { wycName: name });
+    });
+
+    var payload = {
+      family: {
+        wycName:       wycName,
+        price:         price,
+        originalPrice: wasRaw && parseFloat(wasRaw) > 0 ? parseFloat(wasRaw) : null,
+        badge:         badgeKey ? (IMP_BADGE_LABELS[badgeKey] || null) : null,
+        badgeType:     badgeKey || null,
+        specs: Object.assign({}, impData.specs, { features: features, rooms: rooms }),
+        colours:       colours,
+      },
+    };
+
+    // Show progress
+    el('impImportBtn').disabled = true;
+    block('impProgress');
+    setProgress(8, 'Uploading ' + colours.length + ' image' + (colours.length !== 1 ? 's' : '') + ' to Cloudinary…');
+
+    var fakePct = 8;
+    var fakeTimer = setInterval(function () {
+      fakePct = Math.min(fakePct + 4, 85);
+      setProgress(fakePct);
+    }, 900);
+
+    try {
+      var res  = await fetch('/api/panel/import-family', {
+        method:  'POST',
+        headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
+        body:    JSON.stringify(payload),
+      });
+
+      clearInterval(fakeTimer);
+      setProgress(100, 'Saving to database…');
+
+      var data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Import failed — please try again.');
+
+      // Show success
+      hide('impStep2');
+      var ir = data.imageResults;
+      el('impSuccessTitle').textContent  = '"' + data.product.name + '" is live on your website';
+      el('impSuccessDetail').textContent =
+        colours.length + ' colour variant' + (colours.length !== 1 ? 's' : '') +
+        ' imported. Customers can browse this product right now.';
+
+      var statsHtml = '';
+      if (ir.uploaded > 0)
+        statsHtml += '<li><span class="imp-ok">✓</span> ' + ir.uploaded + ' image' + (ir.uploaded !== 1 ? 's' : '') + ' uploaded to Cloudinary</li>';
+      if (ir.fallback > 0)
+        statsHtml += '<li><span class="imp-warn">⚠</span> ' + ir.fallback + ' image' + (ir.fallback !== 1 ? 's' : '') + ' kept supplier URL — re-upload from Products if needed</li>';
+      statsHtml += '<li><span class="imp-ok">✓</span> Product ID: ' + data.product.id + '</li>';
+      el('impSuccessStats').innerHTML = statsHtml;
+
+      block('impStep3');
+      el('impStep3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    } catch (err) {
+      clearInterval(fakeTimer);
+      hide('impProgress');
+      el('impImportBtn').disabled = false;
+      setProgress(0);
+      setErr('impStep2Error', err.message);
+    }
+  };
+
+  // ── RESET ────────────────────────────────────────────────────────────────
+  window.impReset = function () {
+    impData = null;
+    el('impUrlInput').value  = '';
+    el('impPrice').value     = '';
+    el('impWasPrice').value  = '';
+    el('impBadge').value     = '';
+    el('impImportBtn').disabled = false;
+    clearErr('impStep1Error');
+    clearErr('impStep2Error');
+    hide('impProgress');
+    hide('impStep2');
+    hide('impStep3');
+    hide('impLoading');
+    setProgress(0);
+    el('impStep1').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+})();
+</script>
+
+</div>
+
 <div id="import-section" class="section" style="display:none">
 
   <style>
@@ -3333,310 +3639,6 @@ function loadColours(data) {
   </div>
 
 </div><!-- /importSection -->
-
-<script>
-(function () {
-  'use strict';
-
-  // ── Lookup tables ────────────────────────────────────────────────────────
-
-  var IMP_FEATURES = [
-    { key: 'bleach',     label: 'Bleach Cleanable' },
-    { key: 'stain',      label: 'Stain Resistant'  },
-    { key: 'easyClean',  label: 'Easy Clean'        },
-    { key: 'pet',        label: 'Pet Friendly'      },
-    { key: 'waterproof', label: 'Waterproof'        },
-    { key: 'soft',       label: 'Ultra Soft'        },
-    { key: 'insulation', label: 'Warm Underfoot'    },
-    { key: 'scratch',    label: 'Scratch Resistant' },
-  ];
-
-  var IMP_ROOMS = [
-    { key: 'living',   label: 'Living Room' },
-    { key: 'bedroom',  label: 'Bedroom'     },
-    { key: 'kitchen',  label: 'Kitchen'     },
-    { key: 'bathroom', label: 'Bathroom'    },
-    { key: 'hallway',  label: 'Hallway'     },
-    { key: 'stairs',   label: 'Stairs'      },
-  ];
-
-  var IMP_BADGE_LABELS = {
-    new:     'New In',
-    seller:  'Best Seller',
-    sale:    'Sale',
-    premium: 'Premium',
-  };
-
-  // ── State ────────────────────────────────────────────────────────────────
-  var impData = null;
-
-  // ── DOM helpers ──────────────────────────────────────────────────────────
-  function el(id)      { return document.getElementById(id); }
-  function hide(id)    { el(id).style.display = 'none';  }
-  function show(id)    { el(id).style.display = '';       }
-  function block(id)   { el(id).style.display = 'block'; }
-  function flex(id)    { el(id).style.display = 'flex';  }
-
-  function setErr(id, msg)  { var e = el(id); e.textContent = msg; e.style.display = 'block'; }
-  function clearErr(id)     { var e = el(id); e.textContent = '';  e.style.display = 'none';  }
-
-  function authHeader() {
-    var t = localStorage.getItem('wyc_token');
-    return t ? { 'Authorization': 'Bearer ' + t } : {};
-  }
-
-  function esc(str) {
-    if (!str) return '';
-    return String(str)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-      .replace(/'/g, '&#x27;');
-  }
-
-  function stars(n, max) {
-    return '<span class="imp-stars">' + '★'.repeat(n) +
-      '<span style="opacity:.25">' + '★'.repeat(max - n) + '</span></span> ' +
-      n + '/' + max;
-  }
-
-  function setProgress(pct, label) {
-    el('impProgressFill').style.width = pct + '%';
-    if (label !== undefined) el('impProgressLabel').textContent = label;
-  }
-
-  // ── SCRAPE ───────────────────────────────────────────────────────────────
-  window.impScrape = async function () {
-    var url = el('impUrlInput').value.trim();
-    clearErr('impStep1Error');
-
-    if (!url) {
-      setErr('impStep1Error', 'Please paste a Carpet Line Direct URL.');
-      el('impUrlInput').focus();
-      return;
-    }
-    if (!url.includes('carpetlinedirect.co.uk')) {
-      setErr('impStep1Error', "That doesn't look like a Carpet Line Direct URL — please check and try again.");
-      el('impUrlInput').focus();
-      return;
-    }
-
-    el('impScrapeBtn').disabled = true;
-    hide('impStep2');
-    hide('impStep3');
-    flex('impLoading');
-
-    try {
-      var res  = await fetch('/api/panel/scrape-family', {
-        method:  'POST',
-        headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
-        body:    JSON.stringify({ url: url }),
-      });
-      var data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Scrape failed — please try again.');
-
-      impData = data;
-      renderReview(data);
-    } catch (err) {
-      setErr('impStep1Error', err.message);
-    } finally {
-      hide('impLoading');
-      el('impScrapeBtn').disabled = false;
-    }
-  };
-
-  // ── RENDER REVIEW ────────────────────────────────────────────────────────
-  function renderReview(data) {
-    // Source pill
-    el('impSourceUrl').textContent = data.url;
-    block('impSourcePill');
-
-    // Names
-    el('impSupplierName').value = data.supplierName;
-    el('impWycName').value      = data.wycName;
-
-    // Specs
-    el('impSpecFibre').textContent       = data.specs.fibre;
-    el('impSpecStyle').textContent       = data.specs.carpetStyle;
-    el('impSpecSuitability').textContent = data.specs.suitability;
-    el('impSpecDurability').innerHTML    = stars(data.specs.durability, 5);
-    el('impSpecSoftness').innerHTML      = stars(data.specs.softness, 5);
-    el('impSpecDesc').textContent        = data.specs.description;
-
-    // Feature checkboxes
-    el('impFeaturesChecks').innerHTML = IMP_FEATURES.map(function (f) {
-      return '<label class="imp-check-label"><input type="checkbox" data-feat="' + f.key + '" ' +
-        (data.specs.features.indexOf(f.key) !== -1 ? 'checked' : '') + ' />' + f.label + '</label>';
-    }).join('');
-
-    // Room checkboxes
-    el('impRoomsChecks').innerHTML = IMP_ROOMS.map(function (r) {
-      return '<label class="imp-check-label"><input type="checkbox" data-room="' + r.key + '" ' +
-        (data.specs.rooms.indexOf(r.key) !== -1 ? 'checked' : '') + ' />' + r.label + '</label>';
-    }).join('');
-
-    // Colour count
-    el('impColourCount').textContent =
-      data.colours.length + ' colour variant' + (data.colours.length !== 1 ? 's' : '') + ' found';
-
-    // Colour rows
-    el('impColourBody').innerHTML = data.colours.map(function (c, i) {
-      return '<tr>' +
-        '<td><img src="' + esc(c.imgUrl) + '" class="imp-thumb" alt="' + esc(c.supplierName) + '" ' +
-          'onerror="this.style.opacity=\'0.25\'" /></td>' +
-        '<td class="imp-sup-name">' + esc(c.supplierName) + '</td>' +
-        '<td><input type="text" class="imp-colour-input" data-ci="' + i + '" value="' + esc(c.wycName) + '" placeholder="WYC name" /></td>' +
-        '<td><div class="imp-swatch-cell">' +
-          '<span class="imp-swatch-dot" style="background:' + esc(c.hex) + '"></span>' +
-          '<span class="imp-hex-text">' + esc(c.hex) + '</span>' +
-        '</div></td>' +
-        '<td><span class="imp-family-tag">' + esc(c.colourFamily) + '</span></td>' +
-        '</tr>';
-    }).join('');
-
-    // Reset action area state
-    clearErr('impStep2Error');
-    hide('impProgress');
-    el('impImportBtn').disabled = false;
-    setProgress(0);
-
-    // Price + badge reset
-    el('impPrice').value    = '';
-    el('impWasPrice').value = '';
-    el('impBadge').value    = '';
-
-    block('impStep2');
-    el('impStep2').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  // ── IMPORT ───────────────────────────────────────────────────────────────
-  window.impImport = async function () {
-    clearErr('impStep2Error');
-
-    var wycName  = el('impWycName').value.trim();
-    var priceRaw = el('impPrice').value;
-    var wasRaw   = el('impWasPrice').value;
-    var badgeKey = el('impBadge').value;
-
-    if (!wycName) {
-      setErr('impStep2Error', 'Please enter a WYC product name.');
-      el('impWycName').focus();
-      return;
-    }
-    var price = parseFloat(priceRaw);
-    if (!priceRaw || isNaN(price) || price <= 0) {
-      setErr('impStep2Error', 'Please enter a valid selling price.');
-      el('impPrice').focus();
-      return;
-    }
-
-    // Collect checked features
-    var features = [];
-    document.querySelectorAll('#impFeaturesChecks input[data-feat]:checked')
-      .forEach(function (e) { features.push(e.dataset.feat); });
-
-    // Collect checked rooms
-    var rooms = [];
-    document.querySelectorAll('#impRoomsChecks input[data-room]:checked')
-      .forEach(function (e) { rooms.push(e.dataset.room); });
-
-    if (rooms.length === 0) {
-      setErr('impStep2Error', 'Please tick at least one room suitability option.');
-      return;
-    }
-
-    // Collect colour names from editable inputs
-    var colours = impData.colours.map(function (c, i) {
-      var inp = document.querySelector('input[data-ci="' + i + '"]');
-      var name = inp && inp.value.trim() ? inp.value.trim() : c.supplierName;
-      return Object.assign({}, c, { wycName: name });
-    });
-
-    var payload = {
-      family: {
-        wycName:       wycName,
-        price:         price,
-        originalPrice: wasRaw && parseFloat(wasRaw) > 0 ? parseFloat(wasRaw) : null,
-        badge:         badgeKey ? (IMP_BADGE_LABELS[badgeKey] || null) : null,
-        badgeType:     badgeKey || null,
-        specs: Object.assign({}, impData.specs, { features: features, rooms: rooms }),
-        colours:       colours,
-      },
-    };
-
-    // Show progress
-    el('impImportBtn').disabled = true;
-    block('impProgress');
-    setProgress(8, 'Uploading ' + colours.length + ' image' + (colours.length !== 1 ? 's' : '') + ' to Cloudinary…');
-
-    var fakePct = 8;
-    var fakeTimer = setInterval(function () {
-      fakePct = Math.min(fakePct + 4, 85);
-      setProgress(fakePct);
-    }, 900);
-
-    try {
-      var res  = await fetch('/api/panel/import-family', {
-        method:  'POST',
-        headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
-        body:    JSON.stringify(payload),
-      });
-
-      clearInterval(fakeTimer);
-      setProgress(100, 'Saving to database…');
-
-      var data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Import failed — please try again.');
-
-      // Show success
-      hide('impStep2');
-      var ir = data.imageResults;
-      el('impSuccessTitle').textContent  = '"' + data.product.name + '" is live on your website';
-      el('impSuccessDetail').textContent =
-        colours.length + ' colour variant' + (colours.length !== 1 ? 's' : '') +
-        ' imported. Customers can browse this product right now.';
-
-      var statsHtml = '';
-      if (ir.uploaded > 0)
-        statsHtml += '<li><span class="imp-ok">✓</span> ' + ir.uploaded + ' image' + (ir.uploaded !== 1 ? 's' : '') + ' uploaded to Cloudinary</li>';
-      if (ir.fallback > 0)
-        statsHtml += '<li><span class="imp-warn">⚠</span> ' + ir.fallback + ' image' + (ir.fallback !== 1 ? 's' : '') + ' kept supplier URL — re-upload from Products if needed</li>';
-      statsHtml += '<li><span class="imp-ok">✓</span> Product ID: ' + data.product.id + '</li>';
-      el('impSuccessStats').innerHTML = statsHtml;
-
-      block('impStep3');
-      el('impStep3').scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-    } catch (err) {
-      clearInterval(fakeTimer);
-      hide('impProgress');
-      el('impImportBtn').disabled = false;
-      setProgress(0);
-      setErr('impStep2Error', err.message);
-    }
-  };
-
-  // ── RESET ────────────────────────────────────────────────────────────────
-  window.impReset = function () {
-    impData = null;
-    el('impUrlInput').value  = '';
-    el('impPrice').value     = '';
-    el('impWasPrice').value  = '';
-    el('impBadge').value     = '';
-    el('impImportBtn').disabled = false;
-    clearErr('impStep1Error');
-    clearErr('impStep2Error');
-    hide('impProgress');
-    hide('impStep2');
-    hide('impStep3');
-    hide('impLoading');
-    setProgress(0);
-    el('impStep1').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-})();
-</script>
-
-</div>
 
 <div id="bulk-import-modal">
 <div class="bim">
