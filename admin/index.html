@@ -1032,11 +1032,11 @@ html, body { overflow-x: hidden; max-width: 100vw; }
     <div id="impSpecsTable" style="margin-bottom:20px;">
   <div style="display:flex;align-items:baseline;gap:10px;padding:9px 0;border-bottom:1px solid #e5e7eb;">
     <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;min-width:120px;">Fibre</span>
-    <span id="impSpecFibre" style="font-size:14px;color:#1a2332;"></span>
+    <select id="impSpecFibre" style="flex:1;padding:7px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;color:#1a2332;background:#fff;outline:none;"><option value="100% Polypropylene">100% Polypropylene</option><option value="100% Polyester">100% Polyester</option><option value="100% Wool">100% Wool</option><option value="100% Recycled Polyester">100% Recycled Polyester</option><option value="Mixed Fibres">Mixed Fibres</option></select>
   </div>
   <div style="display:flex;align-items:baseline;gap:10px;padding:9px 0;border-bottom:1px solid #e5e7eb;">
     <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;min-width:120px;">Carpet style</span>
-    <span id="impSpecStyle" style="font-size:14px;color:#1a2332;"></span>
+    <select id="impSpecStyle" style="flex:1;padding:7px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;color:#1a2332;background:#fff;outline:none;"><option value="Twist">Twist</option><option value="Saxony">Saxony</option><option value="Loop Pile">Loop Pile</option><option value="Berber">Berber</option><option value="Velvet">Velvet</option></select>
   </div>
   <div style="display:flex;align-items:baseline;gap:10px;padding:9px 0;border-bottom:1px solid #e5e7eb;">
     <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;min-width:120px;">Suitability</span>
@@ -1052,7 +1052,7 @@ html, body { overflow-x: hidden; max-width: 100vw; }
   </div>
   <div style="display:flex;align-items:baseline;gap:10px;padding:9px 0;">
     <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;min-width:120px;">Description</span>
-    <span id="impSpecDesc" style="font-size:14px;color:#6b7280;font-style:italic;"></span>
+    <textarea id="impSpecDesc" rows="3" style="flex:1;padding:7px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;color:#1a2332;background:#fff;outline:none;resize:vertical;font-family:inherit;"></textarea>
   </div>
 </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
@@ -3193,12 +3193,12 @@ function loadColours(data) {
     el('impWycName').value      = data.wycName;
 
     // Specs
-    el('impSpecFibre').textContent       = data.specs.fibre;
-    el('impSpecStyle').textContent       = data.specs.carpetStyle;
+    el('impSpecFibre').value             = data.specs.fibre;
+    el('impSpecStyle').value             = data.specs.carpetStyle;
     el('impSpecSuitability').textContent = data.specs.suitability;
     el('impSpecDurability').innerHTML    = stars(data.specs.durability, 5);
     el('impSpecSoftness').innerHTML      = stars(data.specs.softness, 5);
-    el('impSpecDesc').textContent        = data.specs.description;
+    el('impSpecDesc').value              = data.specs.description;
 
     // Feature checkboxes
     el('impFeaturesChecks').innerHTML = IMP_FEATURES.map(function (f) {
@@ -3222,7 +3222,7 @@ function loadColours(data) {
         '<td><img src="' + esc(c.imgUrl) + '" class="imp-thumb" alt="' + esc(c.supplierName) + '" ' +
           'onerror="this.style.opacity=\'0.25\'" /></td>' +
         '<td class="imp-sup-name">' + esc(c.supplierName) + '</td>' +
-        '<td><input type="text" class="imp-colour-input" data-ci="' + i + '" value="' + esc(c.wycName) + '" placeholder="WYC name" /></td>' +
+        '<td><input type="text" class="imp-colour-input" data-ci="' + i + '" value="" placeholder="Type your WYC name" /></td>' +
         '<td><div class="imp-swatch-cell">' +
           '<span class="imp-swatch-dot" style="background:' + esc(c.hex) + '"></span>' +
           '<span class="imp-hex-text">' + esc(c.hex) + '</span>' +
@@ -3296,7 +3296,7 @@ function loadColours(data) {
         originalPrice: wasRaw && parseFloat(wasRaw) > 0 ? parseFloat(wasRaw) : null,
         badge:         badgeKey ? (IMP_BADGE_LABELS[badgeKey] || null) : null,
         badgeType:     badgeKey || null,
-        specs: Object.assign({}, impData.specs, { features: features, rooms: rooms }),
+        specs: Object.assign({}, impData.specs, { features: features, rooms: rooms, fibre: el('impSpecFibre').value, carpetStyle: el('impSpecStyle').value, description: el('impSpecDesc').value.trim() }),
         colours:       colours,
       },
     };
