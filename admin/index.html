@@ -2756,54 +2756,8 @@ if (TOKEN && USER) showApp();
         <input type="hidden" id="p-density-bar" value="3">
       </div>
     </div>
-    <div class="ratings-grid" style="margin-top:12px">
-      <div class="field"><label>Thickness</label>
-        <div class="bar-rating" id="thickness-bars">
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',1)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',2)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',3)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',4)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',5)"></button>
-          <span class="bar-rating-val" id="thickness-val">3/5</span>
-        </div>
-        <input type="hidden" id="p-thickness-bar" value="3">
-      </div>
-      <div class="field"><label>Density</label>
-        <div class="bar-rating" id="density-bars">
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',1)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',2)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',3)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',4)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',5)"></button>
-          <span class="bar-rating-val" id="density-val">3/5</span>
-        </div>
-        <input type="hidden" id="p-density-bar" value="3">
-      </div>
-    </div>
-    <div class="ratings-grid" style="margin-top:12px">
-      <div class="field"><label>Thickness</label>
-        <div class="bar-rating" id="thickness-bars">
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',1)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',2)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',3)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',4)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('thickness',5)"></button>
-          <span class="bar-rating-val" id="thickness-val">3/5</span>
-        </div>
-        <input type="hidden" id="p-thickness-bar" value="3">
-      </div>
-      <div class="field"><label>Density</label>
-        <div class="bar-rating" id="density-bars">
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',1)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',2)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',3)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',4)"></button>
-          <button class="bar-seg-btn" type="button" onclick="setBar('density',5)"></button>
-          <span class="bar-rating-val" id="density-val">3/5</span>
-        </div>
-        <input type="hidden" id="p-density-bar" value="3">
-      </div>
-    </div>
+
+
 
     <div class="pm-divider"><i class="fa-solid fa-house"></i> Room Suitability</div>
     <div class="room-grid">
@@ -2995,7 +2949,11 @@ function renderColourSwatches() {
       <div style="position:relative">${imgSection}${uploading}</div>
       <div style="display:flex;align-items:center;gap:8px;flex:1">
         <div style="width:18px;height:18px;border-radius:50%;background:${c.hex};border:1.5px solid rgba(0,0,0,.1);flex-shrink:0"></div>
-        <span style="font-size:.9rem;color:var(--ps-slate);font-weight:600">${c.name}</span>
+        <input type="text" value="${c.name}"
+          onchange="_colours[${i}].name=this.value; document.getElementById('p-colours').value=JSON.stringify(_colours.map(x=>({name:x.name,hex:x.hex,img_url:x.img_url||null})))"
+          style="font-size:.9rem;color:var(--ps-slate);font-weight:600;border:1px solid transparent;border-radius:6px;padding:4px 8px;background:transparent;outline:none;flex:1;cursor:text;"
+          onfocus="this.style.borderColor='var(--ps-red)';this.style.background='var(--ps-white)'"
+          onblur="this.style.borderColor='transparent';this.style.background='transparent'" />
       </div>
       <button type="button" onclick="removeColour(${i})"
         style="background:#fee2e2;border:none;color:#dc2626;border-radius:6px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0">
