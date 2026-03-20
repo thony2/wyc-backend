@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>West Yorkshire Carpets — Admin</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='12' fill='%23DE3848'/><text y='.85em' x='15' font-size='70'>W</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -730,6 +730,16 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 .pm-attr-grid { display:flex;flex-direction:column;gap:16px;margin-bottom:4px; }
 .pm-attr-group {}
 .pm-attr-label { font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#888;margin-bottom:8px; }
+
+@media(max-width:768px){
+  #import-section{padding:16px!important;}
+  #impStep1 div[style*="display:flex;gap:10px"]{flex-direction:column!important;}
+  #impScrapeBtn{width:100%!important;padding:14px 20px!important;}
+  #impStep2 div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important;}
+  #impImportBtn{width:100%!important;}
+  #products-section .ps-topbar{height:auto!important;flex-wrap:wrap!important;padding:12px 16px!important;gap:8px!important;}
+  #products-section .ps-topbar-stats{order:3!important;width:100%!important;border-top:1px solid var(--ps-border)!important;padding-top:6px!important;}
+}
 </style>
 </head>
 <body>
@@ -975,13 +985,13 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 
 <div id="impStep1" style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:20px;">
   <h3 style="font-size:15px;font-weight:700;color:#1a2332;margin:0 0 6px;">Enter a product family URL</h3>
-  <p style="font-size:13px;color:#6b7280;margin:0 0 20px;">Go to <strong>carpetlinedirect.co.uk</strong>, open any carpet family page, and paste the URL here. Example: <code style="font-size:12px;">https://www.carpetlinedirect.co.uk/abyss/</code></p>
+  <p style="font-size:13px;color:#6b7280;margin:0 0 20px;">Go to any supported supplier website, find a product or range page, and paste the URL here.</p>
   <div style="display:flex;gap:10px;">
     <input type="url" id="impUrlInput" placeholder="https://www.carpetlinedirect.co.uk/abyss/" onkeydown="if(event.key==='Enter') impScrape()"
       style="flex:1;padding:10px 14px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;color:#1a2332;outline:none;" />
     <button onclick="impScrape()" id="impScrapeBtn"
       style="padding:10px 20px;background:#c8102e;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;">
-      Scrape Family
+      Scrape Page
     </button>
   </div>
   <div id="impStep1Error" style="display:none;margin-top:12px;padding:11px 14px;background:#fff3f4;border:1px solid #fcc;border-radius:8px;color:#c0392b;font-size:13px;"></div>
@@ -3110,7 +3120,7 @@ function loadColours(data) {
       el('impUrlInput').focus();
       return;
     }
-    if (!url.includes('carpetlinedirect.co.uk')) {
+    if (false) {
       setErr('impStep1Error', "That doesn't look like a Carpet Line Direct URL — please check and try again.");
       el('impUrlInput').focus();
       return;
