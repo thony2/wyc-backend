@@ -744,6 +744,258 @@ html, body { overflow-x: hidden; max-width: 100vw; }
   #products-section .ps-topbar-stats{order:3!important;width:100%!important;border-top:1px solid var(--ps-border)!important;padding-top:6px!important;}
 }
 </style>
+<style id="wyc-admin-theme">
+:root{--wyc-red:#E03040;--wyc-red-dk:#B8202F;--wyc-navy:#1B3A5C;--wyc-navy-dk:#142C47;--wyc-gold:#C49A3C;--wyc-ink:#1A1714;--wyc-ink2:#5C574F;--wyc-ink3:#9C9589;--wyc-bg:#F8F9FA;--wyc-surface:#F2EFE8;--wyc-white:#FFFFFF;--wyc-border:#E8E3D9;--wyc-success:#27AE60;--wyc-warn:#C49A3C;--wyc-danger:#E03040;--ps-slate:#1A1714;--ps-slate-mid:#1B3A5C;--ps-red:#E03040;--ps-red-dark:#B8202F;--ps-white:#FFFFFF;--ps-cream:#F8F9FA;--ps-cream-mid:#F2EFE8;--ps-grey:#5C574F;--ps-grey-light:#9C9589;--ps-border:#E8E3D9;--ps-success:#27AE60;--ps-warn:#C49A3C;--ps-danger:#E03040}
+html,body{background:#F8F9FA}
+#app{background:#F8F9FA!important}
+#login-screen{background:linear-gradient(135deg,#1B3A5C 0%,#0F2338 100%)!important}
+.login-box{background:rgba(255,255,255,.07)!important;border:1px solid rgba(255,255,255,.14)!important;border-radius:16px!important}
+.login-logo{color:#F8F9FA!important}
+.login-sub{color:rgba(255,255,255,.45)!important}
+.login-label{color:rgba(255,255,255,.55)!important}
+.login-input{background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.14)!important;color:#F8F9FA!important;border-radius:8px!important}
+.login-input:focus{border-color:#E03040!important}
+.login-input::placeholder{color:rgba(255,255,255,.3)!important}
+.login-btn{background:#E03040!important;border-radius:8px!important;font-weight:600!important}
+.login-btn:hover{background:#B8202F!important}
+.sidebar{background:#1B3A5C!important;border-right:1px solid rgba(255,255,255,.06)!important}
+.sidebar-logo{border-bottom:1px solid rgba(255,255,255,.08)!important}
+.sidebar-logo-text{color:#F8F9FA!important}
+.sidebar-logo-sub{color:rgba(255,255,255,.4)!important}
+.sidebar-footer{border-top:1px solid rgba(255,255,255,.08)!important}
+.sidebar-user{color:rgba(255,255,255,.3)!important}
+.sidebar-user strong{color:rgba(255,255,255,.65)!important}
+.nav-group-label{color:rgba(255,255,255,.35)!important}
+.nav-item{color:rgba(255,255,255,.55)!important}
+.nav-item:hover{background:rgba(255,255,255,.07)!important;color:#F8F9FA!important}
+.nav-item.active{background:rgba(224,48,64,.15)!important;color:#E03040!important}
+.logout-btn{color:rgba(255,255,255,.35)!important}
+.logout-btn:hover{color:#E03040!important;background:none!important}
+.mobile-topbar{background:#1B3A5C!important;border-bottom:1px solid rgba(255,255,255,.06)!important}
+.mobile-topbar-title{color:#F8F9FA!important}
+.hamburger-btn{color:rgba(255,255,255,.55)!important}
+#toast{background:#1B3A5C!important;border:1px solid rgba(255,255,255,.08)!important;color:#F8F9FA!important}
+#leads-section{background:#F8F9FA!important}
+#leads-section .page-title{font-family:"Cormorant Garamond",serif!important;color:#1A1714!important}
+#leads-section .page-sub{color:#9C9589!important}
+#leads-section .btn-primary,#modal-overlay .btn-primary{background:#E03040!important;border-radius:8px!important;font-weight:600!important}
+#leads-section .btn-primary:hover,#modal-overlay .btn-primary:hover{background:#B8202F!important}
+#leads-section .btn-ghost,#modal-overlay .btn-ghost{background:transparent!important;color:#5C574F!important;border:1px solid #E8E3D9!important}
+#leads-section .btn-ghost:hover,#modal-overlay .btn-ghost:hover{background:#F2EFE8!important;color:#1A1714!important;border-color:#E8E3D9!important}
+#leads-section .stat-card{background:#FFFFFF!important;border:1px solid #E8E3D9!important;border-radius:12px!important;box-shadow:0 1px 3px rgba(0,0,0,.04)!important}
+#leads-section .stat-label{color:#9C9589!important}
+#leads-section .stat-value{color:#1A1714!important}
+#leads-section .stat-sub{color:#9C9589!important}
+#leads-section .stat-mini{background:#FFFFFF!important;border:1px solid #E8E3D9!important;border-radius:10px!important}
+#leads-section .stat-mini-label{color:#9C9589!important}
+#leads-section .stat-mini-val{color:#1A1714!important}
+#leads-section .search-input{background:#FFFFFF!important;border:1px solid #E8E3D9!important;color:#1A1714!important;border-radius:8px!important}
+#leads-section .search-input::placeholder{color:#9C9589!important}
+#leads-section .search-input:focus{border-color:#E03040!important;box-shadow:0 0 0 3px rgba(224,48,64,.08)!important}
+#leads-section .search-wrap i{color:#9C9589!important}
+#leads-section .filter-pill{background:#FFFFFF!important;border:1px solid #E8E3D9!important;color:#5C574F!important;border-radius:20px!important}
+#leads-section .filter-pill:hover{border-color:#1B3A5C!important;color:#1B3A5C!important;background:#EEF2F7!important}
+#leads-section .filter-pill.active{background:#1B3A5C!important;border-color:#1B3A5C!important;color:#F8F9FA!important}
+#leads-section .custom-select-btn{background:#FFFFFF!important;border:1px solid #E8E3D9!important;color:#5C574F!important}
+#leads-section .custom-select-btn:hover{background:#F2EFE8!important;border-color:#1B3A5C!important;color:#1A1714!important}
+#leads-section .custom-dropdown{background:#FFFFFF!important;border:1px solid #E8E3D9!important;box-shadow:0 8px 24px rgba(0,0,0,.08)!important}
+#leads-section .custom-option{color:#5C574F!important;border-bottom:1px solid #E8E3D9!important}
+#leads-section .custom-option:hover{background:#F2EFE8!important;color:#1A1714!important}
+#leads-section .custom-option.active{color:#1B3A5C!important;font-weight:600!important}
+#leads-section .table-wrap{background:#FFFFFF!important;border:1px solid #E8E3D9!important;border-radius:12px!important;box-shadow:0 1px 3px rgba(0,0,0,.04)!important}
+#leads-section .table-header{border-bottom:1px solid #E8E3D9!important}
+#leads-section .table-title{color:#1A1714!important}
+#leads-section .table-count{color:#9C9589!important}
+#leads-section thead th{color:#9C9589!important;background:#F8F9FA!important;border-bottom:1px solid #E8E3D9!important;font-weight:700!important}
+#leads-section tbody tr{border-bottom:1px solid #E8E3D9!important}
+#leads-section tbody tr:hover{background:#F5F3EF!important}
+#leads-section tbody td{color:#5C574F!important}
+#leads-section .td-name{color:#1A1714!important;font-weight:600!important}
+#leads-section .td-phone{color:#5C574F!important}
+#leads-section .td-id,#leads-section .td-time{color:#9C9589!important}
+#leads-section .badge-new{background:rgba(59,130,246,.1)!important;color:#2563EB!important}
+#leads-section .badge-contacted{background:rgba(196,154,60,.12)!important;color:#C49A3C!important}
+#leads-section .badge-quoted{background:rgba(139,92,246,.1)!important;color:#7C3AED!important}
+#leads-section .badge-won{background:rgba(39,174,96,.1)!important;color:#27AE60!important}
+#leads-section .badge-lost{background:rgba(107,114,128,.1)!important;color:#6B7280!important}
+#leads-section .badge-spam{background:rgba(224,48,64,.1)!important;color:#E03040!important}
+#leads-section .empty-state i{color:#E8E3D9!important}
+#leads-section .empty-state p{color:#9C9589!important}
+#leads-section .calendar-wrap,#leads-section .unscheduled-wrap,#leads-section .day-panel{background:#FFFFFF!important;border:1px solid #E8E3D9!important;border-radius:12px!important;box-shadow:0 1px 3px rgba(0,0,0,.04)!important}
+#leads-section .cal-header,#leads-section .unscheduled-header,#leads-section .day-panel-header{border-bottom:1px solid #E8E3D9!important}
+#leads-section .cal-title,#leads-section .day-panel-title{font-family:"Cormorant Garamond",serif!important;color:#1A1714!important}
+#leads-section .cal-nav button{background:#F2EFE8!important;color:#5C574F!important;border:1px solid #E8E3D9!important}
+#leads-section .cal-nav button:hover{background:#E8E3D9!important;color:#1A1714!important}
+#leads-section .cal-day-name{color:#9C9589!important;border-bottom:1px solid #E8E3D9!important}
+#leads-section .cal-day{border-right:1px solid #E8E3D9!important;border-bottom:1px solid #E8E3D9!important}
+#leads-section .cal-day:hover{background:#F5F3EF!important}
+#leads-section .cal-day-num{color:#5C574F!important}
+#leads-section .cal-day.today .cal-day-num{background:#E03040!important;color:white!important}
+#leads-section .cal-popover{background:#FFFFFF!important;border:1px solid #E8E3D9!important;box-shadow:0 8px 32px rgba(0,0,0,.1)!important}
+#leads-section .cal-popover-item:hover{background:#F2EFE8!important}
+#leads-section .cal-popover-name{color:#1A1714!important}
+#leads-section .cal-popover-detail{color:#9C9589!important}
+#leads-section .unscheduled-title{color:#1A1714!important}
+#leads-section .unscheduled-sub{color:#9C9589!important}
+#leads-section .unscheduled-item{border-bottom:1px solid #E8E3D9!important}
+#leads-section .unscheduled-item:hover{background:#F5F3EF!important}
+#leads-section .unscheduled-name{color:#1A1714!important}
+#leads-section .unscheduled-detail{color:#9C9589!important}
+#leads-section .day-job{background:#F8F9FA!important;border-radius:8px!important}
+#leads-section .day-job:hover{background:#F2EFE8!important}
+#leads-section .day-job-name{color:#1A1714!important}
+#leads-section .day-job-detail{color:#9C9589!important}
+#leads-section .day-empty{color:#9C9589!important}
+#modal-overlay{background:rgba(27,58,92,.45)!important;backdrop-filter:blur(6px)!important}
+#modal-overlay .modal{background:#FFFFFF!important;border:1px solid #E8E3D9!important;border-radius:16px!important;box-shadow:0 24px 64px rgba(27,58,92,.18)!important}
+#modal-overlay .modal-head{background:#FFFFFF!important;border-bottom:1px solid #E8E3D9!important}
+#modal-overlay .modal-name{font-family:"Cormorant Garamond",serif!important;color:#1A1714!important}
+#modal-overlay .modal-date{color:#9C9589!important}
+#modal-overlay .modal-close{color:#9C9589!important}
+#modal-overlay .modal-close:hover{color:#1A1714!important}
+#modal-overlay .modal-field label{color:#9C9589!important}
+#modal-overlay .modal-field span{color:#1A1714!important}
+#modal-overlay .modal-section-label{color:#9C9589!important}
+#modal-overlay .modal-message-box{background:#F8F9FA!important;color:#5C574F!important;border-radius:8px!important}
+#modal-overlay .modal-foot{border-top:1px solid #E8E3D9!important}
+#modal-overlay .status-pill.pill-new{background:rgba(59,130,246,.08)!important;color:#2563EB!important;border-color:rgba(59,130,246,.2)!important}
+#modal-overlay .status-pill.pill-contacted{background:rgba(196,154,60,.1)!important;color:#C49A3C!important;border-color:rgba(196,154,60,.25)!important}
+#modal-overlay .status-pill.pill-quoted{background:rgba(139,92,246,.08)!important;color:#7C3AED!important;border-color:rgba(139,92,246,.2)!important}
+#modal-overlay .status-pill.pill-won{background:rgba(39,174,96,.08)!important;color:#27AE60!important;border-color:rgba(39,174,96,.2)!important}
+#modal-overlay .status-pill.pill-lost{background:rgba(107,114,128,.08)!important;color:#6B7280!important;border-color:rgba(107,114,128,.2)!important}
+#modal-overlay .status-pill.pill-spam{background:rgba(224,48,64,.08)!important;color:#E03040!important;border-color:rgba(224,48,64,.2)!important}
+#modal-overlay .booking-section{background:#F8F9FA!important;border:1px solid #E8E3D9!important;border-radius:10px!important}
+#modal-overlay .booking-section-title{color:#9C9589!important}
+#modal-overlay .booking-trigger{background:#FFFFFF!important;border:1px solid #E8E3D9!important;color:#5C574F!important;border-radius:8px!important}
+#modal-overlay .booking-trigger:hover{border-color:#1B3A5C!important;color:#1A1714!important;background:#F2EFE8!important}
+#modal-overlay .booking-trigger i{color:#9C9589!important}
+#modal-overlay .booking-notes-input{background:#FFFFFF!important;border:1px solid #E8E3D9!important;color:#1A1714!important;border-radius:8px!important}
+#modal-overlay .booking-notes-input::placeholder{color:#9C9589!important}
+#modal-overlay .booking-notes-input:focus{border-color:#E03040!important}
+#modal-overlay .booking-type-btn{background:#FFFFFF!important;border:1px solid #E8E3D9!important;color:#5C574F!important;border-radius:8px!important}
+#modal-overlay .booking-type-dropdown{background:#FFFFFF!important;border:1px solid #E8E3D9!important;box-shadow:0 8px 24px rgba(0,0,0,.08)!important}
+#modal-overlay .booking-type-option{color:#5C574F!important;border-bottom:1px solid #E8E3D9!important}
+#modal-overlay .booking-type-option:hover{background:#F2EFE8!important;color:#1A1714!important}
+#modal-overlay .booking-type-option.active{color:#1B3A5C!important;font-weight:600!important}
+#modal-overlay .current-booking-badge{background:rgba(39,174,96,.08)!important;border:1px solid rgba(39,174,96,.2)!important;color:#16a34a!important}
+#modal-overlay .dp-nav-btn{color:#5C574F!important}
+#modal-overlay .dp-nav-btn:hover{color:#1A1714!important;background:#F2EFE8!important}
+#modal-overlay .dp-month-label{color:#1A1714!important}
+#modal-overlay .dp-day-name{color:#9C9589!important}
+#modal-overlay .dp-day{color:#5C574F!important}
+#modal-overlay .dp-day:hover{background:#F2EFE8!important;color:#1A1714!important}
+#modal-overlay .dp-day.today{color:#E03040!important}
+#modal-overlay .dp-day.selected{background:#E03040!important;color:white!important}
+#modal-overlay .dp-day.other-month{color:#E8E3D9!important}
+#modal-overlay .time-slot{color:#5C574F!important}
+#modal-overlay .time-slot:hover{background:#F2EFE8!important;color:#1A1714!important}
+#modal-overlay .time-slot.selected{background:#E03040!important;color:white!important}
+.date-picker-dropdown,.time-picker-dropdown{background:#FFFFFF!important;border-color:#E8E3D9!important;box-shadow:0 8px 24px rgba(0,0,0,.08)!important}
+.flatpickr-calendar{background:#FFFFFF!important;border-color:#E8E3D9!important}
+.flatpickr-months,.flatpickr-month{background:transparent!important;color:#1A1714!important;fill:#1A1714!important}
+.flatpickr-current-month .flatpickr-monthDropdown-months{background:#F8F9FA!important;border-color:#E8E3D9!important;color:#1A1714!important}
+.flatpickr-current-month input.cur-year{background:#F8F9FA!important;border-color:#E8E3D9!important;color:#1A1714!important}
+span.flatpickr-weekday{color:#9C9589!important;background:transparent!important}
+.flatpickr-day{color:#5C574F!important;border-color:transparent!important}
+.flatpickr-day:hover{background:#F2EFE8!important;color:#1A1714!important}
+.flatpickr-day.today{border-color:#E03040!important;color:#E03040!important}
+.flatpickr-day.selected{background:#E03040!important;border-color:#E03040!important;color:white!important}
+#date-trigger.picker-open,#time-trigger.picker-open{border-color:#E03040!important;background:#F2EFE8!important;color:#1A1714!important}
+#products-section{background:#F8F9FA!important}
+#products-section .ps-topbar{background:#FFFFFF!important;border-bottom:1px solid #E8E3D9!important;box-shadow:0 1px 4px rgba(0,0,0,.04)!important}
+#products-section .ps-topbar h1{color:#1A1714!important;font-family:"Cormorant Garamond",serif!important;font-size:1.15rem!important}
+#products-section .topbar-stat{color:#9C9589!important}
+#products-section .topbar-stat strong{color:#1A1714!important}
+#products-section .btn-primary,#product-modal .btn-primary,#offer-modal .btn-primary{background:#E03040!important;border-radius:8px!important;font-weight:600!important}
+#products-section .btn-primary:hover,#product-modal .btn-primary:hover{background:#B8202F!important}
+#products-section .btn-secondary,#product-modal .btn-secondary,#offer-modal .btn-secondary{background:#F2EFE8!important;color:#1A1714!important;border-radius:8px!important}
+#products-section .btn-secondary:hover,#product-modal .btn-secondary:hover{background:#E8E3D9!important}
+#products-section .btn-add{background:#E03040!important;border-radius:8px!important;font-weight:600!important}
+#products-section .btn-add:hover{background:#B8202F!important}
+#products-section .btn-import{background:#1B3A5C!important;border:none!important;border-radius:8px!important;color:white!important}
+#products-section .btn-import:hover{background:#142C47!important}
+#products-section .cat-tab{border:1.5px solid #E8E3D9!important;background:#FFFFFF!important;color:#9C9589!important;border-radius:100px!important}
+#products-section .cat-tab:hover{border-color:#1B3A5C!important;color:#1B3A5C!important}
+#products-section .cat-tab.active{background:#1B3A5C!important;border-color:#1B3A5C!important;color:white!important}
+#products-section .search-wrap input{border:1.5px solid #E8E3D9!important;color:#1A1714!important;background:#FFFFFF!important;border-radius:8px!important}
+#products-section .search-wrap input:focus{border-color:#E03040!important}
+#products-section .search-icon{color:#9C9589!important}
+#products-section .product-card{background:#FFFFFF!important;border-radius:12px!important;box-shadow:0 1px 3px rgba(0,0,0,.06)!important;border:1px solid #E8E3D9!important}
+#products-section .product-card:hover{box-shadow:0 8px 24px rgba(27,58,92,.1)!important;transform:translateY(-2px)!important}
+#products-section .card-cat{color:#9C9589!important}
+#products-section .card-name{color:#1A1714!important}
+#products-section .card-price{color:#E03040!important}
+#products-section .card-was{color:#9C9589!important}
+#products-section .card-sku{color:#9C9589!important}
+#products-section .stock-ok{color:#27AE60!important}
+#products-section .stock-low{color:#C49A3C!important}
+#products-section .stock-zero{color:#E03040!important}
+#products-section .btn-edit{background:#F2EFE8!important;color:#1A1714!important;border-radius:7px!important}
+#products-section .btn-edit:hover{background:#E8E3D9!important}
+#products-section .btn-vis{background:#F2EFE8!important;color:#9C9589!important;border-radius:7px!important}
+#products-section .btn-vis.on{background:rgba(39,174,96,.1)!important;color:#27AE60!important}
+#products-section .btn-del{background:rgba(224,48,64,.08)!important;color:#E03040!important;border-radius:7px!important}
+#products-section .btn-del:hover{background:rgba(224,48,64,.15)!important}
+#products-section .badge-seller{background:#1B3A5C!important;color:white!important}
+#products-section .badge-sale{background:#E03040!important;color:white!important}
+#products-section .badge-new{background:#27AE60!important;color:white!important}
+#products-section .deal-card{background:#FFFFFF!important;border:1px solid #E8E3D9!important;border-left:4px solid #E03040!important;border-radius:10px!important;box-shadow:0 1px 3px rgba(0,0,0,.04)!important}
+#products-section .deal-product{color:#1A1714!important}
+#products-section .deal-name{color:#9C9589!important}
+#products-section .deal-price{color:#E03040!important}
+#products-section .deal-dates{color:#9C9589!important}
+#products-section .settings-card{background:#FFFFFF!important;border:1px solid #E8E3D9!important;border-radius:12px!important}
+#products-section .settings-card h3{color:#1A1714!important}
+#products-section .field label{color:#9C9589!important}
+#products-section .field input,#products-section .field select,#products-section .field textarea{border:1.5px solid #E8E3D9!important;color:#1A1714!important;background:#F8F9FA!important;border-radius:8px!important}
+#products-section .field input:focus,#products-section .field select:focus{border-color:#E03040!important;background:#FFFFFF!important}
+#products-section .spinner{border-top-color:#E03040!important}
+#products-section .empty h3{color:#1A1714!important}
+#products-section .empty p{color:#9C9589!important}
+#product-modal,#offer-modal{background:rgba(27,58,92,.45)!important;backdrop-filter:blur(6px)!important}
+.pm-wrap{background:#FFFFFF!important;border:1px solid #E8E3D9!important;border-radius:16px!important;box-shadow:0 24px 64px rgba(27,58,92,.15)!important}
+.pm-head{background:#FFFFFF!important;border-bottom:1px solid #E8E3D9!important}
+.pm-title{font-family:"Cormorant Garamond",serif!important;color:#1A1714!important;font-size:1.3rem!important}
+.pm-close{color:#9C9589!important}
+.pm-close:hover{color:#1A1714!important}
+.pm-body{background:#FFFFFF!important}
+.pm-foot{background:#FFFFFF!important;border-top:1px solid #E8E3D9!important}
+.pm-divider{color:#9C9589!important;border-bottom:1px solid #E8E3D9!important;padding-bottom:8px!important;margin:20px 0 14px!important}
+.pm-field label{color:#9C9589!important}
+.pm-input,.pm-select,.pm-textarea{background:#F8F9FA!important;border:1.5px solid #E8E3D9!important;color:#1A1714!important;border-radius:8px!important}
+.pm-input:focus,.pm-select:focus{border-color:#E03040!important;background:#FFFFFF!important}
+.bar-seg-btn{background:#E8E3D9!important;border:none!important;border-radius:4px!important}
+.bar-seg-btn.active{background:#E03040!important}
+.bar-rating-val{color:#9C9589!important}
+.room-btn,.feat-pill,.flag-pill,.attr-btn{background:#F8F9FA!important;border:1.5px solid #E8E3D9!important;color:#5C574F!important;border-radius:20px!important}
+.room-btn.active,.feat-pill.active,.flag-pill.active,.attr-btn.active{background:#1B3A5C!important;border-color:#1B3A5C!important;color:white!important}
+#offer-modal .modal{background:#FFFFFF!important;border:1px solid #E8E3D9!important;border-radius:16px!important}
+#offer-modal .modal-head{background:#FFFFFF!important;border-bottom:1px solid #E8E3D9!important}
+#import-section{background:#F8F9FA!important}
+#import-section h1{font-family:"Cormorant Garamond",serif!important;color:#1A1714!important}
+#impScrapeBtn,#impImportBtn{background:#E03040!important;border-radius:8px!important;font-weight:600!important}
+#impScrapeBtn:hover,#impImportBtn:hover{background:#B8202F!important}
+#impDetectedBanner{background:linear-gradient(135deg,#1B3A5C 0%,#142C47 100%)!important;border:none!important;border-radius:12px!important}
+#impDetectedSupplier,#impDetectedCategory,#impDetectedImages{color:white!important}
+#impUrlInput,#impWycName,#impPrice,#impWasPrice,#impFittingPrice,#impBadge{border:1.5px solid #E8E3D9!important;border-radius:8px!important;color:#1A1714!important;background:#F8F9FA!important}
+#impUrlInput:focus,#impWycName:focus,#impPrice:focus,#impBadge:focus{border-color:#E03040!important;background:#FFFFFF!important}
+#impProgressFill{background:#E03040!important}
+#bulk-import-modal .bim{background:#FFFFFF!important;border-radius:14px!important}
+#bulk-import-modal .bim-head,#bulk-import-modal .bim-foot{background:#FFFFFF!important;border-color:#E8E3D9!important}
+#bulk-import-modal .bim-head h3{color:#1A1714!important}
+#bulk-import-modal th{background:#F8F9FA!important;color:#9C9589!important;border-bottom-color:#E8E3D9!important}
+#bulk-import-modal td{color:#5C574F!important;border-bottom-color:#E8E3D9!important}
+#bulk-import-modal .bim-stat{background:#F8F9FA!important}
+#bulk-import-modal .bim-stat-n{color:#1A1714!important}
+#bulk-import-modal .bim-progress-bar{background:#E03040!important}
+@media(max-width:768px){
+  #import-section{padding:16px!important}
+  #impScrapeBtn{width:100%!important;padding:14px!important}
+  #impImportBtn{width:100%!important}
+  #products-section .ps-topbar{height:auto!important;flex-wrap:wrap!important;padding:12px 16px!important;gap:8px!important}
+  #products-section .ps-topbar-stats{order:3!important;width:100%!important;border-top:1px solid #E8E3D9!important;padding-top:6px!important}
+}
+</style>
 </head>
 <body>
 
