@@ -3,7 +3,7 @@
 :root{
   --red:#E03040;--navy:#1B3A5C;--gold:#C49A3C;
   --ink:#1A1714;--ink2:#5C574F;--ink3:#9C9589;
-  --bg:#F8F6F1;--surface:#F2EFE8;--white:#FFFFFF;--border:#E8E3D9;
+  --bg:#F8F9FA;--surface:#F2EFE8;--white:#FFFFFF;--border:#E8E3D9;
   --success:#27AE60;--radius:12px;
 }
 html{scroll-behavior:smooth}
@@ -103,7 +103,7 @@ img{max-width:100%;height:auto;display:block}
 .also-card-price{font-size:.85rem;color:var(--red);font-weight:700}
 
 /* ── Footer ──────────────────────────────────────────────────────────────── */
-.site-footer{background:var(--navy);color:rgba(255,255,255,.6);padding:40px 24px 24px;margin-top:80px}
+.site-footer{background:#1A1714;color:rgba(255,255,255,.6);padding:40px 24px 24px;margin-top:80px}
 .footer-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:24px}
 .footer-logo img{height:32px;opacity:.85}
 .footer-links{display:flex;gap:20px;flex-wrap:wrap}

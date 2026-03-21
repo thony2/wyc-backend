@@ -249,7 +249,7 @@ function buildProductPage(p) {
 <!-- Header -->
 <header class="site-header">
   <a href="/" class="header-logo" aria-label="West Yorkshire Carpets — Home">
-    <img src="/images/logo.svg" alt="${SITE_NAME}" width="140" height="36" loading="eager">
+    <img src="/images/logo2.svg" alt="${SITE_NAME}" width="140" height="36" loading="eager">
   </a>
   <div class="header-actions">
     <a href="${PHONE_HREF}" class="btn-phone"><i class="fa-solid fa-phone" aria-hidden="true"></i><span>${PHONE}</span></a>
@@ -334,7 +334,7 @@ function buildProductPage(p) {
 <!-- Footer -->
 <footer class="site-footer">
   <div class="footer-inner">
-    <a href="/" class="footer-logo"><img src="/images/logo.svg" alt="${SITE_NAME}" width="120" height="30" loading="lazy"></a>
+    <a href="/" class="footer-logo"><img src="/images/logo2.svg" alt="${SITE_NAME}" width="120" height="30" loading="lazy"></a>
     <nav class="footer-links" aria-label="Footer navigation">
       <a href="/#range">Browse All Flooring</a>
       <a href="/#quote">Price Calculator</a>
