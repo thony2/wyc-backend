@@ -14,7 +14,7 @@ const helmetMiddleware = helmet({
             styleSrc:       ["'self'", 'https:'],
             imgSrc:         ["'self'", 'data:', 'https:'],
             fontSrc:        ["'self'", 'https:'],
-            connectSrc:     ["'self'"],
+            connectSrc:     ["'self'", 'https://wyc-backend-production-ed78.up.railway.app'],
             frameAncestors: ["'none'"],
             formAction:     ["'self'"],
         },
