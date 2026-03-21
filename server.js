@@ -25,6 +25,7 @@ const adminRoutes    = require('./src/routes/admin');
 const productsRouter = require('./routes/products');
 const panelRouter    = require('./routes/admin');
 const scraperRouter  = require('./routes/scraper');
+const seoRouter      = require('./routes/products-seo');
 
 const app  = express();
 const PORT = parseInt(process.env.PORT || '3001', 10);
@@ -80,6 +81,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/products', productsRouter(db));
 app.use('/api/panel', panelRouter(db));
 app.use('/api/panel', scraperRouter);
+app.use('/flooring', seoRouter);
 
 app.get('/admin', (req, res) => {
     res.setHeader('Content-Security-Policy', ADMIN_CSP);

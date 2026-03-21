@@ -3,6 +3,12 @@
     
     let PRODUCTS = [];
 
+    function toSlug(str) {
+        return (str || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/, '');
+    }
+
+
+
     
         const ROOMS = [
         { key: 'living',   label: 'Living Room', icon: 'fa-couch' },
@@ -26,7 +32,7 @@
         vinyl:    { title: 'Vinyl Flooring',    desc: '100% waterproof LVT — kitchens & bathrooms perfected' },
         laminate: { title: 'Laminate',          desc: 'Scratch-resistant wood effects — tough enough for families' },
         wood:     { title: 'Real Wood',         desc: 'Genuine engineered & solid oak — floors that last a lifetime' },
-        deals:    { title: 'Weekly Deals 🔥',   desc: 'This week\'s best prices — limited stock available' },
+        deals:    { title: 'Weekly Deals',   desc: 'This week\'s best prices — limited stock available' },
     };
 
         const CAT_LABEL = {
@@ -61,7 +67,6 @@
     
     function lockScroll() {
         const sb = window.innerWidth - document.documentElement.clientWidth;
-        // Lock both html and body to prevent any scroll passthrough
         document.documentElement.style.overflow = 'hidden';
         document.body.style.overflow    = 'hidden';
         document.body.style.paddingRight = sb + 'px';
@@ -142,7 +147,6 @@
         syncTabs();
         renderGrid();
         if (DOM.body) DOM.body.scrollTop = 0;
-        // Show/hide category-specific filter groups
         document.querySelectorAll('.cfd-cat-group').forEach(g => {
             const gc = g.dataset.cat;
             g.style.display = (category === 'all' || category === 'deals' || category === gc) ? '' : 'none';
@@ -224,7 +228,6 @@
             const active = btn.dataset.cat === state.activeCategory;
             btn.classList.toggle('is-active', active);
             if (active) {
-                // Scroll only within the tabs strip — never move the panel/page
                 const tabsEl = DOM.tabs;
                 const btnLeft = btn.offsetLeft;
                 const btnWidth = btn.offsetWidth;
@@ -236,7 +239,6 @@
     }
 
     function syncPriceFilters() {
-        // price filter synced via drawer chips
     }
 
     
@@ -293,7 +295,14 @@
                 </div>
                 <div class="cat-card-body">
                     <span class="cat-card-cat-label">${CAT_LABEL[p.category] || p.category}</span>
-                    <h3 class="cat-card-name">${p.name}</h3>
+                    <h3 class="cat-card-name">
+                        <a href="/flooring/${p.category}/${toSlug(p.name)}"
+                           class="cat-card-name-link"
+                           onclick="event.preventDefault();openQuickView('${p.id}')"
+                           aria-label="View ${p.name} details">
+                            ${p.name}
+                        </a>
+                    </h3>
                     <div class="cat-card-pricing">
                         ${p.originalPrice ? `<span class="cat-card-price-was">£${p.originalPrice.toFixed(2)} /m²</span>` : ''}
                         <div class="cat-card-price${p.originalPrice ? ' is-sale' : ''}">£${p.price.toFixed(2)} <span class="cat-card-price-unit">m²</span></div>
@@ -452,7 +461,6 @@
                             let html = row('Durability', mkBars(p.durability||0, 5), (p.durability||0)+'/5');
 
                             if (cat === 'carpets') {
-                                // Carpet: softness bar + pile attributes
                                 html += row('Softness', mkBars(p.softness||0, 5), (p.softness||0)+'/5');
                                 const tMap={'Extra Short':1,'Short':2,'Medium':3,'Deep':4};
                                 const dMap={'Loose':1,'Medium':2,'Compact':3,'Extra Compact':4};
@@ -463,7 +471,6 @@
                                 if (p.fibre) html += spec('Fibre', p.fibre);
                                 if (p.carpet_style) html += spec('Style', p.carpet_style);
                             } else if (cat === 'vinyl') {
-                                // Vinyl: waterproof + thickness + wear layer
                                 if (p.thickness_mm) html += spec('Board Thickness', p.thickness_mm + 'mm');
                                 if (p.wear_layer_mm) html += spec('Wear Layer', p.wear_layer_mm + 'mm');
                                 if (p.plank_width_mm) html += spec('Plank Width', p.plank_width_mm + 'mm');
@@ -471,7 +478,6 @@
                                 if (p.lay_pattern) html += spec('Lay Pattern', p.lay_pattern);
                                 if (p.ufh_compatible) html += spec('Underfloor Heating', 'Compatible');
                             } else if (cat === 'laminate') {
-                                // Laminate: board thickness + AC rating
                                 if (p.thickness_mm) html += spec('Board Thickness', p.thickness_mm + 'mm');
                                 if (p.ac_rating) html += spec('AC Rating', p.ac_rating);
                                 if (p.board_design) html += spec('Design', p.board_design);
@@ -479,7 +485,6 @@
                                 if (p.installation_method) html += spec('Installation', p.installation_method);
                                 if (p.ufh_compatible) html += spec('Underfloor Heating', 'Compatible');
                             } else if (cat === 'wood') {
-                                // Wood: species + thickness + width + finish
                                 if (p.species_finish) html += spec('Species &amp; Finish', p.species_finish);
                                 if (p.thickness_mm) html += spec('Board Thickness', p.thickness_mm + 'mm');
                                 if (p.plank_width_mm) html += spec('Plank Width', p.plank_width_mm + 'mm');
@@ -488,7 +493,6 @@
                                 if (p.installation_method) html += spec('Installation', p.installation_method);
                                 if (p.ufh_compatible) html += spec('Underfloor Heating', 'Compatible');
                             } else {
-                                // Fallback
                                 html += row('Softness', mkBars(p.softness||0, 5), (p.softness||0)+'/5');
                             }
                             return html;
@@ -505,7 +509,7 @@
                     </div>
                     <div id="qv-dims" class="qv-calc-inputs">
                         <div class="qv-calc-field"><label>Length (m)</label><input type="number" id="qv-length" min="0" step="0.1" placeholder="4.5" oninput="qvCalc()"></div>
-                        <div class="qv-calc-field"><label>Width (m)</label><input type="number" id="qv-width" min="0" step="0.1" placeholder="3.2" oninput="qvCalc()"></div>
+                        <div class="qv-calc-field"><label>Width</label><div class="qv-width-btns"><button class="qv-width-btn active" data-width="4" type="button" onclick="qvSetWidth(this)">4m</button><button class="qv-width-btn" data-width="5" type="button" onclick="qvSetWidth(this)">5m</button></div><input type="hidden" id="qv-width" value="4"></div>
                     </div>
                     <div id="qv-area-panel" class="qv-calc-inputs qv-panel-hidden">
                         <div class="qv-calc-field" style="grid-column:1/-1"><label>Total Area (m²)</label><input type="number" id="qv-area-input" min="0" step="0.5" placeholder="14.4" oninput="qvCalc()"></div>
@@ -560,7 +564,6 @@
         if (!card) return;
         card.querySelectorAll('.cat-swatch').forEach(s => s.classList.remove('active'));
         el.classList.add('active');
-        // Open lightbox if colour has an image
         const pid = el.dataset.pid;
         const p   = window.getProduct ? window.getProduct(pid) : null;
         if (!p) return;
@@ -582,7 +585,6 @@
         if (_currentQVProduct && index !== undefined) {
             const c = _currentQVProduct.colours[index];
             if (c && c.img_url) {
-                // Update main image instead of opening lightbox
                 const mainImg = document.getElementById('qv-main-img');
                 if (mainImg) {
                     mainImg.style.opacity = '0';
@@ -590,11 +592,9 @@
                     setTimeout(() => {
                         mainImg.src = c.img_url;
                         mainImg.onload = () => { mainImg.style.opacity = '1'; };
-                        // If image is cached it won't fire onload
                         if (mainImg.complete) mainImg.style.opacity = '1';
                     }, 150);
                 }
-                // Keep lightbox index in sync for if they click the main image
                 _colourLightboxIndex = index;
             }
         }
@@ -625,7 +625,6 @@
         if (!_currentQVProduct) return;
         _colourLightboxIndex = index;
         const colours = _currentQVProduct.colours.filter(c => c.img_url);
-        // If no colour images, fall back to main product image
         if (!colours.length) {
             const mainSrc = document.getElementById('qv-main-img')?.src || _currentQVProduct.img;
             if (!mainSrc) return;
@@ -646,7 +645,6 @@
             if (img) { img.src = mainSrc; img.alt = _currentQVProduct.name; }
             const lbl = overlay.querySelector('#clb-label');
             if (lbl) lbl.textContent = _currentQVProduct.name;
-            // Hide nav arrows when only one image
             overlay.querySelectorAll('.clb-prev,.clb-next,.clb-dots').forEach(el => el.style.display = 'none');
             overlay.style.display = 'flex';
             overlay.classList.add('is-open');
@@ -654,7 +652,6 @@
             return;
         }
         const imgColours = _currentQVProduct.colours;
-        // Find index in full colours array
         let overlay = document.getElementById('colour-lightbox');
         if (!overlay) {
             overlay = document.createElement('div');
@@ -717,7 +714,6 @@
         if (!_currentQVProduct) return;
         const p = _currentQVProduct;
 
-        // ── Gather calc state ─────────────────────────────────────────────────
         const mode = document.querySelector('.qv-calc-mode-btn.active')?.dataset.mode || 'dims';
         let area = 0, length = 0, width = 0;
         if (mode === 'dims') {
@@ -736,23 +732,20 @@
         const total        = flooringAmt + underlayAmt + fittingAmt;
         const colourName   = document.getElementById('qv-colour-name')?.textContent || (p.colours?.[0]?.name || '');
 
-        // ── Dates ─────────────────────────────────────────────────────────────
         const now      = new Date();
         const validTo  = new Date(now); validTo.setDate(validTo.getDate() + 30);
         const fmtDate  = d => d.toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
         const refNo    = 'WYC-' + now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + '-' + String(Math.floor(Math.random()*9000)+1000);
 
-        // ── jsPDF init ────────────────────────────────────────────────────────
         const { jsPDF } = window.jspdf;
         if (!jsPDF) { alert('PDF library not loaded — please try again in a moment.'); return; }
         const doc = new jsPDF({ unit: 'mm', format: 'a4' });
         const W = 210, H = 297;
         const lm = 16, rm = 16, cw = W - lm - rm;
-        const col2x = lm + cw * 0.55 + 6; // right column x
+        const col2x = lm + cw * 0.55 + 6;
         const col1w = cw * 0.55;
         const col2w = cw * 0.45 - 6;
 
-        // Helper shortcuts
         const ink    = [26,  23,  20 ];
         const ink2   = [92,  87,  79 ];
         const ink3   = [156, 149, 137];
@@ -770,16 +763,10 @@
             doc.text(txt.toUpperCase(), x, y);
         };
 
-        // ── TOP HEADER: logo + accent line ────────────────────────────
-        // Red accent bar — thin, top of page
         setF(...red); doc.rect(0, 0, W, 3, 'F');
 
-        // Logo — loaded from same-origin file (no CORS needed)
-        // Logo bottom aligns with Ref: line at y≈22 → height=14mm, width=42mm
         const logoW = 42, logoH = 14;
-        // Logo will be embedded at save time — placeholder position reserved
 
-        // Document title — top right
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(18);
         setC(...ink);
@@ -789,10 +776,8 @@
         setC(...ink3);
         doc.text('Ref: ' + refNo, W - rm, 20, { align: 'right' });
 
-        // Thin full-width rule under header
         rule(lm, 25, W - rm, 25, 0.3);
 
-        // ── META ROW: date, valid until, ref ──────────────────────────────────
         let y = 31;
         label('Date', lm, y);
         label('Valid Until', lm + 50, y);
@@ -806,12 +791,9 @@
         rule(lm, y + 4, W - rm, y + 4, 0.3);
         y += 10;
 
-        // ── TWO-COLUMN BODY ───────────────────────────────────────────────────
         const bodyTop = y;
 
-        // LEFT COLUMN ─────────────────────────────────────────────────────────
 
-        // PRODUCT section
         label('Product', lm, y);
         y += 5;
         doc.setFont('helvetica','bold'); doc.setFontSize(14); setC(...ink);
@@ -831,7 +813,6 @@
             y += 4;
         }
 
-        // Price per m²  pill
         y += 2;
         setF(...red);
         doc.roundedRect(lm, y, 38, 7, 2, 2, 'F');
@@ -839,7 +820,6 @@
         doc.text('£' + p.price.toFixed(2) + ' / m²', lm + 19, y + 4.8, { align: 'center' });
         y += 12;
 
-        // ROOM section
         rule(lm, y, lm + col1w, y);
         y += 6;
         label('Room Measurements', lm, y);
@@ -852,7 +832,6 @@
         doc.text('Total area: ' + (area || 0) + ' m²', lm, y);
         y += 10;
 
-        // PRICE BREAKDOWN section
         rule(lm, y, lm + col1w, y);
         y += 6;
         label('Price Breakdown', lm, y);
@@ -876,26 +855,21 @@
             y += 8;
         });
 
-        // TOTAL box
         y += 2;
         setF(...bg); doc.roundedRect(lm, y, col1w, 18, 3, 3, 'F');
         setD(...border); doc.setLineWidth(0.5);
         doc.roundedRect(lm, y, col1w, 18, 3, 3, 'S');
-        // Left side label
         doc.setFont('helvetica','bold'); doc.setFontSize(8.5); setC(...ink2);
         doc.text('ESTIMATED TOTAL', lm + 5, y + 7);
         doc.setFont('helvetica','normal'); doc.setFontSize(7.5); setC(...ink3);
         doc.text('inc. selected extras', lm + 5, y + 12);
-        // Right side total
         doc.setFont('helvetica','bold'); doc.setFontSize(18); setC(...red);
         doc.text(area > 0 ? '£' + total.toFixed(2) : '£0.00', lm + col1w - 5, y + 12, { align: 'right' });
         y += 24;
 
-        // ── 20% Discount callout ──────────────────────────────────────────
-        y += 10;  // extra gap so right-column card has more height
+        y += 10; 
         const discountTotal = (total * 0.8);
         setD(...red); doc.setLineWidth(0.5);
-        // Dashed border (draw as short segments)
         const dashLen = 3, gapLen = 2;
         const boxW = col1w, boxH = 18;
         for (let x = lm; x < lm + boxW; x += dashLen + gapLen) {
@@ -906,11 +880,9 @@
             doc.line(lm, yy, lm, Math.min(yy + dashLen, y + boxH));
             doc.line(lm + boxW, yy, lm + boxW, Math.min(yy + dashLen, y + boxH));
         }
-        // Red badge
         setF(...red); doc.roundedRect(lm + 4, y + 4, 22, 5.5, 1.5, 1.5, 'F');
         doc.setFont('helvetica','bold'); doc.setFontSize(6.5); setC(...white);
         doc.text('20% OFF', lm + 15, y + 8, { align: 'center' });
-        // Text
         doc.setFont('helvetica','normal'); doc.setFontSize(8); setC(...ink2);
         doc.text('With discount you could pay just:', lm + 29, y + 7.5);
         doc.setFont('helvetica','bold'); doc.setFontSize(11); setC(...red);
@@ -919,32 +891,25 @@
         doc.text('Share your email below to receive your discount', lm + col1w - 4, y + 14, { align: 'right' });
         y += boxH + 6;
 
-        // Disclaimer
         doc.setFont('helvetica','italic'); doc.setFontSize(7); setC(...ink3);
         doc.text('* Estimate only. Excludes wastage, door bars, gripper rods & subfloor prep.', lm, y, { maxWidth: col1w });
         y += 5;
 
-        const leftColBottom = y; // capture for right column alignment
+        const leftColBottom = y;
 
-        // RIGHT COLUMN ────────────────────────────────────────────────────────
         let ry = bodyTop;
 
-        // Product image — fetch & embed if available
-        // Use currently displayed image — already loaded in browser, no CORS
         const imgUrl = document.getElementById('qv-main-img')?.src || p.image_url || p.img || '';
         const imgH   = 58;
         const imgW   = col2w;
 
-        // Draw image box (placeholder border — will be filled async below)
         setD(...border); doc.setLineWidth(0.4);
         doc.roundedRect(col2x, ry, imgW, imgH, 3, 3, 'S');
-        // "No image" fallback text
         doc.setFont('helvetica','normal'); doc.setFontSize(8); setC(...ink3);
         doc.text('Product Image', col2x + imgW/2, ry + imgH/2, { align:'center', baseline:'middle' });
 
         ry += imgH + 8;
 
-        // ── CONTACT CARD ──────────────────────────────────────────────────────
         const cardX = col2x, cardY = ry, cardW = col2w;
         const charcoal = [32, 32, 38];
 
@@ -954,7 +919,6 @@
         const footerH = 11;
         const bodyH = totalCardH - headerH - footerH;
 
-        // 6 rows — phone, address, web, tiktok, instagram, facebook
         const contactRows = [
             { src:'images/contact/iconphone.png',    text:'07449 188 303' },
             { src:'images/contact/iconlocation.png', text:'14-16 Northgate, Dewsbury WF13 1DT' },
@@ -966,18 +930,15 @@
         const nRows = contactRows.length;
         const rH = bodyH / nRows;
 
-        // ── Card base: white, fully rounded, light border
         setF(255,255,255); doc.roundedRect(cardX, cardY, cardW, totalCardH, 3, 3, 'F');
         setD(218, 213, 203); doc.setLineWidth(0.3);
         doc.roundedRect(cardX, cardY, cardW, totalCardH, 3, 3, 'S');
 
-        // ── Header: full charcoal, rounded top, square bottom
         setF(...charcoal); doc.roundedRect(cardX, cardY, cardW, headerH, 3, 3, 'F');
         setF(...charcoal); doc.rect(cardX, cardY + headerH - 4, cardW, 4, 'F');
         doc.setFont('helvetica','bold'); doc.setFontSize(7.8); setC(255,255,255);
         doc.text('WEST YORKSHIRE CARPETS', cardX + cardW/2, cardY + 8.5, { align:'center', charSpace: 0.2 });
 
-        // ── 6 rows: icon + value, vertically centred
         contactRows.forEach((row, i) => {
             const rY = cardY + headerH + i * rH;
             const midY = rY + rH / 2;
@@ -989,41 +950,33 @@
             doc.text(row.text, cardX + 10, midY + 2.3, { maxWidth: cardW - 13 });
         });
 
-        // ── Footer: red, square top / rounded bottom
         const footerY = cardY + headerH + bodyH;
         setF(...red); doc.rect(cardX, footerY, cardW, footerH - 3, 'F');
         setF(...red); doc.roundedRect(cardX, footerY + footerH - 3 - 3, cardW, 6, 3, 3, 'F');
         const badges = ['Free Measuring', 'Fully Insured', 'Prof. Fitting'];
         const bCol = cardW / 3;
-        // True vertical centre: footerH=11, cap-height ~3.5pt → midpoint at footerY+5.5, adjust for baseline
         const badgeY = footerY + 6.2;
         badges.forEach((b, i) => {
             doc.setFont('helvetica','bold'); doc.setFontSize(5.2); setC(255,255,255);
             doc.text(b, cardX + bCol * i + bCol / 2, badgeY, { align:'center' });
         });
 
-        // ── Tagline below card
         const tagY = cardY + totalCardH + 4;
         doc.setFont('helvetica','italic'); doc.setFontSize(7); setC(...ink3);
         doc.text('Family-run, locally trusted flooring specialists', cardX + cardW/2, tagY, { align:'center', maxWidth: cardW });
 
         ry = tagY + 5;
 
-        // ── FOOTER ────────────────────────────────────────────────────────────
-        // Thin red line above footer
         setF(...red); doc.rect(0, H - 16, W, 0.8, 'F');
-        // Footer bar
         setF(26,23,20); doc.rect(0, H - 15.2, W, 15.2, 'F');
         doc.setFont('helvetica','bold'); doc.setFontSize(8.5); setC(...white);
         doc.text('Ready to book? Call 07449 188 303 or visit westyorkshirecarpets.com', W/2, H - 9, { align:'center' });
         doc.setFont('helvetica','normal'); doc.setFontSize(7); setC(156,149,137);
         doc.text('Free measuring · Professional fitting · West Yorkshire · This estimate is valid for 30 days from date of issue', W/2, H - 4.5, { align:'center' });
 
-        // ── Save — then try to embed product image if available ───────────────
         const safeName = p.name.replace(/[^a-z0-9]/gi, '-').toLowerCase();
         const fileName = 'wyc-estimate-' + safeName + '.pdf';
 
-        // Load logo (same origin — no CORS) then product image, then save
         const embedProductImage = (onDone) => {
             if (!imgUrl) { onDone(); return; }
             const img = new Image();
@@ -1038,7 +991,6 @@
                     const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
                     doc.addImage(dataUrl, 'JPEG', col2x, bodyTop, col2w, imgH, undefined, 'FAST');
                 } catch(e) {
-                    // CORS blocked — show website link instead
                     setF(248,249,250); doc.roundedRect(col2x, bodyTop, col2w, imgH, 3, 3, 'F');
                     setD(...border); doc.setLineWidth(0.4); doc.roundedRect(col2x, bodyTop, col2w, imgH, 3, 3, 'S');
                     doc.setFont('helvetica','normal'); doc.setFontSize(7.5); setC(...ink3);
@@ -1052,7 +1004,6 @@
             img.src = imgUrl + (imgUrl.includes('?') ? '&' : '?') + '_pdf=1';
         };
 
-        // Helper: load an image and return canvas dataUrl, or null on fail
         const loadImgDataUrl = (src, type, cb) => {
             const img = new Image();
             img.onload = () => {
@@ -1067,14 +1018,11 @@
             img.src = src;
         };
 
-        // Step 1: load logo
         loadImgDataUrl('images/logo2.png', 'png', (logoData) => {
             if (logoData) {
                 try { doc.addImage(logoData, 'PNG', lm, 8, logoW, logoH); } catch(e) {}
             }
 
-            // Step 2: load contact icons and draw them into card rows
-            // 6 icon rows — phone, location, web, tiktok, instagram, facebook
             const iconSrcs = [
                 'images/contact/iconphone.png',
                 'images/contact/iconlocation.png',
@@ -1136,10 +1084,8 @@
         if (el('qv-floor-out'))  el('qv-floor-out').textContent  = area > 0 ? '£' + flooring.toFixed(2) : '—';
         if (el('qv-und-out'))    el('qv-und-out').textContent    = fmt(underlay);
         if (el('qv-fit-out'))    el('qv-fit-out').textContent    = fmt(fitting);
-        // Update 20% discount teaser
         const discountEl = el('qv-discount-price');
         if (discountEl) discountEl.textContent = area > 0 ? '£' + (total * 0.8).toFixed(2) : '—';
-        // Enable PDF button only when area is entered
         const pdfBtn = el('qv-pdf-btn');
         if (pdfBtn) pdfBtn.disabled = area <= 0;
     }
@@ -1151,21 +1097,18 @@
         const isLiked = btn.classList.contains('is-liked');
         const action = isLiked ? 'unlike' : 'like';
 
-        // Optimistic UI update
         btn.classList.toggle('is-liked', !isLiked);
         icon.className = isLiked ? 'fa-regular fa-heart' : 'fa-solid fa-heart';
         btn.style.color = isLiked ? '' : '#E03040';
         btn.style.transform = 'scale(1.25)';
         setTimeout(() => btn.style.transform = '', 250);
 
-        // Persist in sessionStorage
         if (isLiked) {
             sessionStorage.removeItem(`liked-${productId}`);
         } else {
             sessionStorage.setItem(`liked-${productId}`, '1');
         }
 
-        // Send to backend
         try {
             const res = await fetch(`https://wyc-backend-production-ed78.up.railway.app/api/products/${productId}/like`, {
                 method: 'POST',
@@ -1207,7 +1150,6 @@
             const serviceField = document.getElementById('f-service');
 
             if (section) {
-                // On mobile scroll to the form directly, on desktop to the section
                 const isMobile = window.innerWidth < 768;
                 const formEl = document.getElementById('lead-form');
                 const target = isMobile && formEl ? formEl : section;
@@ -1217,7 +1159,6 @@
                 window.scrollTo({ top, behavior: 'smooth' });
             }
 
-            // Focus Full Name field so user can start typing immediately
             setTimeout(() => {
                 const nameField = document.getElementById('f-name');
                 if (nameField) {
@@ -1274,7 +1215,6 @@
             const msgField = document.getElementById('f-message');
 
             if (section) {
-                // On mobile scroll to the form directly, on desktop to the section
                 const isMobile = window.innerWidth < 768;
                 const formEl = document.getElementById('lead-form');
                 const target = isMobile && formEl ? formEl : section;
@@ -1405,14 +1345,12 @@
 
         DOM.closeBtn.addEventListener('click', close);
 
-        // Escape handled by master keydown listener below
 
         DOM.tabs.addEventListener('click', e => {
             const btn = e.target.closest('.cat-tab');
             if (btn) setCategory(btn.dataset.cat);
         });
 
-        // ── Filter drawer ──
         function positionFilterDrawer() {
             if (!DOM.filterBtn || !DOM.filterDrawer) return;
             const btn    = DOM.filterBtn.getBoundingClientRect();
@@ -1421,11 +1359,8 @@
             const vh     = window.innerHeight;
             const isMobile = vw < 640;
             const MARGIN   = 12;
-            const GAP      = 12; // consistent gap between header and drawer on both breakpoints
+            const GAP      = 12;
 
-            // ── Top: relative to panel top so drawer always stays inside body ─
-            // Use panel.top + cat-header height as the anchor.
-            // cat-header is sticky inside #cat-panel — measure it directly.
             let top;
             if (panel) {
                 const catHeader = DOM.panel.querySelector('.cat-header');
@@ -1434,22 +1369,18 @@
             } else {
                 top = Math.round(btn.bottom + GAP);
             }
-            // Safety: never above viewport
             top = Math.max(top, MARGIN);
             const maxH = Math.min(520, vh - top - MARGIN);
 
-            // ── Width ─────────────────────────────────────────────────────────
             const w = isMobile
-                ? vw - MARGIN * 2        // mobile: edge-to-edge with margins
+                ? vw - MARGIN * 2       
                 : Math.min(460, vw - MARGIN * 2);
 
-            // ── Horizontal placement ──────────────────────────────────────────
             let left, right;
             if (isMobile) {
                 left  = MARGIN;
                 right = 'auto';
             } else {
-                // Align right edge of drawer with right edge of button, clamped
                 let r = vw - btn.right;
                 r = Math.max(MARGIN, r);
                 if (btn.right - w < MARGIN) r = vw - w - MARGIN;
@@ -1466,7 +1397,6 @@
             d.right     = isMobile ? 'auto' : right + 'px';
         }
 
-        // Reposition on resize (only when open)
         let _filterResizeRAF = null;
         function _onFilterResize() {
             if (!DOM.filterDrawer || !DOM.filterDrawer.classList.contains('is-open')) return;
@@ -1475,7 +1405,6 @@
         }
         window.addEventListener('resize', _onFilterResize, { passive: true });
 
-        // Close when catalogue body scrolls (drawer is fixed, content moves away)
         const _catBody = DOM.catBody || document.getElementById('cat-body');
         if (_catBody) {
             _catBody.addEventListener('scroll', () => {
@@ -1524,7 +1453,6 @@
         }
         if (DOM.filterClose) DOM.filterClose.addEventListener('click', closeFilterDrawer);
         if (DOM.cfdApply) DOM.cfdApply.addEventListener('click', closeFilterDrawer);
-        // Colour show more toggle
         const colourToggle = document.getElementById('cfd-colour-toggle');
         if (colourToggle) {
             colourToggle.addEventListener('click', e => {
@@ -1803,8 +1731,15 @@ if (sortDropdown) {
         }
     });
 
-    // Expose calculator + swatch functions to global scope for inline onclick handlers
     window.getProduct           = id => PRODUCTS.find(x => String(x.id) === String(id));
+    function qvSetWidth(btn) {
+        document.querySelectorAll('.qv-width-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const w = document.getElementById('qv-width');
+        if (w) w.value = btn.dataset.width;
+        qvCalc();
+    }
+    window.qvSetWidth = qvSetWidth;
     window.qvSetMode            = qvSetMode;
     window.qvCalc               = qvCalc;
     window.qvSwatchClick        = qvSwatchClick;
