@@ -154,7 +154,7 @@
     }
 
     function prefillFromUrl() {
-        // Reads /#contact?product=Abyss and pre-fills the message field
+        // Reads /#lead-form?product=Abyss and pre-fills the message field
         const hash = window.location.hash || '';
         const qIndex = hash.indexOf('?');
         if (qIndex === -1) return;
