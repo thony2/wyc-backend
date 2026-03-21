@@ -138,6 +138,7 @@
 
     if (response.ok && data.success) {
         showSuccess(form);
+        history.replaceState(null, '', window.location.pathname);
     } else if (response.status === 429) {
         showError(form, 'Too many requests. Please wait a few minutes or call us on <a href="tel:07449188303" style="color:#DE3848;font-weight:600;">07449 188 303</a>.');
     } else if (response.status === 422 && data.fields) {
