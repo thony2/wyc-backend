@@ -89,6 +89,16 @@ function specRow(label, value) {
   return `<div class="spec-row"><span class="spec-label">${label}</span><span class="spec-value">${value}</span></div>`;
 }
 
+function mkBars(v, max) {
+  return Array.from({length:max}, (_,i) =>
+    `<div class="bar-seg ${i < v ? 'bar-seg--on' : 'bar-seg--off'}" aria-hidden="true"></div>`
+  ).join('');
+}
+
+function barRow(label, v, max, valLabel) {
+  return `<div class="perf-row"><span class="perf-label">${label}</span><div class="perf-bars">${mkBars(v,max)}</div><span class="perf-val">${valLabel}</span></div>`;
+}
+
 // ── Build the full HTML page ───────────────────────────────────────────────────
 function buildProductPage(p) {
   const slug     = toSlug(p.name);
@@ -111,16 +121,37 @@ function buildProductPage(p) {
     : `${p.name} ${catLabel} from West Yorkshire Carpets. From £${price}/m². Free professional fitting available. Call ${PHONE}.`;
 
   // Features HTML
-  const featuresHTML = features
-    .filter(f => FEAT_LABELS[f])
-    .map(f => `<div class="feat-chip"><i class="fa-solid ${getFeatIcon(f)}" aria-hidden="true"></i>${FEAT_LABELS[f]}</div>`)
-    .join('');
+  const FEAT_DEF = {
+    stain:      {icon:'fa-droplet-slash',   label:'Stain Resistant'},
+    pet:        {icon:'fa-paw',             label:'Pet Friendly'},
+    bleach:     {icon:'fa-spray-can',       label:'Bleach Cleanable'},
+    soft:       {icon:'fa-feather',         label:'Ultra Soft'},
+    luxury:     {icon:'fa-gem',             label:'Luxury Pile'},
+    insulation: {icon:'fa-temperature-low', label:'Warm Underfoot'},
+    waterproof: {icon:'fa-shield-halved',   label:'100% Waterproof'},
+    scratch:    {icon:'fa-shield',          label:'Scratch Resistant'},
+    easyClean:  {icon:'fa-broom',           label:'Easy Clean'},
+  };
+  const featuresHTML = features.map(f => {
+    const d = FEAT_DEF[f]; if (!d) return '';
+    return `<div class="feat-chip"><div class="feat-icon"><i class="fa-solid ${d.icon}" aria-hidden="true"></i></div><span>${d.label}</span></div>`;
+  }).filter(Boolean).join('');
 
   // Rooms HTML
-  const roomsHTML = rooms
-    .filter(r => ROOM_LABELS[r])
-    .map(r => `<span class="room-chip">${ROOM_LABELS[r]}</span>`)
-    .join('');
+  const ROOMS_DEF = [
+    {key:'living',   icon:'fa-couch',       label:'Living Room'},
+    {key:'bedroom',  icon:'fa-bed',         label:'Bedroom'},
+    {key:'kitchen',  icon:'fa-utensils',    label:'Kitchen'},
+    {key:'bathroom', icon:'fa-shower',      label:'Bathroom'},
+    {key:'hallway',  icon:'fa-door-open',   label:'Hallway'},
+    {key:'stairs',   icon:'fa-stairs',      label:'Stairs'},
+    {key:'office',   icon:'fa-briefcase',   label:'Office'},
+    {key:'dining',   icon:'fa-chair',       label:'Dining Room'},
+  ];
+  const roomsHTML = ROOMS_DEF.map(r => {
+    const on = rooms.includes(r.key);
+    return `<div class="room-chip ${on?'room-chip--on':'room-chip--off'}"><i class="fa-solid ${r.icon}" aria-hidden="true"></i><span>${r.label}</span></div>`;
+  }).join('');
 
   // Colours HTML
   const coloursHTML = colours.map((c, i) => {
@@ -131,31 +162,63 @@ function buildProductPage(p) {
   }).join('');
 
   // Specs section
+  const tMap = {'Extra Short':1,'Short':2,'Medium':3,'Deep':4};
+  const dMap = {'Loose':1,'Medium':2,'Compact':3,'Extra Compact':4};
+
   let specsHTML = '';
   if (catSlug === 'carpets') {
+    const tv = tMap[p.thickness] || 0;
+    const dv = dMap[p.density]   || 0;
     specsHTML = `
+      <div class="perf-block">
+        ${barRow('Durability', p.durability||0, 5, (p.durability||0)+'/5')}
+        ${barRow('Softness',   p.softness||0,   5, (p.softness||0)+'/5')}
+        ${tv ? barRow('Pile Height', tv, 4, p.thickness) : ''}
+        ${dv ? barRow('Density',     dv, 4, p.density)   : ''}
+      </div>
       <div class="spec-group">
         ${p.fibre        ? specRow('Fibre', p.fibre) : ''}
         ${p.carpet_style ? specRow('Style', p.carpet_style) : ''}
-        ${p.thickness    ? specRow('Pile Height', p.thickness) : ''}
-        ${p.density      ? specRow('Density', p.density) : ''}
-        ${specRow('Durability', stars(p.durability || 3, 5) + ` <small>${p.durability || 3}/5</small>`)}
-        ${specRow('Softness', stars(p.softness || 3, 5) + ` <small>${p.softness || 3}/5</small>`)}
+      </div>`;
+  } else if (catSlug === 'vinyl') {
+    specsHTML = `
+      <div class="perf-block">
+        ${barRow('Durability', p.durability||0, 5, (p.durability||0)+'/5')}
+      </div>
+      <div class="spec-group">
+        ${p.thickness_mm       ? specRow('Board Thickness', p.thickness_mm+'mm') : ''}
+        ${p.wear_layer_mm      ? specRow('Wear Layer', p.wear_layer_mm+'mm') : ''}
+        ${p.plank_width_mm     ? specRow('Plank Width', p.plank_width_mm+'mm') : ''}
+        ${p.installation_method? specRow('Installation', p.installation_method) : ''}
+        ${p.lay_pattern        ? specRow('Lay Pattern', p.lay_pattern) : ''}
+        ${p.ufh_compatible     ? specRow('Underfloor Heating', 'Compatible') : ''}
+      </div>`;
+  } else if (catSlug === 'laminate') {
+    specsHTML = `
+      <div class="perf-block">
+        ${barRow('Durability', p.durability||0, 5, (p.durability||0)+'/5')}
+      </div>
+      <div class="spec-group">
+        ${p.thickness_mm       ? specRow('Board Thickness', p.thickness_mm+'mm') : ''}
+        ${p.ac_rating          ? specRow('AC Rating', p.ac_rating) : ''}
+        ${p.board_design       ? specRow('Board Design', p.board_design) : ''}
+        ${p.plank_width_mm     ? specRow('Plank Width', p.plank_width_mm+'mm') : ''}
+        ${p.installation_method? specRow('Installation', p.installation_method) : ''}
+        ${p.ufh_compatible     ? specRow('Underfloor Heating', 'Compatible') : ''}
       </div>`;
   } else {
     specsHTML = `
+      <div class="perf-block">
+        ${barRow('Durability', p.durability||0, 5, (p.durability||0)+'/5')}
+      </div>
       <div class="spec-group">
-        ${p.thickness_mm       ? specRow('Board Thickness', p.thickness_mm + 'mm') : ''}
-        ${p.wear_layer_mm      ? specRow('Wear Layer', p.wear_layer_mm + 'mm') : ''}
-        ${p.ac_rating          ? specRow('AC Rating', p.ac_rating) : ''}
-        ${p.board_design       ? specRow('Board Design', p.board_design) : ''}
-        ${p.plank_width_mm     ? specRow('Plank Width', p.plank_width_mm + 'mm') : ''}
         ${p.species_finish     ? specRow('Species & Finish', p.species_finish) : ''}
+        ${p.thickness_mm       ? specRow('Board Thickness', p.thickness_mm+'mm') : ''}
+        ${p.plank_width_mm     ? specRow('Plank Width', p.plank_width_mm+'mm') : ''}
         ${p.surface_finish     ? specRow('Surface Finish', p.surface_finish) : ''}
         ${p.lay_pattern        ? specRow('Lay Pattern', p.lay_pattern) : ''}
         ${p.installation_method? specRow('Installation', p.installation_method) : ''}
         ${p.ufh_compatible     ? specRow('Underfloor Heating', 'Compatible') : ''}
-        ${specRow('Durability', stars(p.durability || 3, 5) + ` <small>${p.durability || 3}/5</small>`)}
       </div>`;
   }
 

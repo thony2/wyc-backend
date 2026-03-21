@@ -126,3 +126,36 @@ img{max-width:100%;height:auto;display:block}
   .breadcrumb{padding:10px 16px}
   .header-actions .btn-phone span{display:none}
 }
+
+/* ── Features — icon style matching catalogue ────────────────────────────── */
+.feat-chip{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);font-size:.82rem;color:var(--ink-2);font-weight:500;box-shadow:var(--shadow-sm)}
+.feat-icon{width:30px;height:30px;background:rgba(224,48,64,.07);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.feat-icon i{color:var(--red);font-size:.78rem}
+
+/* ── Rooms — on/off matching catalogue ──────────────────────────────────── */
+.room-chip{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 10px;border-radius:var(--radius-md);font-size:.72rem;font-weight:500;border:1px solid var(--border);min-width:72px;text-align:center;transition:all var(--t)}
+.room-chip i{font-size:1.1rem;display:block}
+.room-chip--on{background:var(--white);color:var(--navy);border-color:var(--navy);box-shadow:var(--shadow-sm)}
+.room-chip--on i{color:var(--navy)}
+.room-chip--off{background:transparent;color:var(--ink-3);border-color:var(--border);opacity:.45}
+.room-chip--off i{color:var(--ink-3)}
+.rooms-row{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ── Performance bars — matching catalogue exactly ───────────────────────── */
+.perf-block{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
+.perf-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.perf-row:last-child{margin-bottom:0}
+.perf-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-2);width:80px;flex-shrink:0}
+.perf-bars{display:flex;gap:4px;flex:1}
+.bar-seg{flex:1;height:6px;border-radius:3px;background:var(--border);transition:background var(--t)}
+.bar-seg--on{background:var(--navy)}
+.bar-seg--off{background:var(--border)}
+.perf-val{font-size:.78rem;font-weight:700;color:var(--navy);width:54px;text-align:right;flex-shrink:0}
+
+/* ── Spec rows — plain rows below bars ───────────────────────────────────── */
+.spec-group{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow-sm)}
+.spec-row{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--border);transition:background var(--t)}
+.spec-row:last-child{border-bottom:none}
+.spec-row:hover{background:var(--surface)}
+.spec-label{font-size:.82rem;color:var(--ink-3);font-weight:500}
+.spec-value{font-size:.82rem;color:var(--ink);font-weight:600}
