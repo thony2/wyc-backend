@@ -153,10 +153,25 @@
 }
     }
 
+    function prefillFromUrl() {
+        // Reads /#contact?product=Abyss and pre-fills the message field
+        const hash = window.location.hash || '';
+        const qIndex = hash.indexOf('?');
+        if (qIndex === -1) return;
+        const params = new URLSearchParams(hash.slice(qIndex + 1));
+        const product = params.get('product');
+        if (!product) return;
+        const msgField = document.getElementById('f-message');
+        if (msgField && !msgField.value) {
+            msgField.value = `I'm interested in ${product} — please contact me to arrange a free measure.`;
+        }
+    }
+
     function init() {
         const form = document.getElementById('lead-form');
         if (!form) return;
         form.addEventListener('submit', handleSubmit);
+        prefillFromUrl();
 
         const style = document.createElement('style');
         style.textContent = `
