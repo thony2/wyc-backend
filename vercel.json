@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/flooring/:path*",
+      "destination": "https://wyc-backend-production-ed78.up.railway.app/flooring/:path*"
+    }
+  ]
+}
