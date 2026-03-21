@@ -154,11 +154,8 @@
     }
 
     function prefillFromUrl() {
-        // Reads /#lead-form?product=Abyss and pre-fills the message field
-        const hash = window.location.hash || '';
-        const qIndex = hash.indexOf('?');
-        if (qIndex === -1) return;
-        const params = new URLSearchParams(hash.slice(qIndex + 1));
+        // Reads /?product=Abyss#lead-form and pre-fills the message field
+        const params = new URLSearchParams(window.location.search);
         const product = params.get('product');
         if (!product) return;
         const msgField = document.getElementById('f-message');

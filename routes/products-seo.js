@@ -316,7 +316,7 @@ function buildProductPage(p) {
         <div class="cta-buttons">
           <a href="${PHONE_HREF}" class="btn-cta-primary"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call ${PHONE}</a>
           <a href="https://wa.me/447449188303?text=Hi%2C+I%27m+interested+in+${encodeURIComponent(p.name)}+flooring" target="_blank" rel="noopener noreferrer" class="btn-cta-secondary"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp Us</a>
-          <a href="/#lead-form?product=${encodeURIComponent(p.name)}" class="btn-cta-secondary"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Book Free Measure Online</a>
+          <a href="/?product=${encodeURIComponent(p.name)}#lead-form" class="btn-cta-secondary"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Book Free Measure Online</a>
         </div>
         <p class="cta-note">We respond within 24 hours. No spam, no pressure.</p>
       </div>
