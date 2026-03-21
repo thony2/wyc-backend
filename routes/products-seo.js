@@ -125,8 +125,8 @@ function buildProductPage(p) {
   // Colours HTML
   const coloursHTML = colours.map((c, i) => {
     const bg = c.img_url
-      ? `style="background-image:url('${c.img_url}');background-size:cover"`
-      : `style="background:${c.hex || '#999'}"`;
+      ? `data-bg="${c.img_url}"`
+      : `data-hex="${c.hex || '#999'}"`;
     return `<div class="swatch${i === 0 ? ' active' : ''}" title="${c.name}" ${bg} data-name="${c.name}" data-img="${c.img_url || ''}"></div>`;
   }).join('');
 
@@ -329,7 +329,7 @@ function buildProductPage(p) {
   </div>
 
   <!-- Also in this range placeholder — populated via JS -->
-  <div id="also-section"></div>
+  <div id="also-section" data-cat="${catSlug}" data-slug="${slug}" data-label="${catLabel}" data-api="https://wyc-backend-production-ed78.up.railway.app"></div>
 </main>
 
 <!-- Footer -->
@@ -352,59 +352,7 @@ function buildProductPage(p) {
   </div>
 </footer>
 
-<script>
-// ── Swatch interaction ────────────────────────────────────────────────────
-(function() {
-  var swatches = document.querySelectorAll('.swatch');
-  var mainImg  = document.getElementById('product-main-img');
-  var label    = document.getElementById('swatch-label');
-  swatches.forEach(function(sw) {
-    sw.addEventListener('click', function() {
-      swatches.forEach(function(s) { s.classList.remove('active'); });
-      sw.classList.add('active');
-      var img = sw.dataset.img;
-      var name = sw.dataset.name;
-      if (img && mainImg) {
-        mainImg.style.opacity = '0';
-        setTimeout(function() {
-          mainImg.src = img;
-          mainImg.alt = name;
-          mainImg.style.opacity = '1';
-        }, 120);
-      }
-      if (label) label.textContent = name;
-    });
-  });
-  if (mainImg) mainImg.style.transition = 'opacity 0.12s ease';
-})();
-
-// ── Load "also available" products from same category ─────────────────────
-(function() {
-  var cat  = '${catSlug}';
-  var slug = '${slug}';
-  fetch('https://wyc-backend-production-ed78.up.railway.app/api/products?category=' + cat)
-    .then(function(r) { return r.json(); })
-    .then(function(products) {
-      var others = products.filter(function(p) {
-        return p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') !== slug && p.is_active;
-      }).slice(0, 4);
-      if (others.length === 0) return;
-      var html = '<div class="also-section"><h2 class="also-title">More ${catLabel}</h2><div class="also-grid">';
-      others.forEach(function(p) {
-        var pSlug = p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        var img   = p.img_url || '';
-        var price = parseFloat(p.price).toFixed(2);
-        html += '<a class="also-card" href="/flooring/' + cat + '/' + pSlug + '">'
-          + '<div class="also-card-img"><img src="' + img + '" alt="' + p.name + '" loading="lazy" width="400" height="300"></div>'
-          + '<div class="also-card-body"><div class="also-card-name">' + p.name + '</div>'
-          + '<div class="also-card-price">From £' + price + '/m²</div></div></a>';
-      });
-      html += '</div></div>';
-      document.getElementById('also-section').innerHTML = html;
-    })
-    .catch(function() {});
-})();
-</script>
+<script src="/js/product-page.js"></script>
 
 </body>
 </html>`;
