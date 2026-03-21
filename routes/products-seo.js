@@ -274,31 +274,41 @@ function buildProductPage(p) {
 
     <!-- Image column -->
     <div class="product-img-wrap">
-      <img
-        id="product-main-img"
-        src="${imgUrl}"
-        alt="${p.name} ${catLabel} — ${SITE_NAME}"
-        class="product-main-img"
-        width="800" height="600"
-        loading="eager"
-        fetchpriority="high"
-      >
-      ${colours.length > 1 ? `
-      <div class="product-swatches" role="list" aria-label="Available colours">
-        ${coloursHTML}
+      <div class="product-img-frame">
+        <img
+          id="product-main-img"
+          src="${imgUrl}"
+          alt="${p.name} ${catLabel} — ${SITE_NAME}"
+          class="product-main-img"
+          width="800" height="600"
+          loading="eager"
+          fetchpriority="high"
+        >
       </div>
-      <p class="swatch-label" id="swatch-label">${colours[0]?.name || ''}</p>
+      ${colours.length > 1 ? `
+      <div class="product-swatches-wrap">
+        <div class="swatches-label-row">
+          <span class="swatches-heading">Colour Options</span>
+          <span class="swatch-label" id="swatch-label">${colours[0]?.name || ''}</span>
+        </div>
+        <div class="product-swatches" role="list" aria-label="Available colours">
+          ${coloursHTML}
+        </div>
+      </div>
       ` : ''}
     </div>
 
     <!-- Detail column -->
     <div class="product-detail">
-      ${p.badge && p.badge_type ? `<div class="product-badge badge--${p.badge_type}">${p.badge}</div>` : ''}
-      <div class="product-cat-label">${catLabel}</div>
+      <div class="product-eyebrow">
+        ${p.badge && p.badge_type ? `<span class="product-badge badge--${p.badge_type}">${p.badge}</span>` : ''}
+        <span class="product-cat-label">${catLabel}</span>
+        ${p.sku ? `<span class="eyebrow-dot"></span><span class="product-sku">SKU: ${p.sku}</span>` : ''}
+      </div>
       <h1 class="product-name">${p.name}</h1>
 
-      <div class="product-price-row">
-        <div class="product-price">£${price}<small>/m²</small></div>
+      <div class="product-price-block">
+        <div class="product-price"><sup>£</sup>${price}<sub>/m²</sub></div>
         ${wasPrice ? `<span class="product-was">£${wasPrice}</span>` : ''}
         ${saving ? `<span class="product-save">Save £${saving}</span>` : ''}
       </div>
@@ -307,22 +317,41 @@ function buildProductPage(p) {
       ${p.description ? `<p class="product-desc">${p.description}</p>` : ''}
 
       ${featuresHTML ? `<div class="feat-grid" aria-label="Product features">${featuresHTML}</div>` : ''}
-      ${roomsHTML ? `<div class="rooms-row" aria-label="Suitable for">${roomsHTML}</div>` : ''}
+      ${roomsHTML ? `<div class="rooms-section"><div class="section-micro-label">Suitable for</div><div class="rooms-row">${roomsHTML}</div></div>` : ''}
 
+      <!-- Trust bar -->
+      <div class="trust-bar">
+        <div class="trust-item"><i class="fa-solid fa-ruler-combined"></i><span class="trust-item-title">Free Measure</span><span class="trust-item-sub">Across West Yorkshire</span></div>
+        <div class="trust-item"><i class="fa-solid fa-tag"></i><span class="trust-item-title">Best Price</span><span class="trust-item-sub">Price match guarantee</span></div>
+        <div class="trust-item"><i class="fa-solid fa-screwdriver-wrench"></i><span class="trust-item-title">Expert Fitting</span><span class="trust-item-sub">From £${(parseFloat(p.fitting_price)||6).toFixed(2)}/m²</span></div>
+        <div class="trust-item"><i class="fa-solid fa-bolt"></i><span class="trust-item-title">Fast Turnaround</span><span class="trust-item-sub">Quick installation</span></div>
+      </div>
       <!-- CTA block -->
       <div class="cta-block">
-        <div class="cta-title">Get a Quote for This Product</div>
+        <div class="cta-eyebrow">Get a Quote</div>
+        <div class="cta-title">Interested in ${p.name}?</div>
         <div class="cta-sub">Free in-home measure included. We come to you anywhere in West Yorkshire — no obligation.</div>
         <div class="cta-buttons">
-          <a href="${PHONE_HREF}" class="btn-cta-primary"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call ${PHONE}</a>
-          <a href="https://wa.me/447449188303?text=Hi%2C+I%27m+interested+in+${encodeURIComponent(p.name)}+flooring" target="_blank" rel="noopener noreferrer" class="btn-cta-secondary"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp Us</a>
-          <a href="/?product=${encodeURIComponent(p.name)}&price=${price}&category=${catSlug}#contact" class="btn-cta-secondary"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Book Free Measure Online</a>
+          <a href="${PHONE_HREF}" class="btn-cta-call"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call ${PHONE}</a>
+          <a href="https://wa.me/447449188303?text=Hi%2C+I%27m+interested+in+${encodeURIComponent(p.name)}+flooring" target="_blank" rel="noopener noreferrer" class="btn-cta-whatsapp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp Us</a>
+          <a href="/?product=${encodeURIComponent(p.name)}&price=${price}&category=${catSlug}#contact" class="btn-cta-measure"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Book Free Measure Online</a>
         </div>
-        <p class="cta-note">We respond within 24 hours. No spam, no pressure.</p>
+        <div class="cta-trust">
+          <span class="cta-trust-item"><i class="fa-solid fa-clock"></i> 24hr response</span>
+          <span class="cta-trust-item"><i class="fa-solid fa-shield-halved"></i> No obligation</span>
+          <span class="cta-trust-item"><i class="fa-solid fa-star"></i> Free measure</span>
+        </div>
       </div>
 
       <!-- Specs -->
-      ${specsHTML ? `<div class="specs-title">Specifications</div>${specsHTML}` : ''}
+      ${specsHTML ? `
+      <div class="specs-block">
+        <div class="specs-header">
+          <div class="specs-icon"><i class="fa-solid fa-list-ul" aria-hidden="true"></i></div>
+          <span class="specs-title">Specifications</span>
+        </div>
+        ${specsHTML}
+      </div>` : ''}
 
     </div>
   </div>
@@ -332,15 +361,26 @@ function buildProductPage(p) {
 </main>
 
 <!-- Footer -->
-<footer class="site-footer">
+<footer>
   <div class="footer-inner">
-    <a href="/" class="footer-logo"><img src="/images/logo.svg" alt="${SITE_NAME}" width="120" height="30" loading="lazy"></a>
-    <nav class="footer-links" aria-label="Footer navigation">
-      <a href="/#range">Browse All Flooring</a>
-      <a href="/#quote">Price Calculator</a>
-      <a href="/#contact">Contact Us</a>
-      <a href="/privacy-policy.html">Privacy Policy</a>
-    </nav>
+    <div class="footer-brand">
+      <a href="/"><img src="/images/logo.svg" alt="${SITE_NAME}" width="130" height="34" loading="lazy"></a>
+      <p>West Yorkshire's trusted flooring specialist. Free in-home measure across Leeds, Bradford, Wakefield and Dewsbury.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Flooring</h5>
+      <a href="/#range">Carpets</a>
+      <a href="/#range">Vinyl</a>
+      <a href="/#range">Laminate</a>
+      <a href="/#range">Wood</a>
+    </div>
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <a href="tel:07449188303"><i class="fa-solid fa-phone"></i>07449 188 303</a>
+      <a href="https://wa.me/447449188303"><i class="fa-brands fa-whatsapp"></i>WhatsApp</a>
+      <p><i class="fa-solid fa-location-dot"></i>14-16 Northgate, Dewsbury</p>
+      <a href="/#contact"><i class="fa-solid fa-calendar-check"></i>Book Free Measure</a>
+    </div>
   </div>
   <div class="footer-bottom">
     <p>&copy; 2026 ${SITE_NAME}. All rights reserved.</p>
