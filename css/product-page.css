@@ -293,3 +293,10 @@ footer{background:var(--black);padding:0;padding-bottom:calc(var(--fab-h) + 32px
 }
 
 @media(max-width:380px){.fab-btn--wa-text{display:none}}
+
+#fab.fab--ghost{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+#fab.fab--ghost .fab-inner{background:rgba(255,255,255,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#fab.fab--ghost .fab-price{font-size:1rem;font-weight:600;color:var(--ink-4);letter-spacing:0}
+#fab.fab--ghost .fab-breakdown{color:var(--ink-4);font-style:italic}
+#fab.fab--ghost .fab-btn--primary{opacity:.5;pointer-events:none}
+#fab.fab--ghost .fab-btn--secondary{opacity:.5;pointer-events:none}
