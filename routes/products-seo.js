@@ -351,6 +351,56 @@ function buildProductPage(p) {
       </div>
       <p class="swatch-label" id="swatch-label">${colours[0]?.name || ''}</p>
       ` : ''}
+
+      <!-- Price Calculator -->
+      <div class="pp-calc" id="pp-calc" data-price="${price}" data-fitting="${(parseFloat(p.fitting_price)||6).toFixed(2)}">
+        <div class="pp-calc-header">
+          <div class="pp-calc-title"><i class="fa-solid fa-calculator" aria-hidden="true"></i> Price Calculator</div>
+          <p class="pp-calc-sub">Pre-loaded with <strong>£${price}/m²</strong></p>
+        </div>
+        <div class="pp-calc-mode">
+          <button class="pp-mode-btn active" data-mode="dims" type="button">Length × Width</button>
+          <button class="pp-mode-btn" data-mode="area" type="button">Total m²</button>
+        </div>
+        <div class="pp-calc-inputs" id="pp-dims-panel">
+          <div class="pp-calc-field">
+            <label>Length (m)</label>
+            <input type="number" id="pp-length" min="0" step="0.1" placeholder="4.5">
+          </div>
+          <div class="pp-calc-field">
+            <label>Width</label>
+            <div class="pp-width-btns">
+              <button class="pp-width-btn active" data-width="4" type="button">4m</button>
+              <button class="pp-width-btn" data-width="5" type="button">5m</button>
+            </div>
+          </div>
+        </div>
+        <div class="pp-calc-inputs pp-panel-hidden" id="pp-area-panel">
+          <div class="pp-calc-field" style="grid-column:1/-1">
+            <label>Total Area (m²)</label>
+            <input type="number" id="pp-area-input" min="0" step="0.5" placeholder="14.4">
+          </div>
+        </div>
+        <div class="pp-calc-checks">
+          <label class="pp-calc-check"><input type="checkbox" id="pp-underlay"> Include underlay <em>(+£5/m²)</em></label>
+          <label class="pp-calc-check"><input type="checkbox" id="pp-fitting"> Include fitting <em>(+£${(parseFloat(p.fitting_price)||6).toFixed(2)}/m²)</em></label>
+        </div>
+        <div class="pp-calc-result">
+          <div class="pp-result-top">
+            <span class="pp-result-label">Estimated Total</span>
+            <span class="pp-result-area" id="pp-area-out">0 m²</span>
+          </div>
+          <div class="pp-result-total" id="pp-total">£0.00</div>
+          <div class="pp-result-breakdown">
+            <div class="pp-result-row"><span>Flooring</span><span id="pp-floor-out">—</span></div>
+            <div class="pp-result-row"><span>Underlay</span><span id="pp-und-out">—</span></div>
+            <div class="pp-result-row"><span>Fitting</span><span id="pp-fit-out">—</span></div>
+          </div>
+        </div>
+        <a href="/?product=${encodeURIComponent(p.name)}&price=${price}&category=${catSlug}#contact" class="pp-calc-cta" id="pp-cta">
+          <i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Book Free Measure
+        </a>
+      </div>
     </div>
 
     <!-- Detail column -->
