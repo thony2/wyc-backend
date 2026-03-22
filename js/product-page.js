@@ -137,12 +137,12 @@
 
   // ── FAB visibility ────────────────────────────────────────────────────────
   var fabVisible = false;
-  var heroFrame  = document.querySelector('.hero-frame');
+  var configStep = document.querySelector('.config-step');
 
   function updateFabVisibility() {
     if (!fab) return;
-    var ref = heroFrame || mainImg;
-    var shouldShow = ref ? ref.getBoundingClientRect().bottom < 60 : true;
+    var ref = configStep || document.querySelector('.hero-frame');
+    var shouldShow = ref ? ref.getBoundingClientRect().top < window.innerHeight * 0.8 : false;
     if (shouldShow === fabVisible) return;
     fabVisible = shouldShow;
     fab.classList.toggle('fab--visible', fabVisible);
@@ -150,11 +150,6 @@
 
   window.addEventListener('scroll', updateFabVisibility, { passive: true });
   window.addEventListener('resize', updateFabVisibility, { passive: true });
-
-  // Always show FAB after 1.5 seconds — mobile users rarely scroll far enough
-  setTimeout(function () {
-    if (fab) fab.classList.add('fab--visible');
-  }, 1500);
 
   updateCalc();
   updateFabVisibility();
