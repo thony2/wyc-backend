@@ -771,3 +771,27 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
 .fitting-inline i{font-size:.75rem}
 .fitting-inline strong{color:var(--ink-2);font-weight:600}
 .fitting-line{display:none!important}
+
+/* ── Info tooltip — improved UI ─────────────────────────────────────────── */
+.info-btn{display:inline-flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:var(--ink-4);font-size:.8rem;padding:0 4px;vertical-align:middle;position:relative}
+.info-btn:hover{color:var(--navy)}
+.info-btn[data-tooltip]::after{
+  content:attr(data-tooltip);
+  position:fixed;
+  top:auto;left:16px;right:16px;
+  background:var(--ink);color:var(--white);
+  font-size:.8rem;font-weight:400;font-style:normal;
+  line-height:1.6;padding:14px 16px;
+  border-radius:12px;
+  box-shadow:0 8px 32px rgba(0,0,0,.2);
+  z-index:9999;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .15s;
+  width:auto;
+  white-space:normal;
+  letter-spacing:0;
+  text-transform:none;
+}
+.info-btn[data-tooltip]:hover::after{opacity:1}
+.info-btn[data-tooltip]::before{display:none}

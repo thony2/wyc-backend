@@ -397,7 +397,14 @@ function buildProductPage(p) {
       <div class="product-eyebrow">
         <span class="cat-tag">
           ${p.carpet_style || catLabel}
-          ${p.carpet_style ? `<button class="info-btn" data-tooltip="${p.description ? p.description.split('.')[0] : catLabel + ' carpet style'}" aria-label="About ${p.carpet_style || catLabel}" type="button"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></button>` : ''}
+          ${p.carpet_style ? `<button class="info-btn" data-tooltip="${{
+  'Saxony': 'A dense, cut-pile carpet with an upright, velvety finish. Exceptionally soft underfoot — ideal for bedrooms and living rooms.',
+  'Twist': 'Tightly twisted yarn gives a textured, hardwearing surface. Hides footprints well — perfect for hallways and stairs.',
+  'Loop Pile': 'Uncut loops create a firm, durable surface. Easy to clean and resilient — great for busy family areas.',
+  'Berber': 'Chunky, natural-look loops in earthy tones. Extremely durable with excellent thermal insulation.',
+  'Velvet': 'Ultra-smooth, close-cut pile for a luxurious, formal look. The finest finish available in carpet.',
+  'Herringbone': 'A classic woven pattern creating a V-shaped zigzag. Timeless, elegant and highly durable.',
+}[p.carpet_style] || p.carpet_style + ' — a quality carpet pile style suited to a range of rooms.'}" aria-label="About ${p.carpet_style}" type="button"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></button>` : ''}
         </span>
       </div>
 
