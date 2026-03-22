@@ -543,12 +543,13 @@ footer{background:var(--black);padding:0;margin-top:0;position:relative;z-index:
 .product-detail{display:none}
 .product-img-wrap{display:none}
 
-/* ═══ RESPONSIVE — single authoritative block ═══════════════════════════════ */
 
-/* Hide colour card below image — swatches are in step 01 */
+/* ╣═══ RESPONSIVE ═══════════════════════════════════════════════════ */
+
+/* Hide colour card below image */
 .swatches-card{display:none!important}
 
-/* Also section breathing room */
+/* Also section spacing */
 #also-section{margin-top:56px;padding-top:40px;border-top:1px solid var(--border)}
 
 /* Footer clears FAB */
@@ -557,26 +558,24 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
 /* Product name italic */
 .product-name{font-style:italic}
 
-/* Footer bottom bold */
+/* Footer bold */
 .footer-bottom p{font-weight:700;color:rgba(255,255,255,.45)}
 .footer-legal a{font-weight:600}
 
-/* FAB payment hidden on small screens */
-@media(max-width:1024px){
-  .fab-payment{display:none!important}
-}
+/* Section labels */
+.feat-grid::before{content:"You’ll love it because";display:block;width:100%;font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-4);margin-bottom:8px}
+.rooms-row::before{content:"Suitable for";display:block;width:100%;font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-4);margin-bottom:8px}
 
-/* ── Tablet ── */
+/* FAB payment hidden on tablet */
+@media(max-width:1024px){.fab-payment{display:none!important}}
+
+/* Tablet layout */
 @media(max-width:900px){
   .product-page{padding:20px 16px 40px}
   .hero-frame{aspect-ratio:4/3}
-
-  /* Two columns become one flat flex — children order directly */
   .product-grid{display:flex;flex-direction:column;gap:0}
   .col-image{display:contents}
   .col-detail{display:contents}
-
-  /* Precise order: title block → image → config steps → specs → trust */
   .rating-row{order:1;padding:16px 0 0}
   .product-eyebrow{order:2;padding:4px 0 0}
   .product-name{order:3;font-size:2.2rem;padding:0 0 4px}
@@ -586,12 +585,13 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
   .feat-grid{order:7;padding:8px 0}
   .rooms-row{order:8;padding:4px 0 12px}
   .hero-frame{order:9;border-radius:16px;margin:0 0 16px}
-  .config-step{order:10}
-  .specs-section{order:11}
+  .config-step{order:10;width:100%}
+  .specs-section{order:11;width:100%}
   .trust-bento{order:12;margin-top:8px}
+  .perf-block,.spec-group{width:100%}
 }
 
-/* ── Mobile ── */
+/* Mobile */
 @media(max-width:600px){
   .site-header{padding:0 16px;height:58px}
   .breadcrumb{padding:10px 16px}
@@ -599,163 +599,27 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
   .price-main{font-size:1.75rem}
   .btn-phone span{display:none}
   .trust-bento{grid-template-columns:repeat(3,1fr)}
-  .fab-inner{padding:12px 14px;border-radius:16px;gap:8px}
-  .fab-price{font-size:1.5rem}
-  .fab-breakdown{display:none}
-  .fab-btn{padding:10px 12px;font-size:.74rem}
   .footer-inner{flex-direction:column;align-items:flex-start;padding:24px 16px 16px}
   .footer-bottom{padding:14px 16px}
   .also-grid{grid-template-columns:1fr 1fr}
 }
 
-@media(max-width:380px){
-  .fab-btn--wa-text{display:none}
-}
-
-/* ── Section micro-labels ─────────────────────────────────────────────────── */
-.feat-grid::before{
-  content:"You'll love it because";
-  display:block;width:100%;
-  font-size:.65rem;font-weight:700;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--ink-4);
-  margin-bottom:8px;
-}
-.rooms-row::before{
-  content:"Suitable for";
-  display:block;width:100%;
-  font-size:.65rem;font-weight:700;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--ink-4);
-  margin-bottom:8px;
-}
-
-/* ── Performance bars wider on mobile ────────────────────────────────────── */
-@media(max-width:900px){
-  .perf-block{width:100%}
-  .perf-bars{flex:1;min-width:0}
-  .perf-label{width:64px;font-size:.62rem}
-  .perf-val{width:44px;font-size:.72rem}
-  .bar-seg{height:6px}
-}
-
-/* ── Mobile width and gap fixes ──────────────────────────────────────────── */
-@media(max-width:900px){
-  /* All direct children of the grid fill full width */
-  .product-grid > *,
-  .col-image > *,
-  .col-detail > *{width:100%;box-sizing:border-box}
-
-  /* Consistent gap between every section */
-  .rating-row,.product-eyebrow,.product-name,
-  .price-block,.fitting-line,.product-desc,
-  .feat-grid,.rooms-row,.hero-frame,
-  .config-step,.specs-section,.trust-bento{
-    margin-bottom:16px;
-  }
-
-  /* Performance and spec blocks full width */
-  .perf-block,.spec-group,.specs-section{width:100%!important}
-
-  /* Config steps full width */
-  .config-step{width:100%!important}
-}
-
-
-  .fab-inner{
-    padding:14px 16px;
-    border-radius:18px;
-    gap:12px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-  }
-  .fab-left{gap:0;flex-direction:column;align-items:flex-start}
-  .fab-eyebrow{font-size:.58rem;letter-spacing:.1em;margin-bottom:2px}
-  .fab-price-wrap{align-items:baseline;gap:4px}
-  .fab-price{font-size:1.6rem;font-weight:900;letter-spacing:-.03em}
-  .fab-m2{font-size:.7rem;color:var(--ink-4)}
-  .fab-breakdown{display:none}
-  .fab-actions{gap:8px;flex-shrink:0}
-  /* WhatsApp — icon only on mobile */
-  .fab-btn--secondary{
-    width:44px;height:44px;
-    padding:0;
-    border-radius:12px;
-    display:flex;align-items:center;justify-content:center;
-  }
-  .fab-btn--secondary span{display:none}
-  .fab-btn--secondary i{font-size:1.1rem}
-  /* Primary — compact but readable */
-  .fab-btn--primary{
-    padding:12px 16px;
-    font-size:.78rem;
-    font-weight:700;
-    border-radius:12px;
-    white-space:nowrap;
-  }
-  .fab-btn--primary i{font-size:.75rem}
-}
-
-
-  .fab-price{font-size:1.5rem}
-  .fab-m2{font-size:.72rem;white-space:nowrap;flex-shrink:0}
-  .fab-left{min-width:0;flex:1}
-  .fab-actions{flex-shrink:0}
-}
-
-/* ── FAB MOBILE — two row layout ─────────────────────────────────────────── */
+/* FAB mobile — two rows */
 @media(max-width:768px){
   #fab{bottom:10px;width:94%}
-
-  .fab-inner{
-    flex-direction:column;
-    padding:14px 16px;
-    gap:12px;
-    border-radius:20px;
-  }
-
-  /* Row 1 — price info */
-  .fab-left{
-    width:100%;
-    flex-direction:row;
-    align-items:center;
-    justify-content:space-between;
-    gap:0;
-  }
-  .fab-total{flex-direction:row;align-items:baseline;gap:8px}
-  .fab-eyebrow{
-    font-size:.62rem;
-    letter-spacing:.1em;
-    white-space:nowrap;
-    margin-bottom:0;
-  }
-  .fab-price-wrap{align-items:baseline;gap:6px}
-  .fab-price{font-size:1.6rem;font-weight:900;letter-spacing:-.03em}
-  .fab-m2{font-size:.75rem;color:var(--ink-3);white-space:nowrap}
+  .fab-inner{flex-direction:column;align-items:stretch;padding:16px 18px;gap:12px;border-radius:22px}
+  .fab-left{width:100%;flex-direction:row;align-items:center;justify-content:flex-start;gap:0}
+  .fab-total{display:flex;flex-direction:column;gap:1px}
+  .fab-eyebrow{font-size:.6rem;letter-spacing:.12em;white-space:nowrap}
+  .fab-price-wrap{display:flex;align-items:baseline;gap:6px;white-space:nowrap}
+  .fab-price{font-size:1.75rem;font-weight:900;letter-spacing:-.04em;color:var(--ink)}
+  .fab-m2{font-size:.78rem;color:var(--ink-3);white-space:nowrap;margin-left:4px}
   .fab-breakdown{display:none}
-  .fab-payment{display:none!important}
-
-  /* Row 2 — buttons full width */
-  .fab-actions{
-    width:100%;
-    display:grid;
-    grid-template-columns:52px 1fr;
-    gap:8px;
-  }
-  .fab-btn--secondary{
-    width:52px;height:48px;
-    padding:0;
-    border-radius:12px;
-    display:flex;align-items:center;justify-content:center;
-    flex-shrink:0;
-  }
+  .fab-actions{width:100%;display:grid;grid-template-columns:52px 1fr;gap:10px;align-items:stretch}
+  .fab-btn--secondary{width:52px;padding:0;border-radius:12px;display:flex;align-items:center;justify-content:center}
   .fab-btn--secondary span{display:none}
   .fab-btn--secondary i{font-size:1.2rem}
-  .fab-btn--primary{
-    width:100%;
-    padding:14px 16px;
-    font-size:.82rem;
-    font-weight:700;
-    border-radius:12px;
-    justify-content:center;
-  }
+  .fab-btn--primary{width:100%;padding:15px 16px;font-size:.85rem;font-weight:700;border-radius:12px;justify-content:center;box-shadow:0 6px 16px rgba(224,48,64,.3)}
 }
+
+@media(max-width:380px){.fab-btn--wa-text{display:none}}
