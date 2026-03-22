@@ -136,22 +136,28 @@
   }
 
   // ── FAB visibility ────────────────────────────────────────────────────────
-  var fabVisible = false;
-  var configStep = document.querySelector('.config-step');
+  // FAB only shows after user enters a length value
+  var fabUnlocked = false;
 
-  function updateFabVisibility() {
-    if (!fab) return;
-    var ref = configStep;
-    if (!ref) return;
-    // Show only when config step has scrolled fully into view (top reaches top of screen)
-    var shouldShow = ref.getBoundingClientRect().top <= 0;
-    if (shouldShow === fabVisible) return;
-    fabVisible = shouldShow;
-    fab.classList.toggle('fab--visible', fabVisible);
+  function showFab() {
+    if (!fab || fabUnlocked) return;
+    var area = getArea();
+    if (area > 0) {
+      fabUnlocked = true;
+      fab.classList.add('fab--visible');
+    }
   }
 
-  window.addEventListener('scroll', updateFabVisibility, { passive: true });
-  window.addEventListener('resize', updateFabVisibility, { passive: true });
+  // Hook into the length input and width buttons
+  var lenInputFab = document.getElementById('fp-length');
+  if (lenInputFab) {
+    lenInputFab.addEventListener('input', showFab);
+    lenInputFab.addEventListener('blur', showFab);
+    lenInputFab.addEventListener('change', showFab);
+  }
+  document.querySelectorAll('.dim-w-btn').forEach(function(btn) {
+    btn.addEventListener('click', showFab);
+  });
 
   updateCalc();
   updateFabVisibility();
