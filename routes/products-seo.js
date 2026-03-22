@@ -270,7 +270,6 @@ function buildProductPage(p) {
 <meta name="description" content="${metaDesc.replace(/"/g, '&quot;')}">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="${pageUrl}">
-
 <!-- Open Graph -->
 <meta property="og:type"        content="product">
 <meta property="og:url"         content="${pageUrl}">
@@ -283,39 +282,38 @@ function buildProductPage(p) {
 <meta property="og:locale"      content="en_GB">
 <meta property="product:price:amount"   content="${price}">
 <meta property="product:price:currency" content="GBP">
-
 <!-- Twitter Card -->
 <meta name="twitter:card"        content="summary_large_image">
 <meta name="twitter:title"       content="${p.name} | ${SITE_NAME}">
 <meta name="twitter:description" content="${metaDesc.replace(/"/g, '&quot;')}">
 <meta name="twitter:image"       content="${imgUrl}">
-
-<!-- JSON-LD Structured Data -->
+<!-- JSON-LD -->
 <script type="application/ld+json">${JSON.stringify(jsonLd, null, 2)}</script>
 <script type="application/ld+json">${JSON.stringify(breadcrumbLd, null, 2)}</script>
-
 <!-- Preconnect -->
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-
 <!-- Fonts & Icons -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <link rel="icon" href="/assets/favicon/favicon.svg" type="image/svg+xml">
-
 <link rel="stylesheet" href="/css/product-page.css">
 </head>
 <body>
 
 <!-- Header -->
 <header class="site-header">
-  <a href="/" class="header-logo" aria-label="West Yorkshire Carpets — Home">
-    <img src="/images/logo2.svg" alt="${SITE_NAME}" width="140" height="36" loading="eager">
-  </a>
-  <div class="header-actions">
-    <a href="${PHONE_HREF}" class="btn-phone"><i class="fa-solid fa-phone" aria-hidden="true"></i><span>${PHONE}</span></a>
-    <a href="/#contact" class="btn-primary">Free Quote</a>
+  <div class="header-inner">
+    <a href="/" class="header-logo" aria-label="${SITE_NAME} — Home">
+      <img src="/images/logo2.svg" alt="${SITE_NAME}" width="140" height="36" loading="eager">
+    </a>
+    <div class="header-actions">
+      <a href="${PHONE_HREF}" class="btn-phone">
+        <i class="fa-solid fa-phone" aria-hidden="true"></i>
+        <span>${PHONE}</span>
+      </a>
+      <a href="/#contact" class="btn-primary">Free Quote</a>
+    </div>
   </div>
 </header>
 
@@ -330,125 +328,229 @@ function buildProductPage(p) {
   </div>
 </nav>
 
-<!-- Main content -->
+<!-- Main -->
 <main class="product-page">
   <div class="product-grid">
 
-    <!-- Image column -->
-    <div class="product-img-wrap">
-      <img
-        id="product-main-img"
-        src="${imgUrl}"
-        alt="${p.name} ${catLabel} — ${SITE_NAME}"
-        class="product-main-img"
-        width="800" height="600"
-        loading="eager"
-        fetchpriority="high"
-      >
-      ${colours.length > 1 ? `
-      <div class="product-swatches" role="list" aria-label="Available colours">
-        ${coloursHTML}
+    <!-- ── LEFT COLUMN ── -->
+    <div class="col-image">
+
+      <!-- Hero image -->
+      <div class="hero-frame">
+        <img
+          id="product-main-img"
+          src="${imgUrl}"
+          alt="${p.name} ${catLabel} — ${SITE_NAME}"
+          width="800" height="800"
+          loading="eager"
+          fetchpriority="high"
+        >
+        <div class="hero-badge">
+          ${p.badge && p.badge_type ? `<span class="product-badge badge--${p.badge_type}">${p.badge}</span>` : ''}
+        </div>
       </div>
-      <p class="swatch-label" id="swatch-label">${colours[0]?.name || ''}</p>
+
+      <!-- Colour swatches -->
+      ${colours.length > 1 ? `
+      <div class="swatches-card">
+        <div class="swatches-meta">
+          <span class="swatches-label">Colour Options</span>
+          <span class="swatch-name" id="swatch-name">${colours[0]?.name || ''}</span>
+        </div>
+        <div class="product-swatches" role="list" aria-label="Available colours">
+          ${coloursHTML}
+        </div>
+      </div>
       ` : ''}
 
-      <!-- Price Calculator -->
-      <div class="pp-calc" id="pp-calc" data-price="${price}" data-fitting="${(parseFloat(p.fitting_price)||6).toFixed(2)}">
-        <div class="pp-calc-header">
-          <div class="pp-calc-title"><i class="fa-solid fa-calculator" aria-hidden="true"></i> Price Calculator</div>
-          <p class="pp-calc-sub">Pre-loaded with <strong>£${price}/m²</strong></p>
+      <!-- Trust bento -->
+      <div class="trust-bento">
+        <div class="trust-cell">
+          <i class="fa-solid fa-ruler-combined" aria-hidden="true"></i>
+          <span class="trust-cell-title">Free Measure</span>
+          <span class="trust-cell-sub">West Yorkshire</span>
         </div>
-        <div class="pp-calc-mode">
-          <button class="pp-mode-btn active" data-mode="dims" type="button">Length × Width</button>
-          <button class="pp-mode-btn" data-mode="area" type="button">Total m²</button>
+        <div class="trust-cell">
+          <i class="fa-solid fa-tag" aria-hidden="true"></i>
+          <span class="trust-cell-title">Best Price</span>
+          <span class="trust-cell-sub">Price match promise</span>
         </div>
-        <div class="pp-calc-inputs" id="pp-dims-panel">
-          <div class="pp-calc-field">
-            <label>Length (m)</label>
-            <input type="number" id="pp-length" min="0" step="0.1" placeholder="4.5">
+        <div class="trust-cell">
+          <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+          <span class="trust-cell-title">Fast Fitting</span>
+          <span class="trust-cell-sub">Quick turnaround</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── RIGHT COLUMN ── -->
+    <div class="col-detail">
+
+      <!-- Rating -->
+      <div class="rating-row">
+        <div class="rating-stars-wrap" aria-label="5 stars">★★★★★</div>
+        <span class="rating-text">4.9 / 5 · Rated Excellent</span>
+      </div>
+
+      <!-- Eyebrow -->
+      <div class="product-eyebrow">
+        <span class="cat-tag">${catLabel}</span>
+      </div>
+
+      <!-- Product name -->
+      <h1 class="product-name">${p.name}</h1>
+
+      <!-- Price -->
+      <div class="price-block">
+        <div class="price-main">£${price}<small>/m²</small></div>
+        ${wasPrice ? `<span class="price-was">£${wasPrice}</span>` : ''}
+        ${saving ? `<span class="price-save">Save £${saving}</span>` : ''}
+      </div>
+      <p class="fitting-line">
+        <i class="fa-solid fa-scissors" aria-hidden="true"></i>
+        Professional fitting from <strong>£${(parseFloat(p.fitting_price) || 6).toFixed(2)}/m²</strong>
+      </p>
+
+      <!-- Description -->
+      ${p.description ? `<p class="product-desc">${p.description}</p>` : ''}
+
+      <!-- Features -->
+      ${featuresHTML ? `<div class="feat-grid" aria-label="Product features">${featuresHTML}</div>` : ''}
+
+      <!-- Rooms -->
+      ${roomsHTML ? `<div class="rooms-row" aria-label="Suitable for">${roomsHTML}</div>` : ''}
+
+      <!-- Step 01: Colour (only if there are swatches) -->
+      ${colours.length > 1 ? `
+      <div class="config-step">
+        <div class="step-header">
+          <span class="step-num">01</span>
+          <span class="step-title">Select Colour</span>
+        </div>
+        <div class="step-body">
+          <div class="step-swatches product-swatches" role="list" aria-label="Select colour">
+            ${coloursHTML}
           </div>
-          <div class="pp-calc-field">
-            <label>Width</label>
-            <div class="pp-width-btns">
-              <button class="pp-width-btn active" data-width="4" type="button">4m</button>
-              <button class="pp-width-btn" data-width="5" type="button">5m</button>
+          <p class="step-swatch-note">Selected: <strong id="step-swatch-name">${colours[0]?.name || ''}</strong></p>
+        </div>
+      </div>
+      ` : ''}
+
+      <!-- Step 02: Dimensions -->
+      <div class="config-step">
+        <div class="step-header">
+          <span class="step-num">${colours.length > 1 ? '02' : '01'}</span>
+          <span class="step-title">Your Room Dimensions</span>
+        </div>
+        <div class="step-body">
+          <div class="dim-grid">
+            <div class="dim-field">
+              <label class="dim-label" for="fp-length">Length (m)</label>
+              <input type="number" class="dim-input" id="fp-length" min="0" step="0.1" placeholder="e.g. 4.5">
+            </div>
+            <div class="dim-field">
+              <label class="dim-label">Width</label>
+              <div class="dim-width-btns">
+                <button class="dim-w-btn active" data-width="4" type="button">4m</button>
+                <button class="dim-w-btn" data-width="5" type="button">5m</button>
+              </div>
             </div>
           </div>
         </div>
-        <div class="pp-calc-inputs pp-panel-hidden" id="pp-area-panel">
-          <div class="pp-calc-field" style="grid-column:1/-1">
-            <label>Total Area (m²)</label>
-            <input type="number" id="pp-area-input" min="0" step="0.5" placeholder="14.4">
-          </div>
-        </div>
-        <div class="pp-calc-checks">
-          <label class="pp-calc-check"><input type="checkbox" id="pp-underlay"> Include underlay <em>(+£5/m²)</em></label>
-          <label class="pp-calc-check"><input type="checkbox" id="pp-fitting"> Include fitting <em>(+£${(parseFloat(p.fitting_price)||6).toFixed(2)}/m²)</em></label>
-        </div>
-        <div class="pp-calc-result">
-          <div class="pp-result-top">
-            <span class="pp-result-label">Estimated Total</span>
-            <span class="pp-result-area" id="pp-area-out">0 m²</span>
-          </div>
-          <div class="pp-result-total" id="pp-total">£0.00</div>
-          <div class="pp-result-breakdown">
-            <div class="pp-result-row"><span>Flooring</span><span id="pp-floor-out">—</span></div>
-            <div class="pp-result-row"><span>Underlay</span><span id="pp-und-out">—</span></div>
-            <div class="pp-result-row"><span>Fitting</span><span id="pp-fit-out">—</span></div>
-          </div>
-        </div>
-        <a href="/?product=${encodeURIComponent(p.name)}&price=${price}&category=${catSlug}#contact" class="pp-calc-cta" id="pp-cta">
-          <i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Book Free Measure
-        </a>
-      </div>
-    </div>
-
-    <!-- Detail column -->
-    <div class="product-detail">
-      ${p.badge && p.badge_type ? `<div class="product-badge badge--${p.badge_type}">${p.badge}</div>` : ''}
-      <div class="product-cat-label">${catLabel}</div>
-      <h1 class="product-name">${p.name}</h1>
-
-      <div class="product-price-row">
-        <div class="product-price">£${price}<small>/m²</small></div>
-        ${wasPrice ? `<span class="product-was">£${wasPrice}</span>` : ''}
-        ${saving ? `<span class="product-save">Save £${saving}</span>` : ''}
-      </div>
-      <p class="product-fitting"><i class="fa-solid fa-scissors" aria-hidden="true"></i> Professional fitting from <strong>£${(parseFloat(p.fitting_price) || 6).toFixed(2)}/m²</strong></p>
-
-      ${p.description ? `<p class="product-desc">${p.description}</p>` : ''}
-
-      ${featuresHTML ? `<div class="feat-grid" aria-label="Product features">${featuresHTML}</div>` : ''}
-      ${roomsHTML ? `<div class="rooms-row" aria-label="Suitable for">${roomsHTML}</div>` : ''}
-
-      <!-- CTA block -->
-      <div class="cta-block">
-        <div class="cta-title">Get a Quote for This Product</div>
-        <div class="cta-sub">Free in-home measure included. We come to you anywhere in West Yorkshire — no obligation.</div>
-        <div class="cta-buttons">
-          <a href="${PHONE_HREF}" class="btn-cta-primary"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call ${PHONE}</a>
-          <a href="https://wa.me/447449188303?text=Hi%2C+I%27m+interested+in+${encodeURIComponent(p.name)}+flooring" target="_blank" rel="noopener noreferrer" class="btn-cta-secondary"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp Us</a>
-          <a href="/?product=${encodeURIComponent(p.name)}&price=${price}&category=${catSlug}#contact" class="btn-cta-secondary"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Book Free Measure Online</a>
-        </div>
-        <p class="cta-note">We respond within 24 hours. No spam, no pressure.</p>
       </div>
 
-      <!-- Specs -->
-      ${specsHTML ? `<div class="specs-title">Specifications</div>${specsHTML}` : ''}
+      <!-- Step 03: Professional Services -->
+      <div class="config-step">
+        <div class="step-header">
+          <span class="step-num">${colours.length > 1 ? '03' : '02'}</span>
+          <span class="step-title">Professional Services</span>
+        </div>
+        <div class="step-body">
+          <div class="addon-list">
+            <label class="addon-row active" data-type="fitting">
+              <div class="addon-info">
+                <span class="addon-name"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i> Expert Fitting</span>
+                <span class="addon-price">+£${(parseFloat(p.fitting_price) || 6).toFixed(2)} per m²</span>
+              </div>
+              <div class="addon-toggle" aria-hidden="true"></div>
+              <input type="checkbox" class="addon-cb" id="fp-fitting" checked aria-label="Include fitting">
+            </label>
+            <label class="addon-row active" data-type="underlay">
+              <div class="addon-info">
+                <span class="addon-name"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Premium Underlay</span>
+                <span class="addon-price">+£5.00 per m²</span>
+              </div>
+              <div class="addon-toggle" aria-hidden="true"></div>
+              <input type="checkbox" class="addon-cb" id="fp-underlay" checked aria-label="Include underlay">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Specifications -->
+      ${specsHTML ? `
+      <div class="specs-section">
+        <div class="specs-heading">Performance &amp; Specifications</div>
+        ${specsHTML}
+      </div>
+      ` : ''}
 
     </div>
   </div>
 
-  <!-- Also in this range placeholder — populated via JS -->
-  <div id="also-section" data-cat="${catSlug}" data-slug="${slug}" data-label="${catLabel}" data-api="https://wyc-backend-production-ed78.up.railway.app"></div>
+  <!-- Also available -->
+  <div id="also-section"
+    data-cat="${catSlug}"
+    data-slug="${slug}"
+    data-label="${catLabel}"
+    data-api="https://wyc-backend-production-ed78.up.railway.app">
+  </div>
 </main>
 
+<!-- Floating Action Bar -->
+<div id="fab" data-price="${price}" data-fitting="${(parseFloat(p.fitting_price) || 6).toFixed(2)}" aria-live="polite">
+  <div class="fab-inner">
+    <div class="fab-left">
+      <div class="fab-total">
+        <span class="fab-eyebrow">Estimated Total</span>
+        <div class="fab-price-wrap">
+          <span class="fab-price" id="fab-price">£0.00</span>
+          <span class="fab-m2" id="fab-m2"></span>
+        </div>
+        <div class="fab-breakdown" id="fab-breakdown">Enter dimensions to calculate</div>
+      </div>
+      <div class="fab-payment">
+        <span class="fab-payment-label">Secure Payment via</span>
+        <div class="fab-payment-logos">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" height="13">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" height="16">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Klarna_Logo.svg" alt="Klarna" height="13">
+        </div>
+      </div>
+    </div>
+    <div class="fab-actions">
+      <a href="https://wa.me/447449188303?text=Hi%2C+I%27m+interested+in+${encodeURIComponent(p.name)}+flooring"
+        target="_blank" rel="noopener noreferrer"
+        class="fab-btn fab-btn--secondary">
+        <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+        <span class="fab-btn--wa-text">WhatsApp</span>
+      </a>
+      <a href="/?product=${encodeURIComponent(p.name)}&price=${price}&category=${catSlug}#contact"
+        class="fab-btn fab-btn--primary" id="fab-measure">
+        <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
+        <span>Book Free Measure</span>
+      </a>
+    </div>
+  </div>
+</div>
+
 <!-- Footer -->
-<footer class="site-footer">
+<footer>
   <div class="footer-inner">
-    <a href="/" class="footer-logo"><img src="/images/logo.svg" alt="${SITE_NAME}" width="120" height="30" loading="lazy"></a>
+    <a href="/"><img src="/images/logo.svg" alt="${SITE_NAME}" width="120" height="30" loading="lazy"></a>
     <nav class="footer-links" aria-label="Footer navigation">
-      <a href="/#range">Browse All Flooring</a>
+      <a href="/#range">Browse Flooring</a>
       <a href="/#quote">Price Calculator</a>
       <a href="/#contact">Contact Us</a>
       <a href="/privacy-policy.html">Privacy Policy</a>
