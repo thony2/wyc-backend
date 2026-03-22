@@ -447,3 +447,30 @@ body.keyboard-open #fab{display:none}
 .fab-btn-main{flex-shrink:0;padding:0 32px;height:56px;font-size:.85rem}
 .fab-price{font-size:2.2rem}
 .fab-swatch-thumb{width:60px;height:60px}
+
+/* FAB match reference design */
+#fab{
+  min-width:860px!important;
+  padding:8px 8px 8px 16px!important;
+  gap:8px!important;
+  align-items:center!important;
+}
+.fab-zone-a{gap:16px;padding-right:8px;border-right:1px solid rgba(0,0,0,.06)}
+.fab-swatch-thumb{
+  width:56px;height:56px;
+  background-size:cover!important;
+  background-position:center!important;
+}
+.fab-price{font-size:2rem!important;font-weight:800!important;letter-spacing:-1.5px!important}
+.fab-price-sub{font-size:.65rem!important;font-weight:800!important;color:#8C8A87!important;letter-spacing:.05em!important}
+.fab-hover-wrapper{margin:0 4px}
+.fab-circle-btn{width:52px!important;height:52px!important}
+.fab-btn-main{
+  height:56px!important;
+  padding:0 32px!important;
+  font-size:.82rem!important;
+  font-weight:800!important;
+  border-radius:100px!important;
+  letter-spacing:.06em!important;
+  white-space:nowrap!important;
+}
