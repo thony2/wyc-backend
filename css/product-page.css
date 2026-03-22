@@ -473,3 +473,12 @@ footer{background:var(--black);padding:0;padding-bottom:calc(var(--fab-h) + 32px
   }
   #fab.fab--ghost .fab-inner{background:transparent!important}
 }
+
+/* Mobile: hide payment logos from FAB bar — only show inside drawer */
+@media(max-width:768px){
+  .fab-payment{display:none!important}
+}
+/* Desktop: keep payment in bar, hide from drawer */
+@media(min-width:769px){
+  .fab-drawer-payment{display:none!important}
+}
