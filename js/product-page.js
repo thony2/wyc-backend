@@ -21,6 +21,13 @@ if (window.visualViewport) {
   });
 }
 
+// Set initial FAB swatch thumb from main product image
+var fabThumbInit = document.getElementById('fab-swatch-thumb');
+var mainImgInit  = document.getElementById('product-main-img');
+if (fabThumbInit && mainImgInit && mainImgInit.src) {
+  fabThumbInit.style.backgroundImage = 'url(' + mainImgInit.src + ')';
+}
+
 // Swatch backgrounds (CSP safe)
 document.querySelectorAll('.swatch').forEach(function (sw) {
   if (sw.dataset.bg) {

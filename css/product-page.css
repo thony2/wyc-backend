@@ -442,3 +442,8 @@ body.keyboard-open #fab{display:none}
 @media(max-width:380px){.fab-btn-main span{display:none}}
 
 #fab-r-underlay,#fab-r-fitting,#fab-rm-underlay,#fab-rm-fitting{display:none}
+
+#fab{min-width:820px}
+.fab-btn-main{flex-shrink:0;padding:0 32px;height:56px;font-size:.85rem}
+.fab-price{font-size:2.2rem}
+.fab-swatch-thumb{width:60px;height:60px}
