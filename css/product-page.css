@@ -406,3 +406,41 @@ footer{background:var(--black);padding:0;padding-bottom:calc(var(--fab-h) + 32px
   color:var(--ink-4);
 }
 .fab-drawer-payment img{height:14px;opacity:.45;filter:grayscale(1)}
+
+/* FAB unified box — inner + drawer = one elastic container */
+@media(max-width:768px){
+  #fab{width:94%;bottom:10px}
+
+  /* The white box is the inner — drawer extends it */
+  .fab-inner{
+    border-radius:24px 24px 0 0;
+    border-bottom:none;
+    transition:border-radius .35s cubic-bezier(0.16,1,0.3,1);
+  }
+  #fab:not(.fab--open) .fab-inner{border-radius:24px!important}
+
+  /* Drawer — same background, connects seamlessly */
+  .fab-drawer{
+    background:var(--white);
+    border-radius:0 0 24px 24px;
+    border-top:1px solid var(--border);
+    box-shadow:0 24px 60px rgba(0,0,0,.14),0 4px 12px rgba(0,0,0,.06);
+    margin-top:0;
+  }
+
+  /* Ghost — applies to BOTH inner and drawer */
+  #fab.fab--ghost .fab-inner,
+  #fab.fab--ghost .fab-drawer{
+    background:rgba(255,255,255,.82)!important;
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+  }
+
+  /* Shadow only on the outer fab when open */
+  #fab.fab--open .fab-inner{
+    box-shadow:none;
+  }
+  #fab.fab--open{
+    filter:drop-shadow(0 24px 60px rgba(0,0,0,.14));
+  }
+}
