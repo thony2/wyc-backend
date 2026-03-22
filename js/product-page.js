@@ -186,3 +186,57 @@
     })
     .catch(function () {});
 })();
+
+// ── Like & Share ──────────────────────────────────────────────────────────
+(function () {
+  var API = 'https://wyc-backend-production-ed78.up.railway.app';
+
+  // Like button
+  var likeBtn   = document.getElementById('like-btn');
+  var likeCount = document.getElementById('like-count');
+  if (likeBtn) {
+    var productId = likeBtn.dataset.id;
+    var liked = sessionStorage.getItem('liked-' + productId) === '1';
+    if (liked) {
+      likeBtn.classList.add('liked');
+      likeBtn.querySelector('i').className = 'fa-solid fa-heart';
+    }
+    likeBtn.addEventListener('click', function () {
+      liked = !liked;
+      likeBtn.classList.toggle('liked', liked);
+      likeBtn.querySelector('i').className = liked ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+      likeBtn.style.transform = 'scale(1.2)';
+      setTimeout(function () { likeBtn.style.transform = ''; }, 200);
+      if (liked) {
+        sessionStorage.setItem('liked-' + productId, '1');
+        fetch(API + '/api/products/' + productId + '/like', {method:'POST'})
+          .then(function (r) { return r.json(); })
+          .then(function (d) { if (likeCount && d.likes !== undefined) likeCount.textContent = d.likes; })
+          .catch(function () {});
+      } else {
+        sessionStorage.removeItem('liked-' + productId);
+        if (likeCount) likeCount.textContent = Math.max(0, parseInt(likeCount.textContent) - 1);
+      }
+    });
+  }
+
+  // Share button
+  var shareBtn = document.getElementById('share-btn');
+  if (shareBtn) {
+    shareBtn.addEventListener('click', function () {
+      if (navigator.share) {
+        navigator.share({
+          title: document.title,
+          url: window.location.href
+        }).catch(function () {});
+      } else {
+        navigator.clipboard.writeText(window.location.href).then(function () {
+          shareBtn.querySelector('i').className = 'fa-solid fa-check';
+          setTimeout(function () {
+            shareBtn.querySelector('i').className = 'fa-solid fa-share-nodes';
+          }, 1500);
+        }).catch(function () {});
+      }
+    });
+  }
+})();

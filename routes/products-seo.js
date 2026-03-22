@@ -399,7 +399,18 @@ function buildProductPage(p) {
       </div>
 
       <!-- Product name -->
-      <h1 class="product-name">${p.name}</h1>
+      <div class="product-name-row">
+        <h1 class="product-name">${p.name}</h1>
+        <div class="product-actions">
+          <button class="action-btn" id="like-btn" data-id="${p.id}" aria-label="Like this product">
+            <i class="fa-regular fa-heart" aria-hidden="true"></i>
+            <span class="like-count" id="like-count">${p.likes || 0}</span>
+          </button>
+          <button class="action-btn" id="share-btn" aria-label="Share this product">
+            <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
 
       <!-- Price -->
       <div class="price-block">
