@@ -446,7 +446,7 @@ function buildProductPage(p) {
 <!-- Footer -->
 <footer class="site-footer">
   <div class="footer-inner">
-    <a href="/" class="footer-logo"><img src="/images/logo2.svg" alt="${SITE_NAME}" width="120" height="30" loading="lazy"></a>
+    <a href="/" class="footer-logo"><img src="/images/logo.svg" alt="${SITE_NAME}" width="120" height="30" loading="lazy"></a>
     <nav class="footer-links" aria-label="Footer navigation">
       <a href="/#range">Browse All Flooring</a>
       <a href="/#quote">Price Calculator</a>

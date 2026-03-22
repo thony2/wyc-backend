@@ -254,3 +254,33 @@ img{max-width:100%;height:auto;display:block}
   .sb-price{font-size:1rem}
   .also-grid{grid-template-columns:1fr}
 }
+
+/* ── Chip improvements ───────────────────────────────────────────────────── */
+.feat-chip{padding:8px 16px;gap:8px;font-size:.82rem;border-radius:100px}
+.feat-chip i{font-size:.88rem}
+.room-chip{padding:8px 16px;gap:8px;font-size:.82rem;border-radius:100px}
+.room-chip i{font-size:.85rem}
+.feat-grid{gap:8px;margin-bottom:16px}
+.rooms-row{gap:8px;margin-bottom:20px}
+
+/* ── Mobile order — details top, image middle, CTA+specs below ───────────── */
+@media(max-width:900px){
+  .product-grid{display:flex;flex-direction:column}
+
+  /* Top: eyebrow, name, price, desc, features, rooms */
+  .product-eyebrow-row{order:1}
+  .product-cat-label{order:1}
+  .product-name{order:2}
+  .product-price-block{order:3}
+  .product-fitting{order:4}
+  .product-desc{order:5}
+  .feat-grid{order:6}
+  .rooms-row{order:7}
+
+  /* Image column sits between top detail and CTA */
+  .product-img-wrap{order:8;position:static!important}
+
+  /* CTA + specs below image */
+  .cta-block{order:9}
+  .specs-title,.perf-block,.spec-group{order:10}
+}
