@@ -300,3 +300,81 @@ footer{background:var(--black);padding:0;padding-bottom:calc(var(--fab-h) + 32px
 #fab.fab--ghost .fab-breakdown{color:var(--ink-4);font-style:italic}
 #fab.fab--ghost .fab-btn--primary{opacity:.5;pointer-events:none}
 #fab.fab--ghost .fab-btn--secondary{opacity:.5;pointer-events:none}
+
+/* FAB Grabber */
+.fab-grabber{
+  display:none;
+  justify-content:center;align-items:center;
+  padding:8px 0 4px;cursor:pointer;
+  border-radius:24px 24px 0 0;
+}
+.fab-grabber-line{
+  width:36px;height:4px;
+  background:var(--border-2);border-radius:2px;
+}
+
+/* FAB Ghost state */
+#fab.fab--ghost .fab-inner{background:rgba(255,255,255,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#fab.fab--ghost .fab-price{font-size:1rem;font-weight:600;color:var(--ink-4);letter-spacing:0}
+#fab.fab--ghost .fab-breakdown{color:var(--ink-4);font-style:italic}
+#fab.fab--ghost .fab-btn--primary{opacity:.5;pointer-events:none}
+#fab.fab--ghost .fab-btn--secondary{opacity:.5;pointer-events:none}
+
+/* FAB Drawer — hidden by default */
+.fab-drawer{
+  max-height:0;overflow:hidden;
+  transition:max-height .35s cubic-bezier(0.16,1,0.3,1),opacity .25s ease;
+  opacity:0;
+}
+#fab.fab--open .fab-drawer{
+  max-height:400px;opacity:1;
+}
+#fab.fab--open .fab-inner{border-radius:0 0 24px 24px}
+#fab.fab--open{border-radius:24px}
+
+.fab-drawer-trust{
+  font-size:.68rem;font-weight:600;color:var(--ink-3);
+  display:flex;align-items:center;gap:8px;
+  padding:12px 24px 8px;
+  border-top:1px solid var(--border);
+}
+.fab-drawer-trust i{color:var(--navy);font-size:.8rem;flex-shrink:0}
+
+/* Receipt table */
+.fab-receipt{padding:0 24px 20px}
+.fab-receipt-row{
+  display:grid;grid-template-columns:1fr 2fr 1fr;
+  align-items:center;gap:8px;
+  padding:8px 0;
+  border-bottom:1px solid var(--border);
+  font-size:.78rem;
+}
+.fab-receipt-row:last-child{border-bottom:none}
+.fab-receipt-header{
+  font-size:.62rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.1em;
+  color:var(--ink-4);padding-bottom:6px;
+}
+.fab-receipt-row span:last-child{text-align:right;font-weight:600;color:var(--ink)}
+.fab-receipt-row span:nth-child(2){color:var(--ink-3);font-size:.75rem}
+.fab-receipt-divider{height:1px;background:var(--border-2);margin:4px 0}
+.fab-receipt-total{font-weight:700;font-size:.85rem}
+.fab-receipt-total span:last-child{color:var(--red);font-weight:800;font-size:.95rem}
+
+/* Desktop hover mini-invoice */
+@media(min-width:769px){
+  .fab-price-wrap{cursor:default}
+  #fab.fab--hover .fab-drawer{max-height:400px;opacity:1}
+  #fab.fab--hover .fab-inner{border-radius:0 0 24px 24px}
+  #fab.fab--hover{border-radius:24px}
+}
+
+/* Mobile drawer show grabber */
+@media(max-width:768px){
+  .fab-grabber{display:flex}
+  #fab.fab--open{
+    border-radius:24px;
+    box-shadow:0 -8px 40px rgba(0,0,0,.18);
+  }
+  .fab-price-wrap{cursor:pointer}
+}

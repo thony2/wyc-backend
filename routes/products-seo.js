@@ -529,7 +529,8 @@ function buildProductPage(p) {
 
 <!-- Floating Action Bar -->
 <div id="fab" data-price="${price}" data-fitting="${(parseFloat(p.fitting_price) || 6).toFixed(2)}" aria-live="polite">
-  <div class="fab-inner">
+  <div class="fab-grabber" id="fab-grabber" aria-label="Toggle price breakdown"><span class="fab-grabber-line"></span></div>
+<div class="fab-inner">
     <div class="fab-left">
       <div class="fab-total">
         <span class="fab-eyebrow">Estimated Total</span>
@@ -562,6 +563,40 @@ function buildProductPage(p) {
       </a>
     </div>
   </div>
+
+
+<!-- FAB Drawer -->
+<div class="fab-drawer" id="fab-drawer" aria-hidden="true">
+  <div class="fab-drawer-trust">
+    <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+    Official West Yorkshire Carpets Quote &mdash; Includes VAT &amp; No Hidden Fees
+  </div>
+  <div class="fab-receipt" id="fab-receipt">
+    <div class="fab-receipt-row fab-receipt-header">
+      <span>Item</span><span>Detail</span><span>Price</span>
+    </div>
+    <div class="fab-receipt-row" id="fab-r-flooring">
+      <span>Carpet</span>
+      <span id="fab-r-flooring-detail">&mdash;</span>
+      <span id="fab-r-flooring-price">&mdash;</span>
+    </div>
+    <div class="fab-receipt-row" id="fab-r-underlay" style="display:none">
+      <span>Underlay</span>
+      <span>Premium</span>
+      <span id="fab-r-underlay-price">&mdash;</span>
+    </div>
+    <div class="fab-receipt-row" id="fab-r-fitting" style="display:none">
+      <span>Fitting</span>
+      <span>Professional</span>
+      <span id="fab-r-fitting-price">&mdash;</span>
+    </div>
+    <div class="fab-receipt-divider"></div>
+    <div class="fab-receipt-row fab-receipt-total">
+      <span>Total</span><span></span>
+      <span id="fab-r-total">&mdash;</span>
+    </div>
+  </div>
+</div>
 </div>
 
 <!-- Footer -->

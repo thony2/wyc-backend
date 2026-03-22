@@ -98,7 +98,7 @@ document.querySelectorAll('.addon-row').forEach(function (row) {
   });
 });
 
-// Price ticker — requestAnimationFrame with cancel guard
+// Price ticker
 function animatePrice(targetPrice) {
   var fabPriceEl = document.getElementById('fab-price');
   if (!fabPriceEl) return;
@@ -114,7 +114,7 @@ function animatePrice(targetPrice) {
     if (!startTime) startTime = timestamp;
     var progress = Math.min((timestamp - startTime) / duration, 1);
     var current  = start + (end - start) * progress;
-    var rounded = current.toFixed(2);
+    var rounded  = current.toFixed(2);
     if (fabPriceEl.textContent !== '\u00a3' + rounded) {
       fabPriceEl.textContent = '\u00a3' + rounded;
     }
@@ -164,11 +164,109 @@ function updateCalc() {
     }
   }
 
+  // Update drawer receipt
+  updateDrawer(length, area, flooring, underlay, fitting, total);
+
   if (length > 0 && fab) {
     fab.classList.add('fab--visible');
     fab.classList.remove('fab--ghost');
   }
 }
+
+// Drawer receipt updater
+function fmtGBP(v) {
+  return '\u00a3' + v.toFixed(2);
+}
+
+function updateDrawer(length, area, flooring, underlay, fitting, total) {
+  var rFlooring = document.getElementById('fab-r-flooring');
+  var rFlooringDetail = document.getElementById('fab-r-flooring-detail');
+  var rFlooringPrice  = document.getElementById('fab-r-flooring-price');
+  var rUnderlay       = document.getElementById('fab-r-underlay');
+  var rUnderlayPrice  = document.getElementById('fab-r-underlay-price');
+  var rFitting        = document.getElementById('fab-r-fitting');
+  var rFittingPrice   = document.getElementById('fab-r-fitting-price');
+  var rTotal          = document.getElementById('fab-r-total');
+
+  if (!rFlooring) return;
+
+  if (length > 0) {
+    if (rFlooringDetail) rFlooringDetail.textContent = length + 'm \u00d7 ' + width + 'm = ' + area + 'm\u00b2';
+    if (rFlooringPrice)  rFlooringPrice.textContent  = fmtGBP(flooring);
+    if (rUnderlay)       rUnderlay.style.display      = underlay > 0 ? '' : 'none';
+    if (rUnderlayPrice)  rUnderlayPrice.textContent   = fmtGBP(underlay);
+    if (rFitting)        rFitting.style.display        = fitting > 0  ? '' : 'none';
+    if (rFittingPrice)   rFittingPrice.textContent     = fmtGBP(fitting);
+    if (rTotal)          rTotal.textContent            = fmtGBP(total);
+  } else {
+    if (rFlooringDetail) rFlooringDetail.textContent = '\u2014';
+    if (rFlooringPrice)  rFlooringPrice.textContent  = '\u2014';
+    if (rTotal)          rTotal.textContent          = '\u2014';
+  }
+}
+
+// Drawer toggle
+var fabGrabber = document.getElementById('fab-grabber');
+var fabDrawer  = document.getElementById('fab-drawer');
+var drawerOpen = false;
+
+function openDrawer() {
+  if (!fab || !fabDrawer) return;
+  drawerOpen = true;
+  fab.classList.add('fab--open');
+  fabDrawer.setAttribute('aria-hidden', 'false');
+}
+
+function closeDrawer() {
+  if (!fab || !fabDrawer) return;
+  drawerOpen = false;
+  fab.classList.remove('fab--open');
+  fabDrawer.setAttribute('aria-hidden', 'true');
+}
+
+// Mobile: tap grabber or price area to toggle
+if (fabGrabber) {
+  fabGrabber.addEventListener('click', function () {
+    drawerOpen ? closeDrawer() : openDrawer();
+  });
+}
+
+// Also tap the price to open
+var fabPriceWrap = document.querySelector('.fab-price-wrap');
+if (fabPriceWrap) {
+  fabPriceWrap.addEventListener('click', function () {
+    if (window.innerWidth <= 768) {
+      drawerOpen ? closeDrawer() : openDrawer();
+    }
+  });
+  fabPriceWrap.style.cursor = 'pointer';
+}
+
+// Desktop: hover on fab-left to show mini-invoice (CSS handles visibility,
+// JS just ensures drawer stays closed on desktop)
+var fabLeft = document.querySelector('.fab-left');
+if (fabLeft) {
+  fabLeft.addEventListener('mouseenter', function () {
+    if (window.innerWidth > 768) {
+      fab.classList.add('fab--hover');
+    }
+  });
+  fabLeft.addEventListener('mouseleave', function () {
+    fab.classList.remove('fab--hover');
+  });
+}
+
+// Close drawer on tap outside
+document.addEventListener('click', function (e) {
+  if (drawerOpen && fab && !fab.contains(e.target)) {
+    closeDrawer();
+  }
+});
+
+// Escape key
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && drawerOpen) closeDrawer();
+});
 
 updateCalc();
 
