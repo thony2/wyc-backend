@@ -529,85 +529,110 @@ function buildProductPage(p) {
 
 <!-- Floating Action Bar -->
 <div id="fab" data-price="${price}" data-fitting="${(parseFloat(p.fitting_price) || 6).toFixed(2)}" aria-live="polite">
-  <div class="fab-grabber" id="fab-grabber" aria-label="Toggle price breakdown"><span class="fab-grabber-line"></span></div>
-<div class="fab-inner">
-    <div class="fab-left">
-      <div class="fab-total">
-        <span class="fab-eyebrow">Estimated Total</span>
-        <div class="fab-price-wrap">
-          <span class="fab-price" id="fab-price">£0.00</span>
-          <span class="fab-m2" id="fab-m2"></span>
-        </div>
-        <div class="fab-breakdown" id="fab-breakdown">Enter dimensions to calculate</div>
-      </div>
-      <div class="fab-payment">
-        <span class="fab-payment-label">Secure Payment via</span>
-        <div class="fab-payment-logos">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" height="13">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" height="16">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Klarna_Logo.svg" alt="Klarna" height="13">
-        </div>
-      </div>
-    </div>
-    <div class="fab-actions">
-      <a href="https://wa.me/447449188303?text=Hi%2C+I%27m+interested+in+${encodeURIComponent(p.name)}+flooring"
-        target="_blank" rel="noopener noreferrer"
-        class="fab-btn fab-btn--secondary">
-        <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
-        <span class="fab-btn--wa-text">WhatsApp</span>
-      </a>
-      <button class="fab-btn fab-btn--secondary" id="fab-pdf-btn" type="button" aria-label="Download quote as PDF" disabled>
-        <i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i>
-        <span class="fab-btn--pdf-text">Quote PDF</span>
-      </button>
-      <a href="/?product=${encodeURIComponent(p.name)}&price=${price}&category=${catSlug}#contact"
-        class="fab-btn fab-btn--primary" id="fab-measure">
-        <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
-        <span>Book Free Measure</span>
-      </a>
+
+  <!-- Zone A: Swatch + Price -->
+  <div class="fab-zone-a">
+    <div class="fab-swatch-thumb" id="fab-swatch-thumb"></div>
+    <div class="fab-price-stack">
+      <div class="fab-price" id="fab-price">&pound;0.00</div>
+      <div class="fab-price-sub" id="fab-price-sub">Enter dimensions</div>
     </div>
   </div>
 
+  <!-- Zone B: PDF Quote -->
+  <div class="fab-hover-wrapper">
+    <div class="fab-glass-panel" id="fab-breakdown-panel" role="tooltip">
+      <h4 class="fab-panel-title">Quotation Details</h4>
+      <div class="fab-panel-row" id="fab-r-flooring">
+        <span id="fab-r-flooring-label">Carpet</span>
+        <span id="fab-r-flooring-price">&mdash;</span>
+      </div>
+      <div class="fab-panel-row" id="fab-r-underlay" style="display:none">
+        <span>Underlay</span>
+        <span id="fab-r-underlay-price">&mdash;</span>
+      </div>
+      <div class="fab-panel-row" id="fab-r-fitting" style="display:none">
+        <span>Fitting</span>
+        <span id="fab-r-fitting-price">&mdash;</span>
+      </div>
+      <div class="fab-panel-row fab-panel-total">
+        <span>Total inc. VAT</span>
+        <span id="fab-r-total">&mdash;</span>
+      </div>
+    </div>
+    <button class="fab-circle-btn" id="fab-pdf-btn" type="button" aria-label="Download PDF quote" disabled>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
+  </div>
 
-<!-- FAB Drawer -->
-<div class="fab-drawer" id="fab-drawer" aria-hidden="true"><div class="fab-drawer-inner">
-  <div class="fab-drawer-trust">
-    <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
-    Official West Yorkshire Carpets Quote &mdash; Includes VAT &amp; No Hidden Fees
+  <!-- Zone B: Concierge -->
+  <div class="fab-hover-wrapper">
+    <div class="fab-glass-panel fab-glass-panel--concierge" role="tooltip">
+      <h4 class="fab-panel-title">Get Help</h4>
+      <a href="${PHONE_HREF}" class="fab-concierge-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.63 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 15z"/></svg>
+        <span>${PHONE}</span>
+      </a>
+      <a href="https://wa.me/447449188303?text=Hi%2C+I%27m+interested+in+${encodeURIComponent(p.name)}+flooring" target="_blank" rel="noopener noreferrer" class="fab-concierge-item fab-concierge-item--wa">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M3 21l1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
+        <span>WhatsApp Expert</span>
+      </a>
+    </div>
+    <button class="fab-circle-btn" type="button" aria-label="Contact us">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+    </button>
   </div>
-  <div class="fab-receipt" id="fab-receipt">
-    <div class="fab-receipt-row fab-receipt-header">
-      <span>Item</span><span>Detail</span><span>Price</span>
-    </div>
-    <div class="fab-receipt-row" id="fab-r-flooring">
-      <span>Carpet</span>
-      <span id="fab-r-flooring-detail">&mdash;</span>
-      <span id="fab-r-flooring-price">&mdash;</span>
-    </div>
-    <div class="fab-receipt-row" id="fab-r-underlay" style="display:none">
-      <span>Underlay</span>
-      <span>Premium</span>
-      <span id="fab-r-underlay-price">&mdash;</span>
-    </div>
-    <div class="fab-receipt-row" id="fab-r-fitting" style="display:none">
-      <span>Fitting</span>
-      <span>Professional</span>
-      <span id="fab-r-fitting-price">&mdash;</span>
-    </div>
-    <div class="fab-receipt-divider"></div>
-    <div class="fab-receipt-row fab-receipt-total">
-      <span>Total</span><span></span>
-      <span id="fab-r-total">&mdash;</span>
+
+  <!-- Zone C: Primary CTA -->
+  <a href="/?product=${encodeURIComponent(p.name)}&price=${price}&category=${catSlug}#contact"
+     class="fab-btn-main" id="fab-measure">
+    Book Free Measure
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+  </a>
+
+  <!-- Mobile drawer -->
+  <div class="fab-drawer" id="fab-drawer" aria-hidden="true">
+    <div class="fab-drawer-inner">
+      <div class="fab-drawer-trust">
+        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+        Official West Yorkshire Carpets Quote &mdash; Includes VAT &amp; No Hidden Fees
+      </div>
+      <div class="fab-receipt" id="fab-receipt">
+        <div class="fab-receipt-row fab-receipt-header">
+          <span>Item</span><span>Detail</span><span>Price</span>
+        </div>
+        <div class="fab-receipt-row" id="fab-rm-flooring">
+          <span>Carpet</span>
+          <span id="fab-rm-flooring-detail">&mdash;</span>
+          <span id="fab-rm-flooring-price">&mdash;</span>
+        </div>
+        <div class="fab-receipt-row" id="fab-rm-underlay" style="display:none">
+          <span>Underlay</span><span>Premium</span>
+          <span id="fab-rm-underlay-price">&mdash;</span>
+        </div>
+        <div class="fab-receipt-row" id="fab-rm-fitting" style="display:none">
+          <span>Fitting</span><span>Professional</span>
+          <span id="fab-rm-fitting-price">&mdash;</span>
+        </div>
+        <div class="fab-receipt-divider"></div>
+        <div class="fab-receipt-row fab-receipt-total">
+          <span>Total</span><span></span>
+          <span id="fab-rm-total">&mdash;</span>
+        </div>
+      </div>
+      <div class="fab-drawer-payment">
+        <span class="fab-drawer-payment-label">Secure payment</span>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" height="13">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" height="15">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Klarna_Logo.svg" alt="Klarna" height="12">
+      </div>
     </div>
   </div>
-</div>
-  <div class="fab-drawer-payment">
-    <span class="fab-drawer-payment-label">Secure payment</span>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" height="14">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" height="16">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Klarna_Logo.svg" alt="Klarna" height="13">
+
+  <!-- Mobile grabber -->
+  <div class="fab-grabber" id="fab-grabber" aria-label="Toggle price breakdown">
+    <span class="fab-grabber-line"></span>
   </div>
-</div></div>
 
 </div>
 

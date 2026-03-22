@@ -59,6 +59,12 @@ allSwatches.forEach(function (sw) {
     }
     if (swatchNameEl)     swatchNameEl.textContent     = name;
     if (stepSwatchNameEl) stepSwatchNameEl.textContent = name;
+    // Update FAB swatch thumb
+    var fabThumb = document.getElementById('fab-swatch-thumb');
+    if (fabThumb && img) {
+      fabThumb.style.backgroundImage = 'url(' + img + ')';
+      fabThumb.style.backgroundSize  = 'cover';
+    }
   });
 });
 
@@ -149,6 +155,12 @@ function updateCalc() {
 
   animatePrice(length > 0 ? total : 0);
 
+  var fabPriceSubEl = document.getElementById('fab-price-sub');
+  if (fabPriceSubEl) {
+    fabPriceSubEl.textContent = length > 0 ? area + ' m\u00b2 · Fully Installed' : 'Enter dimensions';
+  }
+  // Legacy fab-m2 fallback
+  var fabM2El = document.getElementById('fab-m2');
   if (fabM2El) {
     fabM2El.textContent = length > 0 ? area + ' m\u00b2' : '';
   }
@@ -199,29 +211,50 @@ function fmtGBP(v) {
 }
 
 function updateDrawer(length, area, flooring, underlay, fitting, total) {
-  var rFlooring = document.getElementById('fab-r-flooring');
-  var rFlooringDetail = document.getElementById('fab-r-flooring-detail');
-  var rFlooringPrice  = document.getElementById('fab-r-flooring-price');
-  var rUnderlay       = document.getElementById('fab-r-underlay');
-  var rUnderlayPrice  = document.getElementById('fab-r-underlay-price');
-  var rFitting        = document.getElementById('fab-r-fitting');
-  var rFittingPrice   = document.getElementById('fab-r-fitting-price');
-  var rTotal          = document.getElementById('fab-r-total');
-
-  if (!rFlooring) return;
+  // Desktop glass panel rows
+  var rFlooringLabel = document.getElementById('fab-r-flooring-label');
+  var rFlooringPrice = document.getElementById('fab-r-flooring-price');
+  var rUnderlay      = document.getElementById('fab-r-underlay');
+  var rUnderlayPrice = document.getElementById('fab-r-underlay-price');
+  var rFitting       = document.getElementById('fab-r-fitting');
+  var rFittingPrice  = document.getElementById('fab-r-fitting-price');
+  var rTotal         = document.getElementById('fab-r-total');
 
   if (length > 0) {
-    if (rFlooringDetail) rFlooringDetail.textContent = length + 'm \u00d7 ' + width + 'm = ' + area + 'm\u00b2';
-    if (rFlooringPrice)  rFlooringPrice.textContent  = fmtGBP(flooring);
-    if (rUnderlay)       rUnderlay.style.display      = underlay > 0 ? '' : 'none';
-    if (rUnderlayPrice)  rUnderlayPrice.textContent   = fmtGBP(underlay);
-    if (rFitting)        rFitting.style.display        = fitting > 0  ? '' : 'none';
-    if (rFittingPrice)   rFittingPrice.textContent     = fmtGBP(fitting);
-    if (rTotal)          rTotal.textContent            = fmtGBP(total);
+    if (rFlooringLabel) rFlooringLabel.textContent = 'Carpet (' + area + 'm²)';
+    if (rFlooringPrice) rFlooringPrice.textContent = fmtGBP(flooring);
+    if (rUnderlay)      rUnderlay.style.display     = underlay > 0 ? '' : 'none';
+    if (rUnderlayPrice) rUnderlayPrice.textContent  = fmtGBP(underlay);
+    if (rFitting)       rFitting.style.display       = fitting > 0  ? '' : 'none';
+    if (rFittingPrice)  rFittingPrice.textContent    = fmtGBP(fitting);
+    if (rTotal)         rTotal.textContent           = fmtGBP(total);
   } else {
-    if (rFlooringDetail) rFlooringDetail.textContent = '\u2014';
-    if (rFlooringPrice)  rFlooringPrice.textContent  = '\u2014';
-    if (rTotal)          rTotal.textContent          = '\u2014';
+    if (rFlooringLabel) rFlooringLabel.textContent = 'Carpet';
+    if (rFlooringPrice) rFlooringPrice.textContent = '—';
+    if (rTotal)         rTotal.textContent         = '—';
+  }
+
+  // Mobile drawer rows
+  var rmFlooringDetail = document.getElementById('fab-rm-flooring-detail');
+  var rmFlooringPrice  = document.getElementById('fab-rm-flooring-price');
+  var rmUnderlay       = document.getElementById('fab-rm-underlay');
+  var rmUnderlayPrice  = document.getElementById('fab-rm-underlay-price');
+  var rmFitting        = document.getElementById('fab-rm-fitting');
+  var rmFittingPrice   = document.getElementById('fab-rm-fitting-price');
+  var rmTotal          = document.getElementById('fab-rm-total');
+
+  if (length > 0) {
+    if (rmFlooringDetail) rmFlooringDetail.textContent = length + 'm × ' + width + 'm = ' + area + 'm²';
+    if (rmFlooringPrice)  rmFlooringPrice.textContent  = fmtGBP(flooring);
+    if (rmUnderlay)       rmUnderlay.style.display      = underlay > 0 ? '' : 'none';
+    if (rmUnderlayPrice)  rmUnderlayPrice.textContent   = fmtGBP(underlay);
+    if (rmFitting)        rmFitting.style.display        = fitting > 0  ? '' : 'none';
+    if (rmFittingPrice)   rmFittingPrice.textContent     = fmtGBP(fitting);
+    if (rmTotal)          rmTotal.textContent            = fmtGBP(total);
+  } else {
+    if (rmFlooringDetail) rmFlooringDetail.textContent = '—';
+    if (rmFlooringPrice)  rmFlooringPrice.textContent  = '—';
+    if (rmTotal)          rmTotal.textContent          = '—';
   }
 }
 
