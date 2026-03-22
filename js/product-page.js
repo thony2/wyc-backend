@@ -65,7 +65,8 @@
 
   // ── Addon toggles ─────────────────────────────────────────────────────────
   document.querySelectorAll('.addon-row').forEach(function (row) {
-    row.addEventListener('click', function () {
+    row.addEventListener('click', function (e) {
+      e.preventDefault();
       row.classList.toggle('active');
       var cb = row.querySelector('input.addon-cb');
       if (cb) cb.checked = row.classList.contains('active');
