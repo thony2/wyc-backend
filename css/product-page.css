@@ -659,9 +659,7 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
   .config-step{width:100%!important}
 }
 
-/* ── FAB mobile — clean readable redesign ────────────────────────────────── */
-@media(max-width:600px){
-  #fab{bottom:12px;width:92%}
+
   .fab-inner{
     padding:14px 16px;
     border-radius:18px;
@@ -697,17 +695,67 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
   .fab-btn--primary i{font-size:.75rem}
 }
 
-/* ── FAB price + m2 inline fix ───────────────────────────────────────────── */
-@media(max-width:600px){
-  .fab-price-wrap{
-    display:flex;
-    align-items:baseline;
-    gap:6px;
-    flex-wrap:nowrap;
-    white-space:nowrap;
-  }
+
   .fab-price{font-size:1.5rem}
   .fab-m2{font-size:.72rem;white-space:nowrap;flex-shrink:0}
   .fab-left{min-width:0;flex:1}
   .fab-actions{flex-shrink:0}
+}
+
+/* ── FAB MOBILE — two row layout ─────────────────────────────────────────── */
+@media(max-width:768px){
+  #fab{bottom:10px;width:94%}
+
+  .fab-inner{
+    flex-direction:column;
+    padding:14px 16px;
+    gap:12px;
+    border-radius:20px;
+  }
+
+  /* Row 1 — price info */
+  .fab-left{
+    width:100%;
+    flex-direction:row;
+    align-items:center;
+    justify-content:space-between;
+    gap:0;
+  }
+  .fab-total{flex-direction:row;align-items:baseline;gap:8px}
+  .fab-eyebrow{
+    font-size:.62rem;
+    letter-spacing:.1em;
+    white-space:nowrap;
+    margin-bottom:0;
+  }
+  .fab-price-wrap{align-items:baseline;gap:6px}
+  .fab-price{font-size:1.6rem;font-weight:900;letter-spacing:-.03em}
+  .fab-m2{font-size:.75rem;color:var(--ink-3);white-space:nowrap}
+  .fab-breakdown{display:none}
+  .fab-payment{display:none!important}
+
+  /* Row 2 — buttons full width */
+  .fab-actions{
+    width:100%;
+    display:grid;
+    grid-template-columns:52px 1fr;
+    gap:8px;
+  }
+  .fab-btn--secondary{
+    width:52px;height:48px;
+    padding:0;
+    border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .fab-btn--secondary span{display:none}
+  .fab-btn--secondary i{font-size:1.2rem}
+  .fab-btn--primary{
+    width:100%;
+    padding:14px 16px;
+    font-size:.82rem;
+    font-weight:700;
+    border-radius:12px;
+    justify-content:center;
+  }
 }
