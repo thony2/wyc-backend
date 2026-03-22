@@ -641,3 +641,23 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
 .dim-w-btn.active{background:var(--red)!important;border-color:var(--red)!important;color:var(--white)!important}
 .step-body{padding:20px 22px 24px}
 .dim-grid{margin-top:4px;gap:16px}
+
+/* ── Consistent 16px gaps between all mobile sections ───────────────────── */
+@media(max-width:900px){
+  .rating-row,.product-eyebrow,.product-name,
+  .price-block,.fitting-line,.product-desc,
+  .feat-grid,.rooms-row,.hero-frame,
+  .config-step,.specs-section,.trust-bento{
+    margin-bottom:16px!important;
+  }
+}
+
+/* ── Consistent 16px gaps between all mobile sections ───────────────────── */
+@media(max-width:900px){
+  .rating-row,.product-eyebrow,.product-name,
+  .price-block,.fitting-line,.product-desc,
+  .feat-grid,.rooms-row,.hero-frame,
+  .config-step,.specs-section,.trust-bento{
+    margin-bottom:16px!important;
+  }
+}
