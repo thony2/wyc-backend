@@ -795,3 +795,15 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
 }
 .info-btn[data-tooltip]:hover::after{opacity:1}
 .info-btn[data-tooltip]::before{display:none}
+
+/* ── Tooltip mobile fix ──────────────────────────────────────────────────── */
+.info-btn[data-tooltip]::after{
+  left:50%;
+  right:auto;
+  transform:translateX(-50%);
+  width:260px;
+  text-align:left;
+}
+
+/* Tap to show on mobile */
+.info-btn.tooltip-active[data-tooltip]::after{opacity:1}

@@ -240,3 +240,22 @@
     });
   }
 })();
+
+// ── Info tooltip tap on mobile ────────────────────────────────────────────
+(function(){
+  document.querySelectorAll('.info-btn').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var active = btn.classList.contains('tooltip-active');
+      document.querySelectorAll('.info-btn').forEach(function(b){
+        b.classList.remove('tooltip-active');
+      });
+      if(!active) btn.classList.add('tooltip-active');
+    });
+  });
+  document.addEventListener('click', function(){
+    document.querySelectorAll('.info-btn').forEach(function(b){
+      b.classList.remove('tooltip-active');
+    });
+  });
+})();
