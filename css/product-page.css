@@ -3,7 +3,7 @@
 :root{
   --red:#E03040;--navy:#1B3A5C;--gold:#C49A3C;
   --ink:#1A1714;--ink2:#5C574F;--ink3:#9C9589;
-  --bg:#F8F9FA;--surface:#F2EFE8;--white:#FFFFFF;--border:#E8E3D9;
+  --bg:#F8F6F1;--surface:#F2EFE8;--white:#FFFFFF;--border:#E8E3D9;
   --success:#27AE60;--radius:12px;
 }
 html{scroll-behavior:smooth}
@@ -103,7 +103,7 @@ img{max-width:100%;height:auto;display:block}
 .also-card-price{font-size:.85rem;color:var(--red);font-weight:700}
 
 /* ── Footer ──────────────────────────────────────────────────────────────── */
-.site-footer{background:#1A1714;color:rgba(255,255,255,.6);padding:40px 24px 24px;margin-top:80px}
+.site-footer{background:var(--navy);color:rgba(255,255,255,.6);padding:40px 24px 24px;margin-top:80px}
 .footer-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:24px}
 .footer-logo img{height:32px;opacity:.85}
 .footer-links{display:flex;gap:20px;flex-wrap:wrap}
@@ -126,31 +126,3 @@ img{max-width:100%;height:auto;display:block}
   .breadcrumb{padding:10px 16px}
   .header-actions .btn-phone span{display:none}
 }
-
-/* ── Features — capsule pills with icon ─────────────────────────────────── */
-.feat-chip{display:flex;align-items:center;gap:7px;padding:7px 14px;background:var(--white);border:1px solid var(--border);border-radius:20px;font-size:.8rem;color:var(--ink-2);font-weight:500;box-shadow:var(--shadow-sm)}
-.feat-chip i{color:var(--red);font-size:.85rem;flex-shrink:0}
-
-/* ── Rooms — capsule pills with icon, suitable only ─────────────────────── */
-.rooms-row{display:flex;flex-wrap:wrap;gap:7px}
-.room-chip{display:flex;align-items:center;gap:7px;padding:7px 14px;background:var(--white);border:1px solid var(--border);border-radius:20px;font-size:.8rem;color:var(--ink-2);font-weight:500;box-shadow:var(--shadow-sm)}
-.room-chip i{color:var(--ink-3);font-size:.82rem;flex-shrink:0}
-
-/* ── Performance bars — matching catalogue exactly ───────────────────────── */
-.perf-block{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
-.perf-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.perf-row:last-child{margin-bottom:0}
-.perf-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-2);width:80px;flex-shrink:0}
-.perf-bars{display:flex;gap:4px;flex:1}
-.bar-seg{flex:1;height:6px;border-radius:3px;background:var(--border);transition:background var(--t)}
-.bar-seg--on{background:var(--navy)}
-.bar-seg--off{background:var(--border)}
-.perf-val{font-size:.78rem;font-weight:700;color:var(--navy);width:54px;text-align:right;flex-shrink:0}
-
-/* ── Spec rows — plain rows below bars ───────────────────────────────────── */
-.spec-group{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow-sm)}
-.spec-row{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--border);transition:background var(--t)}
-.spec-row:last-child{border-bottom:none}
-.spec-row:hover{background:var(--surface)}
-.spec-label{font-size:.82rem;color:var(--ink-3);font-weight:500}
-.spec-value{font-size:.82rem;color:var(--ink);font-weight:600}
