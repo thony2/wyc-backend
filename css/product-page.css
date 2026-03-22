@@ -792,3 +792,25 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
   transition:background var(--t);
 }
 .tooltip-close:hover{background:rgba(255,255,255,.2)}
+
+/* ── Targeted improvements from elite refactor ───────────────────────────── */
+/* 1. FAB safe area for iPhone notch/home bar */
+#fab{
+  padding-bottom:calc(16px + env(safe-area-inset-bottom))!important;
+}
+
+/* 2. Keyboard open — hide FAB */
+body.keyboard-open #fab{display:none!important}
+
+/* 3. Input touch targets — minimum 56px height */
+.dim-input{height:56px;padding:0 16px}
+
+/* 4. Trust cells hover elevation */
+.trust-cell{transition:all .3s ease}
+.trust-cell:hover{background:#fff;border-color:var(--border-2)!important;box-shadow:var(--s-2);transform:translateY(-4px)}
+
+/* 5. FAB spring easing */
+#fab{transition:transform 0.4s cubic-bezier(0.16,1,0.3,1)!important}
+
+/* 6. Image blur transition */
+#product-main-img{transition:filter .2s ease,opacity .2s ease!important}

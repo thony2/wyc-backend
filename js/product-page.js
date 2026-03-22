@@ -7,6 +7,16 @@
   var FITTING = fab ? (parseFloat(fab.dataset.fitting)  || 6) : 6;
   var width   = 4;
 
+  // ── Keyboard awareness — hide FAB when keyboard open ────────────────────
+  var originalHeight = window.innerHeight;
+  window.addEventListener('resize', function() {
+    if (window.innerHeight < originalHeight * 0.75) {
+      document.body.classList.add('keyboard-open');
+    } else {
+      document.body.classList.remove('keyboard-open');
+    }
+  });
+
   // ── Swatch backgrounds — CSP safe ────────────────────────────────────────
   document.querySelectorAll('.swatch').forEach(function (sw) {
     if (sw.dataset.bg) {
@@ -35,12 +45,16 @@
       var img  = sw.dataset.img;
       var name = sw.dataset.name;
       if (img && mainImg) {
-        mainImg.style.opacity = '0';
-        setTimeout(function () {
+        mainImg.style.filter = 'blur(4px)';
+        mainImg.style.opacity = '0.7';
+        var newImg = new Image();
+        newImg.src = img;
+        newImg.onload = function() {
           mainImg.src = img;
           mainImg.alt = name;
+          mainImg.style.filter = 'blur(0)';
           mainImg.style.opacity = '1';
-        }, 120);
+        };
       }
       if (swatchNameEl)     swatchNameEl.textContent     = name;
       if (stepSwatchNameEl) stepSwatchNameEl.textContent = name;
