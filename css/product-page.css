@@ -746,3 +746,17 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
   display:flex;align-items:center;gap:8px;
   flex-shrink:0;padding-top:0;
 }
+
+/* ── Name row order + share button fix ──────────────────────────────────── */
+.rating-row{order:1!important}
+.product-eyebrow{order:2!important}
+.product-name-row{order:3!important}
+
+/* Share button — icon only, no border */
+#share-btn{
+  background:none;
+  border:none;
+  padding:8px;
+  color:var(--ink-3);
+}
+#share-btn:hover{color:var(--ink);background:none;border:none}
