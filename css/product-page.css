@@ -814,3 +814,7 @@ body.keyboard-open #fab{display:none!important}
 
 /* 6. Image blur transition */
 #product-main-img{transition:filter .2s ease,opacity .2s ease!important}
+
+/* ── FAB fully invisible until unlocked ─────────────────────────────────── */
+#fab{opacity:0;pointer-events:none;transform:translateY(100%)}
+#fab.fab--visible{opacity:1;pointer-events:auto;transform:translateY(0)}
