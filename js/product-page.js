@@ -7,15 +7,18 @@
   var FITTING = fab ? (parseFloat(fab.dataset.fitting)  || 6) : 6;
   var width   = 4;
 
-  // ── Keyboard awareness — hide FAB when keyboard open ────────────────────
-  var originalHeight = window.innerHeight;
-  window.addEventListener('resize', function() {
-    if (window.innerHeight < originalHeight * 0.75) {
-      document.body.classList.add('keyboard-open');
-    } else {
-      document.body.classList.remove('keyboard-open');
-    }
-  });
+  // ── Keyboard awareness — hide FAB when keyboard open (iOS safe) ─────────
+  if (window.visualViewport) {
+    var lastVH = window.visualViewport.height;
+    window.visualViewport.addEventListener('resize', function() {
+      var current = window.visualViewport.height;
+      if (current < lastVH * 0.85) {
+        document.body.classList.add('keyboard-open');
+      } else {
+        document.body.classList.remove('keyboard-open');
+      }
+    });
+  }
 
   // ── Swatch backgrounds — CSP safe ────────────────────────────────────────
   document.querySelectorAll('.swatch').forEach(function (sw) {
