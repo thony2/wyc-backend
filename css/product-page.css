@@ -636,3 +636,25 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
   .perf-val{width:44px;font-size:.72rem}
   .bar-seg{height:6px}
 }
+
+/* ── Mobile width and gap fixes ──────────────────────────────────────────── */
+@media(max-width:900px){
+  /* All direct children of the grid fill full width */
+  .product-grid > *,
+  .col-image > *,
+  .col-detail > *{width:100%;box-sizing:border-box}
+
+  /* Consistent gap between every section */
+  .rating-row,.product-eyebrow,.product-name,
+  .price-block,.fitting-line,.product-desc,
+  .feat-grid,.rooms-row,.hero-frame,
+  .config-step,.specs-section,.trust-bento{
+    margin-bottom:16px;
+  }
+
+  /* Performance and spec blocks full width */
+  .perf-block,.spec-group,.specs-section{width:100%!important}
+
+  /* Config steps full width */
+  .config-step{width:100%!important}
+}
