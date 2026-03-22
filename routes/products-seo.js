@@ -547,11 +547,11 @@ function buildProductPage(p) {
         <span id="fab-r-flooring-label">Carpet</span>
         <span id="fab-r-flooring-price">&mdash;</span>
       </div>
-      <div class="fab-panel-row" id="fab-r-underlay" style="display:none">
+      <div class="fab-panel-row" id="fab-r-underlay">
         <span>Underlay</span>
         <span id="fab-r-underlay-price">&mdash;</span>
       </div>
-      <div class="fab-panel-row" id="fab-r-fitting" style="display:none">
+      <div class="fab-panel-row" id="fab-r-fitting">
         <span>Fitting</span>
         <span id="fab-r-fitting-price">&mdash;</span>
       </div>
@@ -606,11 +606,11 @@ function buildProductPage(p) {
           <span id="fab-rm-flooring-detail">&mdash;</span>
           <span id="fab-rm-flooring-price">&mdash;</span>
         </div>
-        <div class="fab-receipt-row" id="fab-rm-underlay" style="display:none">
+        <div class="fab-receipt-row" id="fab-rm-underlay">
           <span>Underlay</span><span>Premium</span>
           <span id="fab-rm-underlay-price">&mdash;</span>
         </div>
-        <div class="fab-receipt-row" id="fab-rm-fitting" style="display:none">
+        <div class="fab-receipt-row" id="fab-rm-fitting">
           <span>Fitting</span><span>Professional</span>
           <span id="fab-rm-fitting-price">&mdash;</span>
         </div>

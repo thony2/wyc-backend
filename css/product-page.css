@@ -440,3 +440,5 @@ body.keyboard-open #fab{display:none}
 }
 
 @media(max-width:380px){.fab-btn-main span{display:none}}
+
+#fab-r-underlay,#fab-r-fitting,#fab-rm-underlay,#fab-rm-fitting{display:none}

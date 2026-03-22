@@ -11,7 +11,7 @@ const helmetMiddleware = helmet({
         directives: {
             defaultSrc:     ["'self'"],
             scriptSrc:      ["'self'", 'https://cdnjs.cloudflare.com'],
-            styleSrc:       ["'self'", 'https:'],
+            styleSrc:       ["'self'", "'unsafe-inline'", 'https:'],
             imgSrc:         ["'self'", 'data:', 'https:'],
             fontSrc:        ["'self'", 'https:'],
             connectSrc:     ["'self'", 'https://wyc-backend-production-ed78.up.railway.app'],
