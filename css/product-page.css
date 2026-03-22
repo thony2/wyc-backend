@@ -187,3 +187,70 @@ img{max-width:100%;height:auto;display:block}
 .pp-result-row{display:flex;justify-content:space-between;font-size:.8rem;color:rgba(255,255,255,.75)}
 .pp-calc-cta{display:flex;align-items:center;justify-content:center;gap:8px;background:#E03040;color:#fff;padding:14px;border-radius:8px;font-size:.85rem;font-weight:700;transition:background .15s;opacity:.5;pointer-events:none}
 .pp-calc-cta:hover{background:#C02535}
+
+/* ── Mobile improvements ─────────────────────────────────────────────────── */
+@media(max-width:768px){
+
+  /* 1. Reorder — product details above image on mobile */
+  .product-grid{display:flex;flex-direction:column}
+  .product-detail{order:1}
+  .product-img-wrap{order:2}
+
+  /* 2. Better name + price typography on mobile */
+  .product-name{font-size:2.2rem;letter-spacing:-.02em;margin-bottom:12px}
+  .product-price{font-size:2rem}
+  .product-eyebrow-row,.product-cat-label{margin-bottom:6px}
+
+  /* 3. Price block tighter on mobile */
+  .product-price-block{padding:14px 0;margin-bottom:14px;gap:10px}
+  .product-was{font-size:.9rem}
+
+  /* 4. Feature + room chips — better padding on mobile */
+  .feat-chip,.room-chip{padding:7px 13px;font-size:.8rem}
+  .feat-grid,.rooms-row{gap:7px;margin-bottom:16px}
+
+  /* 5. CTA buttons — full width, better tap targets */
+  .btn-cta-primary,.btn-cta-secondary{padding:15px;font-size:.9rem}
+  .cta-block{border-radius:12px}
+  .cta-body{padding:18px}
+  .cta-title{font-size:1.1rem}
+
+  /* 6. Calculator — better mobile spacing */
+  .pp-calc{border-radius:12px}
+  .pp-calc-body{padding:14px 16px 16px}
+  .pp-calc-header{padding:14px 16px 0}
+  .pp-width-btn{padding:12px}
+  .pp-mode-btn{padding:9px}
+  .pp-calc-field input{font-size:1rem;padding:11px 12px}
+  .pp-result-total{font-size:1.75rem}
+
+  /* 7. Specs — better mobile spacing */
+  .spec-row{padding:12px 16px}
+  .perf-row{padding:11px 16px}
+  .perf-label{width:70px;font-size:.65rem}
+
+  /* 8. Also section */
+  .also-grid{grid-template-columns:1fr 1fr}
+  .also-title{font-size:1.2rem}
+
+  /* 9. Footer logo white on dark background */
+  .footer-logo img{filter:brightness(0) invert(1);opacity:.85}
+
+  /* 10. Breadcrumb tighter */
+  .breadcrumb{padding:10px 16px}
+  .breadcrumb-inner{font-size:.72rem}
+
+  /* 11. Product description */
+  .product-desc{font-size:.875rem;line-height:1.7}
+
+  /* 12. Swatch size on mobile */
+  .swatch{width:36px;height:36px}
+  .swatch-label{font-size:.78rem}
+}
+
+@media(max-width:480px){
+  .product-name{font-size:1.9rem}
+  .product-price{font-size:1.8rem}
+  .sb-price{font-size:1rem}
+  .also-grid{grid-template-columns:1fr}
+}
