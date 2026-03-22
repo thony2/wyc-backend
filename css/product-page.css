@@ -37,7 +37,7 @@ body{
   background:var(--bg);color:var(--ink);
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
-  padding-bottom:calc(var(--fab-h) + 24px);
+  padding-bottom:0;
 }
 a{color:inherit;text-decoration:none}
 img{max-width:100%;height:auto;display:block}
@@ -512,7 +512,7 @@ input.addon-cb{display:none}
 .fab-btn--primary:active{transform:scale(.98)}
 
 /* ═══ FOOTER ═════════════════════════════════════════════════════════════════ */
-footer{background:var(--black);padding:0;margin-top:0}
+footer{background:var(--black);padding:0;margin-top:0;position:relative;z-index:1}
 .footer-inner{
   max-width:1280px;margin:0 auto;
   display:flex;justify-content:space-between;align-items:center;
@@ -580,10 +580,8 @@ footer{background:var(--black);padding:0;margin-top:0}
 /* 1. Product name italic */
 .product-name{font-style:italic}
 
-/* 2. Hide duplicate swatches in config step (keep only the card below image) */
-.config-step .step-swatches{display:none}
-.config-step .step-swatch-note{display:none}
-.config-step .step-body .product-swatches{display:none}
+/* 2. Hide the colour card below the image — swatches live in step 01 only */
+.swatches-card{display:none!important}
 
 /* 4. Footer bottom text bold */
 .footer-bottom p{font-weight:700;color:rgba(255,255,255,.45)}
