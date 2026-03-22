@@ -7,10 +7,10 @@
   var FITTING = fab ? (parseFloat(fab.dataset.fitting)  || 6) : 6;
   var width   = 4;
 
-  // ── Keyboard awareness — hide FAB when keyboard open (iOS safe) ─────────
+  // ── Keyboard awareness (iOS safe) ─────────────────────────────────────────
   if (window.visualViewport) {
     var lastVH = window.visualViewport.height;
-    window.visualViewport.addEventListener('resize', function() {
+    window.visualViewport.addEventListener('resize', function () {
       var current = window.visualViewport.height;
       if (current < lastVH * 0.85) {
         document.body.classList.add('keyboard-open');
@@ -20,7 +20,7 @@
     });
   }
 
-  // ── Swatch backgrounds — CSP safe ────────────────────────────────────────
+  // ── Swatch backgrounds (CSP safe) ─────────────────────────────────────────
   document.querySelectorAll('.swatch').forEach(function (sw) {
     if (sw.dataset.bg) {
       sw.style.backgroundImage    = 'url(' + sw.dataset.bg + ')';
@@ -32,30 +32,27 @@
   });
 
   // ── Swatch interaction ────────────────────────────────────────────────────
-  var mainImg         = document.getElementById('product-main-img');
-  var swatchNameEl    = document.getElementById('swatch-name');
-  var stepSwatchNameEl= document.getElementById('step-swatch-name');
-  var allSwatches     = document.querySelectorAll('.swatch');
-
-  if (mainImg) mainImg.style.transition = 'opacity 0.12s ease';
+  var mainImg          = document.getElementById('product-main-img');
+  var swatchNameEl     = document.getElementById('swatch-name');
+  var stepSwatchNameEl = document.getElementById('step-swatch-name');
+  var allSwatches      = document.querySelectorAll('.swatch');
 
   allSwatches.forEach(function (sw) {
     sw.addEventListener('click', function () {
-      // Sync all swatches with matching name
       allSwatches.forEach(function (s) {
         s.classList.toggle('active', s.dataset.name === sw.dataset.name);
       });
       var img  = sw.dataset.img;
       var name = sw.dataset.name;
       if (img && mainImg) {
-        mainImg.style.filter = 'blur(4px)';
+        mainImg.style.filter  = 'blur(4px)';
         mainImg.style.opacity = '0.7';
         var newImg = new Image();
         newImg.src = img;
-        newImg.onload = function() {
-          mainImg.src = img;
-          mainImg.alt = name;
-          mainImg.style.filter = 'blur(0)';
+        newImg.onload = function () {
+          mainImg.src           = img;
+          mainImg.alt           = name;
+          mainImg.style.filter  = 'blur(0)';
           mainImg.style.opacity = '1';
         };
       }
@@ -91,72 +88,150 @@
     });
   });
 
-  // ── Calculator ────────────────────────────────────────────────────────────
-  function getArea() {
+  // ── Price Engine ──────────────────────────────────────────────────────────
+
+  // Room area — what the user actually measured
+  function getRoomArea() {
     var l = lenInput ? (parseFloat(lenInput.value) || 0) : 0;
     return parseFloat((l * width).toFixed(2));
+  }
+
+  // Billable area — carpet is sold in full roll lengths
+  // e.g. room is 3.5m long, roll width is 4m → they buy 4 x 4 = 16m², not 14m²
+  function getBillableArea() {
+    var l = lenInput ? (parseFloat(lenInput.value) || 0) : 0;
+    if (l <= 0) return 0;
+    var billableLength = Math.ceil(l * 10) / 10; // round up to nearest 0.1m
+    return parseFloat((billableLength * width).toFixed(2));
   }
 
   function fmtGBP(v) {
     return '\u00a3' + v.toFixed(2);
   }
 
+  // ── Count-up ticker ───────────────────────────────────────────────────────
+  var currentDisplayPrice = 0;
+  var tickerTimer = null;
+
+  function animatePriceTo(target, el) {
+    if (!el) return;
+    if (tickerTimer) clearInterval(tickerTimer);
+    var start     = currentDisplayPrice;
+    var diff      = target - start;
+    var duration  = 300;
+    var steps     = 20;
+    var stepTime  = duration / steps;
+    var step      = 0;
+
+    if (Math.abs(diff) < 0.01) {
+      el.textContent = target > 0 ? fmtGBP(target) : '\u00a30.00';
+      currentDisplayPrice = target;
+      return;
+    }
+
+    tickerTimer = setInterval(function () {
+      step++;
+      var progress = step / steps;
+      // Ease out cubic
+      var ease = 1 - Math.pow(1 - progress, 3);
+      var current = start + diff * ease;
+      el.textContent = fmtGBP(current);
+      if (step >= steps) {
+        clearInterval(tickerTimer);
+        el.textContent = target > 0 ? fmtGBP(target) : '\u00a30.00';
+        currentDisplayPrice = target;
+      }
+    }, stepTime);
+  }
+
+  // ── Update calculator ─────────────────────────────────────────────────────
   function updateCalc() {
-    var area      = getArea();
+    var roomArea     = getRoomArea();
+    var billableArea = getBillableArea();
+
     var underlayRow = document.querySelector('.addon-row[data-type="underlay"]');
     var fittingRow  = document.querySelector('.addon-row[data-type="fitting"]');
     var underlayOn  = underlayRow && underlayRow.classList.contains('active');
     var fittingOn   = fittingRow  && fittingRow.classList.contains('active');
-    var underlay    = underlayOn ? area * 5        : 0;
-    var fitting     = fittingOn  ? area * FITTING  : 0;
-    var flooring    = area * PRICE;
-    var total       = flooring + underlay + fitting;
 
-    // Update FAB total
+    var underlay = underlayOn ? billableArea * 5       : 0;
+    var fitting  = fittingOn  ? billableArea * FITTING : 0;
+    var flooring = billableArea * PRICE;
+    var total    = flooring + underlay + fitting;
+
     var fabPriceEl = document.getElementById('fab-price');
     var fabM2El    = document.getElementById('fab-m2');
     var fabBreakEl = document.getElementById('fab-breakdown');
 
-    if (fabPriceEl) {
-      fabPriceEl.textContent = area > 0 ? fmtGBP(total) : '\u00a30.00';
-    }
+    animatePriceTo(billableArea > 0 ? total : 0, fabPriceEl);
+
     if (fabM2El) {
-      fabM2El.textContent = area > 0 ? area + ' m\u00b2' : '';
+      fabM2El.textContent = billableArea > 0 ? billableArea + ' m\u00b2' : '';
     }
+
     if (fabBreakEl) {
-      if (area > 0) {
-        var parts = ['Flooring ' + fmtGBP(flooring)];
+      if (billableArea > 0) {
+        var parts = ['Carpet ' + fmtGBP(flooring)];
         if (underlay > 0) parts.push('Underlay ' + fmtGBP(underlay));
         if (fitting  > 0) parts.push('Fitting '  + fmtGBP(fitting));
+
+        // Show billable vs room area if they differ
+        if (billableArea !== roomArea) {
+          parts.push(roomArea + 'm\u00b2 room \u2192 ' + billableArea + 'm\u00b2 material');
+        }
+
         fabBreakEl.textContent = parts.join('  \u00b7  ');
       } else {
-        fabBreakEl.textContent = 'Enter dimensions to calculate';
+        fabBreakEl.textContent = '';
       }
     }
+
+    // Unlock full FAB once area is valid
+    if (billableArea > 0) unlockFab();
   }
 
-  // ── FAB visibility ────────────────────────────────────────────────────────
-  // FAB only shows after user enters a length value
-  var fabUnlocked = false;
+  // ── FAB state machine ─────────────────────────────────────────────────────
+  // Three states:
+  // 1. Hidden    — initial, nothing shown
+  // 2. Ghost     — user has focused the length input, prompt shown
+  // 3. Active    — valid area entered, price shown
 
-  function showFab() {
-    if (!fab || fabUnlocked) return;
-    var area = getArea();
-    if (area > 0) {
-      fabUnlocked = true;
-      fab.classList.add('fab--visible');
-    }
+  var fabState = 'hidden';
+
+  function setFabGhost() {
+    if (!fab || fabState === 'active') return;
+    fabState = 'ghost';
+    fab.classList.add('fab--ghost');
+    fab.classList.remove('fab--visible');
+    var fabPriceEl = document.getElementById('fab-price');
+    var fabBreakEl = document.getElementById('fab-breakdown');
+    var fabM2El    = document.getElementById('fab-m2');
+    if (fabPriceEl) fabPriceEl.textContent = 'Enter length';
+    if (fabBreakEl) fabBreakEl.textContent = 'Enter length for an instant quote';
+    if (fabM2El)    fabM2El.textContent    = '';
   }
 
-  // Hook into the length input and width buttons
-  var lenInputFab = document.getElementById('fp-length');
-  if (lenInputFab) {
-    lenInputFab.addEventListener('input', showFab);
-    lenInputFab.addEventListener('blur', showFab);
-    lenInputFab.addEventListener('change', showFab);
+  function unlockFab() {
+    if (!fab || fabState === 'active') return;
+    fabState = 'active';
+    fab.classList.remove('fab--ghost');
+    fab.classList.add('fab--visible');
   }
-  document.querySelectorAll('.dim-w-btn').forEach(function(btn) {
-    btn.addEventListener('click', showFab);
+
+  // Show ghost on focus
+  if (lenInput) {
+    lenInput.addEventListener('focus', function () {
+      if (fabState === 'hidden') setFabGhost();
+    });
+    lenInput.addEventListener('input', updateCalc);
+    lenInput.addEventListener('blur',   updateCalc);
+    lenInput.addEventListener('change', updateCalc);
+  }
+
+  document.querySelectorAll('.dim-w-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      updateCalc();
+    });
   });
 
   updateCalc();
@@ -210,7 +285,6 @@
 (function () {
   var API = 'https://wyc-backend-production-ed78.up.railway.app';
 
-  // Like button
   var likeBtn   = document.getElementById('like-btn');
   var likeCount = document.getElementById('like-count');
   if (likeBtn) {
@@ -228,7 +302,7 @@
       setTimeout(function () { likeBtn.style.transform = ''; }, 200);
       if (liked) {
         sessionStorage.setItem('liked-' + productId, '1');
-        fetch(API + '/api/products/' + productId + '/like', {method:'POST'})
+        fetch(API + '/api/products/' + productId + '/like', { method: 'POST' })
           .then(function (r) { return r.json(); })
           .then(function (d) { if (likeCount && d.likes !== undefined) likeCount.textContent = d.likes; })
           .catch(function () {});
@@ -239,15 +313,11 @@
     });
   }
 
-  // Share button
   var shareBtn = document.getElementById('share-btn');
   if (shareBtn) {
     shareBtn.addEventListener('click', function () {
       if (navigator.share) {
-        navigator.share({
-          title: document.title,
-          url: window.location.href
-        }).catch(function () {});
+        navigator.share({ title: document.title, url: window.location.href }).catch(function () {});
       } else {
         navigator.clipboard.writeText(window.location.href).then(function () {
           shareBtn.querySelector('i').className = 'fa-solid fa-check';
@@ -261,8 +331,7 @@
 })();
 
 // ── Info tooltip modal ────────────────────────────────────────────────────
-(function(){
-  // Create modal DOM once
+(function () {
   var modal = document.createElement('div');
   modal.className = 'tooltip-modal';
   modal.innerHTML =
@@ -273,8 +342,8 @@
     '</div>';
   document.body.appendChild(modal);
 
-  var titleEl = document.getElementById('tooltip-title');
-  var textEl  = document.getElementById('tooltip-text');
+  var titleEl  = document.getElementById('tooltip-title');
+  var textEl   = document.getElementById('tooltip-text');
   var closeBtn = document.getElementById('tooltip-close');
 
   function openModal(title, text) {
@@ -289,22 +358,17 @@
     document.body.style.overflow = '';
   }
 
-  // Open on info button click
-  document.querySelectorAll('.info-btn').forEach(function(btn) {
-    btn.addEventListener('click', function(e) {
+  document.querySelectorAll('.info-btn').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
       e.stopPropagation();
-      var style = btn.closest('.cat-tag') ?
-        btn.closest('.cat-tag').textContent.trim().replace('ⓘ','').trim() : '';
-      var text = btn.dataset.tooltip || '';
+      var catTag = btn.closest('.cat-tag');
+      var style  = catTag ? catTag.textContent.trim().replace(/[ⓘi]/g, '').trim() : '';
+      var text   = btn.dataset.tooltip || '';
       openModal(style, text);
     });
   });
 
   closeBtn.addEventListener('click', closeModal);
-  modal.addEventListener('click', function(e) {
-    if (e.target === modal) closeModal();
-  });
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeModal();
-  });
+  modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
 })();
