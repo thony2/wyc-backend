@@ -141,8 +141,10 @@
 
   function updateFabVisibility() {
     if (!fab) return;
-    var ref = configStep || document.querySelector('.hero-frame');
-    var shouldShow = ref ? ref.getBoundingClientRect().top < window.innerHeight * 0.8 : false;
+    var ref = configStep;
+    if (!ref) return;
+    // Show only when config step has scrolled fully into view (top reaches top of screen)
+    var shouldShow = ref.getBoundingClientRect().top <= 0;
     if (shouldShow === fabVisible) return;
     fabVisible = shouldShow;
     fab.classList.toggle('fab--visible', fabVisible);
