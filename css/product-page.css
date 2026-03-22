@@ -444,3 +444,32 @@ footer{background:var(--black);padding:0;padding-bottom:calc(var(--fab-h) + 32px
     filter:drop-shadow(0 24px 60px rgba(0,0,0,.14));
   }
 }
+
+/* FAB mobile — make #fab the single unified card */
+@media(max-width:768px){
+  #fab.fab--visible,#fab.fab--ghost{
+    background:var(--white);
+    border-radius:24px;
+    box-shadow:0 24px 60px rgba(0,0,0,.14),0 4px 12px rgba(0,0,0,.06);
+    border:1px solid var(--border);
+    overflow:hidden;
+  }
+  .fab-inner{
+    background:transparent!important;
+    box-shadow:none!important;
+    border:none!important;
+    border-radius:0!important;
+  }
+  .fab-drawer{
+    background:var(--surface)!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    border-top:1px solid var(--border)!important;
+  }
+  #fab.fab--ghost{
+    background:rgba(255,255,255,.82)!important;
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+  }
+  #fab.fab--ghost .fab-inner{background:transparent!important}
+}
