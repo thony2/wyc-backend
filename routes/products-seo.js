@@ -382,6 +382,9 @@ function buildProductPage(p) {
         </div>
       </div>
 
+      ${featuresHTML ? `<div class="feat-grid" aria-label="Product features">${featuresHTML}</div>` : ''}
+      ${roomsHTML ? `<div class="rooms-row" aria-label="Suitable for">${roomsHTML}</div>` : ''}
+
     </div>
 
     <!-- ── RIGHT COLUMN ── -->
