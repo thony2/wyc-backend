@@ -574,8 +574,8 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
   .product-page{padding:20px 16px 40px}
   .hero-frame{aspect-ratio:4/3}
   .product-grid{display:flex;flex-direction:column;gap:0}
-  .col-image{display:flex;flex-direction:column;order:2}
-  .col-detail{display:flex;flex-direction:column;order:1}
+  .col-image{display:contents}
+  .col-detail{display:contents}
   .rating-row{order:1;padding:16px 0 0}
   .product-eyebrow{order:2;padding:4px 0 0}
   .product-name{order:3;font-size:2.2rem;padding:0 0 4px}
