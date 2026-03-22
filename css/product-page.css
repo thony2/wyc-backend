@@ -696,3 +696,18 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
   }
   .fab-btn--primary i{font-size:.75rem}
 }
+
+/* ── FAB price + m2 inline fix ───────────────────────────────────────────── */
+@media(max-width:600px){
+  .fab-price-wrap{
+    display:flex;
+    align-items:baseline;
+    gap:6px;
+    flex-wrap:nowrap;
+    white-space:nowrap;
+  }
+  .fab-price{font-size:1.5rem}
+  .fab-m2{font-size:.72rem;white-space:nowrap;flex-shrink:0}
+  .fab-left{min-width:0;flex:1}
+  .fab-actions{flex-shrink:0}
+}
