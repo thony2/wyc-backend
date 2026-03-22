@@ -241,21 +241,51 @@
   }
 })();
 
-// ── Info tooltip tap on mobile ────────────────────────────────────────────
+// ── Info tooltip modal ────────────────────────────────────────────────────
 (function(){
-  document.querySelectorAll('.info-btn').forEach(function(btn){
-    btn.addEventListener('click', function(e){
+  // Create modal DOM once
+  var modal = document.createElement('div');
+  modal.className = 'tooltip-modal';
+  modal.innerHTML =
+    '<div class="tooltip-box">' +
+      '<button class="tooltip-close" id="tooltip-close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>' +
+      '<div class="tooltip-box-title" id="tooltip-title"></div>' +
+      '<div class="tooltip-box-text" id="tooltip-text"></div>' +
+    '</div>';
+  document.body.appendChild(modal);
+
+  var titleEl = document.getElementById('tooltip-title');
+  var textEl  = document.getElementById('tooltip-text');
+  var closeBtn = document.getElementById('tooltip-close');
+
+  function openModal(title, text) {
+    titleEl.textContent = title;
+    textEl.textContent  = text;
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  // Open on info button click
+  document.querySelectorAll('.info-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
       e.stopPropagation();
-      var active = btn.classList.contains('tooltip-active');
-      document.querySelectorAll('.info-btn').forEach(function(b){
-        b.classList.remove('tooltip-active');
-      });
-      if(!active) btn.classList.add('tooltip-active');
+      var style = btn.closest('.cat-tag') ?
+        btn.closest('.cat-tag').textContent.trim().replace('ⓘ','').trim() : '';
+      var text = btn.dataset.tooltip || '';
+      openModal(style, text);
     });
   });
-  document.addEventListener('click', function(){
-    document.querySelectorAll('.info-btn').forEach(function(b){
-      b.classList.remove('tooltip-active');
-    });
+
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
   });
 })();

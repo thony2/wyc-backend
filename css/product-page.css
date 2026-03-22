@@ -696,39 +696,12 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
 .fitting-inline strong{color:var(--ink-2);font-weight:600}
 
 /* Info button next to style tag */
-.info-btn{
-  display:inline-flex;align-items:center;justify-content:center;
-  background:none;border:none;cursor:pointer;
-  color:var(--ink-4);font-size:.75rem;
-  padding:0 3px;vertical-align:middle;
-  position:relative;transition:color var(--t);
-}
-.info-btn:hover{color:var(--navy)}
+
+
 
 /* Tooltip */
-.info-btn[data-tooltip]:hover::after{
-  content:attr(data-tooltip);
-  position:absolute;
-  bottom:calc(100% + 8px);
-  left:50%;transform:translateX(-50%);
-  background:var(--ink);color:var(--white);
-  font-size:.72rem;font-weight:400;font-style:normal;
-  padding:8px 12px;border-radius:8px;
-  white-space:normal;width:220px;
-  line-height:1.5;
-  box-shadow:var(--s-3);
-  z-index:100;
-  pointer-events:none;
-}
-.info-btn[data-tooltip]:hover::before{
-  content:'';
-  position:absolute;
-  bottom:calc(100% + 2px);left:50%;
-  transform:translateX(-50%);
-  border:5px solid transparent;
-  border-top-color:var(--ink);
-  z-index:100;pointer-events:none;
-}
+
+
 
 /* Like/share position — right of name */
 .product-name-row{
@@ -772,57 +745,50 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
 .fitting-inline strong{color:var(--ink-2);font-weight:600}
 .fitting-line{display:none!important}
 
-/* ── Info tooltip — improved UI ─────────────────────────────────────────── */
-.info-btn{display:inline-flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:var(--ink-4);font-size:.8rem;padding:0 4px;vertical-align:middle;position:relative}
-.info-btn:hover{color:var(--navy)}
-.info-btn[data-tooltip]::after{
-  content:attr(data-tooltip);
-  position:fixed;
-  top:auto;left:16px;right:16px;
-  background:var(--ink);color:var(--white);
-  font-size:.8rem;font-weight:400;font-style:normal;
-  line-height:1.6;padding:14px 16px;
-  border-radius:12px;
-  box-shadow:0 8px 32px rgba(0,0,0,.2);
-  z-index:9999;
-  pointer-events:none;
-  opacity:0;
-  transition:opacity .15s;
-  width:auto;
-  white-space:normal;
-  letter-spacing:0;
-  text-transform:none;
-}
-.info-btn[data-tooltip]:hover::after{opacity:1}
-.info-btn[data-tooltip]::before{display:none}
-
-/* ── Tooltip mobile fix ──────────────────────────────────────────────────── */
-.info-btn[data-tooltip]::after{
-  left:50%;
-  right:auto;
-  transform:translateX(-50%);
-  width:260px;
-  text-align:left;
-}
-
 /* Tap to show on mobile */
-.info-btn.tooltip-active[data-tooltip]::after{opacity:1}
 
-/* ── Tooltip — full width, positioned below button on mobile ─────────────── */
-@media(max-width:768px){
-  .info-btn[data-tooltip]::after{
-    position:fixed;
-    bottom:100px;
-    left:16px!important;
-    right:16px!important;
-    width:auto!important;
-    transform:none!important;
-    text-align:left;
-    font-size:.82rem;
-    padding:16px 18px;
-    border-radius:14px;
-    line-height:1.7;
-    z-index:9999;
-  }
-  .info-btn.tooltip-active[data-tooltip]::after{opacity:1!important}
+
+
+/* ── Info button & modal tooltip ─────────────────────────────────────────── */
+.info-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  background:none;border:none;cursor:pointer;
+  color:var(--ink-4);font-size:.8rem;
+  padding:0 4px;vertical-align:middle;
 }
+.info-btn:hover{color:var(--navy)}
+
+/* Tooltip modal overlay */
+.tooltip-modal{
+  display:none;
+  position:fixed;inset:0;z-index:9999;
+  align-items:flex-end;justify-content:center;
+  background:rgba(0,0,0,.4);
+  padding:16px;
+}
+.tooltip-modal.active{display:flex}
+.tooltip-box{
+  background:var(--ink);
+  color:var(--white);
+  border-radius:16px;
+  padding:20px 20px 28px;
+  width:100%;max-width:480px;
+  font-size:.88rem;line-height:1.7;
+  position:relative;
+}
+.tooltip-box-title{
+  font-size:.65rem;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.4);margin-bottom:8px;
+}
+.tooltip-box-text{color:rgba(255,255,255,.85)}
+.tooltip-close{
+  position:absolute;top:14px;right:14px;
+  background:rgba(255,255,255,.1);border:none;
+  color:rgba(255,255,255,.6);
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:.8rem;
+  transition:background var(--t);
+}
+.tooltip-close:hover{background:rgba(255,255,255,.2)}
