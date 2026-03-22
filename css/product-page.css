@@ -575,3 +575,16 @@ footer{background:var(--black);padding:0;margin-top:0}
 @media(max-width:380px){
   .fab-btn--wa-text{display:none}
 }
+
+/* ── Quick fixes ─────────────────────────────────────────────────────────── */
+/* 1. Product name italic */
+.product-name{font-style:italic}
+
+/* 2. Hide duplicate swatches in config step (keep only the card below image) */
+.config-step .step-swatches{display:none}
+.config-step .step-swatch-note{display:none}
+.config-step .step-body .product-swatches{display:none}
+
+/* 4. Footer bottom text bold */
+.footer-bottom p{font-weight:700;color:rgba(255,255,255,.45)}
+.footer-legal a{font-weight:600}
