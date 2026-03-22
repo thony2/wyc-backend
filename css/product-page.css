@@ -784,3 +784,8 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
 .action-btn i{font-size:.82rem}
 .action-btn.liked{color:var(--red);border-color:rgba(224,48,64,.2);background:rgba(224,48,64,.05)}
 .like-count{font-size:.75rem}
+
+/* ── Name row: name left, icons right, same line ────────────────────────── */
+.product-name-row{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:12px!important}
+.product-name-row .product-name{flex:1!important;min-width:0!important}
+.product-actions{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px!important;flex-shrink:0!important;padding-top:0!important;position:static!important;transform:none!important}
