@@ -623,3 +623,15 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
 }
 
 @media(max-width:380px){.fab-btn--wa-text{display:none}}
+
+/* ── Restore mobile element spacing ─────────────────────────────────────── */
+@media(max-width:900px){
+  .rating-row{margin-bottom:8px}
+  .product-eyebrow{margin-bottom:4px}
+  .product-name{margin-bottom:16px}
+  .price-block{margin-bottom:16px}
+  .fitting-line{margin-bottom:12px}
+  .product-desc{margin-bottom:16px}
+  .feat-grid{margin-bottom:12px}
+  .rooms-row{margin-bottom:20px}
+}
