@@ -34,7 +34,7 @@ img{max-width:100%;height:auto;display:block}
 /* ── Main layout ─────────────────────────────────────────────────────────── */
 .product-page{max-width:1200px;margin:0 auto;padding:40px 24px 80px}
 .product-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
-@media(max-width:900px){.product-grid{grid-template-columns:1fr;gap:32px}}
+@media(max-width:900px){.product-grid{grid-template-columns:1fr;gap:32px}.product-img-wrap{position:static!important}}
 
 /* ── Image column ────────────────────────────────────────────────────────── */
 .product-img-wrap{position:sticky;top:80px}
