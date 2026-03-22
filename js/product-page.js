@@ -281,11 +281,11 @@ updateCalc();
 
 // PDF download
 function downloadQuotePDF() {
-  if (typeof window.jspdf === 'undefined') {
-    alert('PDF library loading — please try again in a moment.');
+  var jsPDF = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+  if (!jsPDF) {
+    alert('PDF library not loaded — please refresh and try again.');
     return;
   }
-  var jsPDF = window.jspdf.jsPDF;
   var lenInput = document.getElementById('fp-length');
   var length = lenInput ? (parseFloat(lenInput.value) || 0) : 0;
   if (length <= 0) return;
