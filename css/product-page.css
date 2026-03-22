@@ -749,3 +749,14 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
 
 /* ── Icons to the right, rating stays first ─────────────────────────────── */
 .product-actions{margin-left:auto!important;flex-direction:row!important;display:flex!important;gap:8px!important;align-items:center!important;position:static!important;transform:none!important;padding-top:0!important;flex-shrink:0!important}
+
+/* ── Fitting back on own line ────────────────────────────────────────────── */
+.fitting-inline{display:none!important}
+.fitting-line{display:flex!important}
+
+/* ── Icons right on mobile — fix display:contents breaking flex ──────────── */
+@media(max-width:900px){
+  .product-name-row{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;width:100%}
+  .product-name-row .product-name{flex:1!important}
+  .product-actions{display:flex!important;flex-direction:row!important;gap:8px!important;flex-shrink:0!important;margin-left:auto!important;position:static!important;transform:none!important;padding-top:0!important}
+}
