@@ -566,7 +566,7 @@ function buildProductPage(p) {
 
 
 <!-- FAB Drawer -->
-<div class="fab-drawer" id="fab-drawer" aria-hidden="true">
+<div class="fab-drawer" id="fab-drawer" aria-hidden="true"><div class="fab-drawer-inner">
   <div class="fab-drawer-trust">
     <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
     Official West Yorkshire Carpets Quote &mdash; Includes VAT &amp; No Hidden Fees
@@ -603,7 +603,7 @@ function buildProductPage(p) {
     <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" height="16">
     <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Klarna_Logo.svg" alt="Klarna" height="13">
   </div>
-</div>
+</div></div>
 
 </div>
 
