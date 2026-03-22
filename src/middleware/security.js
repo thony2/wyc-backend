@@ -10,7 +10,7 @@ const helmetMiddleware = helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc:     ["'self'"],
-            scriptSrc:      ["'self'"],
+            scriptSrc:      ["'self'", 'https://cdnjs.cloudflare.com'],
             styleSrc:       ["'self'", 'https:'],
             imgSrc:         ["'self'", 'data:', 'https:'],
             fontSrc:        ["'self'", 'https:'],
