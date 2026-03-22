@@ -79,7 +79,10 @@ var lenInput = document.getElementById('fp-length');
 
 if (lenInput && fab) {
   lenInput.addEventListener('focus', function () {
-    fab.classList.add('fab--visible');
+    if (!fab.classList.contains('fab--visible')) {
+      fab.classList.add('fab--ghost');
+      fab.classList.add('fab--visible');
+    }
   });
   lenInput.addEventListener('input', updateCalc);
 }
@@ -163,6 +166,7 @@ function updateCalc() {
 
   if (length > 0 && fab) {
     fab.classList.add('fab--visible');
+    fab.classList.remove('fab--ghost');
   }
 }
 
