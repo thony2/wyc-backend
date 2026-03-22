@@ -765,3 +765,15 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
 .product-name-row{align-items:center}
 .product-actions{margin-left:auto;padding-top:0}
 .action-btn{padding:7px 11px}
+
+/* ── Like/share absolute right — fully independent of name ───────────────── */
+.product-name-row{position:relative;padding-right:100px}
+.product-name-row .product-name{width:100%}
+.product-actions{
+  position:absolute;
+  top:50%;right:0;
+  transform:translateY(-50%);
+  display:flex;flex-direction:column;
+  align-items:flex-end;gap:6px;
+  margin-left:0;
+}
