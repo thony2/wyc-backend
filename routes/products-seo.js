@@ -148,10 +148,9 @@ function buildProductPage(p) {
     {key:'office',   icon:'fa-briefcase',   label:'Office'},
     {key:'dining',   icon:'fa-chair',       label:'Dining Room'},
   ];
-  const roomsHTML = ROOMS_DEF.map(r => {
-    const on = rooms.includes(r.key);
-    return `<div class="room-chip ${on?'room-chip--on':'room-chip--off'}"><i class="fa-solid ${r.icon}" aria-hidden="true"></i><span>${r.label}</span></div>`;
-  }).join('');
+  const roomsHTML = ROOMS_DEF.filter(r => rooms.includes(r.key)).map(r =>
+    `<div class="room-chip"><i class="fa-solid ${r.icon}" aria-hidden="true"></i><span>${r.label}</span></div>`
+  ).join('');
 
   // Colours HTML
   const coloursHTML = colours.map((c, i) => {
