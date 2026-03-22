@@ -760,3 +760,8 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
   .product-name-row .product-name{flex:1!important}
   .product-actions{display:flex!important;flex-direction:row!important;gap:8px!important;flex-shrink:0!important;margin-left:auto!important;position:static!important;transform:none!important;padding-top:0!important}
 }
+
+/* ── Fitting price: right aligned below icons ────────────────────────────── */
+.fitting-line{display:flex!important;justify-content:flex-end;font-size:.78rem;color:var(--ink-4);margin-top:4px}
+.fitting-line i{font-size:.72rem;margin-right:5px}
+.fitting-line strong{color:var(--ink-2);font-weight:600}
