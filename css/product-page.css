@@ -599,3 +599,21 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
   .col-image{order:1}
   .col-detail{order:2}
 }
+
+/* ── Mobile order FINAL — override all previous rules ───────────────────── */
+@media(max-width:900px){
+  .col-image{order:unset!important;display:contents!important}
+  .col-detail{order:unset!important;display:contents!important}
+  .rating-row{order:1!important}
+  .product-eyebrow{order:2!important}
+  .product-name{order:3!important}
+  .price-block{order:4!important}
+  .fitting-line{order:5!important}
+  .product-desc{order:6!important}
+  .feat-grid{order:7!important}
+  .rooms-row{order:8!important}
+  .hero-frame{order:9!important}
+  .config-step{order:10!important}
+  .specs-section{order:11!important}
+  .trust-bento{order:12!important}
+}
