@@ -378,3 +378,31 @@ footer{background:var(--black);padding:0;padding-bottom:calc(var(--fab-h) + 32px
   }
   .fab-price-wrap{cursor:pointer}
 }
+
+/* Remove desktop hover drawer — was causing infinite loop */
+@media(min-width:769px){
+  #fab.fab--hover .fab-drawer{max-height:0!important;opacity:0!important}
+  #fab.fab--hover .fab-inner{border-radius:24px!important}
+  #fab.fab--hover{border-radius:24px!important}
+  .fab-price-wrap{cursor:default!important}
+  /* Fix desktop FAB — show full breakdown, hide payment on small screens */
+  .fab-breakdown{max-width:none;font-size:.72rem}
+  .fab-left{gap:16px}
+}
+
+/* Receipt drawer background + payment icons */
+.fab-drawer{
+  background:var(--surface);
+  border-radius:0 0 24px 24px;
+  border-top:1px solid var(--border);
+}
+.fab-drawer-payment{
+  display:flex;align-items:center;gap:12px;
+  padding:0 24px 16px;
+}
+.fab-drawer-payment-label{
+  font-size:.62rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;
+  color:var(--ink-4);
+}
+.fab-drawer-payment img{height:14px;opacity:.45;filter:grayscale(1)}

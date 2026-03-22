@@ -242,19 +242,7 @@ if (fabPriceWrap) {
   fabPriceWrap.style.cursor = 'pointer';
 }
 
-// Desktop: hover on fab-left to show mini-invoice (CSS handles visibility,
-// JS just ensures drawer stays closed on desktop)
-var fabLeft = document.querySelector('.fab-left');
-if (fabLeft) {
-  fabLeft.addEventListener('mouseenter', function () {
-    if (window.innerWidth > 768) {
-      fab.classList.add('fab--hover');
-    }
-  });
-  fabLeft.addEventListener('mouseleave', function () {
-    fab.classList.remove('fab--hover');
-  });
-}
+// Desktop: no hover drawer — layout handles info display
 
 // Close drawer on tap outside
 document.addEventListener('click', function (e) {

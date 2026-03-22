@@ -597,6 +597,14 @@ function buildProductPage(p) {
     </div>
   </div>
 </div>
+  <div class="fab-drawer-payment">
+    <span class="fab-drawer-payment-label">Secure payment</span>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" height="14">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" height="16">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Klarna_Logo.svg" alt="Klarna" height="13">
+  </div>
+</div>
+
 </div>
 
 <!-- Footer -->
