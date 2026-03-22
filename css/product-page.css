@@ -576,9 +576,6 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
   .product-grid{display:flex;flex-direction:column;gap:0}
   .col-image{display:contents}
   .col-detail{display:contents}
-  .rating-row{order:1;padding:16px 0 0}
-  .product-eyebrow{order:2;padding:4px 0 0}
-  .product-name{order:3;font-size:2.2rem;padding:0 0 4px}
   .price-block{order:4;padding:12px 0;margin-bottom:0}
   .fitting-line{order:5;padding:6px 0}
   .product-desc{order:6;padding:4px 0}
@@ -746,3 +743,9 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
   display:flex;align-items:center;gap:8px;
   flex-shrink:0;padding-top:0;
 }
+
+/* ── Icons pushed to far right ───────────────────────────────────────────── */
+.product-actions{margin-left:auto!important}
+
+/* ── Icons to the right, rating stays first ─────────────────────────────── */
+.product-actions{margin-left:auto!important;flex-direction:row!important;display:flex!important;gap:8px!important;align-items:center!important;position:static!important;transform:none!important;padding-top:0!important;flex-shrink:0!important}
