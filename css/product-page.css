@@ -658,3 +658,14 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
   /* Config steps full width */
   .config-step{width:100%!important}
 }
+
+/* ── FAB mobile — ensure full price always visible ───────────────────────── */
+@media(max-width:600px){
+  .fab-inner{padding:10px 12px;gap:8px}
+  .fab-price{font-size:1.3rem;letter-spacing:-.03em}
+  .fab-eyebrow{font-size:.55rem}
+  .fab-m2{font-size:.65rem}
+  .fab-btn{padding:9px 10px;font-size:.7rem;gap:5px;border-radius:10px}
+  .fab-btn--primary{padding:9px 14px}
+  .fab-btn i{font-size:.7rem}
+}
