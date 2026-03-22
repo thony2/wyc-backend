@@ -160,7 +160,6 @@
   });
 
   updateCalc();
-  updateFabVisibility();
 
   // ── Also available ────────────────────────────────────────────────────────
   var alsoSection = document.getElementById('also-section');
