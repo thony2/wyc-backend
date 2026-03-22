@@ -395,7 +395,10 @@ function buildProductPage(p) {
 
       <!-- Eyebrow -->
       <div class="product-eyebrow">
-        <span class="cat-tag">${catLabel}</span>
+        <span class="cat-tag">
+          ${p.carpet_style || catLabel}
+          ${p.carpet_style ? `<button class="info-btn" data-tooltip="${p.description ? p.description.split('.')[0] : catLabel + ' carpet style'}" aria-label="About ${p.carpet_style || catLabel}" type="button"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></button>` : ''}
+        </span>
       </div>
 
       <!-- Product name -->
@@ -417,11 +420,11 @@ function buildProductPage(p) {
         <div class="price-main">£${price}<small>/m²</small></div>
         ${wasPrice ? `<span class="price-was">£${wasPrice}</span>` : ''}
         ${saving ? `<span class="price-save">Save £${saving}</span>` : ''}
+        <span class="fitting-inline">
+          <i class="fa-solid fa-scissors" aria-hidden="true"></i>
+          Fitting from <strong>£${(parseFloat(p.fitting_price) || 6).toFixed(2)}/m²</strong>
+        </span>
       </div>
-      <p class="fitting-line">
-        <i class="fa-solid fa-scissors" aria-hidden="true"></i>
-        Professional fitting from <strong>£${(parseFloat(p.fitting_price) || 6).toFixed(2)}/m²</strong>
-      </p>
 
       <!-- Description -->
       ${p.description ? `<p class="product-desc">${p.description}</p>` : ''}

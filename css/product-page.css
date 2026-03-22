@@ -686,3 +686,63 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
 .product-name-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 .product-name-row .product-name{flex:1;order:1}
 .product-actions{order:2;padding-top:6px;flex-shrink:0}
+
+/* ── Concept layout fixes ────────────────────────────────────────────────── */
+/* Fitting inline with price */
+.fitting-line{display:none}
+.fitting-inline{
+  display:flex;align-items:center;gap:6px;
+  font-size:.8rem;color:var(--ink-4);
+  white-space:nowrap;align-self:flex-end;padding-bottom:4px;
+}
+.fitting-inline i{font-size:.72rem}
+.fitting-inline strong{color:var(--ink-2);font-weight:600}
+
+/* Info button next to style tag */
+.info-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  background:none;border:none;cursor:pointer;
+  color:var(--ink-4);font-size:.75rem;
+  padding:0 3px;vertical-align:middle;
+  position:relative;transition:color var(--t);
+}
+.info-btn:hover{color:var(--navy)}
+
+/* Tooltip */
+.info-btn[data-tooltip]:hover::after{
+  content:attr(data-tooltip);
+  position:absolute;
+  bottom:calc(100% + 8px);
+  left:50%;transform:translateX(-50%);
+  background:var(--ink);color:var(--white);
+  font-size:.72rem;font-weight:400;font-style:normal;
+  padding:8px 12px;border-radius:8px;
+  white-space:normal;width:220px;
+  line-height:1.5;
+  box-shadow:var(--s-3);
+  z-index:100;
+  pointer-events:none;
+}
+.info-btn[data-tooltip]:hover::before{
+  content:'';
+  position:absolute;
+  bottom:calc(100% + 2px);left:50%;
+  transform:translateX(-50%);
+  border:5px solid transparent;
+  border-top-color:var(--ink);
+  z-index:100;pointer-events:none;
+}
+
+/* Like/share position — right of name */
+.product-name-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:0!important;
+}
+.product-name-row .product-name{flex:1;margin-bottom:0!important}
+.product-actions{
+  display:flex;align-items:center;gap:8px;
+  flex-shrink:0;padding-top:0;
+}
