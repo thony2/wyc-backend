@@ -543,77 +543,71 @@ footer{background:var(--black);padding:0;margin-top:0;position:relative;z-index:
 .product-detail{display:none}
 .product-img-wrap{display:none}
 
-/* ═══ RESPONSIVE ═════════════════════════════════════════════════════════════ */
-@media(max-width:1024px){
-  .fab-payment{display:none!important}
-}
-@media(max-width:900px){
-  .product-grid{display:flex;flex-direction:column;gap:40px}
-  .col-image{position:static;order:2}
-  .col-detail{order:1}
-  .hero-frame{aspect-ratio:4/3}
-  .product-page{padding:28px 20px 60px}
-  .product-name{font-size:2.6rem}
-}
-@media(max-width:600px){
-  .site-header{padding:0 16px}
-  .breadcrumb{padding:10px 16px}
-  .product-page{padding:20px 16px 60px}
-  .product-name{font-size:2rem}
-  .price-main{font-size:1.9rem}
-  .btn-phone span{display:none}
-  .trust-bento{grid-template-columns:repeat(3,1fr)}
-  .fab-inner{padding:14px 16px;border-radius:18px;gap:10px}
-  .fab-price{font-size:1.6rem}
-  .fab-breakdown{display:none}
-  .fab-btn{padding:11px 14px;font-size:.75rem}
-  .fab-btn--phone-text{display:none}
-  .footer-inner{flex-direction:column;align-items:flex-start;padding:28px 20px 20px}
-  .footer-bottom{padding:16px 20px}
-  .also-grid{grid-template-columns:1fr 1fr}
-}
-@media(max-width:380px){
-  .fab-btn--wa-text{display:none}
-}
+/* ═══ RESPONSIVE — single authoritative block ═══════════════════════════════ */
 
-/* ── Quick fixes ─────────────────────────────────────────────────────────── */
-/* 1. Product name italic */
-.product-name{font-style:italic}
-
-/* 2. Hide the colour card below the image — swatches live in step 01 only */
+/* Hide colour card below image — swatches are in step 01 */
 .swatches-card{display:none!important}
 
-/* 4. Footer bottom text bold */
+/* Also section breathing room */
+#also-section{margin-top:56px;padding-top:40px;border-top:1px solid var(--border)}
+
+/* Footer clears FAB */
+footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
+
+/* Product name italic */
+.product-name{font-style:italic}
+
+/* Footer bottom bold */
 .footer-bottom p{font-weight:700;color:rgba(255,255,255,.45)}
 .footer-legal a{font-weight:600}
 
-/* ── Footer + also section spacing ──────────────────────────────────────── */
-/* Gap above More Carpet section */
-#also-section{margin-top:64px;padding-top:48px;border-top:1px solid var(--border)}
-
-/* Padding so footer content clears the floating action bar */
-footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
-
-/* ── Mobile: image on top like reference site ────────────────────────────── */
-@media(max-width:900px){
-  .col-image{order:1}
-  .col-detail{order:2}
+/* FAB payment hidden on small screens */
+@media(max-width:1024px){
+  .fab-payment{display:none!important}
 }
 
-/* ── Mobile order FINAL — override all previous rules ───────────────────── */
+/* ── Tablet ── */
 @media(max-width:900px){
-  .col-image{order:unset!important;display:contents!important}
-  .col-detail{order:unset!important;display:contents!important}
-  .rating-row{order:1!important}
-  .product-eyebrow{order:2!important}
-  .product-name{order:3!important}
-  .price-block{order:4!important}
-  .fitting-line{order:5!important}
-  .product-desc{order:6!important}
-  .feat-grid{order:7!important}
-  .rooms-row{order:8!important}
-  .hero-frame{order:9!important}
-  .config-step{order:10!important}
-  .specs-section{order:11!important}
-  .trust-bento{order:12!important}
+  .product-page{padding:20px 16px 40px}
+  .hero-frame{aspect-ratio:4/3}
+
+  /* Two columns become one flat flex — children order directly */
+  .product-grid{display:flex;flex-direction:column;gap:0}
+  .col-image{display:contents}
+  .col-detail{display:contents}
+
+  /* Precise order: title block → image → config steps → specs → trust */
+  .rating-row{order:1;padding:16px 0 0}
+  .product-eyebrow{order:2;padding:4px 0 0}
+  .product-name{order:3;font-size:2.2rem;padding:0 0 4px}
+  .price-block{order:4;padding:12px 0;margin-bottom:0}
+  .fitting-line{order:5;padding:6px 0}
+  .product-desc{order:6;padding:4px 0}
+  .feat-grid{order:7;padding:8px 0}
+  .rooms-row{order:8;padding:4px 0 12px}
+  .hero-frame{order:9;border-radius:16px;margin:0 0 16px}
+  .config-step{order:10}
+  .specs-section{order:11}
+  .trust-bento{order:12;margin-top:8px}
+}
+
+/* ── Mobile ── */
+@media(max-width:600px){
+  .site-header{padding:0 16px;height:58px}
+  .breadcrumb{padding:10px 16px}
+  .product-name{font-size:1.9rem}
+  .price-main{font-size:1.75rem}
+  .btn-phone span{display:none}
+  .trust-bento{grid-template-columns:repeat(3,1fr)}
+  .fab-inner{padding:12px 14px;border-radius:16px;gap:8px}
+  .fab-price{font-size:1.5rem}
+  .fab-breakdown{display:none}
+  .fab-btn{padding:10px 12px;font-size:.74rem}
+  .footer-inner{flex-direction:column;align-items:flex-start;padding:24px 16px 16px}
+  .footer-bottom{padding:14px 16px}
+  .also-grid{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:380px){
+  .fab-btn--wa-text{display:none}
 }
