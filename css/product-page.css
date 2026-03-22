@@ -157,12 +157,12 @@ img{max-width:100%;height:auto;display:block}
 
 /* ── Product page calculator ─────────────────────────────────────────────── */
 .pp-calc{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:16px;box-shadow:var(--shadow-sm)}
-.pp-calc-header{padding:12px 18px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;gap:8px}
-.pp-calc-title{display:flex;align-items:center;gap:7px;font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
-.pp-calc-title i{color:var(--red);font-size:.65rem}
-.pp-calc-sub{font-size:.75rem;color:var(--ink-3);margin-left:auto}
-.pp-calc-sub strong{color:var(--navy);font-weight:700}
-.pp-calc-body{padding:16px 18px;display:flex;flex-direction:column;gap:14px}
+.pp-calc-header{padding:14px 18px 0;display:flex;align-items:baseline;justify-content:space-between}
+.pp-calc-title{display:flex;align-items:center;gap:7px;font-size:.82rem;font-weight:700;color:var(--ink)}
+.pp-calc-title i{color:var(--red);font-size:.78rem}
+.pp-calc-sub{font-size:.78rem;color:var(--ink-3)}
+.pp-calc-sub strong{color:var(--ink-2);font-weight:600}
+.pp-calc-body{padding:14px 18px 18px;display:flex;flex-direction:column;gap:14px}
 .pp-calc-mode{display:flex;background:var(--surface);border-radius:8px;padding:3px;gap:3px}
 .pp-mode-btn{flex:1;padding:8px;border:none;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;background:transparent;color:var(--ink-3);font-family:inherit;transition:all .15s}
 .pp-mode-btn.active{background:var(--white);color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.1)}
