@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="./assets/favicon/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="./assets/favicon/favicon.ico" sizes="any">
+    <link rel="icon" href="./assets/favicon/favicon-32x32.png" type="image/png" sizes="32x32">
+    <link rel="icon" href="./assets/favicon/favicon-16x16.png" type="image/png" sizes="16x16">
+    <link rel="apple-touch-icon" href="./assets/favicon/apple-touch-icon.png">
+    <link rel="manifest" href="./assets/favicon/site.webmanifest" crossorigin="use-credentials">
+    <title>West Yorkshire Carpets</title>
+    <meta name="description" content="Unbeatable local prices on carpets, vinyl, laminate, and wood flooring in West Yorkshire. Free measure & quote. Professional fitting team.">
+    <meta name="keywords" content="carpets near me, cheap carpets West Yorkshire, vinyl flooring, laminate flooring UK">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/catalogue.css">
+</head>
+<body>
+
+    <header id="site-header">
+        <div class="header-inner">
+            <div class="logo">
+            <a href="/" class="logo" aria-label="Go to homepage">
+                <img 
+                    src="images/logo.svg" 
+                    alt="West Yorkshire Carpets logo"
+                    class="h-10 w-auto object-contain"
+                    loading="eager"
+                />
+            </a>
+            </div>
+            <nav class="desktop-nav">
+                <a href="#" data-catalogue="carpets">Carpets</a>
+                <a href="#" data-catalogue="vinyl">Vinyl</a>
+                <a href="#" data-catalogue="laminate">Laminate</a>
+                <a href="#" data-catalogue="wood">Wood</a>
+                <a href="#" data-catalogue="deals" class="nav-deals">Weekly Deals</a>
+            </nav>
+            <div class="header-actions">
+                <a href="tel:07449188303" class="btn-phone">
+                    <i class="fa-solid fa-phone"></i>
+                    <span>07449 188 303</span>
+                </a>
+                <a href="#quote" class="btn-primary">Free Quote</a>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+        <div class="mobile-nav" id="mobile-nav">
+            <a href="#" data-catalogue="carpets">Carpets</a>
+            <a href="#" data-catalogue="vinyl">Vinyl</a>
+            <a href="#" data-catalogue="laminate">Laminate</a>
+            <a href="#" data-catalogue="wood">Wood</a>
+            <a href="#" data-catalogue="deals">Weekly Deals</a>
+            <a href="#quote" class="mobile-nav-cta">Free Quote</a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-media">
+            <img src="./images/212.png" alt="Premium flooring installation">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-heading reveal">
+                Where Floors<br>
+                <em>Come</em> To<br>
+                Life.
+            </h1>
+            <p class="hero-sub reveal">Premium carpets, vinyl, laminate & real wood. Unbeatable local prices with free measuring and professional fitting across West Yorkshire.</p>
+            <div class="hero-cta reveal">
+                <a href="#quote" class="btn-primary btn-lg">Get Free Quote</a>
+                <a href="#deals1" class="btn-outline btn-lg">This Week's Deals</a>
+            </div>
+            <div class="hero-trust reveal">
+                <div class="trust-item"><i class="fa-solid fa-star"></i><span>5-Star Rated</span></div>
+                <div class="trust-divider"></div>
+                <div class="trust-item"><i class="fa-solid fa-shield-halved"></i><span>Fully Insured</span></div>
+                <div class="trust-divider"></div>
+                <div class="trust-item"><i class="fa-solid fa-handshake"></i><span>No Obligation</span></div>
+            </div>
+        </div>
+        <div class="hero-scroll-hint">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <section class="features-strip">
+        <div class="features-inner">
+            <div class="feature-item reveal">
+                <div class="feature-icon"><i class="fa-solid fa-ruler-combined"></i></div>
+                <div class="feature-text">
+                    <h4>Free Measure &amp; Quote</h4>
+                    <p>We visit you anywhere in West Yorkshire — no obligation, 100% free.</p>
+                </div>
+            </div>
+            <div class="feature-sep"></div>
+            <div class="feature-item reveal">
+                <div class="feature-icon"><i class="fa-solid fa-tags"></i></div>
+                <div class="feature-text">
+                    <h4>Unbeatable Prices</h4>
+                    <p>We consistently beat big chain store prices without cutting corners.</p>
+                </div>
+            </div>
+            <div class="feature-sep"></div>
+            <div class="feature-item reveal">
+                <div class="feature-icon"><i class="fa-solid fa-hammer"></i></div>
+                <div class="feature-text">
+                    <h4>Expert Fitting</h4>
+                    <p>Our experienced team guarantees a perfect, lasting finish every time.</p>
+                </div>
+            </div>
+            <div class="feature-sep"></div>
+            <div class="feature-item reveal">
+                <div class="feature-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                <div class="feature-text">
+                    <h4>Fast Turnaround</h4>
+                    <p>We work around your schedule. Most installs completed within the week.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="range" class="flooring-range">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-tag">Our Collection</div>
+                <h2 class="section-heading">A Floor for Every Room,<br><em>Every Budget</em></h2>
+            </div>
+            <div class="flooring-grid">
+                <div class="flooring-card reveal" data-id="carpets">
+                    <div class="flooring-card-img">
+                        <img src="./images/carpet.png" alt="Carpets">
+                    </div>
+                    <div class="flooring-card-body">
+                        <h3>Carpets</h3>
+                        <p>Plush, twist, and berber carpets crafted for comfort. Ideal for cosy living rooms, bedrooms and stairs.</p>
+                        <a href="#" data-catalogue="carpets" class="card-link">Explore Range <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="flooring-card reveal" data-id="vinyl">
+                    <div class="flooring-card-img">
+                        <img src="./images/vinyl.png" alt="Vinyl Flooring">
+                    </div>
+                    <div class="flooring-card-body">
+                        <h3>Vinyl</h3>
+                        <p>100% waterproof, durable and effortlessly cleanable. The smart choice for kitchens and bathrooms.</p>
+                        <a href="#" data-catalogue="vinyl" class="card-link">Explore Range <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="flooring-card reveal" data-id="laminate">
+                    <div class="flooring-card-img">
+                        <img src="./images/laminate.png" alt="Laminate Flooring">
+                    </div>
+                    <div class="flooring-card-body">
+                        <h3>Laminate</h3>
+                        <p>Scratch-resistant wood-look floors built for busy homes. Perfect for hallways, dining rooms and open spaces.</p>
+                        <a href="#" data-catalogue="laminate" class="card-link">Explore Range <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="flooring-card reveal" data-id="wood">
+                    <div class="flooring-card-img">
+                        <img src="./images/wood.png" alt="Wood Flooring">
+                    </div>
+                    <div class="flooring-card-body">
+                        <h3>Real Wood</h3>
+                        <p>Engineered and solid oak that adds lasting value and timeless elegance to any room in your home.</p>
+                        <a href="#" data-catalogue="wood" class="card-link">Explore Range <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div id="deals1"></div>
+    <section id="deals" class="deals-section">
+        <div class="deals-inner">
+            <div class="deals-text reveal">
+                <div class="deals-badge">Limited Time Offer</div>
+                <h2 class="deals-heading">Full House Twist<br>Carpet Package</h2>
+                <ul class="deals-list">
+                    <li><i class="fa-solid fa-check"></i> Covers up to 80 sqm</li>
+                    <li><i class="fa-solid fa-check"></i> 12 contemporary colour options</li>
+                    <li><i class="fa-solid fa-check"></i> 100% bleach-cleanable &amp; stain resistant</li>
+                    <li><i class="fa-solid fa-check"></i> Standard underlay included</li>
+                    <li><i class="fa-solid fa-check"></i> Professional fitting at discounted rate</li>
+                </ul>
+                <div class="deals-pricing">
+                    <span class="price-was">£1,450</span>
+                    <span class="price-now">£995</span>
+                </div>
+                <a href="#contact" class="btn-primary btn-lg">Claim This Deal</a>
+            </div>
+            <div class="deals-image reveal">
+                <img src="./images/specialoffer.png" alt="Twist Carpet Package">
+                <div class="deals-img-tag">Save £455</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quote" class="quote-section">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-tag">Budget Planner</div>
+                <h2 class="section-heading">Instant Cost Estimate</h2>
+                <p class="section-sub">Get a rough idea of costs in seconds. For a precise quote, book your free in-home measure.</p>
+            </div>
+            <div class="calculator reveal">
+               <div class="calc-left">
+    <h3>Your Room</h3>
+
+    <div class="calc-mode-group">
+        <button class="calc-mode-btn active" data-mode="dimensions">L × W</button>
+        <button class="calc-mode-btn" data-mode="area">Direct m²</button>
+    </div>
+
+    <div class="calc-switcher-wrap">
+
+        <div class="input-row calc-mode-panel is-active" id="calc-dim-row">
+            <div class="input-group">
+                <label for="calc-length">Length (m)</label>
+                <input type="number" id="calc-length" min="0" step="0.1" placeholder="e.g. 4.5">
+            </div>
+            <div class="input-group">
+                <label for="calc-width">Width (m)</label>
+                <input type="number" id="calc-width" min="0" step="0.1" placeholder="e.g. 3.2">
+            </div>
+        </div>
+
+        <div class="input-group calc-mode-panel" id="calc-area-row">
+            <label for="calc-area-input">Total Area (m²)</label>
+            <input type="number" id="calc-area-input" min="0" step="0.5" placeholder="e.g. 14.4">
+            <p class="calc-area-hint">Already know your room size? Enter it directly.</p>
+        </div>
+
+    </div>
+
+<div class="input-group">
+    <label>Flooring Type</label>
+
+    <select id="calc-type" style="display:none;" aria-hidden="true" tabindex="-1">
+        <option value="carpet_budget">Budget Carpet</option>
+        <option value="carpet_premium">Premium Carpet</option>
+        <option value="vinyl">Vinyl Flooring</option>
+        <option value="laminate">Laminate</option>
+        <option value="wood">Real Wood</option>
+    </select>
+
+    <div class="calc-dropdown" id="calc-dropdown" role="combobox" aria-expanded="false" aria-label="Flooring Type" tabindex="0">
+        <div class="calc-dropdown-selected">
+            <span id="calc-dropdown-label">Budget Carpet — from £5.99/m²</span>
+            <svg class="calc-dropdown-arrow" width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <ul class="calc-dropdown-list" role="listbox" id="calc-dropdown-list">
+            <li class="calc-dropdown-item is-selected" role="option" data-value="carpet_budget" aria-selected="true">Budget Carpet — from £5.99/m²</li>
+            <li class="calc-dropdown-item" role="option" data-value="carpet_premium" aria-selected="false">Premium Carpet — from £25/m²</li>
+            <li class="calc-dropdown-item" role="option" data-value="vinyl" aria-selected="false">Vinyl Flooring — from £15/m²</li>
+            <li class="calc-dropdown-item" role="option" data-value="laminate" aria-selected="false">Laminate — from £20/m²</li>
+            <li class="calc-dropdown-item" role="option" data-value="wood" aria-selected="false">Real Wood — from £45/m²</li>
+        </ul>
+    </div>
+</div>
+
+    <div class="check-group">
+        <label class="checkbox-label">
+            <input type="checkbox" id="calc-underlay">
+            <span class="checkmark"></span>
+            <span>Include standard underlay <em>(+£5/m²)</em></span>
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" id="calc-fitting">
+            <span class="checkmark"></span>
+            <span>Include professional fitting <em>(+£6/m²)</em></span>
+        </label>
+    </div>
+
+</div>
+                <div class="calc-right">
+                    <div class="calc-result-box">
+                        <div class="calc-label">Estimated Total</div>
+                        <div class="calc-total" id="calc-total">£0.00</div>
+                        <div class="calc-area">Area: <strong id="calc-area">0</strong> sqm</div>
+                        <div class="calc-breakdown" id="calc-breakdown">
+                            <div class="breakdown-row">
+                                <span>Flooring cost</span>
+                                <span id="out-flooring">£0.00</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span>Underlay</span>
+                                <span id="out-underlay">—</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span>Fitting</span>
+                                <span id="out-fitting">—</span>
+                            </div>
+                        </div>
+                        <a href="#contact" class="btn-primary" style="width:100%;text-align:center;display:block;">Book Precise Measure</a>
+                        <p class="calc-disclaimer">* Estimate only. Wastage, door bars &amp; gripper rods not included.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="gallery-section">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-tag">Portfolio</div>
+                <h2 class="section-heading">Recent Installations</h2>
+            </div>
+            <div class="gallery-grid reveal">
+                <div class="gallery-item gallery-item--tall">
+                    <img src="https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?auto=format&fit=crop&w=600&q=80" alt="Installation">
+                    <div class="gallery-overlay"><span>Living Room</span></div>
+                </div>
+                <div class="gallery-item">
+                    <img src="./images/bedroom.jpg" alt="Installation">
+                    <div class="gallery-overlay"><span>Bedroom</span></div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1615529182904-14819c35db37?auto=format&fit=crop&w=600&q=80" alt="Installation">
+                    <div class="gallery-overlay"><span>Hallway</span></div>
+                </div>
+                <div class="gallery-item gallery-item--wide">
+                    <img src="https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=900&q=80" alt="Installation">
+                    <div class="gallery-overlay"><span>Open Plan</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact-section">
+        <div class="contact-inner">
+            <div class="contact-info reveal">
+                <div class="section-tag">Get In Touch</div>
+                <h2 class="contact-heading">Ready to Transform<br><em>Your Floors?</em></h2>
+                <p class="contact-sub">Fill out the form and one of our team will be in touch within 24 hours to arrange your free, no-obligation measure.</p>
+                <div class="contact-methods">
+                    <a href="tel:07449188303" class="contact-method">
+                        <div class="method-icon"><i class="fa-solid fa-phone"></i></div>
+                        <div class="method-text">
+                            <span>Call direct</span>
+                            <strong>07449 188 303</strong>
+                        </div>
+                    </a>
+                    <a href="https://wa.me/447449188303" class="contact-method">
+                        <div class="method-icon"><i class="fa-brands fa-whatsapp"></i></div>
+                        <div class="method-text">
+                            <span>WhatsApp</span>
+                            <strong>Message our team</strong>
+                        </div>
+                    </a>
+                    <div class="contact-method">
+                        <div class="method-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                        <div class="method-text">
+                            <span>Service area</span>
+                            <strong>Leeds, Bradford, Wakefield &amp; beyond</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="contact-form-wrap reveal">
+                <form id="lead-form">
+                    <div class="form-group">
+                        <label for="f-name">Full Name *</label>
+                        <input type="text" id="f-name" name="name" placeholder="John Smith" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="f-phone">Phone *</label>
+                            <input type="tel" id="f-phone" name="phone" placeholder="07700 000 000" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="f-postcode">Postcode *</label>
+                            <input type="text" id="f-postcode" name="postcode" placeholder="LS1 1AA" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+    <label>Service Needed</label>
+
+    <select id="f-service" name="service" aria-hidden="true" tabindex="-1" style="display:none;">
+        <option value="Carpet Fitting">Carpet Fitting</option>
+        <option value="Vinyl Installation">Vinyl Installation</option>
+        <option value="Laminate / Wood">Laminate / Wood</option>
+        <option value="Not sure yet — need advice">Not sure yet — need advice</option>
+    </select>
+
+    <div class="form-dropdown" id="form-service-dropdown" role="combobox" aria-expanded="false" aria-label="Service Needed" tabindex="0">
+        <div class="form-dropdown-selected">
+            <span id="form-service-label">Carpet Fitting</span>
+            <svg class="form-dropdown-arrow" width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <ul class="form-dropdown-list" role="listbox">
+            <li class="form-dropdown-item is-selected" role="option" data-value="Carpet Fitting" aria-selected="true">Carpet Fitting</li>
+            <li class="form-dropdown-item" role="option" data-value="Vinyl Installation" aria-selected="false">Vinyl Installation</li>
+            <li class="form-dropdown-item" role="option" data-value="Laminate / Wood" aria-selected="false">Laminate / Wood</li>
+            <li class="form-dropdown-item" role="option" data-value="Not sure yet — need advice" aria-selected="false">Not sure yet — need advice</li>
+        </ul>
+    </div>
+</div>
+                    <div class="form-group">
+                        <label for="f-message">Additional Notes</label>
+                        <textarea id="f-message" rows="3" name="message" placeholder="Tell us about your project..."></textarea>
+                    </div>
+                    <div class="form-group form-group--consent">
+                        <label class="checkbox-label" for="f-consent">
+                            <input type="checkbox" id="f-consent" name="f-consent">
+                            <span class="checkmark"></span>
+                            <span>I agree to be contacted by West Yorkshire Carpets regarding my enquiry.</span>
+                        </label>
+                    </div>
+                    <div style="position:absolute;left:-9999px;opacity:0;" aria-hidden="true">
+                        <input type="text" id="f-website" name="website" 
+                               autocomplete="off" tabindex="-1">
+                    </div>
+
+                    <button type="submit" class="btn-primary btn-submit">
+                        <span>Send Request</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                    <p class="form-note">We'll respond within 24 hours. No spam, no pressure.</p>
+                </form>
+            </div>
+        </div>
+    </section>
+    <section class="insta-section">
+    <div class="container">
+        <div class="insta-header reveal">
+            <div>
+                <div class="section-tag">Follow Our Work</div>
+                <h2 class="insta-headline">Fresh Installs,<br><em>Every Week</em></h2>
+            </div>
+            <a href="https://www.tiktok.com/@14northgateroad"
+               target="_blank" rel="noopener noreferrer"
+               class="insta-handle">
+                <i class="fa-brands fa-tiktok"></i>
+                @14northgateroad
+            </a>
+        </div>
+
+        <div class="insta-grid reveal">
+            <a href="https://www.tiktok.com/@14northgateroad" target="_blank" rel="noopener noreferrer" class="insta-item">
+                <img src="./images/bedroom.jpg" alt="Recent carpet installation" loading="lazy">
+                <div class="insta-item-overlay">
+                    <i class="fa-brands fa-tiktok"></i>
+                    <span>View</span>
+                </div>
+            </a>
+            <a href="https://www.tiktok.com/@14northgateroad" target="_blank" rel="noopener noreferrer" class="insta-item">
+                <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=400&q=80" alt="Laminate installation" loading="lazy">
+                <div class="insta-item-overlay">
+                    <i class="fa-brands fa-tiktok"></i>
+                    <span>View</span>
+                </div>
+            </a>
+            <a href="https://www.tiktok.com/@14northgateroad" target="_blank" rel="noopener noreferrer" class="insta-item">
+                <img src="https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=400&q=80" alt="Open plan flooring" loading="lazy">
+                <div class="insta-item-overlay">
+                    <i class="fa-brands fa-tiktok"></i>
+                    <span>View</span>
+                </div>
+            </a>
+            <a href="https://www.tiktok.com/@14northgateroad" target="_blank" rel="noopener noreferrer" class="insta-item">
+                <img src="https://images.unsplash.com/photo-1615529182904-14819c35db37?auto=format&fit=crop&w=400&q=80" alt="Hallway vinyl" loading="lazy">
+                <div class="insta-item-overlay">
+                    <i class="fa-brands fa-tiktok"></i>
+                    <span>View</span>
+                </div>
+            </a>
+            <a href="https://www.tiktok.com/@14northgateroad" target="_blank" rel="noopener noreferrer" class="insta-item">
+                <img src="https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?auto=format&fit=crop&w=400&q=80" alt="Living room carpet" loading="lazy">
+                <div class="insta-item-overlay">
+                    <i class="fa-brands fa-tiktok"></i>
+                    <span>View</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="insta-cta-row reveal">
+            <div class="insta-offer-pill">
+                <i class="fa-solid fa-tag"></i>
+                <span>Show us your room on TikTok &amp; get <strong>5% off</strong> your fitting — just mention @14northgateroad</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="logo">
+                <img 
+            src="images/logo.svg" 
+            alt="West Yorkshire Carpets logo"
+            class="h-10 w-auto object-contain"
+            loading="eager"
+        />
+            </div>
+                <p>Premium flooring supply &amp; fitting across West Yorkshire. Family-run, locally trusted.</p>
+            </div>
+            <div class="footer-links-col">
+                <h5>Flooring</h5>
+                <a href="#range">Carpets</a>
+                <a href="#range">Vinyl</a>
+                <a href="#range">Laminate</a>
+                <a href="#range">Real Wood</a>
+            </div>
+            <div class="footer-links-col">
+                <h5>Company</h5>
+                <a href="#deals">Weekly Deals</a>
+                <a href="#quote">Quote Calculator</a>
+                <a href="#contact">Contact Us</a>
+                <a href="#">Privacy Policy</a>
+            </div>
+            <div class="footer-contact-col">
+                <h5>Contact</h5>
+                <a href="tel:07449188303"><i class="fa-solid fa-phone"></i> 07449 188 303</a>
+                <a href="https://maps.app.goo.gl/iVSDdfF5xwyA6pQB6" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-map-pin"></i> West Yorkshire, UK</a>
+                <a href="https://www.tiktok.com/@14northgateroad" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-tiktok"></i> @14northgateroad</a>
+                <a href="https://www.facebook.com/14northgateroad" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook-f"></i> @14northgateroad</a>
+            </div> 
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 West Yorkshire Carpets. All rights reserved.</p>
+            <div class="footer-legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <div class="mobile-cta" id="mobile-cta">
+        <a href="tel:07449188303" class="mcta-btn mcta-phone">
+            <i class="fa-solid fa-phone"></i>
+            <span>Call Now</span>
+        </a>
+        <a href="#quote" class="mcta-btn mcta-quote">
+            <i class="fa-solid fa-calculator"></i>
+            <span>Get Quote</span>
+        </a>
+    </div>
+
+    <script src="./js/script.js"></script>
+    <script src="./js/form-handler.js"></script>
+    <script src="./js/catalogue.js"></script>
+    <div id="cat-overlay"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="cat-title"
+         aria-hidden="true"
+         hidden>
+
+        <div class="cat-backdrop" id="cat-backdrop" aria-hidden="true"></div>
+
+        <div id="cat-panel" role="document">
+
+            <div class="cat-header" role="banner">
+
+                <div class="cat-header-top">
+                    <div class="cat-header-left">
+                        <button id="cat-close"
+                                type="button"
+                                aria-label="Close catalogue">
+                            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                        </button>
+                        <div class="cat-title-group">
+                            <span id="cat-title">Our Range</span>
+                            <span id="cat-desc">Browse our complete collection of premium flooring</span>
+                        </div>
+                    </div>
+                    <div class="cat-header-right">
+    <span id="cat-count" aria-live="polite" aria-atomic="true"></span>
+
+    <select id="cat-sort" aria-hidden="true" tabindex="-1" style="display:none;">
+        <option value="default">Featured</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="name">Name: A–Z</option>
+    </select>
+
+    <div class="cat-sort-dropdown" id="cat-sort-dropdown" role="combobox" aria-expanded="false" aria-label="Sort products" tabindex="0">
+        <div class="cat-sort-selected">
+            <span id="cat-sort-label">Featured</span>
+            <svg class="cat-sort-arrow" width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <ul class="cat-sort-list" role="listbox">
+            <li class="cat-sort-item is-selected" role="option" data-value="default" aria-selected="true">Featured</li>
+            <li class="cat-sort-item" role="option" data-value="price-asc" aria-selected="false">Price: Low to High</li>
+            <li class="cat-sort-item" role="option" data-value="price-desc" aria-selected="false">Price: High to Low</li>
+            <li class="cat-sort-item" role="option" data-value="name" aria-selected="false">Name: A–Z</li>
+        </ul>
+    </div>
+
+</div>
+                </div>
+
+                <div class="cat-filters" role="toolbar" aria-label="Filter products">
+
+                    <div id="cat-tabs" role="tablist" aria-label="Filter by category">
+                        <button class="cat-tab is-active" data-cat="all"      role="tab" aria-selected="true">All</button>
+                        <button class="cat-tab"           data-cat="carpets"  role="tab" aria-selected="false">Carpets</button>
+                        <button class="cat-tab"           data-cat="vinyl"    role="tab" aria-selected="false">Vinyl</button>
+                        <button class="cat-tab"           data-cat="laminate" role="tab" aria-selected="false">Laminate</button>
+                        <button class="cat-tab"           data-cat="wood"     role="tab" aria-selected="false">Wood</button>
+                        <button class="cat-tab cat-tab--deals" data-cat="deals" role="tab" aria-selected="false">Deals 🔥</button>
+                    </div>
+
+                    <div id="cat-price-filters" aria-label="Filter by price">
+                        <button class="cat-price-btn is-active" data-price="all"     type="button">All Prices</button>
+                        <button class="cat-price-btn"           data-price="budget"  type="button">Budget &lt;£20</button>
+                        <button class="cat-price-btn"           data-price="mid"     type="button">£20–£40</button>
+                        <button class="cat-price-btn"           data-price="premium" type="button">Premium £40+</button>
+                    </div>
+
+                </div>
+            </div>
+
+        <div id="cat-body" role="main">
+    
+        <div id="cat-grid"
+                role="list"
+                aria-label="Flooring products"
+                aria-live="polite"
+                aria-atomic="false">
+        </div>
+
+        <div id="cat-empty" hidden aria-live="assertive">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                <p>No products match your current filters.</p>
+                <button id="cat-reset-btn" class="btn-primary" type="button">
+                    Clear All Filters
+                 </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="cat-qv"
+             role="dialog"
+             aria-modal="true"
+             aria-label="Product quick view"
+             hidden>
+            <div id="cat-qv-panel">
+            </div>
+        </div>
+    </div>
+
+    <div id="cat-toast" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div id="lightbox-overlay" hidden aria-modal="true" role="dialog" aria-label="Image viewer">
+        <button id="lightbox-close" aria-label="Close image viewer">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+        <button id="lightbox-prev" class="lightbox-nav" aria-label="Previous image">
+            <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+        </button>
+        <button id="lightbox-next" class="lightbox-nav" aria-label="Next image">
+            <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+        </button>
+        <div class="lightbox-inner">
+            <img id="lightbox-img" src="" alt="">
+        <div class="lightbox-footer">
+                <span id="lightbox-caption"></span>
+                <span id="lightbox-counter"></span>
+        </div>
+        </div>
+    </div>
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <div class="lightbox__backdrop"></div>
+
+  <div class="lightbox__content">
+    <button class="lightbox__close" aria-label="Close image">×</button>
+    <img class="lightbox__img" src="" alt="">
+    <div class="lightbox__caption"></div>
+  </div>
+</div>
+</body>
+</html>
