@@ -417,8 +417,7 @@ module.exports = (db) => {
             }
             const headers = Object.keys(rows[0]);
             const escape  = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
-            const csv     = [headers.join(','), ...rows.map(r => headers.map(h => escape(r[h])).join(','))].join('
-');
+            const csv     = [headers.join(','), ...rows.map(r => headers.map(h => escape(r[h])).join(','))].join('\n');
             res.setHeader('Content-Type', 'text/csv');
             res.setHeader('Content-Disposition', `attachment; filename="wyc-leads-${new Date().toISOString().split('T')[0]}.csv"`);
             res.send(csv);
