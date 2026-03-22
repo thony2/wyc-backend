@@ -383,15 +383,9 @@ footer{background:var(--black);padding:0;padding-bottom:calc(var(--fab-h) + 32px
 
 @media(max-width:380px){.fab-btn--wa-text{display:none}}
 
-/* Desktop FAB: uncrop breakdown, payment always visible on desktop */
-@media(min-width:1025px){
-  .fab-payment{display:flex}
-  .fab-breakdown{max-width:none;flex:1;overflow:hidden;text-overflow:ellipsis}
-  .fab-left{gap:16px;flex:1;min-width:0}
+/* PDF button — hide text on mobile like WhatsApp */
+@media(max-width:768px){
+  .fab-btn--pdf-text{display:none}
+  #fab-pdf-btn{width:52px;padding:0;border-radius:12px;display:flex;align-items:center;justify-content:center}
+  .fab-actions{grid-template-columns:52px 52px 1fr}
 }
-
-/* Dimension inputs: equal height for length and width buttons */
-.dim-grid{align-items:stretch}
-.dim-field{justify-content:flex-end}
-.dim-width-btns{height:56px}
-.dim-w-btn{height:56px;display:flex;align-items:center;justify-content:center;padding:0}

@@ -556,6 +556,10 @@ function buildProductPage(p) {
         <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
         <span class="fab-btn--wa-text">WhatsApp</span>
       </a>
+      <button class="fab-btn fab-btn--secondary" id="fab-pdf-btn" type="button" aria-label="Download quote as PDF" disabled>
+        <i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i>
+        <span class="fab-btn--pdf-text">Quote PDF</span>
+      </button>
       <a href="/?product=${encodeURIComponent(p.name)}&price=${price}&category=${catSlug}#contact"
         class="fab-btn fab-btn--primary" id="fab-measure">
         <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
@@ -627,6 +631,7 @@ function buildProductPage(p) {
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="/js/product-page.js"></script>
 
 </body>

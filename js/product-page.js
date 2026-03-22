@@ -171,6 +171,26 @@ function updateCalc() {
     fab.classList.add('fab--visible');
     fab.classList.remove('fab--ghost');
   }
+
+  // Update Book Free Measure href with receipt params
+  var measureBtn = document.getElementById('fab-measure');
+  if (measureBtn && length > 0) {
+    var productName = document.querySelector('.product-name') ? document.querySelector('.product-name').textContent.trim() : '';
+    var params = new URLSearchParams();
+    params.set('product',  productName);
+    params.set('price',    (area * PRICE).toFixed(2));
+    params.set('area',     area);
+    params.set('width',    width);
+    params.set('flooring', flooring.toFixed(2));
+    params.set('underlay', underlay.toFixed(2));
+    params.set('fitting',  fitting.toFixed(2));
+    params.set('total',    total.toFixed(2));
+    measureBtn.href = '/?' + params.toString() + '#contact';
+  }
+
+  // Enable/disable PDF button
+  var pdfBtn = document.getElementById('fab-pdf-btn');
+  if (pdfBtn) pdfBtn.disabled = length <= 0;
 }
 
 // Drawer receipt updater
@@ -258,7 +278,164 @@ document.addEventListener('keydown', function (e) {
 
 updateCalc();
 
+
+// PDF download
+function downloadQuotePDF() {
+  if (typeof window.jspdf === 'undefined') {
+    alert('PDF library loading — please try again in a moment.');
+    return;
+  }
+  var jsPDF = window.jspdf.jsPDF;
+  var lenInput = document.getElementById('fp-length');
+  var length = lenInput ? (parseFloat(lenInput.value) || 0) : 0;
+  if (length <= 0) return;
+
+  var area     = parseFloat((length * width).toFixed(2));
+  var underlayRow = document.querySelector('.addon-row[data-type="underlay"]');
+  var fittingRow  = document.querySelector('.addon-row[data-type="fitting"]');
+  var underlayOn  = underlayRow && underlayRow.classList.contains('active');
+  var fittingOn   = fittingRow  && fittingRow.classList.contains('active');
+  var flooring = area * PRICE;
+  var underlay = underlayOn ? area * 5 : 0;
+  var fitting  = fittingOn  ? area * FITTING : 0;
+  var total    = flooring + underlay + fitting;
+
+  var productName = document.querySelector('.product-name') ? document.querySelector('.product-name').textContent.trim() : 'Product';
+  var imgUrl = document.getElementById('product-main-img') ? document.getElementById('product-main-img').src : '';
+  var colourName = document.getElementById('step-swatch-name') ? document.getElementById('step-swatch-name').textContent.trim() : '';
+
+  var now     = new Date();
+  var validTo = new Date(now); validTo.setDate(validTo.getDate() + 30);
+  var fmtDate = function(d) { return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }); };
+  var refNo   = 'WYC-' + now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + '-' + String(Math.floor(Math.random()*9000)+1000);
+
+  var doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  var W = 210, H = 297, lm = 16, rm = 16;
+  var cw = W - lm - rm;
+  var col2x = lm + cw * 0.55 + 6;
+  var col1w = cw * 0.55;
+  var col2w = cw * 0.45 - 6;
+
+  var ink    = [26,23,20], ink2 = [92,87,79], ink3 = [156,149,137];
+  var red    = [224,48,64], border = [232,227,217], bg = [248,249,250], white = [255,255,255];
+
+  var setC = function(r,g,b) { doc.setTextColor(r,g,b); };
+  var setF = function(r,g,b) { doc.setFillColor(r,g,b); };
+  var setD = function(r,g,b) { doc.setDrawColor(r,g,b); };
+  var rule  = function(x1,y1,x2,y2,lw) { lw = lw || 0.3; doc.setLineWidth(lw); setD.apply(null,border); doc.line(x1,y1,x2,y2); };
+  var label = function(txt,x,y) { doc.setFont('helvetica','bold'); doc.setFontSize(7); setC.apply(null,ink3); doc.text(txt.toUpperCase(),x,y); };
+
+  setF.apply(null,red); doc.rect(0,0,W,3,'F');
+
+  doc.setFont('helvetica','bold'); doc.setFontSize(18); setC.apply(null,ink);
+  doc.text('Estimate', W-rm, 14, { align:'right' });
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); setC.apply(null,ink3);
+  doc.text('Ref: ' + refNo, W-rm, 20, { align:'right' });
+
+  rule(lm,25,W-rm,25,0.3);
+
+  var y = 31;
+  label('Date',lm,y); label('Valid Until',lm+50,y); label('Prepared For',lm+110,y);
+  y += 5;
+  doc.setFont('helvetica','normal'); doc.setFontSize(8.5); setC.apply(null,ink);
+  doc.text(fmtDate(now),lm,y);
+  doc.text(fmtDate(validTo),lm+50,y);
+  doc.text('Customer Copy',lm+110,y);
+  rule(lm,y+4,W-rm,y+4,0.3);
+  y += 10;
+
+  var bodyTop = y;
+
+  label('Product',lm,y); y += 5;
+  doc.setFont('helvetica','bold'); doc.setFontSize(14); setC.apply(null,ink);
+  doc.text(productName,lm,y,{ maxWidth:col1w }); y += 7;
+
+  if (colourName) {
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); setC.apply(null,ink2);
+    doc.text('Colour: ' + colourName,lm,y); y += 5;
+  }
+
+  y += 2;
+  setF.apply(null,red); doc.roundedRect(lm,y,38,7,2,2,'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(9); setC.apply(null,white);
+  doc.text('£' + PRICE.toFixed(2) + ' / m²',lm+19,y+4.8,{ align:'center' });
+  y += 12;
+
+  rule(lm,y,lm+col1w,y); y += 6;
+  label('Room Measurements',lm,y); y += 5;
+  doc.setFont('helvetica','normal'); doc.setFontSize(10); setC.apply(null,ink);
+  doc.text(length + ' m  ×  ' + width + ' m',lm,y); y += 5;
+  doc.text('Total area: ' + area + ' m²',lm,y); y += 10;
+
+  rule(lm,y,lm+col1w,y); y += 6;
+  label('Price Breakdown',lm,y); y += 6;
+
+  var bRows = [
+    { label: 'Flooring (£' + PRICE.toFixed(2) + '/m²)', val: '£' + flooring.toFixed(2), main: true },
+    { label: 'Underlay (+£5.00/m²)', val: underlayOn ? '£' + underlay.toFixed(2) : 'Not included', main: false },
+    { label: 'Fitting (+£' + FITTING.toFixed(2) + '/m²)', val: fittingOn ? '£' + fitting.toFixed(2) : 'Not included', main: false }
+  ];
+  bRows.forEach(function(row) {
+    doc.setFont('helvetica', row.main ? 'bold' : 'normal');
+    doc.setFontSize(9.5);
+    setC.apply(null, row.main ? ink : ink2);
+    doc.text(row.label,lm,y);
+    doc.text(row.val,lm+col1w,y,{ align:'right' });
+    rule(lm,y+2,lm+col1w,y+2,0.2); y += 8;
+  });
+
+  y += 2;
+  setF.apply(null,bg); doc.roundedRect(lm,y,col1w,18,3,3,'F');
+  setD.apply(null,border); doc.setLineWidth(0.5); doc.roundedRect(lm,y,col1w,18,3,3,'S');
+  doc.setFont('helvetica','bold'); doc.setFontSize(8.5); setC.apply(null,ink2);
+  doc.text('ESTIMATED TOTAL',lm+5,y+7);
+  doc.setFont('helvetica','normal'); doc.setFontSize(7.5); setC.apply(null,ink3);
+  doc.text('inc. selected extras',lm+5,y+12);
+  doc.setFont('helvetica','bold'); doc.setFontSize(18); setC.apply(null,red);
+  doc.text('£' + total.toFixed(2),lm+col1w-5,y+12,{ align:'right' });
+  y += 24;
+
+  setF.apply(null,red); doc.rect(0,H-16,W,0.8,'F');
+  setF(26,23,20); doc.rect(0,H-15.2,W,15.2,'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(8.5); setC.apply(null,white);
+  doc.text('Ready to book? Call 07449 188 303 or visit westyorkshirecarpets.com',W/2,H-9,{ align:'center' });
+  doc.setFont('helvetica','normal'); doc.setFontSize(7); setC.apply(null,ink3);
+  doc.text('Free measuring · Professional fitting · West Yorkshire · This estimate is valid for 30 days',W/2,H-4.5,{ align:'center' });
+
+  var safeName = productName.replace(/[^a-z0-9]/gi,'-').toLowerCase();
+  var fileName = 'wyc-estimate-' + safeName + '.pdf';
+
+  var embedImg = function(onDone) {
+    if (!imgUrl) { onDone(); return; }
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function() {
+      try {
+        var canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+        canvas.getContext('2d').drawImage(img,0,0);
+        doc.addImage(canvas.toDataURL('image/jpeg',0.88),'JPEG',col2x,bodyTop,col2w,58,undefined,'FAST');
+      } catch(e) {}
+      onDone();
+    };
+    img.onerror = function() { onDone(); };
+    img.src = imgUrl + (imgUrl.includes('?') ? '&' : '?') + '_pdf=1';
+  };
+
+  embedImg(function() {
+    doc.save(fileName);
+  });
+}
+
 // Also available
+// Wire PDF button
+var pdfBtn = document.getElementById('fab-pdf-btn');
+if (pdfBtn) {
+  pdfBtn.addEventListener('click', function() {
+    downloadQuotePDF();
+  });
+}
+
 var alsoSection = document.getElementById('also-section');
 if (!alsoSection) return;
 
