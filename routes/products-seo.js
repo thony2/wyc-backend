@@ -346,10 +346,10 @@ function buildProductPage(p) {
         fetchpriority="high"
       >
       ${colours.length > 1 ? `
-      <div class="swatches-block">
-        <div class="swatches-row"><span class="swatches-heading">Colour</span><span class="swatch-label" id="swatch-label">${colours[0]?.name || ''}</span></div>
-        <div class="product-swatches" role="list" aria-label="Available colours">${coloursHTML}</div>
+      <div class="product-swatches" role="list" aria-label="Available colours">
+        ${coloursHTML}
       </div>
+      <p class="swatch-label" id="swatch-label">${colours[0]?.name || ''}</p>
       ` : ''}
 
       <!-- Price Calculator -->
@@ -358,7 +358,6 @@ function buildProductPage(p) {
           <div class="pp-calc-title"><i class="fa-solid fa-calculator" aria-hidden="true"></i> Price Calculator</div>
           <p class="pp-calc-sub">Pre-loaded with <strong>£${price}/m²</strong></p>
         </div>
-        <div class="pp-calc-body">
         <div class="pp-calc-mode">
           <button class="pp-mode-btn active" data-mode="dims" type="button">Length × Width</button>
           <button class="pp-mode-btn" data-mode="area" type="button">Total m²</button>
@@ -401,19 +400,16 @@ function buildProductPage(p) {
         <a href="/?product=${encodeURIComponent(p.name)}&price=${price}&category=${catSlug}#contact" class="pp-calc-cta" id="pp-cta">
           <i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Book Free Measure
         </a>
-        </div>
       </div>
     </div>
 
     <!-- Detail column -->
     <div class="product-detail">
-      <div class="product-eyebrow-row">
-        ${p.badge && p.badge_type ? `<span class="product-badge badge--${p.badge_type}">${p.badge}</span>` : ''}
-        <span class="product-cat-label">${catLabel}</span>
-      </div>
+      ${p.badge && p.badge_type ? `<div class="product-badge badge--${p.badge_type}">${p.badge}</div>` : ''}
+      <div class="product-cat-label">${catLabel}</div>
       <h1 class="product-name">${p.name}</h1>
 
-      <div class="product-price-block">
+      <div class="product-price-row">
         <div class="product-price">£${price}<small>/m²</small></div>
         ${wasPrice ? `<span class="product-was">£${wasPrice}</span>` : ''}
         ${saving ? `<span class="product-save">Save £${saving}</span>` : ''}
@@ -427,26 +423,18 @@ function buildProductPage(p) {
 
       <!-- CTA block -->
       <div class="cta-block">
-        <div class="cta-header">
-          <div class="cta-header-icon"><i class="fa-solid fa-tag" aria-hidden="true"></i></div>
-          <span class="cta-header-title">Get a Quote</span>
+        <div class="cta-title">Get a Quote for This Product</div>
+        <div class="cta-sub">Free in-home measure included. We come to you anywhere in West Yorkshire — no obligation.</div>
+        <div class="cta-buttons">
+          <a href="${PHONE_HREF}" class="btn-cta-primary"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call ${PHONE}</a>
+          <a href="https://wa.me/447449188303?text=Hi%2C+I%27m+interested+in+${encodeURIComponent(p.name)}+flooring" target="_blank" rel="noopener noreferrer" class="btn-cta-secondary"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp Us</a>
+          <a href="/?product=${encodeURIComponent(p.name)}&price=${price}&category=${catSlug}#contact" class="btn-cta-secondary"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Book Free Measure Online</a>
         </div>
-        <div class="cta-body">
-          <div>
-            <div class="cta-title">Interested in ${p.name}?</div>
-            <div class="cta-sub">Free in-home measure included. We come to you anywhere in West Yorkshire — no obligation.</div>
-          </div>
-          <div class="cta-buttons">
-            <a href="${PHONE_HREF}" class="btn-cta-primary"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call ${PHONE}</a>
-            <a href="https://wa.me/447449188303?text=Hi%2C+I%27m+interested+in+${encodeURIComponent(p.name)}+flooring" target="_blank" rel="noopener noreferrer" class="btn-cta-secondary"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp Us</a>
-            <a href="/?product=${encodeURIComponent(p.name)}&price=${price}&category=${catSlug}#contact" class="btn-cta-secondary"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Book Free Measure Online</a>
-          </div>
-          <p class="cta-note">We respond within 24 hours. No spam, no pressure.</p>
-        </div>
+        <p class="cta-note">We respond within 24 hours. No spam, no pressure.</p>
       </div>
 
       <!-- Specs -->
-      ${specsHTML ? `<div class="micro-label">Specifications</div>${specsHTML}` : ''}
+      ${specsHTML ? `<div class="specs-title">Specifications</div>${specsHTML}` : ''}
 
     </div>
   </div>
