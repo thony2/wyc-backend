@@ -611,3 +611,28 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
 @media(max-width:380px){
   .fab-btn--wa-text{display:none}
 }
+
+/* ── Section micro-labels ─────────────────────────────────────────────────── */
+.feat-grid::before{
+  content:"You'll love it because";
+  display:block;width:100%;
+  font-size:.65rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-4);
+  margin-bottom:8px;
+}
+.rooms-row::before{
+  content:"Suitable for";
+  display:block;width:100%;
+  font-size:.65rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-4);
+  margin-bottom:8px;
+}
+
+/* ── Performance bars wider on mobile ────────────────────────────────────── */
+@media(max-width:900px){
+  .perf-block{width:100%}
+  .perf-bars{flex:1;min-width:0}
+  .perf-label{width:64px;font-size:.62rem}
+  .perf-val{width:44px;font-size:.72rem}
+  .bar-seg{height:6px}
+}
