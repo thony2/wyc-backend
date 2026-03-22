@@ -439,11 +439,6 @@ function buildProductPage(p) {
       <!-- Description -->
       ${p.description ? `<p class="product-desc">${p.description}</p>` : ''}
 
-      <!-- Features -->
-      ${featuresHTML ? `<div class="feat-grid" aria-label="Product features">${featuresHTML}</div>` : ''}
-
-      <!-- Rooms -->
-      ${roomsHTML ? `<div class="rooms-row" aria-label="Suitable for">${roomsHTML}</div>` : ''}
 
       <!-- Step 01: Colour (only if there are swatches) -->
       ${colours.length > 1 ? `
