@@ -663,9 +663,9 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
 }
 
 /* ── Like & Share ────────────────────────────────────────────────────────── */
-.product-name-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.product-name-row .product-name{flex:1}
-.product-actions{display:flex;align-items:center;gap:8px;padding-top:8px;flex-shrink:0}
+
+
+
 .action-btn{
   display:flex;align-items:center;gap:5px;
   padding:8px 12px;
@@ -682,16 +682,6 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
 .action-btn.liked i{color:var(--red)}
 .like-count{font-size:.75rem}
 
-/* ── Like/share position fix ─────────────────────────────────────────────── */
-.product-name-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.product-name-row .product-name{flex:1;order:1}
-.product-actions{order:2;padding-top:6px;flex-shrink:0}
-
-/* ── Concept layout fixes ────────────────────────────────────────────────── */
-/* Fitting inline with price */
-.fitting-line{display:none}
-.fitting-inline{
-  display:flex;align-items:center;gap:6px;
   font-size:.8rem;color:var(--ink-4);
   white-space:nowrap;align-self:flex-end;padding-bottom:4px;
 }
@@ -734,23 +724,14 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
 }
 
 /* Like/share position — right of name */
-.product-name-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:0!important;
-}
-.product-name-row .product-name{flex:1;margin-bottom:0!important}
-.product-actions{
-  display:flex;align-items:center;gap:8px;
-  flex-shrink:0;padding-top:0;
-}
+
+
+
 
 /* ── Name row order + share button fix ──────────────────────────────────── */
 .rating-row{order:1!important}
 .product-eyebrow{order:2!important}
-.product-name-row{order:3!important}
+
 
 /* Share button — icon only, no border */
 #share-btn{
@@ -761,19 +742,45 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
 }
 #share-btn:hover{color:var(--ink);background:none;border:none}
 
-/* ── Like/share — right aligned, not touching name ───────────────────────── */
-.product-name-row{align-items:center}
-.product-actions{margin-left:auto;padding-top:0}
-.action-btn{padding:7px 11px}
-
-/* ── Like/share absolute right — fully independent of name ───────────────── */
-.product-name-row{position:relative;padding-right:100px}
-.product-name-row .product-name{width:100%}
-.product-actions{
-  position:absolute;
   top:50%;right:0;
   transform:translateY(-50%);
   display:flex;flex-direction:column;
   align-items:flex-end;gap:6px;
   margin-left:0;
 }
+
+/* ── Like/share — stacked right, same margin as left edge ───────────────── */
+.product-name-row{
+  display:flex;
+  flex-direction:row;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+}
+.product-name-row .product-name{
+  flex:1;
+  min-width:0;
+}
+.product-actions{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:8px;
+  flex-shrink:0;
+  padding-top:6px;
+}
+.action-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:7px 12px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:100px;
+  font-size:.78rem;font-weight:600;color:var(--ink-2);
+  cursor:pointer;transition:all var(--t);
+  font-family:inherit;
+  white-space:nowrap;
+}
+.action-btn:hover{border-color:var(--border-2);background:var(--white)}
+.action-btn i{font-size:.82rem}
+.action-btn.liked{color:var(--red);border-color:rgba(224,48,64,.2);background:rgba(224,48,64,.05)}
+.like-count{font-size:.75rem}
