@@ -635,3 +635,9 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
   .feat-grid{margin-bottom:12px}
   .rooms-row{margin-bottom:20px}
 }
+
+/* ── Room icons blue, width buttons red, dimensions spacing ─────────────── */
+.room-chip i{color:var(--navy)!important}
+.dim-w-btn.active{background:var(--red)!important;border-color:var(--red)!important;color:var(--white)!important}
+.step-body{padding:20px 22px 24px}
+.dim-grid{margin-top:4px;gap:16px}
