@@ -760,3 +760,8 @@ footer{padding-bottom:calc(var(--fab-h) + 32px)!important}
   color:var(--ink-3);
 }
 #share-btn:hover{color:var(--ink);background:none;border:none}
+
+/* ── Like/share — right aligned, not touching name ───────────────────────── */
+.product-name-row{align-items:center}
+.product-actions{margin-left:auto;padding-top:0}
+.action-btn{padding:7px 11px}
