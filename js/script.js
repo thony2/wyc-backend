@@ -4,7 +4,6 @@ const PRICING = {
         carpet_premium: { rate: 25  },
         vinyl_standard: { rate: 8.50 },
         vinyl_premium:  { rate: 16   },
-        vinyl:          { rate: 15  },
         laminate:       { rate: 20  },
         wood:           { rate: 45  },
     },
@@ -98,12 +97,22 @@ function calculateQuote() {
     if (outFitting)  outFitting.textContent  = formatGBP(fittingCost);
 }
 
-[calcLength, calcWidth, calcAreaIn, calcType, calcUnderlay, calcFitting]
+[calcLength, calcAreaIn, calcType, calcUnderlay, calcFitting]
     .filter(Boolean)
     .forEach(el => {
         el.addEventListener('input',  calculateQuote);
         el.addEventListener('change', calculateQuote);
     });
+
+// Width selector buttons
+document.querySelectorAll('.calc-width-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.calc-width-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if (calcWidth) calcWidth.value = btn.dataset.width;
+        calculateQuote();
+    });
+});
 
 if (dimRow)  dimRow.classList.add('is-active');
 if (areaRow) areaRow.classList.remove('is-active');

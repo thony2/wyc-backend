@@ -1,738 +1,480 @@
-<!-- ═══════════════════════════════════════════════════════════════════════════
-     IMPORT CATALOGUE SECTION
-     ─────────────────────────────────────────────────────────────────────────
-     HOW TO INSTALL IN admin/index.html
-     ─────────────────────────────────────────────────────────────────────────
-     1. Find the existing Import Catalogue section div — look for
-        id="importSection" or the nav item labelled "Import Catalogue"
-     2. Delete that entire section div (from opening <div id="importSection">
-        to its closing </div>)
-     3. Paste this entire file in its place
-     4. The <style> and <script> blocks below are self-contained — they do
-        not need to go in <head> or at the bottom of the file; inline is fine
-        for a single-file admin panel
-     ═══════════════════════════════════════════════════════════════════════════ -->
+<div id="import-section" style="display:none;background:#f5f0eb;min-height:100vh;padding:32px;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
 
-<div id="importSection" class="section" style="display:none">
+<h1 style="font-size:22px;font-weight:700;color:#1a2332;margin:0 0 4px;">Import Catalogue</h1>
+<p style="font-size:14px;color:#6b7280;margin:0 0 24px;">Paste a product URL from any supported supplier. We'll scrape the data automatically and let you review before importing.</p>
 
-  <style>
-    .imp-page-header { margin-bottom: 24px; }
-    .imp-page-header h1 { font-size: 22px; font-weight: 700; color: var(--ink); margin: 0 0 4px; }
-    .imp-page-header p  { font-size: 14px; color: var(--ink-3); margin: 0; }
+<!-- Supported suppliers pill row -->
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;">
+  <span style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;align-self:center;margin-right:4px;">Supported:</span>
+  <span style="padding:4px 10px;background:#fff;border:1px solid #e5e7eb;border-radius:20px;font-size:12px;color:#1a2332;">🟢 Carpet Line Direct</span>
+  <span style="padding:4px 10px;background:#fff;border:1px solid #e5e7eb;border-radius:20px;font-size:12px;color:#1a2332;">🟡 Victoria Carpets</span>
+  <span style="padding:4px 10px;background:#fff;border:1px solid #e5e7eb;border-radius:20px;font-size:12px;color:#1a2332;">🟡 Cormar Carpets</span>
+  <span style="padding:4px 10px;background:#fff;border:1px solid #e5e7eb;border-radius:20px;font-size:12px;color:#1a2332;">🟡 Woodpecker</span>
+  <span style="padding:4px 10px;background:#fff;border:1px solid #e5e7eb;border-radius:20px;font-size:12px;color:#1a2332;">🟡 Karndean</span>
+  <span style="padding:4px 10px;background:#fff;border:1px solid #e5e7eb;border-radius:20px;font-size:12px;color:#1a2332;">🟡 Quick-Step / Egger / Kronotex</span>
+  <span style="padding:4px 10px;background:#f5f0eb;border:1px solid #e5e7eb;border-radius:20px;font-size:12px;color:#9ca3af;">🟢 = full auto &nbsp; 🟡 = text auto, images manual</span>
+</div>
 
-    .imp-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 20px;
-    }
-    .imp-card-title { font-size: 15px; font-weight: 700; color: var(--ink); margin: 0 0 6px; }
-    .imp-hint { font-size: 13px; color: var(--ink-3); margin: 0 0 20px; }
-
-    .imp-source-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      font-size: 12px;
-      color: var(--ink-3);
-      margin-bottom: 20px;
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .imp-req { color: var(--red); margin-left: 2px; }
-    .imp-opt { font-size: 11px; color: var(--ink-3); font-weight: 400; margin-left: 4px; }
-
-    .imp-url-row { display: flex; gap: 10px; align-items: stretch; }
-    .imp-url-input {
-      flex: 1;
-      padding: 10px 14px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 14px;
-      color: var(--ink);
-      outline: none;
-      transition: border-color .15s, box-shadow .15s;
-    }
-    .imp-url-input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(224,48,64,.1); }
-
-    .imp-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 10px 20px;
-      border: 1px solid transparent;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity .15s, background .15s;
-      white-space: nowrap;
-    }
-    .imp-btn:disabled           { opacity: .5; cursor: not-allowed; }
-    .imp-btn-primary            { background: var(--red); color: #fff; border-color: var(--red); }
-    .imp-btn-primary:hover:not(:disabled) { opacity: .88; }
-    .imp-btn-ghost              { background: transparent; color: var(--ink-2); border-color: var(--border); }
-    .imp-btn-ghost:hover:not(:disabled)   { background: var(--surface); }
-    .imp-btn-large              { padding: 14px 32px; font-size: 15px; border-radius: 10px; }
-
-    .imp-error {
-      margin-top: 12px;
-      padding: 11px 14px;
-      background: #fff3f4;
-      border: 1px solid #fcc;
-      border-radius: 8px;
-      color: #c0392b;
-      font-size: 13px;
-    }
-
-    .imp-loading {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 28px 24px;
-      color: var(--ink-2);
-      font-size: 14px;
-    }
-    .imp-spinner {
-      width: 26px; height: 26px;
-      border: 3px solid var(--border);
-      border-top-color: var(--red);
-      border-radius: 50%;
-      animation: impSpin .7s linear infinite;
-      flex-shrink: 0;
-    }
-    @keyframes impSpin { to { transform: rotate(360deg); } }
-
-    .imp-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    @media (max-width: 640px) { .imp-grid-2 { grid-template-columns: 1fr; } }
-
-    .imp-field  { display: flex; flex-direction: column; gap: 6px; }
-    .imp-label  {
-      font-size: 11px; font-weight: 700; color: var(--ink-2);
-      text-transform: uppercase; letter-spacing: .05em;
-    }
-
-    .imp-input, .imp-select {
-      padding: 9px 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 14px;
-      color: var(--ink);
-      background: #fff;
-      outline: none;
-      transition: border-color .15s, box-shadow .15s;
-    }
-    .imp-input:focus, .imp-select:focus {
-      border-color: var(--red);
-      box-shadow: 0 0 0 3px rgba(224,48,64,.1);
-    }
-    .imp-input-ro { background: var(--surface); color: var(--ink-2); cursor: default; }
-
-    .imp-specs-list { display: grid; gap: 0; }
-    .imp-spec-row {
-      display: flex; align-items: baseline; gap: 10px;
-      padding: 9px 0; border-bottom: 1px solid var(--border);
-    }
-    .imp-spec-row:last-child { border-bottom: none; }
-    .imp-spec-key {
-      font-size: 11px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .05em; color: var(--ink-3);
-      min-width: 120px; flex-shrink: 0;
-    }
-    .imp-spec-val  { font-size: 14px; color: var(--ink); }
-    .imp-stars     { color: var(--gold); letter-spacing: 1px; }
-
-    .imp-checks { display: flex; flex-direction: column; gap: 7px; margin-top: 6px; }
-    .imp-check-label {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 14px; color: var(--ink);
-      cursor: pointer; user-select: none;
-    }
-    .imp-check-label input[type=checkbox] {
-      accent-color: var(--red);
-      width: 15px; height: 15px; cursor: pointer;
-    }
-
-    .imp-colour-count {
-      display: inline-block;
-      padding: 4px 12px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      font-size: 13px; font-weight: 600;
-      color: var(--ink-2);
-      margin-bottom: 16px;
-    }
-
-    .imp-table-wrap { overflow-x: auto; }
-    .imp-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    .imp-table th {
-      text-align: left;
-      padding: 10px 12px;
-      font-size: 11px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .05em;
-      color: var(--ink-3);
-      border-bottom: 2px solid var(--border);
-      white-space: nowrap;
-    }
-    .imp-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-    .imp-table tr:last-child td { border-bottom: none; }
-    .imp-table tr:hover td { background: var(--surface); }
-
-    .imp-thumb {
-      width: 52px; height: 52px;
-      object-fit: cover;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      display: block;
-    }
-    .imp-sup-name { color: var(--ink-3); font-size: 13px; }
-    .imp-colour-input {
-      width: 100%; min-width: 160px;
-      padding: 7px 10px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 13px; color: var(--ink);
-      background: #fff; outline: none;
-    }
-    .imp-colour-input:focus { border-color: var(--red); box-shadow: 0 0 0 2px rgba(224,48,64,.1); }
-    .imp-swatch-cell { display: flex; align-items: center; gap: 7px; }
-    .imp-swatch-dot  {
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      border: 1px solid rgba(0,0,0,.12);
-      flex-shrink: 0;
-    }
-    .imp-hex-text    { font-size: 12px; color: var(--ink-3); font-family: 'Courier New', monospace; }
-    .imp-family-tag  {
-      display: inline-block;
-      padding: 2px 10px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      font-size: 12px; color: var(--ink-2);
-      text-transform: capitalize; white-space: nowrap;
-    }
-
-    .imp-action-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
-
-    .imp-progress-wrap  { width: 100%; margin-bottom: 16px; }
-    .imp-progress-label { font-size: 13px; color: var(--ink-2); margin-bottom: 8px; }
-    .imp-progress-track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
-    .imp-progress-fill  {
-      height: 100%; background: var(--red);
-      border-radius: 3px;
-      transition: width .4s ease;
-      width: 0%;
-    }
-
-    .imp-success-card { text-align: center; padding: 56px 24px; }
-    .imp-success-icon {
-      width: 60px; height: 60px;
-      border-radius: 50%;
-      background: #e6f9f0; color: #27ae60;
-      font-size: 26px; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 20px;
-    }
-    .imp-success-card h3  { font-size: 20px; font-weight: 700; color: var(--ink); margin: 0 0 8px; }
-    .imp-success-card p   { font-size: 14px; color: var(--ink-2); max-width: 480px; margin: 0 auto; line-height: 1.6; }
-    .imp-success-stats    { list-style: none; padding: 0; margin: 16px auto 0; max-width: 380px; text-align: left; }
-    .imp-success-stats li {
-      padding: 7px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 13px; color: var(--ink-2);
-      display: flex; gap: 8px; align-items: flex-start;
-    }
-    .imp-success-stats li:last-child { border-bottom: none; }
-    .imp-ok   { color: #27ae60; }
-    .imp-warn { color: #e67e22; }
-  </style>
-
-  <!-- Page header -->
-  <div class="imp-page-header">
-    <h1>Import Catalogue</h1>
-    <p>Paste a Carpet Line Direct family URL to scrape, review, and import it to your website.</p>
-  </div>
-
-  <!-- STEP 1 — URL input ─────────────────────────────────────────────────── -->
-  <div id="impStep1" class="imp-card">
-    <h3 class="imp-card-title">Enter a product family URL</h3>
-    <p class="imp-hint">
-      Go to <strong>carpetlinedirect.co.uk</strong>, open any carpet family page,
-      and paste the URL here. Example:
-      <code style="font-size:12px">https://www.carpetlinedirect.co.uk/abyss/</code>
-    </p>
-    <div class="imp-url-row">
-      <input
-        type="url"
-        id="impUrlInput"
-        class="imp-url-input"
-        placeholder="https://www.carpetlinedirect.co.uk/abyss/"
-        onkeydown="if(event.key==='Enter') impScrape()"
-      />
-      <button class="imp-btn imp-btn-primary" onclick="impScrape()" id="impScrapeBtn">
-        Scrape Family
-      </button>
-    </div>
-    <div id="impStep1Error" class="imp-error" style="display:none"></div>
-  </div>
-
-  <!-- Loading ────────────────────────────────────────────────────────────── -->
-  <div id="impLoading" class="imp-card imp-loading" style="display:none">
-    <div class="imp-spinner"></div>
-    <span>Reading supplier page — this usually takes 3–5 seconds…</span>
-  </div>
-
-  <!-- STEP 2 — Review ────────────────────────────────────────────────────── -->
-  <div id="impStep2" style="display:none">
-
-    <div id="impSourcePill" class="imp-source-pill" style="display:none">
-      🔗 <span id="impSourceUrl"></span>
-    </div>
-
-    <!-- 2a. Name & pricing -->
-    <div class="imp-card">
-      <h3 class="imp-card-title">1 — Family name &amp; pricing</h3>
-      <p class="imp-hint">Rename to your WYC branding and set the selling price before importing.</p>
-      <div class="imp-grid-2">
-        <div class="imp-field">
-          <label class="imp-label">Supplier name</label>
-          <input type="text" id="impSupplierName" class="imp-input imp-input-ro" readonly />
-        </div>
-        <div class="imp-field">
-          <label class="imp-label">WYC product name <span class="imp-req">*</span></label>
-          <input type="text" id="impWycName" class="imp-input" placeholder="Your branded family name" />
-        </div>
-        <div class="imp-field">
-          <label class="imp-label">Price per m² (£) <span class="imp-req">*</span></label>
-          <input type="number" id="impPrice" class="imp-input" placeholder="0.00" step="0.01" min="0.01" />
-        </div>
-        <div class="imp-field">
-          <label class="imp-label">Was price per m² (£) <span class="imp-opt">optional — shows strikethrough</span></label>
-          <input type="number" id="impWasPrice" class="imp-input" placeholder="Leave blank if not on sale" step="0.01" min="0" />
-        </div>
-        <div class="imp-field">
-          <label class="imp-label">Badge <span class="imp-opt">optional</span></label>
-          <select id="impBadge" class="imp-select">
-            <option value="">No badge</option>
-            <option value="new">New In</option>
-            <option value="seller">Best Seller</option>
-            <option value="sale">Sale</option>
-            <option value="premium">Premium</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2b. Auto-mapped specs -->
-    <div class="imp-card">
-      <h3 class="imp-card-title">2 — Auto-mapped specs</h3>
-      <p class="imp-hint">
-        Read from the supplier page and mapped to your website's fields.
-        These apply to every colour in the family. Tick or untick features and rooms as needed.
-      </p>
-      <div class="imp-specs-list">
-        <div class="imp-spec-row">
-          <span class="imp-spec-key">Fibre</span>
-          <span id="impSpecFibre" class="imp-spec-val"></span>
-        </div>
-        <div class="imp-spec-row">
-          <span class="imp-spec-key">Carpet style</span>
-          <span id="impSpecStyle" class="imp-spec-val"></span>
-        </div>
-        <div class="imp-spec-row">
-          <span class="imp-spec-key">Suitability</span>
-          <span id="impSpecSuitability" class="imp-spec-val"></span>
-        </div>
-        <div class="imp-spec-row">
-          <span class="imp-spec-key">Durability</span>
-          <span id="impSpecDurability" class="imp-spec-val"></span>
-        </div>
-        <div class="imp-spec-row">
-          <span class="imp-spec-key">Softness</span>
-          <span id="impSpecSoftness" class="imp-spec-val"></span>
-        </div>
-        <div class="imp-spec-row">
-          <span class="imp-spec-key">Description</span>
-          <span id="impSpecDesc" class="imp-spec-val" style="font-style:italic;color:var(--ink-2)"></span>
-        </div>
-      </div>
-      <div class="imp-grid-2" style="margin-top:24px">
-        <div>
-          <div class="imp-label">Features</div>
-          <div id="impFeaturesChecks" class="imp-checks"></div>
-        </div>
-        <div>
-          <div class="imp-label">Room suitability</div>
-          <div id="impRoomsChecks" class="imp-checks"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2c. Colour variants -->
-    <div class="imp-card">
-      <h3 class="imp-card-title">3 — Colour variants</h3>
-      <p class="imp-hint">
-        Rename any colour to your WYC branding. The WYC name is what customers see.
-        Hex swatches are auto-detected from the colour name.
-      </p>
-      <span id="impColourCount" class="imp-colour-count"></span>
-      <div class="imp-table-wrap">
-        <table class="imp-table">
-          <thead>
-            <tr>
-              <th>Preview</th>
-              <th>Supplier name</th>
-              <th>WYC name (editable)</th>
-              <th>Swatch</th>
-              <th>Colour family</th>
-            </tr>
-          </thead>
-          <tbody id="impColourBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- 2d. Import action -->
-    <div class="imp-card">
-      <div id="impStep2Error" class="imp-error" style="display:none"></div>
-      <div id="impProgress" class="imp-progress-wrap" style="display:none">
-        <p id="impProgressLabel" class="imp-progress-label"></p>
-        <div class="imp-progress-track">
-          <div id="impProgressFill" class="imp-progress-fill"></div>
-        </div>
-      </div>
-      <div class="imp-action-row">
-        <button class="imp-btn imp-btn-primary imp-btn-large" id="impImportBtn" onclick="impImport()">
-          Import Family to Website
-        </button>
-        <button class="imp-btn imp-btn-ghost" onclick="impReset()">← Start over</button>
-      </div>
-    </div>
-
-  </div><!-- /impStep2 -->
-
-  <!-- STEP 3 — Success ───────────────────────────────────────────────────── -->
-  <div id="impStep3" class="imp-card imp-success-card" style="display:none">
-    <div class="imp-success-icon">✓</div>
-    <h3 id="impSuccessTitle"></h3>
-    <p id="impSuccessDetail"></p>
-    <ul id="impSuccessStats" class="imp-success-stats"></ul>
-    <button class="imp-btn imp-btn-primary" onclick="impReset()" style="margin-top:28px">
-      Import Another Family
+<!-- STEP 1: URL -->
+<div id="impStep1" style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:20px;">
+  <h3 style="font-size:15px;font-weight:700;color:#1a2332;margin:0 0 6px;">Paste a product URL</h3>
+  <p style="font-size:13px;color:#6b7280;margin:0 0 20px;">Go to the supplier website, open a product or product family page, and paste the URL below.</p>
+  <div style="display:flex;gap:10px;">
+    <input type="url" id="impUrlInput"
+      placeholder="e.g. https://www.carpetlinedirect.co.uk/abyss/"
+      onkeydown="if(event.key==='Enter') impScrape()"
+      style="flex:1;padding:10px 14px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;color:#1a2332;outline:none;" />
+    <button onclick="impScrape()" id="impScrapeBtn"
+      style="padding:10px 20px;background:#c8102e;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;">
+      Scrape Page
     </button>
   </div>
+  <div id="impStep1Error" style="display:none;margin-top:12px;padding:11px 14px;background:#fff3f4;border:1px solid #fcc;border-radius:8px;color:#c0392b;font-size:13px;"></div>
+</div>
 
-</div><!-- /importSection -->
+<!-- Loading -->
+<div id="impLoading" style="display:none;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:28px 24px;margin-bottom:20px;flex-direction:row;align-items:center;gap:14px;color:#6b7280;font-size:14px;">
+  <div id="impSpinner" style="width:26px;height:26px;border:3px solid #e5e7eb;border-top-color:#c8102e;border-radius:50%;animation:impSpin .7s linear infinite;flex-shrink:0;"></div>
+  <span>Reading supplier page — this usually takes a few seconds…</span>
+</div>
+<style>@keyframes impSpin{to{transform:rotate(360deg)}}</style>
+
+<!-- STEP 2: Review -->
+<div id="impStep2" style="display:none;">
+
+  <!-- Supplier + category detected -->
+  <div id="impDetectedBanner" style="display:none;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Supplier detected</div>
+      <div id="impDetectedSupplier" style="font-size:14px;font-weight:600;color:#1a2332;margin-top:2px;"></div>
+    </div>
+    <div style="width:1px;height:32px;background:#e5e7eb;"></div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Category</div>
+      <div id="impDetectedCategory" style="font-size:14px;font-weight:600;color:#1a2332;margin-top:2px;"></div>
+    </div>
+    <div style="width:1px;height:32px;background:#e5e7eb;"></div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Images</div>
+      <div id="impDetectedImages" style="font-size:14px;font-weight:600;margin-top:2px;"></div>
+    </div>
+    <div style="margin-left:auto;">
+      <button onclick="impReset()" style="padding:7px 14px;background:transparent;color:#6b7280;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;cursor:pointer;">← Try another URL</button>
+    </div>
+  </div>
+
+  <!-- 1. Name & pricing -->
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:20px;">
+    <h3 style="font-size:15px;font-weight:700;color:#1a2332;margin:0 0 6px;">1 — Name &amp; pricing</h3>
+    <p style="font-size:13px;color:#6b7280;margin:0 0 20px;">Rename to your WYC branding and set your selling price.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Supplier name</label>
+        <input type="text" id="impSupplierName" readonly style="padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;color:#6b7280;background:#f5f0eb;" />
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">WYC product name <span style="color:#c8102e;">*</span></label>
+        <input type="text" id="impWycName" placeholder="Your branded name" style="padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;color:#1a2332;outline:none;" />
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Price per m² (£) <span style="color:#c8102e;">*</span></label>
+        <input type="number" id="impPrice" placeholder="0.00" step="0.01" min="0.01" style="padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;color:#1a2332;outline:none;" />
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Was price per m² (£) <span style="font-size:11px;font-weight:400;color:#9ca3af;">optional</span></label>
+        <input type="number" id="impWasPrice" placeholder="Leave blank if not on sale" step="0.01" min="0" style="padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;color:#1a2332;outline:none;" />
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Fitting price per m² (£)</label>
+        <input type="number" id="impFittingPrice" value="6.00" step="0.01" min="0" style="padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;color:#1a2332;outline:none;" />
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Badge <span style="font-size:11px;font-weight:400;color:#9ca3af;">optional</span></label>
+        <select id="impBadge" style="padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;color:#1a2332;background:#fff;outline:none;">
+          <option value="">No badge</option>
+          <option value="new">New In</option>
+          <option value="seller">Best Seller</option>
+          <option value="sale">Sale</option>
+          <option value="premium">Premium</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Specs -->
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:20px;">
+    <h3 style="font-size:15px;font-weight:700;color:#1a2332;margin:0 0 6px;">2 — Auto-mapped specs</h3>
+    <p style="font-size:13px;color:#6b7280;margin:0 0 20px;">Read from the supplier page. Check features and rooms — tick or untick as needed.</p>
+
+    <!-- Specs table — populated by JS -->
+    <div id="impSpecsTable" style="margin-bottom:20px;"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Features</div>
+        <div id="impFeaturesChecks" style="display:flex;flex-direction:column;gap:7px;"></div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Room suitability</div>
+        <div id="impRoomsChecks" style="display:flex;flex-direction:column;gap:7px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Colours / products -->
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:20px;">
+    <h3 style="font-size:15px;font-weight:700;color:#1a2332;margin:0 0 6px;">3 — Colours &amp; images</h3>
+    <p id="impImagesNote" style="font-size:13px;color:#6b7280;margin:0 0 16px;"></p>
+    <div id="impColourCount" style="display:inline-block;padding:4px 12px;background:#f5f0eb;border:1px solid #e5e7eb;border-radius:20px;font-size:13px;font-weight:600;color:#6b7280;margin-bottom:16px;"></div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:14px;">
+        <thead id="impColourHead"></thead>
+        <tbody id="impColourBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 4. Import -->
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:20px;">
+    <div id="impStep2Error" style="display:none;margin-bottom:12px;padding:11px 14px;background:#fff3f4;border:1px solid #fcc;border-radius:8px;color:#c0392b;font-size:13px;"></div>
+    <div id="impProgress" style="display:none;margin-bottom:16px;">
+      <p id="impProgressLabel" style="font-size:13px;color:#6b7280;margin-bottom:8px;"></p>
+      <div style="height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden;">
+        <div id="impProgressFill" style="height:100%;background:#c8102e;border-radius:3px;transition:width .4s ease;width:0%;"></div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <button onclick="impImport()" id="impImportBtn"
+        style="padding:14px 32px;background:#c8102e;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">
+        Import to Website
+      </button>
+      <button onclick="impReset()" style="padding:10px 20px;background:transparent;color:#6b7280;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">
+        ← Start over
+      </button>
+    </div>
+  </div>
+
+</div><!-- /impStep2 -->
+
+<!-- STEP 3: Success -->
+<div id="impStep3" style="display:none;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:56px 24px;text-align:center;">
+  <div style="width:60px;height:60px;border-radius:50%;background:#e6f9f0;color:#27ae60;font-size:26px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">✓</div>
+  <h3 id="impSuccessTitle" style="font-size:20px;font-weight:700;color:#1a2332;margin:0 0 8px;"></h3>
+  <p id="impSuccessDetail" style="font-size:14px;color:#6b7280;max-width:480px;margin:0 auto 16px;line-height:1.6;"></p>
+  <ul id="impSuccessStats" style="list-style:none;padding:0;margin:0 auto 28px;max-width:380px;text-align:left;"></ul>
+  <button onclick="impReset()" style="padding:14px 32px;background:#c8102e;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">Import Another Product</button>
+</div>
+
+</div><!-- /import-section -->
 
 <script>
 (function () {
-  'use strict';
+'use strict';
 
-  // ── Lookup tables ────────────────────────────────────────────────────────
+// ── Constants ──────────────────────────────────────────────────────────────────
 
-  var IMP_FEATURES = [
-    { key: 'bleach',     label: 'Bleach Cleanable' },
-    { key: 'stain',      label: 'Stain Resistant'  },
-    { key: 'easyClean',  label: 'Easy Clean'        },
-    { key: 'pet',        label: 'Pet Friendly'      },
-    { key: 'waterproof', label: 'Waterproof'        },
-    { key: 'soft',       label: 'Ultra Soft'        },
-    { key: 'insulation', label: 'Warm Underfoot'    },
-    { key: 'scratch',    label: 'Scratch Resistant' },
-  ];
+var IMP_FEATURES = [
+  { key: 'bleach',     label: 'Bleach Cleanable' },
+  { key: 'stain',      label: 'Stain Resistant'  },
+  { key: 'easyClean',  label: 'Easy Clean'        },
+  { key: 'pet',        label: 'Pet Friendly'      },
+  { key: 'waterproof', label: 'Waterproof'        },
+  { key: 'soft',       label: 'Ultra Soft'        },
+  { key: 'insulation', label: 'Warm Underfoot'    },
+  { key: 'scratch',    label: 'Scratch Resistant' },
+];
 
-  var IMP_ROOMS = [
-    { key: 'living',   label: 'Living Room' },
-    { key: 'bedroom',  label: 'Bedroom'     },
-    { key: 'kitchen',  label: 'Kitchen'     },
-    { key: 'bathroom', label: 'Bathroom'    },
-    { key: 'hallway',  label: 'Hallway'     },
-    { key: 'stairs',   label: 'Stairs'      },
-  ];
+var IMP_ROOMS = [
+  { key: 'living',   label: 'Living Room' },
+  { key: 'bedroom',  label: 'Bedroom'     },
+  { key: 'kitchen',  label: 'Kitchen'     },
+  { key: 'bathroom', label: 'Bathroom'    },
+  { key: 'hallway',  label: 'Hallway'     },
+  { key: 'stairs',   label: 'Stairs'      },
+];
 
-  var IMP_BADGE_LABELS = {
-    new:     'New In',
-    seller:  'Best Seller',
-    sale:    'Sale',
-    premium: 'Premium',
-  };
+var CATEGORY_LABELS = {
+  carpets:  'Carpets',
+  vinyl:    'Vinyl / LVT',
+  laminate: 'Laminate',
+  wood:     'Real Wood',
+};
 
-  // ── State ────────────────────────────────────────────────────────────────
-  var impData = null;
+var BADGE_LABELS = { new: 'New In', seller: 'Best Seller', sale: 'Sale', premium: 'Premium' };
 
-  // ── DOM helpers ──────────────────────────────────────────────────────────
-  function el(id)      { return document.getElementById(id); }
-  function hide(id)    { el(id).style.display = 'none';  }
-  function show(id)    { el(id).style.display = '';       }
-  function block(id)   { el(id).style.display = 'block'; }
-  function flex(id)    { el(id).style.display = 'flex';  }
+// ── State ──────────────────────────────────────────────────────────────────────
+var impData = null;
 
-  function setErr(id, msg)  { var e = el(id); e.textContent = msg; e.style.display = 'block'; }
-  function clearErr(id)     { var e = el(id); e.textContent = '';  e.style.display = 'none';  }
+// ── DOM helpers ────────────────────────────────────────────────────────────────
+function el(id)    { return document.getElementById(id); }
+function hide(id)  { var e = el(id); if(e) e.style.display = 'none'; }
+function block(id) { var e = el(id); if(e) e.style.display = 'block'; }
+function flex(id)  { var e = el(id); if(e) e.style.display = 'flex'; }
 
-  function authHeader() {
-    var t = localStorage.getItem('wyc_token');
-    return t ? { 'Authorization': 'Bearer ' + t } : {};
-  }
+function setErr(id, msg)  { var e = el(id); if(!e) return; e.textContent = msg; e.style.display = 'block'; }
+function clearErr(id)     { var e = el(id); if(!e) return; e.textContent = ''; e.style.display = 'none'; }
 
-  function esc(str) {
-    if (!str) return '';
-    return String(str)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-      .replace(/'/g, '&#x27;');
-  }
+function authHdr() {
+  var t = localStorage.getItem('wyc_token');
+  return t ? { 'Authorization': 'Bearer ' + t } : {};
+}
 
-  function stars(n, max) {
-    return '<span class="imp-stars">' + '★'.repeat(n) +
-      '<span style="opacity:.25">' + '★'.repeat(max - n) + '</span></span> ' +
-      n + '/' + max;
-  }
+function esc(s) {
+  return String(s || '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+    .replace(/'/g,'&#x27;');
+}
 
-  function setProgress(pct, label) {
-    el('impProgressFill').style.width = pct + '%';
-    if (label !== undefined) el('impProgressLabel').textContent = label;
-  }
+function setProgress(pct, label) {
+  el('impProgressFill').style.width = pct + '%';
+  if (label !== undefined) el('impProgressLabel').textContent = label;
+}
 
-  // ── SCRAPE ───────────────────────────────────────────────────────────────
-  window.impScrape = async function () {
-    var url = el('impUrlInput').value.trim();
-    clearErr('impStep1Error');
+// ── SCRAPE ─────────────────────────────────────────────────────────────────────
+window.impScrape = async function () {
+  var url = el('impUrlInput').value.trim();
+  clearErr('impStep1Error');
+  if (!url) { setErr('impStep1Error', 'Please paste a supplier URL.'); return; }
 
-    if (!url) {
-      setErr('impStep1Error', 'Please paste a Carpet Line Direct URL.');
-      el('impUrlInput').focus();
-      return;
-    }
-    if (!url.includes('carpetlinedirect.co.uk')) {
-      setErr('impStep1Error', "That doesn't look like a Carpet Line Direct URL — please check and try again.");
-      el('impUrlInput').focus();
-      return;
-    }
+  el('impScrapeBtn').disabled = true;
+  hide('impStep2');
+  hide('impStep3');
+  flex('impLoading');
 
-    el('impScrapeBtn').disabled = true;
-    hide('impStep2');
-    hide('impStep3');
-    flex('impLoading');
-
-    try {
-      var res  = await fetch('/api/panel/scrape-family', {
-        method:  'POST',
-        headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
-        body:    JSON.stringify({ url: url }),
-      });
-      var data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Scrape failed — please try again.');
-
-      impData = data;
-      renderReview(data);
-    } catch (err) {
-      setErr('impStep1Error', err.message);
-    } finally {
-      hide('impLoading');
-      el('impScrapeBtn').disabled = false;
-    }
-  };
-
-  // ── RENDER REVIEW ────────────────────────────────────────────────────────
-  function renderReview(data) {
-    // Source pill
-    el('impSourceUrl').textContent = data.url;
-    block('impSourcePill');
-
-    // Names
-    el('impSupplierName').value = data.supplierName;
-    el('impWycName').value      = data.wycName;
-
-    // Specs
-    el('impSpecFibre').textContent       = data.specs.fibre;
-    el('impSpecStyle').textContent       = data.specs.carpetStyle;
-    el('impSpecSuitability').textContent = data.specs.suitability;
-    el('impSpecDurability').innerHTML    = stars(data.specs.durability, 5);
-    el('impSpecSoftness').innerHTML      = stars(data.specs.softness, 5);
-    el('impSpecDesc').textContent        = data.specs.description;
-
-    // Feature checkboxes
-    el('impFeaturesChecks').innerHTML = IMP_FEATURES.map(function (f) {
-      return '<label class="imp-check-label"><input type="checkbox" data-feat="' + f.key + '" ' +
-        (data.specs.features.indexOf(f.key) !== -1 ? 'checked' : '') + ' />' + f.label + '</label>';
-    }).join('');
-
-    // Room checkboxes
-    el('impRoomsChecks').innerHTML = IMP_ROOMS.map(function (r) {
-      return '<label class="imp-check-label"><input type="checkbox" data-room="' + r.key + '" ' +
-        (data.specs.rooms.indexOf(r.key) !== -1 ? 'checked' : '') + ' />' + r.label + '</label>';
-    }).join('');
-
-    // Colour count
-    el('impColourCount').textContent =
-      data.colours.length + ' colour variant' + (data.colours.length !== 1 ? 's' : '') + ' found';
-
-    // Colour rows
-    el('impColourBody').innerHTML = data.colours.map(function (c, i) {
-      return '<tr>' +
-        '<td><img src="' + esc(c.imgUrl) + '" class="imp-thumb" alt="' + esc(c.supplierName) + '" ' +
-          'onerror="this.style.opacity=\'0.25\'" /></td>' +
-        '<td class="imp-sup-name">' + esc(c.supplierName) + '</td>' +
-        '<td><input type="text" class="imp-colour-input" data-ci="' + i + '" value="' + esc(c.wycName) + '" placeholder="WYC name" /></td>' +
-        '<td><div class="imp-swatch-cell">' +
-          '<span class="imp-swatch-dot" style="background:' + esc(c.hex) + '"></span>' +
-          '<span class="imp-hex-text">' + esc(c.hex) + '</span>' +
-        '</div></td>' +
-        '<td><span class="imp-family-tag">' + esc(c.colourFamily) + '</span></td>' +
-        '</tr>';
-    }).join('');
-
-    // Reset action area state
-    clearErr('impStep2Error');
-    hide('impProgress');
-    el('impImportBtn').disabled = false;
-    setProgress(0);
-
-    // Price + badge reset
-    el('impPrice').value    = '';
-    el('impWasPrice').value = '';
-    el('impBadge').value    = '';
-
-    block('impStep2');
-    el('impStep2').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  // ── IMPORT ───────────────────────────────────────────────────────────────
-  window.impImport = async function () {
-    clearErr('impStep2Error');
-
-    var wycName  = el('impWycName').value.trim();
-    var priceRaw = el('impPrice').value;
-    var wasRaw   = el('impWasPrice').value;
-    var badgeKey = el('impBadge').value;
-
-    if (!wycName) {
-      setErr('impStep2Error', 'Please enter a WYC product name.');
-      el('impWycName').focus();
-      return;
-    }
-    var price = parseFloat(priceRaw);
-    if (!priceRaw || isNaN(price) || price <= 0) {
-      setErr('impStep2Error', 'Please enter a valid selling price.');
-      el('impPrice').focus();
-      return;
-    }
-
-    // Collect checked features
-    var features = [];
-    document.querySelectorAll('#impFeaturesChecks input[data-feat]:checked')
-      .forEach(function (e) { features.push(e.dataset.feat); });
-
-    // Collect checked rooms
-    var rooms = [];
-    document.querySelectorAll('#impRoomsChecks input[data-room]:checked')
-      .forEach(function (e) { rooms.push(e.dataset.room); });
-
-    if (rooms.length === 0) {
-      setErr('impStep2Error', 'Please tick at least one room suitability option.');
-      return;
-    }
-
-    // Collect colour names from editable inputs
-    var colours = impData.colours.map(function (c, i) {
-      var inp = document.querySelector('input[data-ci="' + i + '"]');
-      var name = inp && inp.value.trim() ? inp.value.trim() : c.supplierName;
-      return Object.assign({}, c, { wycName: name });
+  try {
+    var res  = await fetch('/api/panel/scrape-family', {
+      method:  'POST',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, authHdr()),
+      body:    JSON.stringify({ url: url }),
     });
-
-    var payload = {
-      family: {
-        wycName:       wycName,
-        price:         price,
-        originalPrice: wasRaw && parseFloat(wasRaw) > 0 ? parseFloat(wasRaw) : null,
-        badge:         badgeKey ? (IMP_BADGE_LABELS[badgeKey] || null) : null,
-        badgeType:     badgeKey || null,
-        specs: Object.assign({}, impData.specs, { features: features, rooms: rooms }),
-        colours:       colours,
-      },
-    };
-
-    // Show progress
-    el('impImportBtn').disabled = true;
-    block('impProgress');
-    setProgress(8, 'Uploading ' + colours.length + ' image' + (colours.length !== 1 ? 's' : '') + ' to Cloudinary…');
-
-    var fakePct = 8;
-    var fakeTimer = setInterval(function () {
-      fakePct = Math.min(fakePct + 4, 85);
-      setProgress(fakePct);
-    }, 900);
-
-    try {
-      var res  = await fetch('/api/panel/import-family', {
-        method:  'POST',
-        headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
-        body:    JSON.stringify(payload),
-      });
-
-      clearInterval(fakeTimer);
-      setProgress(100, 'Saving to database…');
-
-      var data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Import failed — please try again.');
-
-      // Show success
-      hide('impStep2');
-      var ir = data.imageResults;
-      el('impSuccessTitle').textContent  = '"' + data.product.name + '" is live on your website';
-      el('impSuccessDetail').textContent =
-        colours.length + ' colour variant' + (colours.length !== 1 ? 's' : '') +
-        ' imported. Customers can browse this product right now.';
-
-      var statsHtml = '';
-      if (ir.uploaded > 0)
-        statsHtml += '<li><span class="imp-ok">✓</span> ' + ir.uploaded + ' image' + (ir.uploaded !== 1 ? 's' : '') + ' uploaded to Cloudinary</li>';
-      if (ir.fallback > 0)
-        statsHtml += '<li><span class="imp-warn">⚠</span> ' + ir.fallback + ' image' + (ir.fallback !== 1 ? 's' : '') + ' kept supplier URL — re-upload from Products if needed</li>';
-      statsHtml += '<li><span class="imp-ok">✓</span> Product ID: ' + data.product.id + '</li>';
-      el('impSuccessStats').innerHTML = statsHtml;
-
-      block('impStep3');
-      el('impStep3').scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-    } catch (err) {
-      clearInterval(fakeTimer);
-      hide('impProgress');
-      el('impImportBtn').disabled = false;
-      setProgress(0);
-      setErr('impStep2Error', err.message);
-    }
-  };
-
-  // ── RESET ────────────────────────────────────────────────────────────────
-  window.impReset = function () {
-    impData = null;
-    el('impUrlInput').value  = '';
-    el('impPrice').value     = '';
-    el('impWasPrice').value  = '';
-    el('impBadge').value     = '';
-    el('impImportBtn').disabled = false;
-    clearErr('impStep1Error');
-    clearErr('impStep2Error');
-    hide('impProgress');
-    hide('impStep2');
-    hide('impStep3');
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Scrape failed.');
+    impData = data;
+    renderReview(data);
+  } catch (err) {
+    setErr('impStep1Error', err.message);
+  } finally {
     hide('impLoading');
-    setProgress(0);
-    el('impStep1').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    el('impScrapeBtn').disabled = false;
+  }
+};
+
+// ── RENDER REVIEW ──────────────────────────────────────────────────────────────
+function renderReview(data) {
+  var specs    = data.specs || {};
+  var category = data.category || 'carpets';
+  var isCarpet = category === 'carpets';
+
+  // Detected banner
+  el('impDetectedSupplier').textContent = data.supplierDomain || 'Unknown supplier';
+  el('impDetectedCategory').textContent = CATEGORY_LABELS[category] || category;
+  el('impDetectedImages').innerHTML = data.imagesAuto
+    ? '<span style="color:#16a34a;">✓ Automatic</span>'
+    : '<span style="color:#d97706;">⚠ Manual paste required</span>';
+  block('impDetectedBanner');
+
+  // Names
+  el('impSupplierName').value = data.supplierName;
+  el('impWycName').value      = data.wycName;
+  el('impPrice').value        = '';
+  el('impWasPrice').value     = '';
+  el('impBadge').value        = '';
+
+  // Specs table
+  var specsRows = [];
+  specsRows.push(['Description', specs.description || '—']);
+  if (isCarpet) {
+    if (specs.fibre)        specsRows.push(['Fibre', specs.fibre]);
+    if (specs.carpetStyle)  specsRows.push(['Style', specs.carpetStyle]);
+    if (specs.suitability)  specsRows.push(['Suitability', specs.suitability]);
+    specsRows.push(['Durability', '★'.repeat(specs.durability||3) + ' ' + (specs.durability||3) + '/5']);
+    specsRows.push(['Softness',   '★'.repeat(specs.softness||3)   + ' ' + (specs.softness||3)   + '/5']);
+  } else {
+    if (specs.thickness_mm)       specsRows.push(['Thickness', specs.thickness_mm + 'mm']);
+    if (specs.wear_layer_mm)      specsRows.push(['Wear Layer', specs.wear_layer_mm + 'mm']);
+    if (specs.ac_rating)          specsRows.push(['AC Rating', specs.ac_rating]);
+    if (specs.board_design)       specsRows.push(['Board Design', specs.board_design]);
+    if (specs.plank_width_mm)     specsRows.push(['Plank Width', specs.plank_width_mm + 'mm']);
+    if (specs.species_finish)     specsRows.push(['Species & Finish', specs.species_finish]);
+    if (specs.surface_finish)     specsRows.push(['Surface Finish', specs.surface_finish]);
+    if (specs.lay_pattern)        specsRows.push(['Lay Pattern', specs.lay_pattern]);
+    if (specs.installation_method) specsRows.push(['Installation', specs.installation_method]);
+    specsRows.push(['UFH Compatible', specs.ufh_compatible ? 'Yes' : 'No']);
+    specsRows.push(['Durability', '★'.repeat(specs.durability||3) + ' ' + (specs.durability||3) + '/5']);
+  }
+
+  el('impSpecsTable').innerHTML = specsRows.map(function(r) {
+    return '<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #e5e7eb;">' +
+      '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;min-width:130px;flex-shrink:0;">' + esc(r[0]) + '</span>' +
+      '<span style="font-size:14px;color:#1a2332;">' + esc(r[1]) + '</span>' +
+      '</div>';
+  }).join('') + '<div style="height:1px;"></div>';
+
+  // Features
+  el('impFeaturesChecks').innerHTML = IMP_FEATURES.map(function(f) {
+    return '<label style="display:flex;align-items:center;gap:8px;font-size:14px;color:#1a2332;cursor:pointer;">' +
+      '<input type="checkbox" data-feat="' + f.key + '" ' + ((specs.features||[]).indexOf(f.key) !== -1 ? 'checked' : '') +
+      ' style="accent-color:#c8102e;width:15px;height:15px;" />' + f.label + '</label>';
+  }).join('');
+
+  // Rooms
+  el('impRoomsChecks').innerHTML = IMP_ROOMS.map(function(r) {
+    return '<label style="display:flex;align-items:center;gap:8px;font-size:14px;color:#1a2332;cursor:pointer;">' +
+      '<input type="checkbox" data-room="' + r.key + '" ' + ((specs.rooms||[]).indexOf(r.key) !== -1 ? 'checked' : '') +
+      ' style="accent-color:#c8102e;width:15px;height:15px;" />' + r.label + '</label>';
+  }).join('');
+
+  // Colour count
+  el('impColourCount').textContent = data.colours.length + ' colour variant' + (data.colours.length !== 1 ? 's' : '') + ' found';
+
+  // Images note
+  el('impImagesNote').textContent = data.imagesAuto
+    ? 'Images will be downloaded and uploaded to Cloudinary automatically.'
+    : 'This supplier\'s images require JavaScript to load. Right-click each colour image on the supplier website, choose "Copy Image Address", and paste it into the box below.';
+
+  // Table headers
+  var hasManualImg = !data.imagesAuto;
+  el('impColourHead').innerHTML = '<tr>' +
+    (data.imagesAuto ? '<th style="text-align:left;padding:10px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;border-bottom:2px solid #e5e7eb;">Preview</th>' : '') +
+    '<th style="text-align:left;padding:10px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;border-bottom:2px solid #e5e7eb;">Supplier name</th>' +
+    '<th style="text-align:left;padding:10px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;border-bottom:2px solid #e5e7eb;">WYC name</th>' +
+    (hasManualImg ? '<th style="text-align:left;padding:10px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;border-bottom:2px solid #e5e7eb;">Image URL (paste here)</th>' : '') +
+    '<th style="text-align:left;padding:10px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;border-bottom:2px solid #e5e7eb;">Swatch</th>' +
+    '</tr>';
+
+  // Table rows
+  el('impColourBody').innerHTML = data.colours.map(function(c, i) {
+    return '<tr>' +
+      (data.imagesAuto ?
+        '<td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;"><img src="' + esc(c.imgUrl) + '" style="width:52px;height:52px;object-fit:cover;border-radius:6px;border:1px solid #e5e7eb;display:block;" onerror="this.style.opacity=\'0.2\'" /></td>' : '') +
+      '<td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;font-size:13px;color:#9ca3af;">' + esc(c.supplierName) + '</td>' +
+      '<td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;"><input type="text" data-ci="' + i + '" value="' + esc(c.wycName) + '" style="width:100%;min-width:140px;padding:6px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;color:#1a2332;outline:none;" /></td>' +
+      (hasManualImg ?
+        '<td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;"><input type="url" data-img="' + i + '" placeholder="Paste image URL here…" style="width:100%;min-width:200px;padding:6px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;color:#1a2332;outline:none;" /></td>' : '') +
+      '<td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;">' +
+        '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<span style="width:18px;height:18px;border-radius:50%;background:' + esc(c.hex) + ';border:1px solid rgba(0,0,0,.12);display:inline-block;"></span>' +
+          '<span style="font-size:12px;color:#9ca3af;font-family:monospace;">' + esc(c.hex) + '</span>' +
+        '</div>' +
+      '</td>' +
+      '</tr>';
+  }).join('');
+
+  clearErr('impStep2Error');
+  hide('impProgress');
+  el('impImportBtn').disabled = false;
+  setProgress(0);
+
+  block('impStep2');
+  el('impStep2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── IMPORT ─────────────────────────────────────────────────────────────────────
+window.impImport = async function () {
+  clearErr('impStep2Error');
+
+  var wycName  = el('impWycName').value.trim();
+  var priceRaw = el('impPrice').value;
+  var wasRaw   = el('impWasPrice').value;
+  var badgeKey = el('impBadge').value;
+  var fittingPrice = parseFloat(el('impFittingPrice').value) || 6.00;
+
+  if (!wycName) { setErr('impStep2Error', 'Please enter a WYC product name.'); el('impWycName').focus(); return; }
+  var price = parseFloat(priceRaw);
+  if (!priceRaw || isNaN(price) || price <= 0) { setErr('impStep2Error', 'Please enter a valid selling price.'); el('impPrice').focus(); return; }
+
+  var features = [];
+  document.querySelectorAll('#impFeaturesChecks input[data-feat]:checked').forEach(function(e) { features.push(e.dataset.feat); });
+
+  var rooms = [];
+  document.querySelectorAll('#impRoomsChecks input[data-room]:checked').forEach(function(e) { rooms.push(e.dataset.room); });
+  if (rooms.length === 0) { setErr('impStep2Error', 'Please tick at least one room.'); return; }
+
+  // Collect colours with manual image URLs where applicable
+  var colours = impData.colours.map(function(c, i) {
+    var nameEl  = document.querySelector('input[data-ci="' + i + '"]');
+    var imgEl   = document.querySelector('input[data-img="' + i + '"]');
+    var wycName = nameEl && nameEl.value.trim() ? nameEl.value.trim() : c.supplierName;
+    var imgUrl  = imgEl && imgEl.value.trim() ? imgEl.value.trim() : c.imgUrl;
+    return Object.assign({}, c, { wycName: wycName, imgUrl: imgUrl });
+  });
+
+  var payload = {
+    family: {
+      wycName:       wycName,
+      price:         price,
+      originalPrice: wasRaw && parseFloat(wasRaw) > 0 ? parseFloat(wasRaw) : null,
+      badge:         badgeKey ? (BADGE_LABELS[badgeKey] || null) : null,
+      badgeType:     badgeKey || null,
+      category:      impData.category,
+      fittingPrice:  fittingPrice,
+      specs:         Object.assign({}, impData.specs, { features: features, rooms: rooms }),
+      colours:       colours,
+    },
   };
+
+  el('impImportBtn').disabled = true;
+  block('impProgress');
+  setProgress(8, 'Uploading images to Cloudinary…');
+
+  var fakePct = 8;
+  var fakeTimer = setInterval(function() { fakePct = Math.min(fakePct + 3, 85); setProgress(fakePct); }, 900);
+
+  try {
+    var res  = await fetch('/api/panel/import-family', {
+      method:  'POST',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, authHdr()),
+      body:    JSON.stringify(payload),
+    });
+    clearInterval(fakeTimer);
+    setProgress(100, 'Saving to database…');
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Import failed.');
+
+    hide('impStep2');
+    var ir = data.imageResults;
+    el('impSuccessTitle').textContent  = '"' + data.product.name + '" is now live on your website';
+    el('impSuccessDetail').textContent = colours.length + ' colour variant' + (colours.length !== 1 ? 's' : '') + ' imported successfully.';
+
+    var stats = '';
+    if (ir.uploaded > 0)  stats += '<li style="padding:7px 0;border-bottom:1px solid #e5e7eb;font-size:13px;color:#6b7280;display:flex;gap:8px;"><span style="color:#27ae60;">✓</span> ' + ir.uploaded + ' image' + (ir.uploaded!==1?'s':'') + ' uploaded to Cloudinary</li>';
+    if (ir.skipped > 0)   stats += '<li style="padding:7px 0;border-bottom:1px solid #e5e7eb;font-size:13px;color:#6b7280;display:flex;gap:8px;"><span style="color:#9ca3af;">—</span> ' + ir.skipped + ' colour' + (ir.skipped!==1?'s':'') + ' without image — add from the Products panel</li>';
+    if (ir.fallback > 0)  stats += '<li style="padding:7px 0;border-bottom:1px solid #e5e7eb;font-size:13px;color:#6b7280;display:flex;gap:8px;"><span style="color:#d97706;">⚠</span> ' + ir.fallback + ' image upload failed — using supplier URL</li>';
+    stats += '<li style="padding:7px 0;font-size:13px;color:#6b7280;display:flex;gap:8px;"><span style="color:#27ae60;">✓</span> Product ID: ' + data.product.id + '</li>';
+    el('impSuccessStats').innerHTML = stats;
+
+    block('impStep3');
+    el('impStep3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch (err) {
+    clearInterval(fakeTimer);
+    hide('impProgress');
+    el('impImportBtn').disabled = false;
+    setProgress(0);
+    setErr('impStep2Error', err.message);
+  }
+};
+
+// ── RESET ──────────────────────────────────────────────────────────────────────
+window.impReset = function () {
+  impData = null;
+  el('impUrlInput').value     = '';
+  el('impPrice').value        = '';
+  el('impWasPrice').value     = '';
+  el('impFittingPrice').value = '6.00';
+  el('impBadge').value        = '';
+  el('impImportBtn').disabled = false;
+  clearErr('impStep1Error');
+  clearErr('impStep2Error');
+  hide('impProgress');
+  hide('impStep2');
+  hide('impStep3');
+  hide('impLoading');
+  hide('impDetectedBanner');
+  setProgress(0);
+  el('impStep1').scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
 
 })();
 </script>

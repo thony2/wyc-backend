@@ -34,7 +34,6 @@
 #cat-overlay.is-open   .cat-backdrop { opacity: 1; pointer-events: auto; }
 #cat-overlay.is-closing .cat-backdrop { opacity: 0; transition: opacity 0.25s ease; }
 
-/* Prevent landing page scrolling while catalogue is open */
 html.cat-open,
 body.cat-open {
     overflow: hidden !important;
@@ -298,8 +297,6 @@ body.cat-open {
 #cat-body::-webkit-scrollbar-track { background: transparent; }
 #cat-body::-webkit-scrollbar-thumb { background: var(--grey-light); border-radius: 3px; }
 
-
-
 #cat-grid {
     display: grid;
     grid-template-columns: repeat(3, 280px);
@@ -430,8 +427,6 @@ body.cat-open {
     transform: translateY(-1px) !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
-
-
 
 .cat-card-body {
     padding: 16px 16px 18px;
@@ -681,7 +676,7 @@ body.cat-open {
     max-width: 1060px;
     padding-left: clamp(20px, 4vw, 72px);
     padding-right: clamp(20px, 4vw, 72px);
-    max-height: calc(90vh - 40px);
+    max-height: calc(92vh - 40px);
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--grey-light) transparent;
@@ -784,7 +779,6 @@ body.cat-open {
     display: block;
 }
 
-/* Main image zoom hint */
 .qv-main-img-wrap { position: relative; }
 .qv-img-zoom-hint {
     position: absolute;
@@ -891,7 +885,7 @@ body.cat-open {
     align-items: center;
     gap: 16px;
 }
-/* Spec rows for hard floor attributes */
+
 .qv-spec-row {
     display: flex;
     justify-content: space-between;
@@ -1068,8 +1062,6 @@ body.cat-open {
     transform: none;
 }
 
-/* ── Discount email widget ── */
-/* ── Discount widget ── */
 .qv-discount-wrap {
     margin-top: 8px;
     border: 1.5px dashed var(--red, #E03040);
@@ -1222,7 +1214,7 @@ body.cat-open {
         gap: 16px;
     }
 
-    /* tabs scroll horizontally in single row at all sizes above mobile */
+    
 
     #cat-price-filters { flex-wrap: wrap; }
 
@@ -1247,7 +1239,7 @@ body.cat-open {
     #cat-title      { font-size: 1.22rem; }
     .cat-filters    { padding: 0 18px 12px; }
 
-    .cat-header-right { display: none; } /* hide sort on mobile */
+    .cat-header-right { display: none; } 
 
     #cat-body  { padding: 14px; }
     #cat-grid  { grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -1255,7 +1247,7 @@ body.cat-open {
     .cat-card-img-wrap { height: 144px; }
     .cat-card-body     { padding: 12px 13px 14px; gap: 7px; }
     .cat-card-name     { font-size: 1.04rem; }
-    .cat-card-specs    { display: none; } /* declutter */
+    .cat-card-specs    { display: none; } 
 
     .room-pill {
         width: 24px;
@@ -1290,8 +1282,6 @@ body.cat-open {
         right: 12px;
         z-index: 100;
     }
-
-
 
     .qv-image-wrap     { height: 220px; border-radius: 20px 20px 0 0; }
     .qv-content        { padding: 18px 18px 28px; gap: 12px; }
@@ -1402,19 +1392,11 @@ body.cat-open {
     }
 }
 
-
-
-/* ═══════════════════════════════════════════════════════════════
-   WYC REDESIGN — Cards, Swatches, Quick View, Calculator
-   ═══════════════════════════════════════════════════════════════ */
-
-/* ── Card swatches ── */
 .cat-card-swatches { display:flex; align-items:center; gap:5px; margin:8px 0 10px; flex-wrap:wrap; }
 .cat-swatch { display:inline-block; width:18px; height:18px; border-radius:50%; border:2px solid transparent; cursor:pointer; transition:transform .15s, border-color .15s; flex-shrink:0; }
 .cat-swatch.active, .cat-swatch:hover { border-color:#1B3A5C; transform:scale(1.2); }
 .cat-swatch-more { font-size:.7rem; color:#5C574F; font-weight:600; margin-left:2px; }
 
-/* ── Card pricing ── */
 .cat-card-meta { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px; }
 .cat-card-pricing { display:flex; flex-direction:column; align-items:flex-start; gap:2px; }
 .cat-card-price-was { font-size:.72rem; color:#9C9589; text-decoration:line-through; }
@@ -1422,24 +1404,20 @@ body.cat-open {
 .cat-card-price small { font-size:.65rem; font-weight:500; color:#9C9589; }
 .cat-card-save { position:absolute; top:10px; right:10px; background:#E03040; color:#fff; font-size:.65rem; font-weight:700; padding:3px 8px; border-radius:100px; pointer-events:none; }
 
-/* ── QV overlay on card ── */
 .cat-card-img-wrap { position:relative; overflow:hidden; }
 .cat-card-qv-overlay { position:absolute; inset:0; background:rgba(27,58,92,.45); display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .2s; }
 .cat-card:hover .cat-card-qv-overlay { opacity:1; }
 .cat-card-qv-btn { background:#fff; color:#1B3A5C; border:none; border-radius:100px; padding:9px 18px; font-size:.8rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; transition:background .15s; }
 .cat-card-qv-btn:hover { background:#F2EFE8; }
 
-/* ── Quick View panel layout ── */
 .qv-top { display:grid; grid-template-columns:1fr 1fr; gap:28px; padding:28px 28px 0; }
 .qv-bottom { display:grid; grid-template-columns:1fr 1fr; gap:28px; padding:24px 28px 28px; }
 @media(max-width:700px) { .qv-top, .qv-bottom { grid-template-columns:1fr; padding:18px; gap:18px; } }
 
-/* ── QV image ── */
 .qv-main-img-wrap { position:relative; border-radius:10px; overflow:hidden; background:#F2EFE8; aspect-ratio:4/3; }
 .qv-main-img { width:100%; height:100%; object-fit:cover; display:block; position:absolute; inset:0; }
 .qv-badge-abs { position:absolute; top:12px; left:12px; }
 
-/* ── QV detail col ── */
 .qv-breadcrumb { font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:#9C9589; margin-bottom:6px; }
 .qv-name { font-size:1.4rem; font-weight:800; color:#1A1714; margin:0 0 6px; line-height:1.2; }
 .qv-price-row { display:flex; align-items:baseline; gap:10px; margin-bottom:6px; flex-wrap:wrap; }
@@ -1450,7 +1428,6 @@ body.cat-open {
 .qv-fitting-line { font-size:.82rem; color:#5C574F; margin-bottom:6px; display:flex; align-items:center; gap:7px; }
 .qv-fitting-line strong { color:#1A6B4A; }
 
-/* ── QV colour swatches ── */
 .qv-colour-section { margin-bottom:14px; }
 .qv-col-sublabel { font-size:.72rem; text-transform:uppercase; letter-spacing:.07em; color:#9C9589; font-weight:600; margin-bottom:8px; }
 .qv-colour-name { color:#1A1714; text-transform:none; letter-spacing:0; font-weight:700; }
@@ -1458,7 +1435,6 @@ body.cat-open {
 .qv-swatch { width:26px; height:26px; border-radius:50%; border:2px solid transparent; cursor:pointer; transition:transform .15s, border-color .15s; }
 .qv-swatch.active, .qv-swatch:hover { border-color:#1B3A5C; transform:scale(1.18); }
 
-/* ── QV desc + actions ── */
 .qv-desc { font-size:.85rem; color:#5C574F; line-height:1.6; margin-bottom:10px; }
 .qv-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:6px; }
 .qv-enquire { background:#E03040; color:#fff; border:none; border-radius:8px; padding:11px 16px; font-size:.85rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:7px; justify-content:center; transition:background .15s; }
@@ -1469,7 +1445,6 @@ body.cat-open {
 .qv-sample:hover { background:#E8E3D9; }
 .qv-note { font-size:.72rem; color:#9C9589; margin:8px 0 0; line-height:1.5; }
 
-/* ── QV features col ── */
 .qv-col-title { font-size:1rem; font-weight:800; color:#1A1714; margin:0 0 16px; }
 .qv-features-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
 .qv-feature-item { display:flex; align-items:center; gap:9px; }
@@ -1477,14 +1452,12 @@ body.cat-open {
 .qv-feature-label { font-size:.8rem; color:#1A1714; font-weight:500; }
 .qv-no-features { font-size:.85rem; color:#9C9589; margin-bottom:16px; }
 
-/* ── QV room grid ── */
 .qv-room-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px; }
 .qv-room-item { display:flex; flex-direction:column; align-items:center; gap:5px; padding:10px 6px; border-radius:8px; font-size:.72rem; font-weight:600; text-align:center; border:1.5px solid #E8E3D9; }
 .qv-room-item--on { background:#F2EFE8; color:#1B3A5C; border-color:#1B3A5C; }
 .qv-room-item--off { background:#fff; color:#9C9589; }
 .qv-room-item i { font-size:1.1rem; }
 
-/* ── QV comfort bars ── */
 .qv-comfort { background:#F8F6F1; border-radius:10px; padding:14px 14px 4px; }
 .qv-bar-row { display:flex; align-items:center; gap:14px; padding:10px 0; border-top:1px solid #E8E3D9; margin-bottom:0; }
 .qv-bar-row:last-child { margin-bottom:0; }
@@ -1495,13 +1468,13 @@ body.cat-open {
 .qv-bar-seg--off { background:#E8E3D9; }
 .qv-bar-val { font-size:.72rem; font-weight:600; color:#1B3A5C; width:80px; text-align:right; flex-shrink:0; white-space:nowrap; }
 
-/* ── QV calculator ── */
 .qv-calc-col { background:#F8F6F1; border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:14px; }
 .qv-calc-sub { font-size:.82rem; color:#5C574F; margin:0; }
 .qv-calc-mode { display:flex; background:#E8E3D9; border-radius:8px; padding:3px; gap:3px; }
 .qv-calc-mode-btn { flex:1; padding:8px; border:none; border-radius:6px; font-size:.8rem; font-weight:600; cursor:pointer; background:transparent; color:#5C574F; transition:all .15s; }
 .qv-calc-mode-btn.active { background:#fff; color:#1B3A5C; box-shadow:0 1px 3px rgba(0,0,0,.1); }
 .qv-calc-inputs { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.qv-calc-inputs.qv-panel-hidden { display:none !important; }
 .qv-calc-field { display:flex; flex-direction:column; gap:5px; }
 .qv-calc-field label { font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:#9C9589; }
 .qv-calc-field input { padding:10px 12px; border:1.5px solid #E8E3D9; border-radius:8px; font-size:.95rem; font-family:inherit; color:#1A1714; background:#fff; outline:none; transition:border-color .2s; }
@@ -1518,11 +1491,9 @@ body.cat-open {
 .qv-calc-breakdown { display:flex; flex-direction:column; gap:5px; border-top:1px solid rgba(255,255,255,.15); padding-top:10px; }
 .qv-calc-row { display:flex; justify-content:space-between; font-size:.8rem; color:rgba(255,255,255,.75); }
 
-/* ── QV close button ── */
 .qv-close { position:absolute; top:14px; right:14px; width:34px; height:34px; border-radius:50%; background:rgba(0,0,0,.06); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#5C574F; font-size:.9rem; z-index:10; transition:background .15s; }
 .qv-close:hover { background:rgba(0,0,0,.12); }
 
-/* ── Colour lightbox ── */
 #colour-lightbox { position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center; }
 #colour-lightbox.is-open { display:flex; }
 .clb-backdrop { position:absolute; inset:0; background:rgba(0,0,0,.85); }
@@ -1539,20 +1510,12 @@ body.cat-open {
 .clb-dot { width:8px; height:8px; border-radius:50%; background:#E8E3D9; cursor:pointer; transition:background .15s; border:none; }
 .clb-dot.active { background:#1B3A5C; }
 
-/* ── Swatch image thumbnails ── */
 .cat-swatch--img { border-radius:8px !important; width:36px !important; height:36px !important; }
 .qv-swatch--img { border-radius:6px !important; }
 
-/* ── Colour lightbox display fix ── */
 #colour-lightbox:not(.is-open) { display:none !important; }
 #colour-lightbox.is-open { display:flex !important; }
 
-
-/* ═══════════════════════════════════════════════════════
-   MOBILE RESPONSIVE — Catalogue + QV Panel
-   ═══════════════════════════════════════════════════════ */
-
-/* ── Global: kill horizontal scroll everywhere ── */
 html, body {
     overflow-x: hidden;
     max-width: 100vw;
@@ -1566,7 +1529,6 @@ html, body {
 }
 * { box-sizing: border-box; }
 
-/* ── Overlay: bottom sheet on mobile ── */
 @media (max-width: 640px) {
     #cat-overlay {
         padding: 0;
@@ -1597,7 +1559,6 @@ html, body {
     }
 }
 
-/* ── Card grid ── */
 @media (max-width: 420px) {
     
 
@@ -1617,7 +1578,6 @@ html, body {
     }
 }
 
-/* ── QV Panel: full-width bottom sheet ── */
 @media (max-width: 640px) {
     #cat-qv-panel {
         position: fixed !important;
@@ -1636,7 +1596,7 @@ html, body {
         overflow-x: hidden;
     }
 
-    /* ── Close button: inside image, top-right corner ── */
+    
     .qv-close {
         position: absolute !important;
         top: 22px !important;
@@ -1649,7 +1609,7 @@ html, body {
         height: 38px !important;
     }
 
-    /* ── QV top: single column ── */
+    
     .qv-top {
         display: flex !important;
         flex-direction: column !important;
@@ -1670,11 +1630,11 @@ html, body {
         height: auto !important;
     }
 
-    /* ── QV name + price ── */
+    
     .qv-name { font-size: 1.25rem !important; }
     .qv-price { font-size: 1.5rem !important; }
 
-    /* ── Actions: stacked ── */
+    
     .qv-actions {
         display: flex !important;
         flex-direction: column !important;
@@ -1688,7 +1648,7 @@ html, body {
         font-size: .9rem !important;
     }
 
-    /* ── QV bottom: single column ── */
+    
     .qv-bottom {
         display: flex !important;
         flex-direction: column !important;
@@ -1701,13 +1661,13 @@ html, body {
         max-width: 100% !important;
     }
 
-    /* ── Features grid: 2 col ── */
+    
     .qv-features-grid {
         grid-template-columns: 1fr 1fr !important;
         gap: 10px !important;
     }
 
-    /* ── Room grid: 3 col, contained ── */
+    
     .qv-room-grid {
         grid-template-columns: repeat(3, 1fr) !important;
         gap: 7px !important;
@@ -1719,7 +1679,7 @@ html, body {
     }
     .qv-room-item i { font-size: .95rem !important; }
 
-    /* ── Comfort bars: proper spacing ── */
+    
     .qv-comfort {
         padding: 16px !important;
         width: 100% !important;
@@ -1737,7 +1697,7 @@ html, body {
         border-radius: 4px !important;
     }
 
-    /* ── Calculator: fully contained ── */
+    
     .qv-calc-col {
         padding: 16px !important;
         gap: 12px !important;
@@ -1777,7 +1737,7 @@ html, body {
         font-size: .82rem !important;
     }
 
-    /* ── Colour lightbox: full screen ── */
+    
     .clb-box {
         width: 100vw !important;
         max-width: 100vw !important;
@@ -1785,7 +1745,6 @@ html, body {
     }
 }
 
-/* ── Close button desktop: top-right of panel ── */
 @media (min-width: 641px) {
     .qv-close {
         position: absolute;
@@ -1798,9 +1757,8 @@ html, body {
     }
 }
 
-/* ── Mobile: kill black gap + fix header + lock overscroll ── */
 @media (max-width: 640px) {
-    /* No black gap above bottom sheet */
+    
     #cat-overlay {
         background: transparent;
     }
@@ -1808,36 +1766,31 @@ html, body {
         background: rgba(242, 239, 233, 0.27);
     }
 
-    /* Stop panel bouncing past its top edge */
+    
     #cat-panel {
         overscroll-behavior: none;
         touch-action: pan-y;
         -webkit-overflow-scrolling: touch;
     }
 
-    /* Stop the body scrolling behind the panel */
+    
     body.cat-open {
         overflow: hidden;
         position: fixed;
         width: 100%;
     }
 
-    /* Header: push down from rounded corner */
+    
     .cat-header {
         padding-top: 20px !important;
     }
 
-    /* Give close button + title breathing room */
+    
     .cat-title-row {
         padding-top: 4px;
     }
 }
 
-/* ═══════════════════════════════════════════
-   FILTER DROPDOWN + FONT + QV IMAGE FIX
-   ═══════════════════════════════════════════ */
-
-/* ── Helvetica everywhere in catalogue ── */
 #cat-overlay, #cat-panel, #cat-qv-panel,
 .cat-card, .qv-name, .qv-price, .qv-calc-col,
 .qv-features-col, .qv-col-title, .qv-enquire,
@@ -1853,7 +1806,6 @@ html, body {
 .qv-fitting-line { font-weight: 400 !important; }
 .cat-card-price { font-weight: 800 !important; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important; }
 
-/* ── cat-filters row layout ── */
 #cat-price-filters { display: none; }
 
 .cat-toolbar-right {
@@ -1865,7 +1817,6 @@ html, body {
     right: 28px;
 }
 
-/* ── Filter button ── */
 .cat-filter-btn {
     display: flex;
     align-items: center;
@@ -1889,7 +1840,6 @@ html, body {
     background: #F2EFE8;
 }
 
-/* ── Filter dropdown ── */
 .cat-filter-wrap {
     position: relative;
 }
@@ -1928,7 +1878,6 @@ html, body {
     font-weight: 600;
 }
 
-/* ── QV image: push down on mobile so not cropped ── */
 @media (max-width: 640px) {
     .qv-main-img-wrap {
         margin-top: 0;
@@ -1940,7 +1889,6 @@ html, body {
     }
 }
 
-/* ── Card enquire button — red, spacious, clean ── */
 .cat-card-enquire {
     background: #E03040 !important;
     color: #fff !important;
@@ -1962,7 +1910,6 @@ html, body {
     transform: translateY(-1px) !important;
 }
 
-/* ── QV redesign: icons, swatches, spec rows ── */
 .qv-detail-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
 .qv-header-icons { display:flex; gap:8px; flex-shrink:0; }
 .qv-icon-btn { width:36px; height:36px; border-radius:50%; border:1.5px solid #E8E3D9; background:#fff; color:#5C574F; font-size:.9rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .15s; flex-shrink:0; }
@@ -1979,7 +1926,6 @@ html, body {
 .cat-card-colour-count { font-size: 0.72rem; font-weight: 700; color: #5C574F; letter-spacing: 0.02em; }
 .cat-card-swatches { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
 
-/* ── Tag filter row (future: colours, brands, textures) ── */
 .cat-tag-filters {
     display: flex;
     align-items: center;
@@ -2015,7 +1961,6 @@ html, body {
     flex-shrink: 0;
 }
 
-/* ── Get Free Quote button — Warm Gold ── */
 .cat-card-enquire {
     background: #C49A3C !important;
     color: #fff !important;
@@ -2024,7 +1969,6 @@ html, body {
     background: #a8812e !important;
 }
 
-/* ── Card action buttons row ── */
 .cat-card-actions {
     margin-top: auto;
     display: flex;
@@ -2085,11 +2029,6 @@ html, body {
     min-width: 0;
 }
 
-/* ═══════════════════════════════════════════
-   FILTER DRAWER
-   ═══════════════════════════════════════════ */
-
-/* ── Filter button badge ── */
 .cat-filter-btn {
     position: relative;
 }
@@ -2111,15 +2050,12 @@ html, body {
     color: #fff;
 }
 
-/* ── cat-body layout when drawer open ── */
 #cat-body {
     position: relative;
     display: flex;
     flex-direction: column;
 }
 
-/* ── Drawer ── */
-/* ── Filter drawer: compact dropdown from filter button ── */
 #cat-filter-drawer {
     position: fixed;
     z-index: 1200;
@@ -2155,16 +2091,10 @@ html, body {
     flex-shrink: 0;
 }
 
-/* No grid shift needed */
-/* drawer never shifts grid */
-
-
 #cat-grid { transition: none; }
 
-/* cat-panel is the positioning anchor */
 #cat-panel { position: relative; }
 
-/* ── Drawer header ── */
 .cfd-header {
     display: flex;
     align-items: center;
@@ -2191,7 +2121,6 @@ html, body {
 }
 .cfd-close:hover { color: #1A1714; background: #F2EFE8; }
 
-/* ── Drawer body ── */
 .cfd-body {
     flex: 1;
     overflow-y: auto;
@@ -2242,7 +2171,6 @@ html, body {
 }
 .cfd-chip[hidden] { display: none !important; }
 
-/* ── Drawer footer ── */
 .cfd-footer {
     display: flex;
     gap: 8px;
@@ -2279,7 +2207,6 @@ html, body {
 }
 .cfd-apply:hover { background: #142d48; }
 
-/* ── Mobile: drawer is a centred floating card — JS handles geometry ── */
 @media (max-width: 640px) {
     #cat-filter-drawer {
         border: 1.5px solid #E8E3D9;
@@ -2290,7 +2217,6 @@ html, body {
     }
 }
 
-/* ── Filter drawer colour dots ── */
 .cfd-dot {
     display: inline-block;
     width: 13px; height: 13px;
@@ -2319,7 +2245,6 @@ html, body {
 .cfd-colour-chip { display:inline-flex; align-items:center; gap:8px; }
 .cfd-colour-chip .cfd-dot { flex-shrink:0; margin-right:3px; }
 
-/* ── Chip counts ── */
 .chip-count {
     font-size: .68rem;
     font-weight: 700;
@@ -2329,7 +2254,6 @@ html, body {
 }
 .cfd-chip.is-selected .chip-count { opacity: 0.8; }
 
-/* ── Tab counts ── */
 .tab-count {
     display: inline-block;
     font-size: .68rem;
@@ -2339,9 +2263,8 @@ html, body {
     margin-left: 4px;
 }
 
-/* ── Mobile: two-row layout — tabs scroll top, filters button below ── */
 @media (max-width: 640px) {
-    /* Stack tabs row + filter button row vertically */
+    
     .cat-filters {
         flex-direction: column;
         align-items: stretch;
@@ -2349,7 +2272,7 @@ html, body {
         gap: 0;
     }
 
-    /* Row 1: tabs scroll horizontally, fade at edges */
+    
     #cat-tabs {
         flex: none;
         width: 100%;
@@ -2361,7 +2284,7 @@ html, body {
     #cat-tabs::-webkit-scrollbar { display: none; }
     .cat-tab { flex-shrink: 0; }
 
-    /* Row 2: filter button full width */
+    
     .cat-toolbar-right {
         position: static;
         border-left: none;
@@ -2380,4 +2303,32 @@ html, body {
     .cat-filter-btn {
         flex-shrink: 0;
     }
+}
+
+.qv-width-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-top: 2px;
+}
+.qv-width-btn {
+    padding: 10px 0;
+    border: 1.5px solid var(--border, #E8E3D9);
+    border-radius: 8px;
+    background: var(--surface, #FFFFFF);
+    color: var(--ink-2, #5C574F);
+    font-size: 0.88rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.qv-width-btn:hover {
+    border-color: var(--red, #E03040);
+    color: var(--red, #E03040);
+}
+.qv-width-btn.active {
+    background: var(--red, #E03040);
+    border-color: var(--red, #E03040);
+    color: #fff;
 }

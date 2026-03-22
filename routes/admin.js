@@ -140,9 +140,6 @@ module.exports = (db) => {
                 durability, softness, is_featured, is_deal, is_active,
                 fitting_price, colours, features,
                 colour_family, fibre, carpet_style, softness_label, thickness, density,
-                thickness_mm, wear_layer_mm, ac_rating, board_design,
-                plank_width_mm, species_finish, surface_finish, lay_pattern,
-                installation_method, ufh_compatible,
             } = req.body;
 
             if (!name || price == null) return res.status(400).json({ error: 'Name and price required' });
@@ -153,12 +150,8 @@ module.exports = (db) => {
                      stock_level, description, img_url, badge, badge_type, rooms,
                      durability, softness, is_featured, is_deal, is_active,
                      fitting_price, colours, features,
-                     colour_family, fibre, carpet_style, softness_label, thickness, density,
-                     thickness_mm, wear_layer_mm, ac_rating, board_design,
-                     plank_width_mm, species_finish, surface_finish, lay_pattern,
-                     installation_method, ufh_compatible)
-                 VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,
-                         $21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36)
+                     colour_family, fibre, carpet_style, softness_label, thickness, density)
+                 VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)
                  RETURNING id`,
                 [
                     name, category_slug, subcategory || null, sku || null, price, original_price || null,
@@ -168,10 +161,6 @@ module.exports = (db) => {
                     fitting_price || 6.00, colours || '[]', features || '[]',
                     colour_family || '', fibre || '', carpet_style || '',
                     softness_label || '', thickness || '', density || '',
-                    thickness_mm || null, wear_layer_mm || null, ac_rating || '',
-                    board_design || '', plank_width_mm || null, species_finish || '',
-                    surface_finish || '', lay_pattern || '', installation_method || '',
-                    ufh_compatible || 0,
                 ]
             );
 
@@ -191,9 +180,6 @@ module.exports = (db) => {
                 durability, softness, is_featured, is_deal, is_active,
                 fitting_price, colours, features,
                 colour_family, fibre, carpet_style, softness_label, thickness, density,
-                thickness_mm, wear_layer_mm, ac_rating, board_design,
-                plank_width_mm, species_finish, surface_finish, lay_pattern,
-                installation_method, ufh_compatible,
             } = req.body;
 
             await db.query(
@@ -205,11 +191,8 @@ module.exports = (db) => {
                     fitting_price=$18, colours=$19, features=$20,
                     colour_family=$21, fibre=$22, carpet_style=$23,
                     softness_label=$24, thickness=$25, density=$26,
-                    thickness_mm=$27, wear_layer_mm=$28, ac_rating=$29, board_design=$30,
-                    plank_width_mm=$31, species_finish=$32, surface_finish=$33,
-                    lay_pattern=$34, installation_method=$35, ufh_compatible=$36,
                     updated_at=NOW()
-                 WHERE id=$37`,
+                 WHERE id=$27`,
                 [
                     name, category_slug, subcategory || null, sku || null, price,
                     original_price || null, stock_level || 0, description || null, img_url || null,
@@ -218,10 +201,6 @@ module.exports = (db) => {
                     fitting_price || 6.00, colours || '[]', features || '[]',
                     colour_family || '', fibre || '', carpet_style || '',
                     softness_label || '', thickness || '', density || '',
-                    thickness_mm || null, wear_layer_mm || null, ac_rating || '',
-                    board_design || '', plank_width_mm || null, species_finish || '',
-                    surface_finish || '', lay_pattern || '', installation_method || '',
-                    ufh_compatible || 0,
                     req.params.id,
                 ]
             );
@@ -367,6 +346,170 @@ module.exports = (db) => {
             res.json({ success: true });
         } catch (e) {
             res.status(500).json({ error: e.message });
+        }
+    });
+
+
+    // ── LEADS ────────────────────────────────────────────────────────────────
+
+    // GET /api/admin/dashboard — summary stats
+    router.get('/dashboard', requireAuth, async (req, res) => {
+        try {
+            const [totals, week] = await Promise.all([
+                db.query(`
+                    SELECT
+                        COUNT(*)                                          AS total,
+                        COUNT(*) FILTER (WHERE status='new')             AS new_count,
+                        COUNT(*) FILTER (WHERE status='contacted')       AS contacted_count,
+                        COUNT(*) FILTER (WHERE status='quoted')          AS quoted_count,
+                        COUNT(*) FILTER (WHERE status='won')             AS won_count,
+                        COUNT(*) FILTER (WHERE status='lost')            AS lost_count,
+                        COUNT(*) FILTER (WHERE status='spam')            AS spam_count
+                    FROM leads
+                `),
+                db.query(`
+                    SELECT COUNT(*) AS last_7_days FROM leads
+                    WHERE created_at >= NOW() - INTERVAL '7 days'
+                `),
+            ]);
+            const s = totals.rows[0];
+            res.json({
+                success: true,
+                data: {
+                    summary: {
+                        total:            parseInt(s.total           || 0),
+                        new_count:        parseInt(s.new_count       || 0),
+                        contacted_count:  parseInt(s.contacted_count || 0),
+                        quoted_count:     parseInt(s.quoted_count    || 0),
+                        won_count:        parseInt(s.won_count       || 0),
+                        lost_count:       parseInt(s.lost_count      || 0),
+                        spam_count:       parseInt(s.spam_count      || 0),
+                        last_7_days:      parseInt(week.rows[0]?.last_7_days || 0),
+                    }
+                }
+            });
+        } catch(e) {
+            res.status(500).json({ success: false, error: e.message });
+        }
+    });
+
+    // GET /api/admin/leads — all leads
+    router.get('/leads', requireAuth, async (req, res) => {
+        try {
+            const limit  = Math.min(parseInt(req.query.limit) || 500, 1000);
+            const result = await db.query(
+                `SELECT * FROM leads ORDER BY created_at DESC LIMIT $1`, [limit]
+            );
+            res.json({ success: true, data: { leads: result.rows } });
+        } catch(e) {
+            res.status(500).json({ success: false, error: e.message });
+        }
+    });
+
+    // GET /api/admin/leads/export.csv
+    router.get('/leads/export.csv', requireAuth, async (req, res) => {
+        try {
+            const result = await db.query(`SELECT * FROM leads ORDER BY created_at DESC`);
+            const rows   = result.rows;
+            if (!rows.length) {
+                res.setHeader('Content-Type', 'text/csv');
+                return res.send('No data');
+            }
+            const headers = Object.keys(rows[0]);
+            const escape  = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+            const csv     = [headers.join(','), ...rows.map(r => headers.map(h => escape(r[h])).join(','))].join('
+');
+            res.setHeader('Content-Type', 'text/csv');
+            res.setHeader('Content-Disposition', `attachment; filename="wyc-leads-${new Date().toISOString().split('T')[0]}.csv"`);
+            res.send(csv);
+        } catch(e) {
+            res.status(500).json({ success: false, error: e.message });
+        }
+    });
+
+    // PATCH /api/admin/leads/:id/status
+    router.patch('/leads/:id/status', requireAuth, async (req, res) => {
+        try {
+            const { status } = req.body;
+            const allowed = ['new','contacted','quoted','won','lost','spam'];
+            if (!allowed.includes(status)) return res.status(400).json({ success: false, error: 'Invalid status' });
+            await db.query(
+                `UPDATE leads SET status=$1, updated_at=NOW() WHERE id=$2`,
+                [status, req.params.id]
+            );
+            await audit(db, req.user, 'STATUS_UPDATE', 'leads', req.params.id, { status });
+            res.json({ success: true });
+        } catch(e) {
+            res.status(500).json({ success: false, error: e.message });
+        }
+    });
+
+    // PATCH /api/admin/leads/:id/booking
+    router.patch('/leads/:id/booking', requireAuth, async (req, res) => {
+        try {
+            const { booking_date, booking_time, booking_type, booking_notes } = req.body;
+            await db.query(
+                `UPDATE leads SET
+                    booking_date=$1, booking_time=$2, booking_type=$3, booking_notes=$4,
+                    updated_at=NOW()
+                 WHERE id=$5`,
+                [booking_date||null, booking_time||null, booking_type||null, booking_notes||null, req.params.id]
+            );
+            await audit(db, req.user, 'BOOKING_UPDATE', 'leads', req.params.id, req.body);
+            res.json({ success: true });
+        } catch(e) {
+            res.status(500).json({ success: false, error: e.message });
+        }
+    });
+
+    // DELETE /api/admin/leads/:id
+    router.delete('/leads/:id', requireAuth, async (req, res) => {
+        try {
+            await db.query(`DELETE FROM leads WHERE id=$1`, [req.params.id]);
+            await audit(db, req.user, 'DELETE', 'leads', req.params.id, {});
+            res.json({ success: true });
+        } catch(e) {
+            res.status(500).json({ success: false, error: e.message });
+        }
+    });
+
+    // ── CALENDAR ─────────────────────────────────────────────────────────────
+
+    // GET /api/admin/calendar?month=YYYY-MM
+    router.get('/calendar', requireAuth, async (req, res) => {
+        try {
+            const month = req.query.month; // e.g. "2026-03"
+            let bookings = [], unscheduled = [];
+
+            if (month) {
+                const [year, mon] = month.split('-');
+                const start = `${year}-${mon}-01`;
+                // Last day of month
+                const end   = new Date(parseInt(year), parseInt(mon), 0).toISOString().split('T')[0];
+                const result = await db.query(
+                    `SELECT id, name, phone, postcode, service_type, status,
+                            booking_date, booking_time, booking_type, booking_notes
+                     FROM leads
+                     WHERE booking_date BETWEEN $1 AND $2
+                     ORDER BY booking_date ASC, booking_time ASC`,
+                    [start, end]
+                );
+                bookings = result.rows;
+
+                const unsch = await db.query(
+                    `SELECT id, name, phone, postcode, service_type, status, created_at
+                     FROM leads
+                     WHERE (booking_date IS NULL OR booking_date = '')
+                       AND status NOT IN ('won','lost','spam')
+                     ORDER BY created_at DESC
+                     LIMIT 20`
+                );
+                unscheduled = unsch.rows;
+            }
+
+            res.json({ success: true, data: { bookings, unscheduled } });
+        } catch(e) {
+            res.status(500).json({ success: false, error: e.message });
         }
     });
 

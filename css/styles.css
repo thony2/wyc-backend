@@ -104,7 +104,7 @@ input, select, textarea { font-family: inherit; }
 }
 
 .section-header {
-    margin-bottom: 24px;
+    margin-bottom: 56px;
 }
 
 .btn-primary {
@@ -723,7 +723,7 @@ input, select, textarea { font-family: inherit; }
 
 .calc-switcher-wrap {
     position: relative;
-    height: 90px;
+    height: 76px;
     margin-bottom: 20px;
 }
 
@@ -734,12 +734,45 @@ input, select, textarea { font-family: inherit; }
     right: 0;
     opacity: 0;
     pointer-events: none;
+    transition: opacity 0.18s ease;
     margin-bottom: 0;
 }
 
 .calc-mode-panel.is-active {
     opacity: 1;
     pointer-events: auto;
+}
+
+/* Width selector buttons */
+.calc-width-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 2px;
+}
+
+.calc-width-btn {
+    padding: 11px 0;
+    border: 1.5px solid var(--grey-light, #E8E3D9);
+    border-radius: 8px;
+    background: var(--bg, #F8F6F1);
+    color: var(--ink-2, #5C574F);
+    font-size: 0.92rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.calc-width-btn:hover {
+    border-color: var(--red, #E03040);
+    color: var(--red, #E03040);
+}
+
+.calc-width-btn.active {
+    background: var(--red, #E03040);
+    border-color: var(--red, #E03040);
+    color: #fff;
 }
 
 .input-row {
@@ -1960,43 +1993,7 @@ footer {
     font-weight: 600;
 }
 
-.brands-section {
-    background: var(--white);
-    padding: 40px 0;
-    border-top: 1px solid var(--cream-mid);
-    border-bottom: 1px solid var(--cream-mid);
-}
-.brands-label {
-    text-align: center;
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--grey-light);
-    margin-bottom: 28px;
-}
-.brands-grid {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 52px;
-    flex-wrap: wrap;
-}
-.brand-item img {
-    height: 36px;
-    width: auto;
-    max-width: 120px;
-    object-fit: contain;
-    filter: grayscale(1) opacity(0.4);
-    transition: filter 0.3s ease;
-}
-.brand-item img:hover {
-    filter: grayscale(0) opacity(1);
-}
-@media (max-width: 640px) {
-    .brands-grid { gap: 28px; }
-    .brand-item img { height: 28px; }
-}
+
 
 @media (max-width: 640px) {
     .calc-switcher-wrap {
