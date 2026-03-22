@@ -1,13 +1,12 @@
 (function () {
   'use strict';
 
-  // ── Data from FAB ─────────────────────────────────────────────────────────
   var fab     = document.getElementById('fab');
   var PRICE   = fab ? (parseFloat(fab.dataset.price)   || 0) : 0;
   var FITTING = fab ? (parseFloat(fab.dataset.fitting)  || 6) : 6;
   var width   = 4;
+  var currentDisplayPrice = 0;
 
-  // ── Keyboard awareness (iOS safe) ─────────────────────────────────────────
   if (window.visualViewport) {
     var lastVH = window.visualViewport.height;
     window.visualViewport.addEventListener('resize', function () {
