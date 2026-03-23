@@ -30,6 +30,10 @@ if (mainImgInit && mainImgInit.src) {
   if (fabThumbSmInit) fabThumbSmInit.style.backgroundImage = 'url(' + mainImgInit.src + ')';
 }
 
+// Hide desktop panel rows until calc runs
+var _hide = ['fab-r-underlay','fab-r-fitting'];
+_hide.forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display='none'; });
+
 // Swatch backgrounds (CSP safe)
 document.querySelectorAll('.swatch').forEach(function (sw) {
   if (sw.dataset.bg) {
