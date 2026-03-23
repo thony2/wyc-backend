@@ -30,9 +30,6 @@ if (mainImgInit && mainImgInit.src) {
   if (fabThumbSmInit) fabThumbSmInit.style.backgroundImage = 'url(' + mainImgInit.src + ')';
 }
 
-// Hide desktop panel rows until calc runs
-var _hide = ['fab-r-underlay','fab-r-fitting'];
-_hide.forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display='none'; });
 
 // Swatch backgrounds (CSP safe)
 document.querySelectorAll('.swatch').forEach(function (sw) {
@@ -252,14 +249,16 @@ function updateDrawer(length, area, flooring, underlay, fitting, total) {
   if (length > 0) {
     if (rFlooringLabel) rFlooringLabel.textContent = 'Carpet (' + area + 'm²)';
     if (rFlooringPrice) rFlooringPrice.textContent = fmtGBP(flooring);
-    if (rUnderlay)      rUnderlay.style.display     = underlay > 0 ? '' : 'none';
+    if (rUnderlay)      rUnderlay.classList.toggle('fab-panel-row--hidden', underlay <= 0);
     if (rUnderlayPrice) rUnderlayPrice.textContent  = fmtGBP(underlay);
-    if (rFitting)       rFitting.style.display       = fitting > 0  ? '' : 'none';
+    if (rFitting)       rFitting.classList.toggle('fab-panel-row--hidden',  fitting  <= 0);
     if (rFittingPrice)  rFittingPrice.textContent    = fmtGBP(fitting);
     if (rTotal)         rTotal.textContent           = fmtGBP(total);
   } else {
     if (rFlooringLabel) rFlooringLabel.textContent = 'Carpet';
     if (rFlooringPrice) rFlooringPrice.textContent = '—';
+    if (rUnderlay)      rUnderlay.classList.add('fab-panel-row--hidden');
+    if (rFitting)       rFitting.classList.add('fab-panel-row--hidden');
     if (rTotal)         rTotal.textContent         = '—';
   }
 
@@ -275,14 +274,16 @@ function updateDrawer(length, area, flooring, underlay, fitting, total) {
   if (length > 0) {
     if (rmFlooringDetail) rmFlooringDetail.textContent = length + 'm × ' + width + 'm = ' + area + 'm²';
     if (rmFlooringPrice)  rmFlooringPrice.textContent  = fmtGBP(flooring);
-    if (rmUnderlay)       rmUnderlay.style.display      = underlay > 0 ? '' : 'none';
+    if (rmUnderlay)       rmUnderlay.classList.toggle('fab-panel-row--hidden', underlay <= 0);
     if (rmUnderlayPrice)  rmUnderlayPrice.textContent   = fmtGBP(underlay);
-    if (rmFitting)        rmFitting.style.display        = fitting > 0  ? '' : 'none';
+    if (rmFitting)        rmFitting.classList.toggle('fab-panel-row--hidden',  fitting  <= 0);
     if (rmFittingPrice)   rmFittingPrice.textContent     = fmtGBP(fitting);
     if (rmTotal)          rmTotal.textContent            = fmtGBP(total);
   } else {
     if (rmFlooringDetail) rmFlooringDetail.textContent = '—';
     if (rmFlooringPrice)  rmFlooringPrice.textContent  = '—';
+    if (rmUnderlay)       rmUnderlay.classList.add('fab-panel-row--hidden');
+    if (rmFitting)        rmFitting.classList.add('fab-panel-row--hidden');
     if (rmTotal)          rmTotal.textContent          = '—';
   }
 }

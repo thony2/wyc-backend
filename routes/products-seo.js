@@ -547,11 +547,11 @@ function buildProductPage(p) {
         <span id="fab-r-flooring-label">Carpet</span>
         <span id="fab-r-flooring-price">&mdash;</span>
       </div>
-      <div class="fab-panel-row" id="fab-r-underlay">
+      <div class="fab-panel-row fab-panel-row--hidden" id="fab-r-underlay">
         <span>Underlay</span>
         <span id="fab-r-underlay-price">&mdash;</span>
       </div>
-      <div class="fab-panel-row" id="fab-r-fitting">
+      <div class="fab-panel-row fab-panel-row--hidden" id="fab-r-fitting">
         <span>Fitting</span>
         <span id="fab-r-fitting-price">&mdash;</span>
       </div>
