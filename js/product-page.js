@@ -231,6 +231,8 @@ function updateCalc() {
   if (pdfBtn) pdfBtn.disabled = length <= 0;
   var pdfBtnMobile = document.getElementById('fab-pdf-btn-mobile');
   if (pdfBtnMobile) pdfBtnMobile.disabled = length <= 0;
+  var pdfBtnDrawer = document.getElementById('fab-pdf-btn-drawer');
+  if (pdfBtnDrawer) pdfBtnDrawer.disabled = length <= 0;
 }
 
 // Drawer receipt updater
@@ -265,7 +267,7 @@ function updateDrawer(length, area, flooring, underlay, fitting, total) {
   }
 
   // Mobile drawer rows
-  var rmFlooringDetail = document.getElementById('fab-rm-flooring-detail');
+  var rmFlooringLabel  = document.getElementById('fab-rm-flooring-label');
   var rmFlooringPrice  = document.getElementById('fab-rm-flooring-price');
   var rmUnderlay       = document.getElementById('fab-rm-underlay');
   var rmUnderlayPrice  = document.getElementById('fab-rm-underlay-price');
@@ -274,7 +276,7 @@ function updateDrawer(length, area, flooring, underlay, fitting, total) {
   var rmTotal          = document.getElementById('fab-rm-total');
 
   if (length > 0) {
-    if (rmFlooringDetail) rmFlooringDetail.textContent = length + 'm × ' + width + 'm = ' + area + 'm²';
+    if (rmFlooringLabel)  rmFlooringLabel.textContent  = 'Carpet (' + area + 'm²)';
     if (rmFlooringPrice)  rmFlooringPrice.textContent  = fmtGBP(flooring);
     if (rmUnderlay)       rmUnderlay.classList.toggle('fab-panel-row--hidden', underlay <= 0);
     if (rmUnderlayPrice)  rmUnderlayPrice.textContent   = fmtGBP(underlay);
@@ -282,7 +284,7 @@ function updateDrawer(length, area, flooring, underlay, fitting, total) {
     if (rmFittingPrice)   rmFittingPrice.textContent     = fmtGBP(fitting);
     if (rmTotal)          rmTotal.textContent            = fmtGBP(total);
   } else {
-    if (rmFlooringDetail) rmFlooringDetail.textContent = '—';
+    if (rmFlooringLabel)  rmFlooringLabel.textContent  = 'Carpet';
     if (rmFlooringPrice)  rmFlooringPrice.textContent  = '—';
     if (rmUnderlay)       rmUnderlay.classList.add('fab-panel-row--hidden');
     if (rmFitting)        rmFitting.classList.add('fab-panel-row--hidden');
@@ -499,6 +501,13 @@ if (pdfBtn) {
 var pdfBtnMobile = document.getElementById('fab-pdf-btn-mobile');
 if (pdfBtnMobile) {
   pdfBtnMobile.addEventListener('click', function() {
+    downloadQuotePDF();
+  });
+}
+
+var pdfBtnDrawer = document.getElementById('fab-pdf-btn-drawer');
+if (pdfBtnDrawer) {
+  pdfBtnDrawer.addEventListener('click', function() {
     downloadQuotePDF();
   });
 }

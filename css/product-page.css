@@ -567,39 +567,40 @@ footer{background:var(--black);padding:0;padding-bottom:calc(var(--fab-h) + 32px
     overflow: hidden;
     opacity: 0;
     transition: max-height .35s cubic-bezier(0.16,1,0.3,1), opacity .25s ease;
-    background: var(--surface);
+    background: #ffffff;
     border-top: 1px solid var(--border);
   }
   #fab.fab--open .fab-drawer { max-height: 500px; opacity: 1 }
-  .fab-drawer-trust {
-    font-size: .68rem; font-weight: 600; color: var(--ink-3);
-    display: flex; align-items: center; gap: 8px;
-    padding: 12px 20px 8px;
+  .fab-drawer-inner {
+    padding: 20px 20px 16px;
   }
-  .fab-drawer-trust i { color: var(--navy); font-size: .8rem; flex-shrink: 0 }
-  .fab-receipt { padding: 0 20px 12px }
-  .fab-receipt-row {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    align-items: center; gap: 8px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
+  .fab-drawer-inner .fab-panel-title {
+    margin-bottom: 14px;
+  }
+  .fab-drawer-pdf-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 14px;
+    padding: 11px 0;
+    background: var(--surface);
+    border: 1.5px solid var(--border-2);
+    border-radius: var(--r-md);
     font-size: .78rem;
+    font-weight: 700;
+    color: var(--ink-2);
+    font-family: inherit;
+    cursor: pointer;
+    transition: all var(--t);
   }
-  .fab-receipt-row:last-child { border-bottom: none }
-  .fab-receipt-header { font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-4) }
-  .fab-receipt-row span:last-child { text-align: right; font-weight: 600; color: var(--ink) }
-  .fab-receipt-row span:nth-child(2) { color: var(--ink-3); font-size: .75rem }
-  .fab-receipt-divider { height: 1px; background: var(--border-2); margin: 4px 0 }
-  .fab-receipt-total { font-weight: 700; font-size: .85rem }
-  .fab-receipt-total span:last-child { color: var(--red); font-weight: 800; font-size: .95rem }
-  .fab-drawer-payment {
-    display: flex; align-items: center; gap: 12px;
-    padding: 8px 20px 14px;
-    border-top: 1px solid var(--border);
+  .fab-drawer-pdf-btn:hover:not(:disabled) {
+    background: var(--white);
+    border-color: var(--ink);
+    color: var(--ink);
   }
-  .fab-drawer-payment-label { font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-4) }
-  .fab-drawer-payment img { height: 13px; opacity: .45; filter: grayscale(1) }
+  .fab-drawer-pdf-btn:disabled { opacity: .4; cursor: not-allowed; }
 
   /* Ghost on mobile */
   #fab.fab--ghost {

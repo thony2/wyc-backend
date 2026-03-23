@@ -613,38 +613,28 @@ function buildProductPage(p) {
       </a>
     </div>
     <div class="fab-drawer" id="fab-drawer">
-      <div class="fab-drawer-trust">
-        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
-        Official West Yorkshire Carpets Quote &mdash; Includes VAT &amp; No Hidden Fees
-      </div>
-      <div class="fab-receipt">
-        <div class="fab-receipt-row fab-receipt-header">
-          <span>Item</span><span>Detail</span><span>Price</span>
-        </div>
-        <div class="fab-receipt-row" id="fab-rm-flooring">
-          <span>Carpet</span>
-          <span id="fab-rm-flooring-detail">&mdash;</span>
+      <div class="fab-drawer-inner">
+        <h4 class="fab-panel-title">Quotation Details</h4>
+        <div class="fab-panel-row" id="fab-rm-flooring">
+          <span id="fab-rm-flooring-label">Carpet</span>
           <span id="fab-rm-flooring-price">&mdash;</span>
         </div>
-        <div class="fab-receipt-row fab-panel-row--hidden" id="fab-rm-underlay">
-          <span>Underlay</span><span>Premium</span>
+        <div class="fab-panel-row fab-panel-row--hidden" id="fab-rm-underlay">
+          <span>Underlay</span>
           <span id="fab-rm-underlay-price">&mdash;</span>
         </div>
-        <div class="fab-receipt-row fab-panel-row--hidden" id="fab-rm-fitting">
-          <span>Fitting</span><span>Professional</span>
+        <div class="fab-panel-row fab-panel-row--hidden" id="fab-rm-fitting">
+          <span>Fitting</span>
           <span id="fab-rm-fitting-price">&mdash;</span>
         </div>
-        <div class="fab-receipt-divider"></div>
-        <div class="fab-receipt-row fab-receipt-total">
-          <span>Total</span><span></span>
+        <div class="fab-panel-row fab-panel-total">
+          <span>Total inc. VAT</span>
           <span id="fab-rm-total">&mdash;</span>
         </div>
-      </div>
-      <div class="fab-drawer-payment">
-        <span class="fab-drawer-payment-label">Secure payment</span>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" height="13" loading="lazy">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" height="15" loading="lazy">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Klarna_Logo.svg" alt="Klarna" height="12" loading="lazy">
+        <button class="fab-drawer-pdf-btn" id="fab-pdf-btn-drawer" type="button" aria-label="Download PDF quote" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF Quote
+        </button>
       </div>
     </div>
   </div>
