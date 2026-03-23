@@ -544,6 +544,7 @@ footer{background:var(--black);padding:0;padding-bottom:calc(var(--fab-h) + 32px
     white-space: nowrap;
   }
   .fab-mobile-main .fab-price-sub {
+    font-size: 8px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
