@@ -604,8 +604,8 @@ function buildProductPage(p) {
         </div>
       </div>
       <a href="/?product=${encodeURIComponent(p.name)}&price=${price}&category=${catSlug}#contact"
-         class="fab-btn-main" id="fab-measure-mobile" aria-label="Book free measure">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+         class="fab-btn-main" id="fab-measure-mobile">
+        Book Free Measure
       </a>
     </div>
     <div class="fab-drawer" id="fab-drawer">
