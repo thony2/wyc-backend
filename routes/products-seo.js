@@ -603,13 +603,9 @@ function buildProductPage(p) {
           <div class="fab-price-sub" id="fab-price-sub-mobile">Enter dimensions</div>
         </div>
       </div>
-      <button class="fab-circle-btn fab-circle-btn--sm" id="fab-pdf-btn-mobile" type="button" aria-label="Download PDF quote" disabled>
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      </button>
       <a href="/?product=${encodeURIComponent(p.name)}&price=${price}&category=${catSlug}#contact"
-         class="fab-btn-main" id="fab-measure-mobile">
-        Book Free Measure
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+         class="fab-btn-main" id="fab-measure-mobile" aria-label="Book free measure">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
     </div>
     <div class="fab-drawer" id="fab-drawer">

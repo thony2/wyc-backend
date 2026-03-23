@@ -229,8 +229,6 @@ function updateCalc() {
   // Enable/disable PDF button
   var pdfBtn = document.getElementById('fab-pdf-btn');
   if (pdfBtn) pdfBtn.disabled = length <= 0;
-  var pdfBtnMobile = document.getElementById('fab-pdf-btn-mobile');
-  if (pdfBtnMobile) pdfBtnMobile.disabled = length <= 0;
   var pdfBtnDrawer = document.getElementById('fab-pdf-btn-drawer');
   if (pdfBtnDrawer) pdfBtnDrawer.disabled = length <= 0;
 }
@@ -494,13 +492,6 @@ function downloadQuotePDF() {
 var pdfBtn = document.getElementById('fab-pdf-btn');
 if (pdfBtn) {
   pdfBtn.addEventListener('click', function() {
-    downloadQuotePDF();
-  });
-}
-
-var pdfBtnMobile = document.getElementById('fab-pdf-btn-mobile');
-if (pdfBtnMobile) {
-  pdfBtnMobile.addEventListener('click', function() {
     downloadQuotePDF();
   });
 }

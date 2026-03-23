@@ -544,18 +544,12 @@ footer{background:var(--black);padding:0;padding-bottom:calc(var(--fab-h) + 32px
   .fab-mobile-main .fab-price-sub {
     white-space: nowrap;
   }
-  /* Zone B: PDF circle — same visual as desktop, smaller */
-  .fab-circle-btn--sm {
-    width: 40px;
-    height: 40px;
-    flex-shrink: 0;
-  }
-  /* Zone C: CTA — pill matching desktop, fixed width */
+  /* Zone C: CTA — arrow-only circle */
   .fab-mobile-main .fab-btn-main {
-    height: 46px;
-    padding: 0 20px;
-    border-radius: 100px;
-    font-size: .75rem;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 50%;
     flex-shrink: 0;
     justify-content: center;
   }
@@ -624,5 +618,4 @@ footer{background:var(--black);padding:0;padding-bottom:calc(var(--fab-h) + 32px
 }
 
 @media(max-width:380px) {
-  .fab-mobile-main .fab-btn-main span:not(:first-child) { display: none }
 }
