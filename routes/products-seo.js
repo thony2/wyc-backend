@@ -533,7 +533,7 @@ function buildProductPage(p) {
   <!-- Zone A: Swatch + Price -->
   <div class="fab-zone-a">
     <div class="fab-swatch-thumb" id="fab-swatch-thumb"></div>
-    <div class="fab-price-stack">
+    <div>
       <div class="fab-price" id="fab-price">&pound;0.00</div>
       <div class="fab-price-sub" id="fab-price-sub">Enter dimensions</div>
     </div>
@@ -541,17 +541,17 @@ function buildProductPage(p) {
 
   <!-- Zone B: PDF Quote -->
   <div class="fab-hover-wrapper">
-    <div class="fab-glass-panel" id="fab-breakdown-panel" role="tooltip">
+    <div class="fab-glass-panel" role="tooltip" aria-label="Quote breakdown">
       <h4 class="fab-panel-title">Quotation Details</h4>
       <div class="fab-panel-row" id="fab-r-flooring">
         <span id="fab-r-flooring-label">Carpet</span>
         <span id="fab-r-flooring-price">&mdash;</span>
       </div>
-      <div class="fab-panel-row" id="fab-r-underlay">
+      <div class="fab-panel-row fab-panel-row--hidden" id="fab-r-underlay">
         <span>Underlay</span>
         <span id="fab-r-underlay-price">&mdash;</span>
       </div>
-      <div class="fab-panel-row" id="fab-r-fitting">
+      <div class="fab-panel-row fab-panel-row--hidden" id="fab-r-fitting">
         <span>Fitting</span>
         <span id="fab-r-fitting-price">&mdash;</span>
       </div>
@@ -567,7 +567,7 @@ function buildProductPage(p) {
 
   <!-- Zone B: Concierge -->
   <div class="fab-hover-wrapper">
-    <div class="fab-glass-panel fab-glass-panel--concierge" role="tooltip">
+    <div class="fab-glass-panel fab-glass-panel--concierge" role="tooltip" aria-label="Contact options">
       <h4 class="fab-panel-title">Get Help</h4>
       <a href="${PHONE_HREF}" class="fab-concierge-item">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.63 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 15z"/></svg>
@@ -578,7 +578,7 @@ function buildProductPage(p) {
         <span>WhatsApp Expert</span>
       </a>
     </div>
-    <button class="fab-circle-btn" type="button" aria-label="Contact us">
+    <button class="fab-circle-btn" type="button" aria-label="Contact options">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
     </button>
   </div>
@@ -590,14 +590,31 @@ function buildProductPage(p) {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
   </a>
 
-  <!-- Mobile drawer -->
-  <div class="fab-drawer" id="fab-drawer" aria-hidden="true">
-    <div class="fab-drawer-inner">
+  <!-- Mobile drawer (hidden on desktop) -->
+  <div class="fab-mobile-bar" id="fab-mobile-bar">
+    <div class="fab-grabber" id="fab-grabber">
+      <span class="fab-grabber-line"></span>
+    </div>
+    <div class="fab-mobile-main">
+      <div class="fab-zone-a">
+        <div class="fab-swatch-thumb-sm" id="fab-swatch-thumb-sm"></div>
+        <div>
+          <div class="fab-price" id="fab-price-mobile">&pound;0.00</div>
+          <div class="fab-price-sub" id="fab-price-sub-mobile">Enter dimensions</div>
+        </div>
+      </div>
+      <a href="/?product=${encodeURIComponent(p.name)}&price=${price}&category=${catSlug}#contact"
+         class="fab-btn-main" id="fab-measure-mobile">
+        Book Free Measure
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+    <div class="fab-drawer" id="fab-drawer">
       <div class="fab-drawer-trust">
         <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
         Official West Yorkshire Carpets Quote &mdash; Includes VAT &amp; No Hidden Fees
       </div>
-      <div class="fab-receipt" id="fab-receipt">
+      <div class="fab-receipt">
         <div class="fab-receipt-row fab-receipt-header">
           <span>Item</span><span>Detail</span><span>Price</span>
         </div>
@@ -606,11 +623,11 @@ function buildProductPage(p) {
           <span id="fab-rm-flooring-detail">&mdash;</span>
           <span id="fab-rm-flooring-price">&mdash;</span>
         </div>
-        <div class="fab-receipt-row" id="fab-rm-underlay">
+        <div class="fab-receipt-row fab-panel-row--hidden" id="fab-rm-underlay">
           <span>Underlay</span><span>Premium</span>
           <span id="fab-rm-underlay-price">&mdash;</span>
         </div>
-        <div class="fab-receipt-row" id="fab-rm-fitting">
+        <div class="fab-receipt-row fab-panel-row--hidden" id="fab-rm-fitting">
           <span>Fitting</span><span>Professional</span>
           <span id="fab-rm-fitting-price">&mdash;</span>
         </div>
@@ -622,16 +639,11 @@ function buildProductPage(p) {
       </div>
       <div class="fab-drawer-payment">
         <span class="fab-drawer-payment-label">Secure payment</span>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" height="13">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" height="15">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Klarna_Logo.svg" alt="Klarna" height="12">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" height="13" loading="lazy">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" height="15" loading="lazy">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Klarna_Logo.svg" alt="Klarna" height="12" loading="lazy">
       </div>
     </div>
-  </div>
-
-  <!-- Mobile grabber -->
-  <div class="fab-grabber" id="fab-grabber" aria-label="Toggle price breakdown">
-    <span class="fab-grabber-line"></span>
   </div>
 
 </div>

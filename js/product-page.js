@@ -23,9 +23,11 @@ if (window.visualViewport) {
 
 // Set initial FAB swatch thumb from main product image
 var fabThumbInit = document.getElementById('fab-swatch-thumb');
+var fabThumbSmInit = document.getElementById('fab-swatch-thumb-sm');
 var mainImgInit  = document.getElementById('product-main-img');
-if (fabThumbInit && mainImgInit && mainImgInit.src) {
-  fabThumbInit.style.backgroundImage = 'url(' + mainImgInit.src + ')';
+if (mainImgInit && mainImgInit.src) {
+  if (fabThumbInit)   fabThumbInit.style.backgroundImage   = 'url(' + mainImgInit.src + ')';
+  if (fabThumbSmInit) fabThumbSmInit.style.backgroundImage = 'url(' + mainImgInit.src + ')';
 }
 
 // Swatch backgrounds (CSP safe)
@@ -71,6 +73,11 @@ allSwatches.forEach(function (sw) {
     if (fabThumb && img) {
       fabThumb.style.backgroundImage = 'url(' + img + ')';
       fabThumb.style.backgroundSize  = 'cover';
+    }
+    var fabThumbSm = document.getElementById('fab-swatch-thumb-sm');
+    if (fabThumbSm && img) {
+      fabThumbSm.style.backgroundImage = 'url(' + img + ')';
+      fabThumbSm.style.backgroundSize  = 'cover';
     }
   });
 });
@@ -164,7 +171,16 @@ function updateCalc() {
 
   var fabPriceSubEl = document.getElementById('fab-price-sub');
   if (fabPriceSubEl) {
-    fabPriceSubEl.textContent = length > 0 ? area + ' m\u00b2 · Fully Installed' : 'Enter dimensions';
+    fabPriceSubEl.textContent = length > 0 ? area + ' m² · Fully Installed' : 'Enter dimensions';
+  }
+  // Sync mobile bar
+  var fabPriceMobile = document.getElementById('fab-price-mobile');
+  var fabPriceSubMobile = document.getElementById('fab-price-sub-mobile');
+  if (fabPriceMobile) {
+    fabPriceMobile.textContent = length > 0 ? '£' + total.toFixed(2) : '£0.00';
+  }
+  if (fabPriceSubMobile) {
+    fabPriceSubMobile.textContent = length > 0 ? area + ' m² · Fully Installed' : 'Enter dimensions';
   }
   // Legacy fab-m2 fallback
   var fabM2El = document.getElementById('fab-m2');
@@ -193,6 +209,7 @@ function updateCalc() {
 
   // Update Book Free Measure href with receipt params
   var measureBtn = document.getElementById('fab-measure');
+  var measureBtnMobile = document.getElementById('fab-measure-mobile');
   if (measureBtn && length > 0) {
     var productName = document.querySelector('.product-name') ? document.querySelector('.product-name').textContent.trim() : '';
     var params = new URLSearchParams();
@@ -205,6 +222,7 @@ function updateCalc() {
     params.set('fitting',  fitting.toFixed(2));
     params.set('total',    total.toFixed(2));
     measureBtn.href = '/?' + params.toString() + '#contact';
+    if (measureBtnMobile) measureBtnMobile.href = '/?' + params.toString() + '#contact';
   }
 
   // Enable/disable PDF button
@@ -274,32 +292,27 @@ function openDrawer() {
   if (!fab || !fabDrawer) return;
   drawerOpen = true;
   fab.classList.add('fab--open');
-  fabDrawer.setAttribute('aria-hidden', 'false');
 }
 
 function closeDrawer() {
   if (!fab || !fabDrawer) return;
   drawerOpen = false;
   fab.classList.remove('fab--open');
-  fabDrawer.setAttribute('aria-hidden', 'true');
 }
 
-// Mobile: tap grabber or price area to toggle
 if (fabGrabber) {
   fabGrabber.addEventListener('click', function () {
     drawerOpen ? closeDrawer() : openDrawer();
   });
 }
 
-// Also tap the price to open
-var fabPriceWrap = document.querySelector('.fab-price-wrap');
-if (fabPriceWrap) {
-  fabPriceWrap.addEventListener('click', function () {
-    if (window.innerWidth <= 768) {
-      drawerOpen ? closeDrawer() : openDrawer();
-    }
+// Tap mobile price area to open drawer
+var fabMobileMain = document.querySelector('.fab-mobile-main .fab-zone-a');
+if (fabMobileMain) {
+  fabMobileMain.addEventListener('click', function () {
+    drawerOpen ? closeDrawer() : openDrawer();
   });
-  fabPriceWrap.style.cursor = 'pointer';
+  fabMobileMain.style.cursor = 'pointer';
 }
 
 // Desktop: no hover drawer — layout handles info display
