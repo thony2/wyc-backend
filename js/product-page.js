@@ -1,635 +1,580 @@
 (function () {
 'use strict';
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   STATE
+   ───────────────────────────────────────────────────────────────────────────── */
 var fab     = document.getElementById('fab');
 var PRICE   = fab ? (parseFloat(fab.dataset.price)   || 0) : 0;
 var FITTING = fab ? (parseFloat(fab.dataset.fitting)  || 6) : 6;
-var width   = 4;
-var currentDisplayPrice = 0;
-var animFrameId = null;
+var UNDERLAY_PRICE = 5;
 
-// Keyboard awareness (iOS safe)
-if (window.visualViewport) {
-  var lastVH = window.visualViewport.height;
-  window.visualViewport.addEventListener('resize', function () {
-    var current = window.visualViewport.height;
-    if (current < lastVH * 0.85) {
-      document.body.classList.add('keyboard-open');
-    } else {
-      document.body.classList.remove('keyboard-open');
+var selectedWidth  = 4;
+var selectedColour = { name: '', hex: '', img: '' };
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   HELPERS
+   ───────────────────────────────────────────────────────────────────────────── */
+function $(id) { return document.getElementById(id); }
+function fmtGBP(v) { return '\u00a3' + v.toFixed(2); }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SWATCH BACKGROUNDS  (CSP-safe: set via JS, not inline style attr)
+   ───────────────────────────────────────────────────────────────────────────── */
+function initSwatchBg() {
+  document.querySelectorAll('.swatch').forEach(function (sw) {
+    if (sw.dataset.bg || sw.dataset.img) {
+      var url = sw.dataset.bg || sw.dataset.img;
+      sw.style.backgroundImage    = 'url(' + url + ')';
+      sw.style.backgroundSize     = 'cover';
+      sw.style.backgroundPosition = 'center';
+    } else if (sw.dataset.hex) {
+      sw.style.backgroundColor = sw.dataset.hex;
     }
   });
 }
 
-// Set initial FAB swatch thumb from main product image
-var fabThumbInit = document.getElementById('fab-swatch-thumb');
-var fabThumbSmInit = document.getElementById('fab-swatch-thumb-sm');
-var mainImgInit  = document.getElementById('product-main-img');
-if (mainImgInit && mainImgInit.src) {
-  if (fabThumbInit)   fabThumbInit.style.backgroundImage   = 'url(' + mainImgInit.src + ')';
-  if (fabThumbSmInit) fabThumbSmInit.style.backgroundImage = 'url(' + mainImgInit.src + ')';
-}
+/* ─────────────────────────────────────────────────────────────────────────────
+   SWATCH SELECTION
+   ───────────────────────────────────────────────────────────────────────────── */
+function initSwatches() {
+  var allSwatches = document.querySelectorAll('.swatch');
+  if (!allSwatches.length) return;
 
-
-// Swatch backgrounds (CSP safe)
-document.querySelectorAll('.swatch').forEach(function (sw) {
-  if (sw.dataset.bg) {
-    sw.style.backgroundImage    = 'url(' + sw.dataset.bg + ')';
-    sw.style.backgroundSize     = 'cover';
-    sw.style.backgroundPosition = 'center';
-  } else if (sw.dataset.hex) {
-    sw.style.backgroundColor = sw.dataset.hex;
+  // Seed state from first active swatch
+  var first = document.querySelector('.swatch.active') || allSwatches[0];
+  if (first) {
+    selectedColour = {
+      name: first.dataset.name || '',
+      hex:  first.dataset.hex  || '',
+      img:  first.dataset.img  || first.dataset.bg || ''
+    };
+    // Set initial main image
+    setMainImage(selectedColour.img, selectedColour.name);
   }
-});
 
-// Swatch interaction
-var mainImg          = document.getElementById('product-main-img');
-var swatchNameEl     = document.getElementById('swatch-name');
-var stepSwatchNameEl = document.getElementById('step-swatch-name');
-var allSwatches      = document.querySelectorAll('.swatch');
+  allSwatches.forEach(function (sw) {
+    sw.addEventListener('click', function () {
+      allSwatches.forEach(function (s) {
+        s.classList.toggle('active', s === sw);
+      });
 
-allSwatches.forEach(function (sw) {
-  sw.addEventListener('click', function () {
-    allSwatches.forEach(function (s) {
-      s.classList.toggle('active', s.dataset.name === sw.dataset.name);
-    });
-    var img  = sw.dataset.img;
-    var name = sw.dataset.name;
-    if (img && mainImg) {
-      mainImg.style.filter  = 'blur(4px)';
-      mainImg.style.opacity = '0.7';
-      var newImg = new Image();
-      newImg.src = img;
-      newImg.onload = function () {
-        mainImg.src           = img;
-        mainImg.alt           = name;
-        mainImg.style.filter  = 'blur(0)';
-        mainImg.style.opacity = '1';
+      selectedColour = {
+        name: sw.dataset.name || '',
+        hex:  sw.dataset.hex  || '',
+        img:  sw.dataset.img  || sw.dataset.bg || ''
       };
-    }
-    if (swatchNameEl)     swatchNameEl.textContent     = name;
-    if (stepSwatchNameEl) stepSwatchNameEl.textContent = name;
-    // Update FAB swatch thumb
-    var fabThumb = document.getElementById('fab-swatch-thumb');
-    if (fabThumb && img) {
-      fabThumb.style.backgroundImage = 'url(' + img + ')';
-      fabThumb.style.backgroundSize  = 'cover';
-    }
-    var fabThumbSm = document.getElementById('fab-swatch-thumb-sm');
-    if (fabThumbSm && img) {
-      fabThumbSm.style.backgroundImage = 'url(' + img + ')';
-      fabThumbSm.style.backgroundSize  = 'cover';
-    }
-  });
-});
 
-// Width buttons
-document.querySelectorAll('.dim-w-btn').forEach(function (btn) {
-  btn.addEventListener('click', function () {
-    document.querySelectorAll('.dim-w-btn').forEach(function (b) {
-      b.classList.remove('active');
+      // Update swatch name labels
+      document.querySelectorAll('#swatch-name').forEach(function (el) {
+        el.textContent = selectedColour.name;
+      });
+
+      // Update main image (desktop left col)
+      setMainImage(selectedColour.img, selectedColour.name);
+
+      // Update hero background (mobile)
+      var heroBg = document.getElementById('hero-bg');
+      if (heroBg && selectedColour.img) {
+        heroBg.style.backgroundImage = 'url(' + selectedColour.img + ')';
+      }
     });
-    btn.classList.add('active');
-    width = parseFloat(btn.dataset.width);
-    updateCalc();
   });
-});
-
-// Length input
-var lenInput = document.getElementById('fp-length');
-
-if (lenInput && fab) {
-  lenInput.addEventListener('focus', function () {
-    if (!fab.classList.contains('fab--visible')) {
-      fab.classList.add('fab--ghost');
-      fab.classList.add('fab--visible');
-    }
-  });
-  lenInput.addEventListener('input', updateCalc);
 }
 
-// Addon toggles
-document.querySelectorAll('.addon-row').forEach(function (row) {
-  row.addEventListener('click', function (e) {
-    e.preventDefault();
-    row.classList.toggle('active');
-    var cb = row.querySelector('input.addon-cb');
-    if (cb) cb.checked = row.classList.contains('active');
-    updateCalc();
-  });
-});
-
-// Price ticker
-function animatePrice(targetPrice) {
-  var fabPriceEl = document.getElementById('fab-price');
-  if (!fabPriceEl) return;
-  if (animFrameId) {
-    cancelAnimationFrame(animFrameId);
-    animFrameId = null;
-  }
-  var start     = currentDisplayPrice;
-  var end       = targetPrice;
-  var duration  = 300;
-  var startTime = null;
-  function step(timestamp) {
-    if (!startTime) startTime = timestamp;
-    var progress = Math.min((timestamp - startTime) / duration, 1);
-    var current  = start + (end - start) * progress;
-    var rounded  = current.toFixed(2);
-    if (fabPriceEl.textContent !== '\u00a3' + rounded) {
-      fabPriceEl.textContent = '\u00a3' + rounded;
-    }
-    currentDisplayPrice = current;
-    if (progress < 1) {
-      animFrameId = window.requestAnimationFrame(step);
-    } else {
-      animFrameId = null;
-      currentDisplayPrice = end;
-    }
-  }
-  animFrameId = window.requestAnimationFrame(step);
+function setMainImage(imgUrl, altText) {
+  var mainImg = document.getElementById('product-main-img');
+  if (!mainImg || !imgUrl) return;
+  mainImg.style.filter  = 'blur(4px)';
+  mainImg.style.opacity = '0.7';
+  var newImg = new Image();
+  newImg.src = imgUrl;
+  newImg.onload = function () {
+    mainImg.src           = imgUrl;
+    mainImg.alt           = altText || '';
+    mainImg.style.filter  = '';
+    mainImg.style.opacity = '1';
+  };
+  newImg.onerror = function () {
+    mainImg.style.filter  = '';
+    mainImg.style.opacity = '1';
+  };
 }
 
-// Calculator
-function updateCalc() {
-  var length = lenInput ? (parseFloat(lenInput.value) || 0) : 0;
-  var area   = parseFloat((length * width).toFixed(2));
+// Set initial product image on the main img from page src
+(function seedMainImg() {
+  var mainImg = document.getElementById('product-main-img');
+  if (!mainImg) return;
+  // hero-bg mirrors main image on mobile
+  var heroBg = document.getElementById('hero-bg');
+  if (heroBg && mainImg.src) {
+    heroBg.style.backgroundImage = 'url(' + mainImg.src + ')';
+  }
+})();
 
-  var underlayRow = document.querySelector('.addon-row[data-type="underlay"]');
-  var fittingRow  = document.querySelector('.addon-row[data-type="fitting"]');
-  var underlayOn  = underlayRow && underlayRow.classList.contains('active');
-  var fittingOn   = fittingRow  && fittingRow.classList.contains('active');
+/* ─────────────────────────────────────────────────────────────────────────────
+   WIDTH SEGMENT CONTROL
+   ───────────────────────────────────────────────────────────────────────────── */
+function initWidthBtns() {
+  document.querySelectorAll('.seg-btn[data-width]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.seg-btn[data-width]').forEach(function (b) {
+        b.classList.remove('active');
+      });
+      btn.classList.add('active');
+      selectedWidth = parseFloat(btn.dataset.width);
+      calcPrice();
+    });
+  });
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ROOM PRESETS
+   ───────────────────────────────────────────────────────────────────────────── */
+function initPresets() {
+  var lenInput = document.getElementById('room-len');
+  document.querySelectorAll('.preset-chip').forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      document.querySelectorAll('.preset-chip').forEach(function (c) {
+        c.classList.remove('active');
+      });
+      chip.classList.add('active');
+      if (lenInput && chip.dataset.len) {
+        lenInput.value = chip.dataset.len;
+        calcPrice();
+      }
+    });
+  });
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   CALCULATOR
+   ───────────────────────────────────────────────────────────────────────────── */
+function initCalc() {
+  var lenInput = document.getElementById('room-len');
+  if (!lenInput) return;
+
+  // Clear preset active when user types manually
+  lenInput.addEventListener('input', function () {
+    document.querySelectorAll('.preset-chip').forEach(function (c) {
+      c.classList.remove('active');
+    });
+    calcPrice();
+  });
+
+  // Service toggle checkboxes
+  ['svc-fitting', 'svc-underlay'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('change', calcPrice);
+  });
+}
+
+function calcPrice() {
+  var lenInput    = document.getElementById('room-len');
+  var len         = lenInput ? (parseFloat(lenInput.value) || 0) : 0;
+  var estimCard   = document.getElementById('estimate-card');
+  var pdfBtn      = document.getElementById('estimate-pdf-btn');
+  var ctaBtn      = document.getElementById('estimate-cta-btn');
+
+  if (len <= 0) {
+    if (estimCard) estimCard.classList.remove('visible');
+    if (pdfBtn)    pdfBtn.disabled = true;
+    return;
+  }
+
+  var area      = parseFloat((len * selectedWidth).toFixed(2));
+  var withFit   = document.getElementById('svc-fitting')  ? document.getElementById('svc-fitting').checked  : true;
+  var withUnder = document.getElementById('svc-underlay') ? document.getElementById('svc-underlay').checked : true;
 
   var flooring = area * PRICE;
-  var underlay = underlayOn ? area * 5       : 0;
-  var fitting  = fittingOn  ? area * FITTING : 0;
-  var total    = flooring + underlay + fitting;
+  var fitting  = withFit   ? area * FITTING       : 0;
+  var underlay = withUnder ? area * UNDERLAY_PRICE : 0;
+  var total    = flooring + fitting + underlay;
 
-  var fabM2El    = document.getElementById('fab-m2');
-  var fabBreakEl = document.getElementById('fab-breakdown');
-
-  animatePrice(length > 0 ? total : 0);
-
-  var fabPriceSubEl = document.getElementById('fab-price-sub');
-  if (fabPriceSubEl) {
-    fabPriceSubEl.textContent = length > 0 ? area + ' m² · Fully Installed' : 'Enter dimensions';
-  }
-  // Sync mobile bar
-  var fabPriceMobile = document.getElementById('fab-price-mobile');
-  var fabPriceSubMobile = document.getElementById('fab-price-sub-mobile');
-  if (fabPriceMobile) {
-    fabPriceMobile.textContent = length > 0 ? '£' + total.toFixed(2) : '£0.00';
-  }
-  if (fabPriceSubMobile) {
-    fabPriceSubMobile.textContent = length > 0 ? area + ' m² · Fully Installed' : 'Enter dimensions';
-  }
-  // Legacy fab-m2 fallback
-  var fabM2El = document.getElementById('fab-m2');
-  if (fabM2El) {
-    fabM2El.textContent = length > 0 ? area + ' m\u00b2' : '';
+  // Update estimate card
+  var totalEl = document.getElementById('est-total');
+  var bkEl    = document.getElementById('est-breakdown');
+  if (totalEl) totalEl.textContent = fmtGBP(total);
+  if (bkEl) {
+    var bk = 'Carpet: ' + fmtGBP(flooring);
+    if (withFit)   bk += '<br>Fitting: '  + fmtGBP(fitting);
+    if (withUnder) bk += '<br>Underlay: ' + fmtGBP(underlay);
+    bkEl.innerHTML = bk;
   }
 
-  if (fabBreakEl) {
-    if (length > 0) {
-      var parts = ['Material (' + width + 'm width) \u00a3' + flooring.toFixed(2)];
-      if (underlay > 0) parts.push('Underlay \u00a3' + underlay.toFixed(2));
-      if (fitting  > 0) parts.push('Fitting \u00a3'  + fitting.toFixed(2));
-      fabBreakEl.textContent = parts.join('  \u00b7  ');
-    } else {
-      fabBreakEl.textContent = 'Enter length for an instant quote';
-    }
-  }
+  if (estimCard) estimCard.classList.add('visible');
+  if (pdfBtn)    pdfBtn.disabled = false;
 
-  // Update drawer receipt
-  updateDrawer(length, area, flooring, underlay, fitting, total);
-
-  if (length > 0 && fab) {
-    fab.classList.add('fab--visible');
-    fab.classList.remove('fab--ghost');
-  }
-
-  // Update Book Free Measure href with receipt params
-  var measureBtn = document.getElementById('fab-measure');
-  var measureBtnMobile = document.getElementById('fab-measure-mobile');
-  if (measureBtn && length > 0) {
-    var productName = document.querySelector('.product-name') ? document.querySelector('.product-name').textContent.trim() : '';
+  // Update estimate CTA href
+  if (ctaBtn) {
+    var productName = document.querySelector('.product-name-desktop') || document.querySelector('h1.hero-title');
+    var name = productName ? productName.textContent.trim() : '';
     var params = new URLSearchParams();
-    params.set('product',  productName);
-    params.set('price',    (area * PRICE).toFixed(2));
+    params.set('product',  name);
+    params.set('price',    flooring.toFixed(2));
     params.set('area',     area);
-    params.set('width',    width);
+    params.set('width',    selectedWidth);
     params.set('flooring', flooring.toFixed(2));
     params.set('underlay', underlay.toFixed(2));
     params.set('fitting',  fitting.toFixed(2));
     params.set('total',    total.toFixed(2));
-    measureBtn.href = '/?' + params.toString() + '#contact';
-    if (measureBtnMobile) measureBtnMobile.href = '/?' + params.toString() + '#contact';
-  }
-
-  // Enable/disable PDF button
-  var pdfBtn = document.getElementById('fab-pdf-btn');
-  if (pdfBtn) pdfBtn.disabled = length <= 0;
-  var pdfBtnDrawer = document.getElementById('fab-pdf-btn-drawer');
-  if (pdfBtnDrawer) pdfBtnDrawer.disabled = length <= 0;
-}
-
-// Drawer receipt updater
-function fmtGBP(v) {
-  return '\u00a3' + v.toFixed(2);
-}
-
-function updateDrawer(length, area, flooring, underlay, fitting, total) {
-  // Desktop glass panel rows
-  var rFlooringLabel = document.getElementById('fab-r-flooring-label');
-  var rFlooringPrice = document.getElementById('fab-r-flooring-price');
-  var rUnderlay      = document.getElementById('fab-r-underlay');
-  var rUnderlayPrice = document.getElementById('fab-r-underlay-price');
-  var rFitting       = document.getElementById('fab-r-fitting');
-  var rFittingPrice  = document.getElementById('fab-r-fitting-price');
-  var rTotal         = document.getElementById('fab-r-total');
-
-  if (length > 0) {
-    if (rFlooringLabel) rFlooringLabel.textContent = 'Carpet (' + area + 'm²)';
-    if (rFlooringPrice) rFlooringPrice.textContent = fmtGBP(flooring);
-    if (rUnderlay)      rUnderlay.classList.toggle('fab-panel-row--hidden', underlay <= 0);
-    if (rUnderlayPrice) rUnderlayPrice.textContent  = fmtGBP(underlay);
-    if (rFitting)       rFitting.classList.toggle('fab-panel-row--hidden',  fitting  <= 0);
-    if (rFittingPrice)  rFittingPrice.textContent    = fmtGBP(fitting);
-    if (rTotal)         rTotal.textContent           = fmtGBP(total);
-  } else {
-    if (rFlooringLabel) rFlooringLabel.textContent = 'Carpet';
-    if (rFlooringPrice) rFlooringPrice.textContent = '—';
-    if (rUnderlay)      rUnderlay.classList.add('fab-panel-row--hidden');
-    if (rFitting)       rFitting.classList.add('fab-panel-row--hidden');
-    if (rTotal)         rTotal.textContent         = '—';
-  }
-
-  // Mobile drawer rows
-  var rmFlooringLabel  = document.getElementById('fab-rm-flooring-label');
-  var rmFlooringPrice  = document.getElementById('fab-rm-flooring-price');
-  var rmUnderlay       = document.getElementById('fab-rm-underlay');
-  var rmUnderlayPrice  = document.getElementById('fab-rm-underlay-price');
-  var rmFitting        = document.getElementById('fab-rm-fitting');
-  var rmFittingPrice   = document.getElementById('fab-rm-fitting-price');
-  var rmTotal          = document.getElementById('fab-rm-total');
-
-  if (length > 0) {
-    if (rmFlooringLabel)  rmFlooringLabel.textContent  = 'Carpet (' + area + 'm²)';
-    if (rmFlooringPrice)  rmFlooringPrice.textContent  = fmtGBP(flooring);
-    if (rmUnderlay)       rmUnderlay.classList.toggle('fab-panel-row--hidden', underlay <= 0);
-    if (rmUnderlayPrice)  rmUnderlayPrice.textContent   = fmtGBP(underlay);
-    if (rmFitting)        rmFitting.classList.toggle('fab-panel-row--hidden',  fitting  <= 0);
-    if (rmFittingPrice)   rmFittingPrice.textContent     = fmtGBP(fitting);
-    if (rmTotal)          rmTotal.textContent            = fmtGBP(total);
-  } else {
-    if (rmFlooringLabel)  rmFlooringLabel.textContent  = 'Carpet';
-    if (rmFlooringPrice)  rmFlooringPrice.textContent  = '—';
-    if (rmUnderlay)       rmUnderlay.classList.add('fab-panel-row--hidden');
-    if (rmFitting)        rmFitting.classList.add('fab-panel-row--hidden');
-    if (rmTotal)          rmTotal.textContent          = '—';
+    ctaBtn.dataset.href = '/?' + params.toString() + '#contact';
   }
 }
 
-// Drawer toggle
-var fabGrabber = document.getElementById('fab-grabber');
-var fabDrawer  = document.getElementById('fab-drawer');
-var drawerOpen = false;
-
-function openDrawer() {
-  if (!fab || !fabDrawer) return;
-  drawerOpen = true;
-  fab.classList.add('fab--open');
+function initEstimateCta() {
+  var ctaBtn = document.getElementById('estimate-cta-btn');
+  if (ctaBtn) {
+    ctaBtn.addEventListener('click', function () {
+      var href = ctaBtn.dataset.href;
+      if (href) window.location.href = href;
+    });
+  }
 }
 
-function closeDrawer() {
-  if (!fab || !fabDrawer) return;
-  drawerOpen = false;
-  fab.classList.remove('fab--open');
-}
-
-if (fabGrabber) {
-  fabGrabber.addEventListener('click', function () {
-    drawerOpen ? closeDrawer() : openDrawer();
+/* ─────────────────────────────────────────────────────────────────────────────
+   GET PRICE BUTTON  (scrolls to configurator)
+   ───────────────────────────────────────────────────────────────────────────── */
+function initGetPriceBtn() {
+  var btn = document.getElementById('get-price-btn');
+  if (!btn) return;
+  btn.addEventListener('click', function () {
+    var target = document.getElementById('config-section');
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 }
 
-// Tap mobile price area to open drawer
-var fabMobileMain = document.querySelector('.fab-mobile-main .fab-zone-a');
-if (fabMobileMain) {
-  fabMobileMain.addEventListener('click', function () {
-    drawerOpen ? closeDrawer() : openDrawer();
-  });
-  fabMobileMain.style.cursor = 'pointer';
+/* ─────────────────────────────────────────────────────────────────────────────
+   PDF QUOTE
+   ───────────────────────────────────────────────────────────────────────────── */
+function initPDF() {
+  var btn = document.getElementById('estimate-pdf-btn');
+  if (btn) btn.addEventListener('click', downloadQuotePDF);
 }
 
-// Desktop: no hover drawer — layout handles info display
-
-// Close drawer on tap outside
-document.addEventListener('click', function (e) {
-  if (drawerOpen && fab && !fab.contains(e.target)) {
-    closeDrawer();
-  }
-});
-
-// Escape key
-document.addEventListener('keydown', function (e) {
-  if (e.key === 'Escape' && drawerOpen) closeDrawer();
-});
-
-updateCalc();
-
-
-// PDF download
 function downloadQuotePDF() {
   var jsPDF = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
-  if (!jsPDF) {
-    alert('PDF library not loaded — please refresh and try again.');
-    return;
-  }
-  var lenInput = document.getElementById('fp-length');
-  var length = lenInput ? (parseFloat(lenInput.value) || 0) : 0;
-  if (length <= 0) return;
+  if (!jsPDF) { alert('PDF library not loaded \u2014 please refresh and try again.'); return; }
 
-  var area     = parseFloat((length * width).toFixed(2));
-  var underlayRow = document.querySelector('.addon-row[data-type="underlay"]');
-  var fittingRow  = document.querySelector('.addon-row[data-type="fitting"]');
-  var underlayOn  = underlayRow && underlayRow.classList.contains('active');
-  var fittingOn   = fittingRow  && fittingRow.classList.contains('active');
-  var flooring = area * PRICE;
-  var underlay = underlayOn ? area * 5 : 0;
-  var fitting  = fittingOn  ? area * FITTING : 0;
-  var total    = flooring + underlay + fitting;
+  var lenInput = document.getElementById('room-len');
+  var len = lenInput ? (parseFloat(lenInput.value) || 0) : 0;
+  if (len <= 0) return;
 
-  var productName = document.querySelector('.product-name') ? document.querySelector('.product-name').textContent.trim() : 'Product';
-  var imgUrl = document.getElementById('product-main-img') ? document.getElementById('product-main-img').src : '';
-  var colourName = document.getElementById('step-swatch-name') ? document.getElementById('step-swatch-name').textContent.trim() : '';
+  var area      = parseFloat((len * selectedWidth).toFixed(2));
+  var withFit   = document.getElementById('svc-fitting')  ? document.getElementById('svc-fitting').checked  : true;
+  var withUnder = document.getElementById('svc-underlay') ? document.getElementById('svc-underlay').checked : true;
+  var flooring  = area * PRICE;
+  var fitting   = withFit   ? area * FITTING       : 0;
+  var underlay  = withUnder ? area * UNDERLAY_PRICE : 0;
+  var total     = flooring + fitting + underlay;
+
+  var productName = (document.querySelector('h1.hero-title') || document.querySelector('.product-name-desktop') || { textContent: 'Product' }).textContent.trim();
+  var imgUrl      = document.getElementById('product-main-img') ? document.getElementById('product-main-img').src : '';
+  var colourName  = document.getElementById('swatch-name')  ? document.getElementById('swatch-name').textContent.trim()  : '';
 
   var now     = new Date();
   var validTo = new Date(now); validTo.setDate(validTo.getDate() + 30);
-  var fmtDate = function(d) { return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }); };
-  var refNo   = 'WYC-' + now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + '-' + String(Math.floor(Math.random()*9000)+1000);
+  var fmtDate = function (d) { return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }); };
+  var refNo   = 'WYC-' + now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0') + '-' + String(Math.floor(Math.random() * 9000) + 1000);
 
   var doc = new jsPDF({ unit: 'mm', format: 'a4' });
-  var W = 210, H = 297, lm = 16, rm = 16;
-  var cw = W - lm - rm;
-  var col2x = lm + cw * 0.55 + 6;
+  var W = 210, lm = 16, rm = 16;
+  var cw   = W - lm - rm;
   var col1w = cw * 0.55;
+  var col2x = lm + col1w + 6;
   var col2w = cw * 0.45 - 6;
+  var H = 297;
 
-  var ink    = [26,23,20], ink2 = [92,87,79], ink3 = [156,149,137];
-  var red    = [224,48,64], border = [232,227,217], bg = [248,249,250], white = [255,255,255];
+  var ink    = [26, 23, 20], ink2 = [92, 87, 79], ink3 = [156, 149, 137];
+  var red    = [184, 50, 50], border = [232, 227, 217], bg = [247, 247, 246], white = [255, 255, 255];
 
-  var setC = function(r,g,b) { doc.setTextColor(r,g,b); };
-  var setF = function(r,g,b) { doc.setFillColor(r,g,b); };
-  var setD = function(r,g,b) { doc.setDrawColor(r,g,b); };
-  var rule  = function(x1,y1,x2,y2,lw) { lw = lw || 0.3; doc.setLineWidth(lw); setD.apply(null,border); doc.line(x1,y1,x2,y2); };
-  var label = function(txt,x,y) { doc.setFont('helvetica','bold'); doc.setFontSize(7); setC.apply(null,ink3); doc.text(txt.toUpperCase(),x,y); };
+  var setC = function (r, g, b) { doc.setTextColor(r, g, b); };
+  var setF = function (r, g, b) { doc.setFillColor(r, g, b); };
+  var setD = function (r, g, b) { doc.setDrawColor(r, g, b); };
+  var rule  = function (x1, y1, x2, y2, lw) { lw = lw || 0.3; doc.setLineWidth(lw); setD.apply(null, border); doc.line(x1, y1, x2, y2); };
+  var lbl   = function (txt, x, y) { doc.setFont('helvetica', 'bold'); doc.setFontSize(7); setC.apply(null, ink3); doc.text(txt.toUpperCase(), x, y); };
 
-  setF.apply(null,red); doc.rect(0,0,W,3,'F');
-
-  doc.setFont('helvetica','bold'); doc.setFontSize(18); setC.apply(null,ink);
-  doc.text('Estimate', W-rm, 14, { align:'right' });
-  doc.setFont('helvetica','normal'); doc.setFontSize(8); setC.apply(null,ink3);
-  doc.text('Ref: ' + refNo, W-rm, 20, { align:'right' });
-
-  rule(lm,25,W-rm,25,0.3);
+  setF.apply(null, red); doc.rect(0, 0, W, 3, 'F');
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(18); setC.apply(null, ink);
+  doc.text('Estimate', W - rm, 14, { align: 'right' });
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(8); setC.apply(null, ink3);
+  doc.text('Ref: ' + refNo, W - rm, 20, { align: 'right' });
+  rule(lm, 25, W - rm, 25, 0.3);
 
   var y = 31;
-  label('Date',lm,y); label('Valid Until',lm+50,y); label('Prepared For',lm+110,y);
+  lbl('Date', lm, y); lbl('Valid Until', lm + 50, y); lbl('Prepared For', lm + 110, y);
   y += 5;
-  doc.setFont('helvetica','normal'); doc.setFontSize(8.5); setC.apply(null,ink);
-  doc.text(fmtDate(now),lm,y);
-  doc.text(fmtDate(validTo),lm+50,y);
-  doc.text('Customer Copy',lm+110,y);
-  rule(lm,y+4,W-rm,y+4,0.3);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); setC.apply(null, ink);
+  doc.text(fmtDate(now), lm, y);
+  doc.text(fmtDate(validTo), lm + 50, y);
+  doc.text('Customer Copy', lm + 110, y);
+  rule(lm, y + 4, W - rm, y + 4, 0.3);
   y += 10;
 
   var bodyTop = y;
-
-  label('Product',lm,y); y += 5;
-  doc.setFont('helvetica','bold'); doc.setFontSize(14); setC.apply(null,ink);
-  doc.text(productName,lm,y,{ maxWidth:col1w }); y += 7;
-
+  lbl('Product', lm, y); y += 5;
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(14); setC.apply(null, ink);
+  doc.text(productName, lm, y, { maxWidth: col1w }); y += 7;
   if (colourName) {
-    doc.setFont('helvetica','normal'); doc.setFontSize(9); setC.apply(null,ink2);
-    doc.text('Colour: ' + colourName,lm,y); y += 5;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); setC.apply(null, ink2);
+    doc.text('Colour: ' + colourName, lm, y); y += 5;
   }
-
   y += 2;
-  setF.apply(null,red); doc.roundedRect(lm,y,38,7,2,2,'F');
-  doc.setFont('helvetica','bold'); doc.setFontSize(9); setC.apply(null,white);
-  doc.text('£' + PRICE.toFixed(2) + ' / m²',lm+19,y+4.8,{ align:'center' });
+  setF.apply(null, red); doc.roundedRect(lm, y, 38, 7, 2, 2, 'F');
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(9); setC.apply(null, white);
+  doc.text('\u00a3' + PRICE.toFixed(2) + ' / m\u00b2', lm + 19, y + 4.8, { align: 'center' });
   y += 12;
 
-  rule(lm,y,lm+col1w,y); y += 6;
-  label('Room Measurements',lm,y); y += 5;
-  doc.setFont('helvetica','normal'); doc.setFontSize(10); setC.apply(null,ink);
-  doc.text(length + ' m  ×  ' + width + ' m',lm,y); y += 5;
-  doc.text('Total area: ' + area + ' m²',lm,y); y += 10;
+  rule(lm, y, lm + col1w, y); y += 6;
+  lbl('Room Measurements', lm, y); y += 5;
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(10); setC.apply(null, ink);
+  doc.text(len + ' m  \u00d7  ' + selectedWidth + ' m', lm, y); y += 5;
+  doc.text('Total area: ' + area + ' m\u00b2', lm, y); y += 10;
 
-  rule(lm,y,lm+col1w,y); y += 6;
-  label('Price Breakdown',lm,y); y += 6;
+  rule(lm, y, lm + col1w, y); y += 6;
+  lbl('Price Breakdown', lm, y); y += 6;
 
   var bRows = [
-    { label: 'Flooring (£' + PRICE.toFixed(2) + '/m²)', val: '£' + flooring.toFixed(2), main: true },
-    { label: 'Underlay (+£5.00/m²)', val: underlayOn ? '£' + underlay.toFixed(2) : 'Not included', main: false },
-    { label: 'Fitting (+£' + FITTING.toFixed(2) + '/m²)', val: fittingOn ? '£' + fitting.toFixed(2) : 'Not included', main: false }
+    { label: 'Flooring (\u00a3' + PRICE.toFixed(2) + '/m\u00b2)', val: '\u00a3' + flooring.toFixed(2), main: true },
+    { label: 'Underlay (+\u00a35.00/m\u00b2)', val: withUnder ? '\u00a3' + underlay.toFixed(2) : 'Not included', main: false },
+    { label: 'Fitting (+\u00a3' + FITTING.toFixed(2) + '/m\u00b2)', val: withFit ? '\u00a3' + fitting.toFixed(2) : 'Not included', main: false }
   ];
-  bRows.forEach(function(row) {
+  bRows.forEach(function (row) {
     doc.setFont('helvetica', row.main ? 'bold' : 'normal');
     doc.setFontSize(9.5);
     setC.apply(null, row.main ? ink : ink2);
-    doc.text(row.label,lm,y);
-    doc.text(row.val,lm+col1w,y,{ align:'right' });
-    rule(lm,y+2,lm+col1w,y+2,0.2); y += 8;
+    doc.text(row.label, lm, y);
+    doc.text(row.val, lm + col1w, y, { align: 'right' });
+    rule(lm, y + 2, lm + col1w, y + 2, 0.2); y += 8;
   });
 
   y += 2;
-  setF.apply(null,bg); doc.roundedRect(lm,y,col1w,18,3,3,'F');
-  setD.apply(null,border); doc.setLineWidth(0.5); doc.roundedRect(lm,y,col1w,18,3,3,'S');
-  doc.setFont('helvetica','bold'); doc.setFontSize(8.5); setC.apply(null,ink2);
-  doc.text('ESTIMATED TOTAL',lm+5,y+7);
-  doc.setFont('helvetica','normal'); doc.setFontSize(7.5); setC.apply(null,ink3);
-  doc.text('inc. selected extras',lm+5,y+12);
-  doc.setFont('helvetica','bold'); doc.setFontSize(18); setC.apply(null,red);
-  doc.text('£' + total.toFixed(2),lm+col1w-5,y+12,{ align:'right' });
-  y += 24;
+  setF.apply(null, bg); doc.roundedRect(lm, y, col1w, 18, 3, 3, 'F');
+  setD.apply(null, border); doc.setLineWidth(0.5); doc.roundedRect(lm, y, col1w, 18, 3, 3, 'S');
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); setC.apply(null, ink2);
+  doc.text('ESTIMATED TOTAL', lm + 5, y + 7);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); setC.apply(null, ink3);
+  doc.text('inc. selected extras', lm + 5, y + 12);
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(18); setC.apply(null, red);
+  doc.text('\u00a3' + total.toFixed(2), lm + col1w - 5, y + 12, { align: 'right' });
 
-  setF.apply(null,red); doc.rect(0,H-16,W,0.8,'F');
-  setF(26,23,20); doc.rect(0,H-15.2,W,15.2,'F');
-  doc.setFont('helvetica','bold'); doc.setFontSize(8.5); setC.apply(null,white);
-  doc.text('Ready to book? Call 07449 188 303 or visit westyorkshirecarpets.com',W/2,H-9,{ align:'center' });
-  doc.setFont('helvetica','normal'); doc.setFontSize(7); setC.apply(null,ink3);
-  doc.text('Free measuring · Professional fitting · West Yorkshire · This estimate is valid for 30 days',W/2,H-4.5,{ align:'center' });
+  setF.apply(null, red); doc.rect(0, H - 16, W, 0.8, 'F');
+  setF(26, 23, 20); doc.rect(0, H - 15.2, W, 15.2, 'F');
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); setC.apply(null, white);
+  doc.text('Ready to book? Call 07449 188 303 or visit westyorkshirecarpets.com', W / 2, H - 9, { align: 'center' });
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(7); setC.apply(null, ink3);
+  doc.text('Free measuring \u00b7 Professional fitting \u00b7 West Yorkshire \u00b7 Valid 30 days', W / 2, H - 4.5, { align: 'center' });
 
-  var safeName = productName.replace(/[^a-z0-9]/gi,'-').toLowerCase();
+  var safeName = productName.replace(/[^a-z0-9]/gi, '-').toLowerCase();
   var fileName = 'wyc-estimate-' + safeName + '.pdf';
 
-  var embedImg = function(onDone) {
+  var embedImg = function (onDone) {
     if (!imgUrl) { onDone(); return; }
     var img = new Image();
     img.crossOrigin = 'anonymous';
-    img.onload = function() {
+    img.onload = function () {
       try {
         var canvas = document.createElement('canvas');
         canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
-        canvas.getContext('2d').drawImage(img,0,0);
-        doc.addImage(canvas.toDataURL('image/jpeg',0.88),'JPEG',col2x,bodyTop,col2w,58,undefined,'FAST');
-      } catch(e) {}
+        canvas.getContext('2d').drawImage(img, 0, 0);
+        doc.addImage(canvas.toDataURL('image/jpeg', 0.88), 'JPEG', col2x, bodyTop, col2w, 58, undefined, 'FAST');
+      } catch (e) {}
       onDone();
     };
-    img.onerror = function() { onDone(); };
+    img.onerror = function () { onDone(); };
     img.src = imgUrl + (imgUrl.includes('?') ? '&' : '?') + '_pdf=1';
   };
 
-  embedImg(function() {
-    doc.save(fileName);
-  });
+  embedImg(function () { doc.save(fileName); });
 }
 
-// Also available
-// Wire PDF button
-var pdfBtn = document.getElementById('fab-pdf-btn');
-if (pdfBtn) {
-  pdfBtn.addEventListener('click', function() {
-    downloadQuotePDF();
-  });
-}
+/* ─────────────────────────────────────────────────────────────────────────────
+   LIKE & SHARE
+   ───────────────────────────────────────────────────────────────────────────── */
+function initLikeShare() {
+  var API = 'https://wyc-backend-production-ed78.up.railway.app';
 
-var pdfBtnDrawer = document.getElementById('fab-pdf-btn-drawer');
-if (pdfBtnDrawer) {
-  pdfBtnDrawer.addEventListener('click', function() {
-    downloadQuotePDF();
-  });
-}
-
-var alsoSection = document.getElementById('also-section');
-if (!alsoSection) return;
-
-var cat      = alsoSection.dataset.cat;
-var slug     = alsoSection.dataset.slug;
-var catLabel = alsoSection.dataset.label;
-var apiBase  = alsoSection.dataset.api;
-
-if (!cat || !apiBase) return;
-
-fetch(apiBase + '/api/products?category=' + cat)
-  .then(function (r) { return r.json(); })
-  .then(function (products) {
-    var others = products.filter(function (p) {
-      return p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') !== slug && p.is_active;
-    }).slice(0, 4);
-    if (others.length === 0) return;
-    var html = '<div class="also-header">'
-      + '<h2 class="also-title">More ' + catLabel + '</h2>'
-      + '<a href="/#range" class="also-view-all">View all <i class="fa-solid fa-arrow-right"></i></a>'
-      + '</div><div class="also-grid">';
-    others.forEach(function (p) {
-      var pSlug = p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-      var img   = p.img_url || '';
-      var price = parseFloat(p.price).toFixed(2);
-      html += '<a class="also-card" href="/flooring/' + cat + '/' + pSlug + '">'
-        + '<div class="also-card-img"><img src="' + img + '" alt="' + p.name
-        + '" loading="lazy" width="400" height="300"></div>'
-        + '<div class="also-card-body">'
-        + '<div class="also-card-name">' + p.name + '</div>'
-        + '<div class="also-card-price">From \u00a3' + price + '/m\u00b2</div>'
-        + '</div></a>';
-    });
-    html += '</div>';
-    alsoSection.innerHTML = html;
-  })
-  .catch(function () {});
-})();
-
-// Like & Share
-(function () {
-var API = 'https://wyc-backend-production-ed78.up.railway.app';
-
-var likeBtn   = document.getElementById('like-btn');
-var likeCount = document.getElementById('like-count');
-if (likeBtn) {
-  var productId = likeBtn.dataset.id;
-  var liked = sessionStorage.getItem('liked-' + productId) === '1';
-  if (liked) {
-    likeBtn.classList.add('liked');
-    likeBtn.querySelector('i').className = 'fa-solid fa-heart';
-  }
-  likeBtn.addEventListener('click', function () {
-    liked = !liked;
-    likeBtn.classList.toggle('liked', liked);
-    likeBtn.querySelector('i').className = liked ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
-    likeBtn.style.transform = 'scale(1.2)';
-    setTimeout(function () { likeBtn.style.transform = ''; }, 200);
+  var likeBtn   = document.getElementById('like-btn');
+  var likeCount = document.getElementById('like-count');
+  if (likeBtn) {
+    var productId = likeBtn.dataset.id;
+    var liked = sessionStorage.getItem('liked-' + productId) === '1';
     if (liked) {
-      sessionStorage.setItem('liked-' + productId, '1');
-      fetch(API + '/api/products/' + productId + '/like', { method: 'POST' })
-        .then(function (r) { return r.json(); })
-        .then(function (d) { if (likeCount && d.likes !== undefined) likeCount.textContent = d.likes; })
-        .catch(function () {});
-    } else {
-      sessionStorage.removeItem('liked-' + productId);
-      if (likeCount) likeCount.textContent = Math.max(0, parseInt(likeCount.textContent) - 1);
+      likeBtn.classList.add('liked');
+      var svg = likeBtn.querySelector('svg');
+      if (svg) { svg.style.fill = 'currentColor'; }
     }
+    likeBtn.addEventListener('click', function () {
+      liked = !liked;
+      likeBtn.classList.toggle('liked', liked);
+      var svgEl = likeBtn.querySelector('svg');
+      if (svgEl) svgEl.style.fill = liked ? 'currentColor' : 'none';
+      likeBtn.style.transform = 'scale(1.2)';
+      setTimeout(function () { likeBtn.style.transform = ''; }, 200);
+      if (liked) {
+        sessionStorage.setItem('liked-' + productId, '1');
+        fetch(API + '/api/products/' + productId + '/like', { method: 'POST' })
+          .then(function (r) { return r.json(); })
+          .then(function (d) { if (likeCount && d.likes !== undefined) likeCount.textContent = d.likes; })
+          .catch(function () {});
+      } else {
+        sessionStorage.removeItem('liked-' + productId);
+        if (likeCount) likeCount.textContent = Math.max(0, parseInt(likeCount.textContent, 10) - 1);
+      }
+    });
+  }
+
+  var shareBtn = document.getElementById('share-btn');
+  if (shareBtn) {
+    shareBtn.addEventListener('click', function () {
+      if (navigator.share) {
+        navigator.share({ title: document.title, url: window.location.href }).catch(function () {});
+      } else {
+        navigator.clipboard.writeText(window.location.href).then(function () {
+          var icon = shareBtn.querySelector('svg');
+          if (icon) icon.style.stroke = '#059669';
+          setTimeout(function () { if (icon) icon.style.stroke = ''; }, 1500);
+        }).catch(function () {});
+      }
+    });
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TOOLTIP MODAL  (pile style info)
+   ───────────────────────────────────────────────────────────────────────────── */
+function initTooltip() {
+  var modal   = document.createElement('div');
+  modal.className = 'tooltip-modal';
+  modal.innerHTML =
+    '<div class="tooltip-box">' +
+      '<button class="tooltip-close" id="tooltip-close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>' +
+      '<div class="tooltip-box-title" id="tooltip-title"></div>' +
+      '<div class="tooltip-box-text"  id="tooltip-text"></div>' +
+    '</div>';
+  document.body.appendChild(modal);
+
+  var titleEl  = document.getElementById('tooltip-title');
+  var textEl   = document.getElementById('tooltip-text');
+  var closeBtn = document.getElementById('tooltip-close');
+
+  function openModal(title, text) {
+    titleEl.textContent = title;
+    textEl.textContent  = text;
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.info-btn').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var catTag = btn.closest('.cat-tag') || btn.closest('.desktop-eyebrow');
+      var label  = catTag ? catTag.textContent.trim().replace(/[ⓘi]/g, '').trim() : '';
+      openModal(label, btn.dataset.tooltip || '');
+    });
   });
+
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
 }
 
-var shareBtn = document.getElementById('share-btn');
-if (shareBtn) {
-  shareBtn.addEventListener('click', function () {
-    if (navigator.share) {
-      navigator.share({ title: document.title, url: window.location.href }).catch(function () {});
-    } else {
-      navigator.clipboard.writeText(window.location.href).then(function () {
-        shareBtn.querySelector('i').className = 'fa-solid fa-check';
-        setTimeout(function () {
-          shareBtn.querySelector('i').className = 'fa-solid fa-share-nodes';
-        }, 1500);
-      }).catch(function () {});
-    }
-  });
+/* ─────────────────────────────────────────────────────────────────────────────
+   ALSO AVAILABLE
+   ───────────────────────────────────────────────────────────────────────────── */
+function initAlsoAvailable() {
+  var alsoSection = document.getElementById('also-section');
+  if (!alsoSection) return;
+
+  var cat      = alsoSection.dataset.cat;
+  var slug     = alsoSection.dataset.slug;
+  var catLabel = alsoSection.dataset.label;
+  var apiBase  = alsoSection.dataset.api;
+  if (!cat || !apiBase) return;
+
+  fetch(apiBase + '/api/products?category=' + cat)
+    .then(function (r) { return r.json(); })
+    .then(function (products) {
+      var others = products.filter(function (p) {
+        return p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') !== slug && p.is_active;
+      }).slice(0, 4);
+      if (others.length === 0) return;
+
+      var priceFrom = Math.min.apply(null, others.map(function (p) { return parseFloat(p.price); }));
+
+      var html =
+        '<div class="also-header">' +
+          '<div class="also-title">More ' + catLabel + '</div>' +
+          '<a class="also-link" href="/#range">View all \u2192</a>' +
+        '</div>' +
+        '<p class="also-sub">Quality flooring across every budget \u00b7 from \u00a3' + priceFrom.toFixed(2) + ' / m\u00b2</p>' +
+        '<div class="also-grid">';
+
+      others.forEach(function (p) {
+        var pSlug = p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        var img   = p.img_url || '';
+        var price = parseFloat(p.price).toFixed(2);
+        var col   = (p.colours && Array.isArray(p.colours) && p.colours[0] && p.colours[0].hex) ? p.colours[0].hex : '#D4D2CE';
+
+        html +=
+          '<a class="also-card" href="/flooring/' + cat + '/' + pSlug + '">' +
+            '<div class="also-card-img">' +
+              (img
+                ? '<img src="' + img + '" alt="' + p.name + '" loading="lazy" width="400" height="300">'
+                : '<div style="width:100%;height:100%;background:' + col + '"></div>'
+              ) +
+            '</div>' +
+            '<div class="also-card-body">' +
+              '<div class="also-card-name">' + p.name + '</div>' +
+              '<div class="also-card-price">From \u00a3' + price + '/m\u00b2</div>' +
+            '</div>' +
+          '</a>';
+      });
+
+      html += '</div>';
+      alsoSection.innerHTML = html;
+    })
+    .catch(function () {});
 }
-})();
 
-// Info tooltip modal
-(function () {
-var modal = document.createElement('div');
-modal.className = 'tooltip-modal';
-modal.innerHTML =
-  '<div class="tooltip-box">' +
-    '<button class="tooltip-close" id="tooltip-close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>' +
-    '<div class="tooltip-box-title" id="tooltip-title"></div>' +
-    '<div class="tooltip-box-text" id="tooltip-text"></div>' +
-  '</div>';
-document.body.appendChild(modal);
-
-var titleEl  = document.getElementById('tooltip-title');
-var textEl   = document.getElementById('tooltip-text');
-var closeBtn = document.getElementById('tooltip-close');
-
-function openModal(title, text) {
-  titleEl.textContent = title;
-  textEl.textContent  = text;
-  modal.classList.add('active');
-  document.body.style.overflow = 'hidden';
+/* ─────────────────────────────────────────────────────────────────────────────
+   SCROLL REVEALS
+   ───────────────────────────────────────────────────────────────────────────── */
+function initReveal() {
+  if (!window.IntersectionObserver) {
+    // Fallback: just show everything
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+    return;
+  }
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.07 });
+  document.querySelectorAll('.reveal').forEach(function (el) { obs.observe(el); });
 }
 
-function closeModal() {
-  modal.classList.remove('active');
-  document.body.style.overflow = '';
-}
+/* ─────────────────────────────────────────────────────────────────────────────
+   INIT
+   ───────────────────────────────────────────────────────────────────────────── */
+initSwatchBg();
+initSwatches();
+initWidthBtns();
+initPresets();
+initCalc();
+initEstimateCta();
+initGetPriceBtn();
+initPDF();
+initLikeShare();
+initTooltip();
+initAlsoAvailable();
+initReveal();
 
-document.querySelectorAll('.info-btn').forEach(function (btn) {
-  btn.addEventListener('click', function (e) {
-    e.stopPropagation();
-    var catTag = btn.closest('.cat-tag');
-    var style  = catTag ? catTag.textContent.trim().replace(/[ⓘi]/g, '').trim() : '';
-    var text   = btn.dataset.tooltip || '';
-    openModal(style, text);
-  });
-});
-
-closeBtn.addEventListener('click', closeModal);
-modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
-document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
 })();
