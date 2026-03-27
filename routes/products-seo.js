@@ -404,7 +404,6 @@ function buildProductPage(p) {
     </a>
   </div>
   <div class="hero-foot">
-    <div class="hero-eyebrow">${esc(eyebrowLabel)}</div>
     ${badgeHTML ? `<div class="hero-badge-wrap">${badgeHTML}</div>` : ''}
     <h1 class="hero-title">${esc(p.name)}</h1>
   </div>
@@ -436,7 +435,7 @@ function buildProductPage(p) {
 
     <!-- Meta row -->
     <div class="meta-row reveal">
-      <div class="meta-category">${esc(catLabel)}</div>
+      <span class="cat-tag">${esc(eyebrowLabel)}${infoBtn}</span>
       <div class="meta-actions">
         <button class="btn-like" id="like-btn" data-id="${p.id}" aria-label="Like this product" type="button">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -450,9 +449,6 @@ function buildProductPage(p) {
 
     <!-- Desktop product name (aria-hidden: h1 is in hero for mobile/Google) -->
     <div class="desktop-name-wrap" aria-hidden="true">
-      <div class="desktop-eyebrow">
-        <span class="cat-tag">${esc(eyebrowLabel)}${infoBtn}</span>
-      </div>
       <div class="desktop-name">${esc(p.name)}</div>
     </div>
 

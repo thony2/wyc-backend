@@ -514,8 +514,9 @@ function initTooltip() {
   document.querySelectorAll('.info-btn').forEach(function (btn) {
     btn.addEventListener('click', function (e) {
       e.stopPropagation();
-      var parent = btn.closest('.cat-tag') || btn.closest('.desktop-eyebrow');
-      var label  = parent ? parent.textContent.replace(/[ⓘi]/g,'').trim() : '';
+      var catTag = btn.closest('.cat-tag');
+      // Strip the info icon text, leaving just the label
+      var label  = catTag ? catTag.textContent.replace(/\s*[ⓘi]\s*$/,'').trim() : '';
       openModal(label, btn.dataset.tooltip || '');
     });
   });
