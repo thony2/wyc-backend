@@ -203,11 +203,16 @@ function buildProductPage(p) {
   ).join('');
 
   // ── Colour swatches HTML ───────────────────────────────────────────────────
+  const SWATCH_VISIBLE = 8;
   const coloursHTML = colours.map((c, i) => {
-    const bg = c.img_url ? `data-bg="${esc(c.img_url)}"` : `data-hex="${esc(c.hex || '#999')}"`;
-    const img = c.img_url ? `data-img="${esc(c.img_url)}"` : '';
-    return `<div class="swatch${i === 0 ? ' active' : ''}" ${bg} ${img} data-name="${esc(c.name)}" role="button" aria-label="Select colour ${esc(c.name)}" tabindex="0"></div>`;
+    const bg      = c.img_url ? `data-bg="${esc(c.img_url)}"` : `data-hex="${esc(c.hex || '#999')}"`;
+    const imgAttr = c.img_url ? `data-img="${esc(c.img_url)}"` : '';
+    const hidden  = i >= SWATCH_VISIBLE ? ' swatch--hidden' : '';
+    return `<div class="swatch${i === 0 ? ' active' : ''}${hidden}" ${bg} ${imgAttr} data-name="${esc(c.name)}" role="button" aria-label="Select colour ${esc(c.name)}" tabindex="0"></div>`;
   }).join('');
+  const showMoreBtn = colours.length > SWATCH_VISIBLE
+    ? `<button class="swatch-show-more" id="swatch-show-more" type="button">Show ${colours.length - SWATCH_VISIBLE} more colour${colours.length - SWATCH_VISIBLE !== 1 ? 's' : ''}</button>`
+    : '';
 
   // ── Badge HTML ─────────────────────────────────────────────────────────────
   const badgeHTML = p.badge && p.badge_type
@@ -219,7 +224,7 @@ function buildProductPage(p) {
   const infoBtn = p.carpet_style && infoTip
     ? `<button class="info-btn" data-tooltip="${esc(infoTip)}" aria-label="About ${esc(p.carpet_style)}" type="button"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></button>`
     : '';
-  const eyebrowLabel = p.carpet_style || catLabel;
+  const eyebrowLabel = p.carpet_style ? `${catLabel} / ${p.carpet_style}` : catLabel;
 
   // ── Presets HTML ───────────────────────────────────────────────────────────
   const presetsHTML = (PRESETS[catSlug] || PRESETS.carpets).map(pr =>
@@ -285,9 +290,10 @@ function buildProductPage(p) {
         <div class="section-tag">Choose colour</div>
       </div>
       <div class="section-heading">Selected Finish</div>
-      <div class="swatch-row" role="list" aria-label="Available colours">
+      <div class="swatch-grid" id="swatch-grid" role="list" aria-label="Available colours">
         ${coloursHTML}
       </div>
+      ${showMoreBtn}
       <div class="swatch-meta">
         <div class="swatch-name" id="swatch-name">${esc(colours[0]?.name || '')}</div>
         <div class="swatch-count">${colours.length} colour${colours.length > 1 ? 's' : ''}</div>
@@ -464,7 +470,6 @@ function buildProductPage(p) {
       </div>
       <span class="rating-score">4.9</span>
       <span class="rating-count">&middot; Rated Excellent</span>
-      <span class="tp-pill">Trustpilot</span>
     </div>
 
     <div class="divider"></div>
@@ -584,21 +589,23 @@ function buildProductPage(p) {
 
       <!-- Estimate card -->
       <div class="estimate-card" id="estimate-card">
-        <div class="estimate-top">
-          <div>
-            <div class="estimate-label">Estimated total</div>
-            <div class="estimate-total" id="est-total">&pound;&mdash;</div>
+        <div class="estimate-card-inner">
+          <div class="estimate-top">
+            <div>
+              <div class="estimate-label">Estimated total</div>
+              <div class="estimate-total" id="est-total">&pound;&mdash;</div>
+            </div>
+            <div class="estimate-breakdown" id="est-breakdown"></div>
           </div>
-          <div class="estimate-breakdown" id="est-breakdown"></div>
+          <div class="estimate-divider"></div>
+          <button class="estimate-cta" id="estimate-cta-btn" data-href="${ctaBase}" type="button">
+            Request Full Quote for This Room &rarr;
+          </button>
+          <button class="estimate-pdf-btn" id="estimate-pdf-btn" type="button" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download PDF Estimate
+          </button>
         </div>
-        <div class="estimate-divider"></div>
-        <button class="estimate-cta" id="estimate-cta-btn" data-href="${ctaBase}" type="button">
-          Request Full Quote for This Room &rarr;
-        </button>
-        <button class="estimate-pdf-btn" id="estimate-pdf-btn" type="button" disabled>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Download PDF Estimate
-        </button>
       </div>
 
       <!-- Nudge card -->
@@ -654,6 +661,7 @@ function buildProductPage(p) {
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<div id="product-data" data-price="${price}" data-fitting="${fitting}" aria-hidden="true" style="display:none"></div>
 <script src="/js/product-page.js"></script>
 </body>
 </html>`;
