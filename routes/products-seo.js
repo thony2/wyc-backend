@@ -204,15 +204,13 @@ function buildProductPage(p) {
 
   // ── Colour swatches HTML ───────────────────────────────────────────────────
   const SWATCH_VISIBLE = 8;
+  const hasHidden = colours.length > SWATCH_VISIBLE;
   const coloursHTML = colours.map((c, i) => {
     const bg      = c.img_url ? `data-bg="${esc(c.img_url)}"` : `data-hex="${esc(c.hex || '#999')}"`;
     const imgAttr = c.img_url ? `data-img="${esc(c.img_url)}"` : '';
     const hidden  = i >= SWATCH_VISIBLE ? ' swatch--hidden' : '';
     return `<div class="swatch${i === 0 ? ' active' : ''}${hidden}" ${bg} ${imgAttr} data-name="${esc(c.name)}" role="button" aria-label="Select colour ${esc(c.name)}" tabindex="0"></div>`;
   }).join('');
-  const showMoreBtn = colours.length > SWATCH_VISIBLE
-    ? `<button class="swatch-show-more" id="swatch-show-more" type="button">Show ${colours.length - SWATCH_VISIBLE} more colour${colours.length - SWATCH_VISIBLE !== 1 ? 's' : ''}</button>`
-    : '';
 
   // ── Badge HTML ─────────────────────────────────────────────────────────────
   const badgeHTML = p.badge && p.badge_type
@@ -289,14 +287,12 @@ function buildProductPage(p) {
         <div class="section-step">${colourStep}</div>
         <div class="section-tag">Choose colour</div>
       </div>
-      <div class="section-heading">Selected Finish</div>
-      <div class="swatch-grid" id="swatch-grid" role="list" aria-label="Available colours">
+      <div class="swatch-strip" id="swatch-strip" role="list" aria-label="Available colours">
         ${coloursHTML}
       </div>
-      ${showMoreBtn}
-      <div class="swatch-meta">
-        <div class="swatch-name" id="swatch-name">${esc(colours[0]?.name || '')}</div>
-        <div class="swatch-count">${colours.length} colour${colours.length > 1 ? 's' : ''}</div>
+      <div class="swatch-footer">
+        <span class="swatch-name" id="swatch-name">${esc(colours[0]?.name || '')}</span>
+        ${hasHidden ? `<button class="swatch-toggle-link" id="swatch-show-more" type="button">Show more colours</button>` : ''}
       </div>
     </div>
     <div class="divider"></div>` : '';
@@ -407,27 +403,52 @@ function buildProductPage(p) {
     ${badgeHTML ? `<div class="hero-badge-wrap">${badgeHTML}</div>` : ''}
     <h1 class="hero-title">${esc(p.name)}</h1>
   </div>
+  <button class="hero-img-reset" id="hero-img-reset" type="button" aria-label="Reset to original image">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+    Original
+  </button>
 </div>
 
 <!-- ═══ PRODUCT LAYOUT ══════════════════════════════════════════════════════ -->
 <div class="product-layout">
 
-  <!-- ── LEFT COLUMN (desktop sticky image) ─────────────────────────────── -->
+  <!-- ── TABLET IMAGE (768–1023px only) ─────────────────────────────────── -->
+  <div class="tablet-img-wrap">
+    <div class="tablet-img-frame">
+      <img
+        id="tablet-main-img"
+        src="${imgUrl}"
+        alt="${esc(p.name)} ${catLabel} — ${SITE_NAME}"
+        width="800" height="600"
+        loading="eager"
+      >
+      ${badgeHTML ? `<div class="img-badge-wrap">${badgeHTML}</div>` : ''}
+      <button class="img-reset-btn" id="tablet-img-reset" type="button" aria-label="Reset to original image">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+        Original
+      </button>
+    </div>
+  </div>
+
+  <!-- ── LEFT COLUMN (desktop sticky image ≥1024px) ─────────────────────── -->
   <div class="col-image">
     <div class="main-img-frame">
       <img
         id="product-main-img"
         src="${imgUrl}"
+        data-original="${imgUrl}"
         alt="${esc(p.name)} ${catLabel} — ${SITE_NAME}"
         width="800" height="800"
         loading="eager"
         fetchpriority="high"
       >
       ${badgeHTML ? `<div class="img-badge-wrap">${badgeHTML}</div>` : ''}
+      <button class="img-reset-btn" id="desktop-img-reset" type="button" aria-label="Reset to original image">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+        Original
+      </button>
     </div>
-  </div>
-
-  <!-- ── RIGHT COLUMN / CARD BODY ───────────────────────────────────────── -->
+  </div> ───────────────────────────────────────── -->
   <div class="col-content card-body">
 
     <!-- Screen-reader only product name (desktop accessibility) -->
@@ -624,14 +645,6 @@ function buildProductPage(p) {
   </div><!-- /col-content -->
 
 </div><!-- /product-layout -->
-
-<!-- ═══ ALSO AVAILABLE ══════════════════════════════════════════════════════ -->
-<div id="also-section"
-  data-cat="${catSlug}"
-  data-slug="${slug}"
-  data-label="${catLabel}"
-  data-api="https://wyc-backend-production-ed78.up.railway.app">
-</div>
 
 <!-- ═══ FOOTER ═══════════════════════════════════════════════════════════════ -->
 <footer>

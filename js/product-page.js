@@ -36,29 +36,36 @@ function initSwatchBg() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   SWATCH SHOW-MORE
+   SWATCH SHOW-MORE TOGGLE
    ───────────────────────────────────────────────────────────────────────────── */
 function initShowMore() {
-  var btn  = document.getElementById('swatch-show-more');
-  var grid = document.getElementById('swatch-grid');
-  if (!btn || !grid) return;
+  var btn   = document.getElementById('swatch-show-more');
+  var strip = document.getElementById('swatch-strip');
+  if (!btn || !strip) return;
 
+  var expanded = false;
   btn.addEventListener('click', function () {
-    grid.classList.add('expanded');
-    btn.style.display = 'none';
-    // Re-apply backgrounds to newly visible swatches
-    initSwatchBg();
+    expanded = !expanded;
+    strip.classList.toggle('expanded', expanded);
+    btn.textContent = expanded ? 'Close' : 'Show more colours';
+    if (expanded) initSwatchBg();
   });
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   SWATCH SELECTION
+   SWATCH SELECTION + RESET
    ───────────────────────────────────────────────────────────────────────────── */
 function initSwatches() {
-  var allSwatches = document.querySelectorAll('.swatch');
+  var allSwatches  = document.querySelectorAll('.swatch');
   if (!allSwatches.length) return;
 
-  // Seed state from first active swatch
+  // Capture original image URL once at init
+  var mainImg     = document.getElementById('product-main-img');
+  var tabletImg   = document.getElementById('tablet-main-img');
+  var heroBg      = document.getElementById('hero-bg');
+  var originalUrl = mainImg ? (mainImg.dataset.original || mainImg.src) : '';
+
+  // Seed selected colour from first active swatch
   var first = document.querySelector('.swatch.active') || allSwatches[0];
   if (first) {
     selectedColour = {
@@ -66,9 +73,43 @@ function initSwatches() {
       hex:  first.dataset.hex  || '',
       img:  first.dataset.img  || first.dataset.bg || ''
     };
-    setMainImage(selectedColour.img, selectedColour.name);
   }
 
+  // Reset helpers
+  function showReset(show) {
+    var heroReset   = document.getElementById('hero-img-reset');
+    var tabletReset = document.getElementById('tablet-img-reset');
+    var desktopReset= document.getElementById('desktop-img-reset');
+    if (heroReset)    heroReset.classList.toggle('visible', show);
+    if (tabletReset)  tabletReset.classList.toggle('visible', show);
+    if (desktopReset) desktopReset.classList.toggle('visible', show);
+  }
+
+  function resetImages() {
+    if (!originalUrl) return;
+    // Restore all targets
+    if (mainImg)   { mainImg.src   = originalUrl; }
+    if (tabletImg) { tabletImg.src = originalUrl; }
+    if (heroBg)    { heroBg.style.backgroundImage = 'url(' + originalUrl + ')'; }
+    // Restore active swatch to first
+    allSwatches.forEach(function (s, i) { s.classList.toggle('active', i === 0); });
+    selectedColour = {
+      name: first ? (first.dataset.name || '') : '',
+      hex:  first ? (first.dataset.hex  || '') : '',
+      img:  originalUrl
+    };
+    var nameEl = document.getElementById('swatch-name');
+    if (nameEl) nameEl.textContent = selectedColour.name;
+    showReset(false);
+  }
+
+  // Wire reset buttons
+  ['hero-img-reset', 'tablet-img-reset', 'desktop-img-reset'].forEach(function (id) {
+    var btn = document.getElementById(id);
+    if (btn) btn.addEventListener('click', resetImages);
+  });
+
+  // Swatch click
   allSwatches.forEach(function (sw) {
     sw.addEventListener('click', function () {
       allSwatches.forEach(function (s) { s.classList.toggle('active', s === sw); });
@@ -79,52 +120,52 @@ function initSwatches() {
         img:  sw.dataset.img  || sw.dataset.bg || ''
       };
 
+      // Update name label
       document.querySelectorAll('#swatch-name').forEach(function (el) {
         el.textContent = selectedColour.name;
       });
 
-      setMainImage(selectedColour.img, selectedColour.name);
-
-      var heroBg = document.getElementById('hero-bg');
-      if (heroBg && selectedColour.img) {
-        heroBg.style.backgroundImage = 'url(' + selectedColour.img + ')';
+      // Update all image targets
+      if (selectedColour.img) {
+        setImage(mainImg,   selectedColour.img);
+        setImage(tabletImg, selectedColour.img);
+        if (heroBg) heroBg.style.backgroundImage = 'url(' + selectedColour.img + ')';
       }
+
+      // Show reset only if not the default
+      var isDefault = selectedColour.img === originalUrl || sw === allSwatches[0];
+      showReset(!isDefault);
     });
 
-    // Keyboard support
     sw.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); sw.click(); }
     });
   });
 }
 
-function setMainImage(imgUrl, altText) {
-  var mainImg = document.getElementById('product-main-img');
-  if (!mainImg || !imgUrl) return;
-  mainImg.style.filter  = 'blur(4px)';
-  mainImg.style.opacity = '0.7';
+function setImage(imgEl, url) {
+  if (!imgEl || !url) return;
+  imgEl.style.filter  = 'blur(4px)';
+  imgEl.style.opacity = '0.7';
   var tmp = new Image();
-  tmp.src = imgUrl;
+  tmp.src = url;
   tmp.onload = function () {
-    mainImg.src           = imgUrl;
-    mainImg.alt           = altText || '';
-    mainImg.style.filter  = '';
-    mainImg.style.opacity = '1';
+    imgEl.src           = url;
+    imgEl.style.filter  = '';
+    imgEl.style.opacity = '1';
   };
   tmp.onerror = function () {
-    mainImg.style.filter  = '';
-    mainImg.style.opacity = '1';
+    imgEl.style.filter  = '';
+    imgEl.style.opacity = '1';
   };
 }
 
-// Mirror initial main image onto mobile hero background
-(function seedHeroBg() {
+// Keep setMainImage as thin wrapper for PDF compatibility
+function setMainImage(imgUrl, altText) {
   var mainImg = document.getElementById('product-main-img');
-  var heroBg  = document.getElementById('hero-bg');
-  if (heroBg && mainImg && mainImg.src) {
-    heroBg.style.backgroundImage = 'url(' + mainImg.src + ')';
-  }
-}());
+  setImage(mainImg, imgUrl);
+  if (mainImg && altText) mainImg.alt = altText;
+}
 
 /* ─────────────────────────────────────────────────────────────────────────────
    WIDTH SEGMENT CONTROL
@@ -527,65 +568,6 @@ function initTooltip() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   ALSO AVAILABLE
-   ───────────────────────────────────────────────────────────────────────────── */
-function initAlsoAvailable() {
-  var section = document.getElementById('also-section');
-  if (!section) return;
-
-  var cat      = section.dataset.cat;
-  var slug     = section.dataset.slug;
-  var catLabel = section.dataset.label;
-  var apiBase  = section.dataset.api;
-  if (!cat || !apiBase) return;
-
-  fetch(apiBase+'/api/products?category='+cat)
-    .then(function (r) { return r.json(); })
-    .then(function (products) {
-      var others = products.filter(function (p) {
-        return p.name.toLowerCase().replace(/[^a-z0-9]+/g,'-') !== slug && p.is_active;
-      }).slice(0,4);
-
-      if (!others.length) return;
-
-      var lowestPrice = Math.min.apply(null, others.map(function (p) { return parseFloat(p.price); }));
-
-      var html =
-        '<div class="also-header">' +
-          '<div class="also-title">More '+catLabel+'</div>' +
-          '<a class="also-link" href="/#range">View all \u2192</a>' +
-        '</div>' +
-        '<p class="also-sub">Quality flooring across every budget \u00b7 from \u00a3'+lowestPrice.toFixed(2)+' / m\u00b2</p>' +
-        '<div class="also-grid">';
-
-      others.forEach(function (p) {
-        var pSlug    = p.name.toLowerCase().replace(/[^a-z0-9]+/g,'-');
-        var imgSrc   = p.img_url || '';
-        var fallback = (p.colours && Array.isArray(p.colours) && p.colours[0] && p.colours[0].hex) ? p.colours[0].hex : '#D4D2CE';
-        var price    = parseFloat(p.price).toFixed(2);
-
-        html +=
-          '<a class="also-card" href="/flooring/'+cat+'/'+pSlug+'">' +
-            '<div class="also-card-img">' +
-              (imgSrc
-                ? '<img src="'+imgSrc+'" alt="'+p.name+'" loading="lazy" width="400" height="300">'
-                : '<div style="width:100%;height:100%;background:'+fallback+'"></div>'
-              ) +
-            '</div>' +
-            '<div class="also-card-body">' +
-              '<div class="also-card-name">'+p.name+'</div>' +
-              '<div class="also-card-price">From \u00a3'+price+'/m\u00b2</div>' +
-            '</div>' +
-          '</a>';
-      });
-
-      html += '</div>';
-      section.innerHTML = html;
-    })
-    .catch(function () {});
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
    SCROLL REVEALS
    ───────────────────────────────────────────────────────────────────────────── */
 function initReveal() {
@@ -615,7 +597,6 @@ initGetPriceBtn();
 initPDF();
 initLikeShare();
 initTooltip();
-initAlsoAvailable();
 initReveal();
 
 }());
