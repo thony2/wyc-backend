@@ -448,7 +448,25 @@ function buildProductPage(p) {
         Original
       </button>
     </div>
-  </div> ───────────────────────────────────────── -->
+    <!-- Trust strip — visible only on desktop, below the image -->
+    <div class="trust-strip trust-strip--desktop" aria-hidden="true">
+      <div class="trust-cell">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="1"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        <div class="trust-name">Free Measure</div>
+        <div class="trust-sub">West Yorkshire</div>
+      </div>
+      <div class="trust-cell">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7" stroke-width="2.5"/></svg>
+        <div class="trust-name">Price Match</div>
+        <div class="trust-sub">Best price promise</div>
+      </div>
+      <div class="trust-cell">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div class="trust-name">Fast Fitting</div>
+        <div class="trust-sub">Quick turnaround</div>
+      </div>
+    </div>
+  </div>
   <div class="col-content card-body">
 
     <!-- Screen-reader only product name (desktop accessibility) -->
@@ -528,7 +546,6 @@ function buildProductPage(p) {
       <div class="cta-block">
         <button class="btn-primary" id="get-price-btn" type="button">
           Get Your Price &amp; Quote
-          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
       </div>
     </div>

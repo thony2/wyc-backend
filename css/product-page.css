@@ -439,7 +439,8 @@ h1.hero-title {
 .trust-name { font-size: 11px; font-weight: 700; color: var(--text); line-height: 1.3; }
 .trust-sub  { font-size: 10px; color: var(--muted); line-height: 1.3; }
 
-/* CTA row ──────────────────────────────────────────────────────────────────── */
+/* Trust strip — desktop variant (hidden by default, shown in col-image at 1024px+) */
+.trust-strip--desktop { display: none; }
 .cta-block { display: flex; flex-direction: column; gap: 0; }
 .btn-primary {
   width: 100%; height: 52px;
@@ -967,7 +968,6 @@ footer {
   .site-breadcrumb { display: block; }
   .hero            { display: none; }
 
-  /* Show tablet image */
   .tablet-img-wrap { display: block; }
 
   .product-layout {
@@ -976,12 +976,12 @@ footer {
     padding: 0 40px 0;
   }
 
-  /* No card-lift on tablet — flat white surface */
+  /* No card-lift on tablet */
   .col-content {
     margin-top: 0;
     border-radius: 0;
-    background: transparent;
-    padding: 24px 0 0;
+    background: var(--white);
+    padding: 32px 0 0;
   }
   .divider { margin: 0; }
 
@@ -996,7 +996,6 @@ footer {
 @media (min-width: 1024px) {
   body { padding-bottom: 48px; }
 
-  /* Hide tablet image — desktop uses sticky left col */
   .tablet-img-wrap { display: none; }
 
   .product-layout {
@@ -1004,14 +1003,16 @@ footer {
     grid-template-columns: 1fr 1fr;
     gap: 56px;
     align-items: start;
+    max-width: 1280px;
+    margin: 0 auto;
     padding: 40px 40px 0;
   }
 
-  /* Sticky left column */
+  /* ── Left column — sticky image ───────────────────────────────────────── */
   .col-image {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
     position: sticky;
     top: calc(64px + 24px);
   }
@@ -1022,32 +1023,51 @@ footer {
     overflow: hidden;
     aspect-ratio: 1 / 1;
     background: var(--surface);
-    box-shadow: 0 16px 48px rgba(0,0,0,.10);
+    box-shadow: 0 8px 32px rgba(0,0,0,.08);
   }
   .main-img-frame img {
     width: 100%; height: 100%;
     object-fit: cover; display: block;
     transition: filter .2s ease, opacity .2s ease, transform .5s ease;
   }
-  .main-img-frame:hover img { transform: scale(1.03); }
+  .main-img-frame:hover img { transform: scale(1.02); }
   .img-badge-wrap {
     position: absolute; top: 16px; left: 16px;
     display: flex; flex-direction: column; gap: 8px;
     pointer-events: none;
   }
 
-  /* Right col */
+  /* Trust strip moves under the image on desktop */
+  .trust-strip--desktop {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    overflow: hidden;
+  }
+
+  /* ── Right column ─────────────────────────────────────────────────────── */
   .col-content {
     display: flex;
     flex-direction: column;
-    gap: 0;
     padding: 0 0 48px;
+    background: transparent;
   }
 
-  /* Desktop typography adjustments */
-  .desktop-name    { font-size: 2.8rem; margin-bottom: 8px; }
-  .price-figure    { font-size: 34px; }
-  .section-heading { font-size: 20px; margin-bottom: 16px; }
+  /* Hide the inline trust strip in the price block on desktop */
+  .price-block .trust-strip { display: none; }
+
+  /* Desktop typography */
+  .desktop-name    { font-size: 2.6rem; margin-bottom: 6px; }
+  .price-figure    { font-size: 32px; }
+  .price-block     { padding: 16px 0; }
+  .section-heading { font-size: 20px; margin-bottom: 14px; }
+
+  /* Tighten price-addons on desktop */
+  .price-addons { font-size: 11.5px; margin-bottom: 14px; }
+
+  /* CTA full width on desktop */
+  .btn-primary { height: 48px; font-size: 12.5px; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
