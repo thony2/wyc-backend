@@ -261,7 +261,7 @@ h1.hero-title {
   margin-top: -22px;
   background: var(--white);
   border-radius: var(--r-xl) var(--r-xl) 0 0;
-  padding: 28px 20px 0;
+  padding: 24px 20px 0;   /* was 28px — align to 24 (3×8) */
   min-height: 60px;
 }
 
@@ -277,14 +277,14 @@ h1.hero-title {
    ═══════════════════════════════════════════════════════════════════════════ */
 .meta-row {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 16px;  /* ✓ on-grid */
 }
 .meta-category {
   font-size: 10px; font-weight: 700;
   letter-spacing: .14em; text-transform: uppercase;
   color: var(--muted);
 }
-.meta-actions { display: flex; align-items: center; gap: 7px; }
+.meta-actions { display: flex; align-items: center; gap: 8px; /* was 7 */ }
 
 .btn-like {
   display: flex; align-items: center; gap: 5px;
@@ -356,8 +356,8 @@ h1.hero-title {
   font-size: 14px; font-weight: 400;
   color: var(--muted);
   line-height: 1.75;
-  margin-bottom: 20px;
-  padding-left: 13px;
+  margin-bottom: 16px;  /* was 20px */
+  padding-left: 12px;   /* was 13px — snap to 12 */
   border-left: 2px solid var(--border);
 }
 .editorial strong { color: var(--text); font-weight: 600; }
@@ -366,8 +366,8 @@ h1.hero-title {
    RATING ROW
    ═══════════════════════════════════════════════════════════════════════════ */
 .rating-row {
-  display: flex; align-items: center; gap: 9px;
-  margin-bottom: 22px; flex-wrap: wrap;
+  display: flex; align-items: center; gap: 8px; /* was 9px */
+  margin-bottom: 24px; flex-wrap: wrap;          /* was 22px */
 }
 .stars      { display: flex; gap: 2px; }
 .star       { font-size: 12px; color: var(--amber); line-height: 1; }
@@ -387,11 +387,11 @@ h1.hero-title {
    PRICE BLOCK
    ═══════════════════════════════════════════════════════════════════════════ */
 .price-block {
-  padding: 22px 0;
+  padding: 24px 0;  /* was 22px */
 }
 .price-line {
   display: flex; align-items: baseline; gap: 8px;
-  margin-bottom: 8px; flex-wrap: wrap;
+  margin-bottom: 12px; flex-wrap: wrap;  /* was 8px — gives £ figure room to breathe */
 }
 .price-figure {
   font-size: 38px; font-weight: 800;
@@ -411,7 +411,7 @@ h1.hero-title {
 }
 .price-addons {
   font-size: 12px; color: var(--muted); line-height: 1.6;
-  margin-bottom: 20px;
+  margin-bottom: 16px;  /* was 20px */
 }
 .price-addons strong { color: var(--text); font-weight: 600; }
 
@@ -421,12 +421,12 @@ h1.hero-title {
   border: 1px solid var(--border);
   border-radius: var(--r-md);
   overflow: hidden;
-  margin-bottom: 20px;
+  margin-bottom: 16px;  /* was 20px */
 }
 .trust-cell {
   display: flex; flex-direction: column;
   align-items: center; text-align: center;
-  gap: 5px; padding: 13px 6px;
+  gap: 4px; padding: 12px 8px;  /* was 5px gap, 13px 6px — snap both to grid */
   border-right: 1px solid var(--border);
   background: var(--white);
 }
@@ -477,7 +477,7 @@ h1.hero-title {
    FEATURE CHIPS
    ═══════════════════════════════════════════════════════════════════════════ */
 .feat-section {
-  padding: 22px 0;
+  padding: 24px 0;  /* was 22px — now matches other sections */
 }
 .feat-section-label {
   font-size: 10px; font-weight: 700;
@@ -499,11 +499,11 @@ h1.hero-title {
    PAGE SECTION WRAPPER
    ═══════════════════════════════════════════════════════════════════════════ */
 .page-section {
-  padding: 28px 0;
+  padding: 24px 0;  /* was 28px — unified with feat-section at 24 (3×8) */
 }
 .section-eyebrow {
-  display: flex; align-items: center; gap: 7px;
-  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 8px;  /* was 7px */
+  margin-bottom: 8px;  /* was 6px — needs to read as label, not bleed into content */
 }
 .section-step {
   width: 18px; height: 18px; border-radius: 50%;
@@ -520,7 +520,7 @@ h1.hero-title {
 .section-heading {
   font-size: 22px; font-weight: 800;
   color: var(--text); letter-spacing: -.02em;
-  line-height: 1.1; margin-bottom: 20px;
+  line-height: 1.1; margin-bottom: 16px;  /* was 20px */
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -572,7 +572,7 @@ h1.hero-title {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 8px;  /* was 10px */
   min-height: 20px;
 }
 .swatch-name {
@@ -597,10 +597,10 @@ h1.hero-title {
 
 /* Presets ──────────────────────────────────────────────────────────────────── */
 .presets {
-  display: flex; gap: 7px;
+  display: flex; gap: 8px;  /* was 7px */
   overflow-x: auto; padding-bottom: 2px;
   scrollbar-width: none;
-  margin-bottom: 22px;
+  margin-bottom: 16px;  /* was 22px */
 }
 .presets::-webkit-scrollbar { display: none; }
 .preset-chip {
@@ -627,8 +627,8 @@ h1.hero-title {
 .dim-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-bottom: 10px;
+  gap: 16px;       /* was 14px */
+  margin-bottom: 8px;  /* was 10px */
 }
 .dim-label {
   font-size: 10px; font-weight: 700;
@@ -674,7 +674,7 @@ h1.hero-title {
 
 .dim-helper {
   font-size: 12px; color: var(--muted);
-  line-height: 1.6; margin-bottom: 22px;
+  line-height: 1.6; margin-bottom: 16px;  /* was 22px */
 }
 
 /* Service toggles ─────────────────────────────────────────────────────────── */
@@ -683,19 +683,19 @@ h1.hero-title {
   border: 1.5px solid var(--border);
   border-radius: var(--r-md);
   overflow: hidden;
-  margin-bottom: 14px;
+  margin-bottom: 16px;  /* was 14px */
 }
 .service-row {
   display: flex; align-items: center;
   justify-content: space-between;
-  padding: 15px 16px;
+  padding: 16px;  /* was 15px 16px — square to grid */
   background: var(--white);
   border-bottom: 1px solid var(--border);
   transition: background .15s;
 }
 .service-row:last-child { border-bottom: none; }
 .service-row:hover { background: var(--surface); }
-.svc-left { display: flex; align-items: center; gap: 13px; }
+.svc-left { display: flex; align-items: center; gap: 12px; /* was 13px */ }
 .svc-icon {
   width: 38px; height: 38px; border-radius: 9px;
   background: var(--surface);
@@ -753,7 +753,7 @@ h1.hero-title {
   margin-bottom: 14px;
 }
 .estimate-card-inner {
-  padding: 20px;
+  padding: 16px;  /* was 20px — tighter but on-grid */
 }
 .estimate-top {
   display: flex; justify-content: space-between;
@@ -762,7 +762,7 @@ h1.hero-title {
 .estimate-label {
   font-size: 10px; font-weight: 700;
   letter-spacing: .10em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 5px;
+  color: var(--muted); margin-bottom: 8px;  /* was 5px */
 }
 .estimate-total {
   font-size: 32px; font-weight: 800;
@@ -807,10 +807,10 @@ h1.hero-title {
 
 /* Nudge card ────────────────────────────────────────────────────────────────── */
 .nudge-card {
-  display: flex; align-items: center; gap: 14px;
+  display: flex; align-items: center; gap: 16px;  /* was 14px */
   border: 1.5px dashed var(--border-med);
   border-radius: var(--r-md);
-  padding: 15px 16px;
+  padding: 16px;  /* was 15px 16px — square to grid */
   cursor: pointer;
   transition: background .15s;
   text-decoration: none; color: inherit;
@@ -828,7 +828,7 @@ h1.hero-title {
 .suitable-grid  { display: flex; flex-wrap: wrap; gap: 8px; }
 .suitable-tag {
   display: flex; align-items: center; gap: 8px;
-  padding: 9px 14px;
+  padding: 8px 14px;  /* was 9px 14px — snap top/bottom to 8 */
   border: 1.5px solid var(--border);
   border-radius: var(--r-sm);
   font-size: 13px; font-weight: 500;
@@ -841,7 +841,7 @@ h1.hero-title {
    ═══════════════════════════════════════════════════════════════════════════ */
 .spec-bar-row {
   display: flex; align-items: center;
-  padding: 14px 0;
+  padding: 12px 0;  /* was 14px — snap to 12 */
   border-bottom: 1px solid var(--border);
 }
 .spec-bar-row:last-child { border-bottom: none; }
@@ -871,11 +871,11 @@ h1.hero-title {
   border: 1.5px solid var(--border);
   border-radius: var(--r-md);
   overflow: hidden;
-  margin-top: 22px;
+  margin-top: 16px;  /* was 22px */
 }
 .dt-row {
   display: flex; justify-content: space-between;
-  align-items: center; padding: 13px 16px;
+  align-items: center; padding: 12px 16px;  /* was 13px 16px */
   border-bottom: 1px solid var(--border);
 }
 .dt-row:last-child { border-bottom: none; }
@@ -920,11 +920,11 @@ h1.hero-title {
    ═══════════════════════════════════════════════════════════════════════════ */
 footer {
   background: var(--black);
-  padding: 30px 20px 48px;
+  padding: 32px 20px 48px;  /* was 30px — snap to 32 */
 }
 .footer-logo {
-  display: flex; align-items: center; gap: 9px;
-  margin-bottom: 22px;
+  display: flex; align-items: center; gap: 8px;  /* was 9px */
+  margin-bottom: 24px;  /* was 22px */
 }
 .footer-logo-mark { width: 26px; height: 26px; }
 .footer-brand-text {
@@ -934,10 +934,10 @@ footer {
 }
 .footer-links {
   display: flex; flex-direction: column; gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 24px;  /* was 24px ✓ */
 }
 .footer-link { font-size: 13px; color: rgba(255,255,255,.45); font-weight: 400; }
-.footer-rule { height: 1px; background: rgba(255,255,255,.09); margin-bottom: 18px; }
+.footer-rule { height: 1px; background: rgba(255,255,255,.09); margin-bottom: 16px;  /* was 18px */ }
 .footer-legal {
   font-size: 11px; color: rgba(255,255,255,.28); line-height: 1.8;
 }
