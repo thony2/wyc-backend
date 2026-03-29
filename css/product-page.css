@@ -25,6 +25,15 @@
 
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --t:    0.18s ease;
+  /* Spacing Scale */
+  --space-unit:  8px;
+  --space-xs:    4px;
+  --space-sm:    8px;
+  --space-md:    16px;
+  --space-lg:    24px;
+  --space-xl:    32px;
+  --space-macro: 40px;
+
 }
 
 /* ─── RESET ───────────────────────────────────────────────────────────────── */
@@ -84,9 +93,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   justify-content: space-between;
 }
 .header-logo img { height: 34px; width: auto; }
-.header-actions  { display: flex; align-items: center; gap: 8px; }
+.header-actions  { display: flex; align-items: center; gap: 12px; }
 .btn-phone {
-  display: flex; align-items: center; gap: 8px;
+  display: flex; align-items: center; gap: 12px;
   font-size: .82rem; font-weight: 500;
   color: var(--muted);
   padding: 8px 16px;
@@ -277,7 +286,7 @@ h1.hero-title {
    ═══════════════════════════════════════════════════════════════════════════ */
 .meta-row {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 16px;  /* ✓ on-grid */
+  margin-bottom: var(--space-md);
 }
 .meta-category {
   font-size: 10px; font-weight: 700;
@@ -356,7 +365,7 @@ h1.hero-title {
   font-size: 14px; font-weight: 400;
   color: var(--muted);
   line-height: 1.75;
-  margin-bottom: 16px;  /* was 20px */
+  margin-bottom: var(--space-md);
   padding-left: 12px;   /* was 13px — snap to 12 */
   border-left: 2px solid var(--border);
 }
@@ -411,7 +420,7 @@ h1.hero-title {
 }
 .price-addons {
   font-size: 12px; color: var(--muted); line-height: 1.6;
-  margin-bottom: 16px;  /* was 20px */
+  margin-bottom: var(--space-md);
 }
 .price-addons strong { color: var(--text); font-weight: 600; }
 
@@ -421,12 +430,12 @@ h1.hero-title {
   border: 1px solid var(--border);
   border-radius: var(--r-md);
   overflow: hidden;
-  margin-bottom: 16px;  /* was 20px */
+  margin-bottom: var(--space-md);
 }
 .trust-cell {
   display: flex; flex-direction: column;
   align-items: center; text-align: center;
-  gap: 4px; padding: 12px 8px;  /* was 5px gap, 13px 6px — snap both to grid */
+  gap: 4px; padding: 16px 8px;
   border-right: 1px solid var(--border);
   background: var(--white);
 }
@@ -477,7 +486,7 @@ h1.hero-title {
    FEATURE CHIPS
    ═══════════════════════════════════════════════════════════════════════════ */
 .feat-section {
-  padding: 24px 0;  /* was 22px — now matches other sections */
+  padding: var(--space-macro) 0;
 }
 .feat-section-label {
   font-size: 10px; font-weight: 700;
@@ -499,7 +508,7 @@ h1.hero-title {
    PAGE SECTION WRAPPER
    ═══════════════════════════════════════════════════════════════════════════ */
 .page-section {
-  padding: 24px 0;  /* was 28px — unified with feat-section at 24 (3×8) */
+  padding: var(--space-macro) 0;
 }
 .section-eyebrow {
   display: flex; align-items: center; gap: 8px;  /* was 7px */
@@ -520,7 +529,7 @@ h1.hero-title {
 .section-heading {
   font-size: 22px; font-weight: 800;
   color: var(--text); letter-spacing: -.02em;
-  line-height: 1.1; margin-bottom: 16px;  /* was 20px */
+  line-height: 1.1; margin-bottom: var(--space-md);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -529,7 +538,7 @@ h1.hero-title {
 .swatch-strip {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 12px;
 }
 
 .swatch {
@@ -636,7 +645,7 @@ h1.hero-title {
   color: var(--muted); display: block; margin-bottom: 9px;
 }
 .dim-input {
-  width: 100%; height: 50px;
+  width: 100%; height: 56px; padding-top: 8px;
   border: none;
   border-bottom: 2px solid var(--border-med);
   padding: 0;
@@ -707,7 +716,7 @@ h1.hero-title {
   stroke: var(--text); fill: none;
   stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
 }
-.svc-name  { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.svc-name  { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 0; }
 .svc-price { font-size: 12px; color: var(--muted); }
 
 /* Toggle switch ─────────────────────────────────────────────────────────────── */
@@ -818,14 +827,14 @@ h1.hero-title {
 .nudge-card:active { background: var(--surface); }
 .nudge-icon  { font-size: 22px; line-height: 1; flex-shrink: 0; }
 .nudge-body  { flex: 1; min-width: 0; }
-.nudge-title { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.nudge-title { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 0; }
 .nudge-sub   { font-size: 12px; color: var(--muted); line-height: 1.5; }
 .nudge-arrow { font-size: 16px; color: var(--muted); flex-shrink: 0; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    SUITABLE FOR
    ═══════════════════════════════════════════════════════════════════════════ */
-.suitable-grid  { display: flex; flex-wrap: wrap; gap: 8px; }
+.suitable-grid  { display: flex; flex-wrap: wrap; gap: 12px; }
 .suitable-tag {
   display: flex; align-items: center; gap: 8px;
   padding: 8px 14px;  /* was 9px 14px — snap top/bottom to 8 */
