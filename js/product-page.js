@@ -12,6 +12,12 @@ var UNDERLAY_PRICE = 5;
 var selectedWidth  = 4;
 var selectedColour = { name: '', hex: '', img: '' };
 
+/* FAB state */
+var fab               = null;   /* resolved in initFab */
+var fabCurrentPrice   = 0;
+var fabAnimId         = null;
+var fabDrawerOpen     = false;
+
 /* ─────────────────────────────────────────────────────────────────────────────
    HELPERS
    ───────────────────────────────────────────────────────────────────────────── */
@@ -119,6 +125,7 @@ function initSwatches() {
         hex:  sw.dataset.hex  || '',
         img:  sw.dataset.img  || sw.dataset.bg || ''
       };
+      updateFabThumbs(selectedColour.img || selectedColour.hex);
 
       // Update name label
       document.querySelectorAll('#swatch-name').forEach(function (el) {
@@ -231,6 +238,7 @@ function calcPrice() {
   if (isNaN(len) || len <= 0) {
     if (estimCard) estimCard.classList.remove('visible');
     if (pdfBtn)    pdfBtn.disabled = true;
+    updateFab(0, 0, 0, 0, 0, 0);
     return;
   }
 
@@ -276,6 +284,7 @@ function calcPrice() {
     params.set('total',    total.toFixed(2));
     ctaBtn.dataset.href = '/?' + params.toString() + '#contact';
   }
+  updateFab(len, area, carpetCost, underlayCost, fittingCost, total);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -589,6 +598,7 @@ function initReveal() {
 initSwatchBg();
 initShowMore();
 initSwatches();
+initFab();
 initWidthBtns();
 initPresets();
 initCalc();
@@ -600,3 +610,236 @@ initTooltip();
 initReveal();
 
 }());
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   FAB — updateFabThumbs
+   Called whenever a swatch is selected. Updates both desktop + mobile circles.
+   ───────────────────────────────────────────────────────────────────────────── */
+function updateFabThumbs(imgOrHex) {
+  var desktop = document.getElementById('fab-swatch-thumb');
+  var mobile  = document.getElementById('fab-swatch-thumb-sm');
+  if (!imgOrHex) return;
+  var val = imgOrHex.startsWith('#')
+    ? null           /* hex — set background-color */
+    : imgOrHex;      /* url */
+  [desktop, mobile].forEach(function (el) {
+    if (!el) return;
+    if (val) {
+      el.style.backgroundImage = 'url(' + val + ')';
+      el.style.backgroundSize  = 'cover';
+      el.style.backgroundColor = '';
+    } else {
+      el.style.backgroundImage = '';
+      el.style.backgroundColor = imgOrHex;
+    }
+  });
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   FAB — animateFabPrice
+   Smooth ease-out counter over 300ms. Guard prevents overlapping animations.
+   ───────────────────────────────────────────────────────────────────────────── */
+function animateFabPrice(target) {
+  var el = document.getElementById('fab-price');
+  if (!el) return;
+  if (fabAnimId) { cancelAnimationFrame(fabAnimId); fabAnimId = null; }
+  var start     = fabCurrentPrice;
+  var duration  = 300;
+  var startTime = null;
+  function step(ts) {
+    if (!startTime) startTime = ts;
+    var p   = Math.min((ts - startTime) / duration, 1);
+    var cur = start + (target - start) * p;
+    el.textContent = '\u00a3' + cur.toFixed(2);
+    fabCurrentPrice = cur;
+    if (p < 1) {
+      fabAnimId = requestAnimationFrame(step);
+    } else {
+      fabAnimId = null;
+      fabCurrentPrice = target;
+      el.textContent = '\u00a3' + target.toFixed(2);
+    }
+  }
+  fabAnimId = requestAnimationFrame(step);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   FAB — updateFab
+   Single source of truth for FAB state. Called from calcPrice().
+   ───────────────────────────────────────────────────────────────────────────── */
+function updateFab(len, area, flooring, underlay, fitting, total) {
+  if (!fab) return;
+
+  var hasVal = len > 0;
+
+  /* ── Price animation ──────────────────────────────────────────────────── */
+  animateFabPrice(hasVal ? total : 0);
+
+  /* ── Subtitle ─────────────────────────────────────────────────────────── */
+  var sub    = hasVal ? (area + ' m\u00b2 \u00b7 Fully Installed') : 'Enter dimensions';
+  var subEl  = document.getElementById('fab-price-sub');
+  var subMob = document.getElementById('fab-price-sub-mobile');
+  if (subEl)  subEl.textContent  = sub;
+  if (subMob) subMob.textContent = sub;
+
+  /* ── Mobile price (static, no animation) ─────────────────────────────── */
+  var mobPrice = document.getElementById('fab-price-mobile');
+  if (mobPrice) mobPrice.textContent = hasVal ? ('\u00a3' + total.toFixed(2)) : '\u00a30.00';
+
+  /* ── Desktop glass panel rows ─────────────────────────────────────────── */
+  var rFlooringLabel = document.getElementById('fab-r-flooring-label');
+  var rFlooringPrice = document.getElementById('fab-r-flooring-price');
+  var rUnderlay      = document.getElementById('fab-r-underlay');
+  var rUnderlayPrice = document.getElementById('fab-r-underlay-price');
+  var rFitting       = document.getElementById('fab-r-fitting');
+  var rFittingPrice  = document.getElementById('fab-r-fitting-price');
+  var rTotal         = document.getElementById('fab-r-total');
+
+  if (hasVal) {
+    if (rFlooringLabel) rFlooringLabel.textContent = 'Carpet (' + area + 'm\u00b2)';
+    if (rFlooringPrice) rFlooringPrice.textContent = fmtGBP(flooring);
+    if (rUnderlay)      rUnderlay.classList.toggle('fab-panel-row--hidden', underlay <= 0);
+    if (rUnderlayPrice) rUnderlayPrice.textContent = fmtGBP(underlay);
+    if (rFitting)       rFitting.classList.toggle('fab-panel-row--hidden',  fitting  <= 0);
+    if (rFittingPrice)  rFittingPrice.textContent  = fmtGBP(fitting);
+    if (rTotal)         rTotal.textContent         = fmtGBP(total);
+  } else {
+    if (rFlooringLabel) rFlooringLabel.textContent = 'Carpet';
+    if (rFlooringPrice) rFlooringPrice.textContent = '\u2014';
+    if (rUnderlay)      rUnderlay.classList.add('fab-panel-row--hidden');
+    if (rFitting)       rFitting.classList.add('fab-panel-row--hidden');
+    if (rTotal)         rTotal.textContent         = '\u2014';
+  }
+
+  /* ── Mobile drawer rows ───────────────────────────────────────────────── */
+  var rmFlooringLabel = document.getElementById('fab-rm-flooring-label');
+  var rmFlooringPrice = document.getElementById('fab-rm-flooring-price');
+  var rmUnderlay      = document.getElementById('fab-rm-underlay');
+  var rmUnderlayPrice = document.getElementById('fab-rm-underlay-price');
+  var rmFitting       = document.getElementById('fab-rm-fitting');
+  var rmFittingPrice  = document.getElementById('fab-rm-fitting-price');
+  var rmTotal         = document.getElementById('fab-rm-total');
+
+  if (hasVal) {
+    if (rmFlooringLabel) rmFlooringLabel.textContent = 'Carpet (' + area + 'm\u00b2)';
+    if (rmFlooringPrice) rmFlooringPrice.textContent = fmtGBP(flooring);
+    if (rmUnderlay)      rmUnderlay.classList.toggle('fab-panel-row--hidden', underlay <= 0);
+    if (rmUnderlayPrice) rmUnderlayPrice.textContent = fmtGBP(underlay);
+    if (rmFitting)       rmFitting.classList.toggle('fab-panel-row--hidden',  fitting  <= 0);
+    if (rmFittingPrice)  rmFittingPrice.textContent  = fmtGBP(fitting);
+    if (rmTotal)         rmTotal.textContent         = fmtGBP(total);
+  } else {
+    if (rmFlooringLabel) rmFlooringLabel.textContent = 'Carpet';
+    if (rmFlooringPrice) rmFlooringPrice.textContent = '\u2014';
+    if (rmUnderlay)      rmUnderlay.classList.add('fab-panel-row--hidden');
+    if (rmFitting)       rmFitting.classList.add('fab-panel-row--hidden');
+    if (rmTotal)         rmTotal.textContent         = '\u2014';
+  }
+
+  /* ── FAB visibility ───────────────────────────────────────────────────── */
+  if (hasVal) {
+    fab.classList.add('fab--visible');
+    fab.classList.remove('fab--ghost');
+  }
+
+  /* ── Measure button hrefs ─────────────────────────────────────────────── */
+  if (hasVal) {
+    var nameEl = document.querySelector('h1.hero-title') || document.querySelector('.desktop-name');
+    var name   = nameEl ? nameEl.textContent.trim() : '';
+    var params = new URLSearchParams();
+    params.set('product',  name);
+    params.set('price',    flooring.toFixed(2));
+    params.set('area',     area);
+    params.set('width',    selectedWidth);
+    params.set('flooring', flooring.toFixed(2));
+    params.set('underlay', underlay.toFixed(2));
+    params.set('fitting',  fitting.toFixed(2));
+    params.set('total',    total.toFixed(2));
+    var href = '/?' + params.toString() + '#contact';
+    var mBtn  = document.getElementById('fab-measure');
+    var mMob  = document.getElementById('fab-measure-mobile');
+    if (mBtn)  mBtn.href  = href;
+    if (mMob)  mMob.href  = href;
+  }
+
+  /* ── PDF button enable/disable ────────────────────────────────────────── */
+  var pdfBtn       = document.getElementById('fab-pdf-btn');
+  var pdfBtnDrawer = document.getElementById('fab-pdf-btn-drawer');
+  if (pdfBtn)       pdfBtn.disabled       = !hasVal;
+  if (pdfBtnDrawer) pdfBtnDrawer.disabled = !hasVal;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   FAB — initFab
+   ───────────────────────────────────────────────────────────────────────────── */
+function initFab() {
+  fab = document.getElementById('fab');
+  if (!fab) return;
+
+  /* Keyboard awareness (iOS safe-area) */
+  if (window.visualViewport) {
+    var lastVH = window.visualViewport.height;
+    window.visualViewport.addEventListener('resize', function () {
+      var cur = window.visualViewport.height;
+      document.body.classList.toggle('keyboard-open', cur < lastVH * 0.85);
+    });
+  }
+
+  /* Seed swatch thumb from initial product image */
+  var mainImg = document.getElementById('product-main-img');
+  if (mainImg && mainImg.src) {
+    updateFabThumbs(mainImg.src);
+  }
+
+  /* Ghost on input focus */
+  var lenInput = document.getElementById('room-len');
+  if (lenInput) {
+    lenInput.addEventListener('focus', function () {
+      if (!fab.classList.contains('fab--visible')) {
+        fab.classList.add('fab--ghost');
+      }
+    });
+  }
+
+  /* PDF buttons */
+  var pdfBtn       = document.getElementById('fab-pdf-btn');
+  var pdfBtnDrawer = document.getElementById('fab-pdf-btn-drawer');
+  if (pdfBtn)       pdfBtn.addEventListener('click', downloadQuotePDF);
+  if (pdfBtnDrawer) pdfBtnDrawer.addEventListener('click', downloadQuotePDF);
+
+  /* Mobile drawer toggle */
+  var grabber = document.getElementById('fab-grabber');
+  var drawer  = document.getElementById('fab-drawer');
+  if (grabber) {
+    grabber.addEventListener('click', function () {
+      fabDrawerOpen = !fabDrawerOpen;
+      fab.classList.toggle('fab--open', fabDrawerOpen);
+    });
+  }
+  /* Tap price area to open drawer */
+  var mobileZone = document.querySelector('.fab-mobile-main .fab-zone-a');
+  if (mobileZone) {
+    mobileZone.style.cursor = 'pointer';
+    mobileZone.addEventListener('click', function () {
+      fabDrawerOpen = !fabDrawerOpen;
+      fab.classList.toggle('fab--open', fabDrawerOpen);
+    });
+  }
+  /* Close drawer on outside tap */
+  document.addEventListener('click', function (e) {
+    if (fabDrawerOpen && fab && !fab.contains(e.target)) {
+      fabDrawerOpen = false;
+      fab.classList.remove('fab--open');
+    }
+  });
+  /* Close drawer on Escape */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && fabDrawerOpen) {
+      fabDrawerOpen = false;
+      fab.classList.remove('fab--open');
+    }
+  });
+
+  /* Initial render (hidden state) */
+  updateFab(0, 0, 0, 0, 0, 0);
+}
