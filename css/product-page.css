@@ -511,8 +511,10 @@ h1.hero-title {
   padding: var(--space-macro) 0;
 }
 .section-eyebrow {
-  display: flex; align-items: center; gap: 8px;  /* was 7px */
-  margin-bottom: 8px;  /* was 6px — needs to read as label, not bleed into content */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px; /* Increased slightly for better breathing room */
 }
 .section-step {
   width: 18px; height: 18px; border-radius: 50%;
@@ -527,9 +529,13 @@ h1.hero-title {
   color: var(--muted);
 }
 .section-heading {
-  font-size: 22px; font-weight: 800;
-  color: var(--text); letter-spacing: -.02em;
-  line-height: 1.1; margin-bottom: var(--space-md);
+  font-size: 22px; 
+  font-weight: 800;
+  color: var(--text); 
+  letter-spacing: -.02em;
+  line-height: 1.1; 
+  margin-top: -4px;    /* <--- Add this to balance the visual gap */
+  margin-bottom: var(--space-md);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
