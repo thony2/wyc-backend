@@ -956,8 +956,6 @@ footer {
 .footer-logo-link { display: inline-block; margin-bottom: 16px; }
 .footer-logo-img  {
   height: 32px; width: auto;
-  filter: brightness(0) invert(1); /* white on black */
-  opacity: .85;
 }
 
 .footer-tagline {
