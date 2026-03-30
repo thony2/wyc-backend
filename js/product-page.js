@@ -654,7 +654,7 @@ function updateFab(len, area, flooring, underlay, fitting, total) {
 
   animateFabPrice(hasVal ? total : 0);
 
-  var subtitle = hasVal ? (area + '\u00a0m\u00b2\u00a0\u00b7\u00a0Fully Installed') : 'Enter dimensions';
+  var subtitle = hasVal ? (area + '\u00a0m\u00b2') : 'Enter dimensions';
   var subEl  = document.getElementById('fab-price-sub');
   var subMob = document.getElementById('fab-price-sub-mobile');
   if (subEl)  subEl.textContent  = subtitle;
