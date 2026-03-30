@@ -13,10 +13,10 @@ var selectedWidth  = 4;
 var selectedColour = { name: '', hex: '', img: '' };
 
 /* FAB state */
-var fab               = null;   /* resolved in initFab */
-var fabCurrentPrice   = 0;
-var fabAnimId         = null;
-var fabDrawerOpen     = false;
+var fab             = null;   /* resolved in initFab */
+var fabCurrentPrice = 0;
+var fabAnimId       = null;
+var fabDrawerOpen   = false;
 
 /* ─────────────────────────────────────────────────────────────────────────────
    HELPERS
@@ -125,6 +125,7 @@ function initSwatches() {
         hex:  sw.dataset.hex  || '',
         img:  sw.dataset.img  || sw.dataset.bg || ''
       };
+
       updateFabThumbs(selectedColour.img || selectedColour.hex);
 
       // Update name label
@@ -284,6 +285,7 @@ function calcPrice() {
     params.set('total',    total.toFixed(2));
     ctaBtn.dataset.href = '/?' + params.toString() + '#contact';
   }
+
   updateFab(len, area, carpetCost, underlayCost, fittingCost, total);
 }
 
@@ -610,54 +612,57 @@ initTooltip();
 initReveal();
 
 }());
-
 /* ─────────────────────────────────────────────────────────────────────────────
    FAB — updateFabThumbs
-   Called whenever a swatch is selected. Updates both desktop + mobile circles.
+   Updates both desktop circle and mobile circle whenever a swatch is selected.
+   Accepts either a URL string or a hex colour string (#rrggbb).
    ───────────────────────────────────────────────────────────────────────────── */
 function updateFabThumbs(imgOrHex) {
   var desktop = document.getElementById('fab-swatch-thumb');
   var mobile  = document.getElementById('fab-swatch-thumb-sm');
   if (!imgOrHex) return;
-  var val = imgOrHex.startsWith('#')
-    ? null           /* hex — set background-color */
-    : imgOrHex;      /* url */
+
+  var isHex = imgOrHex.charAt(0) === '#';
   [desktop, mobile].forEach(function (el) {
     if (!el) return;
-    if (val) {
-      el.style.backgroundImage = 'url(' + val + ')';
-      el.style.backgroundSize  = 'cover';
-      el.style.backgroundColor = '';
-    } else {
+    if (isHex) {
       el.style.backgroundImage = '';
       el.style.backgroundColor = imgOrHex;
+    } else {
+      el.style.backgroundImage = 'url(' + imgOrHex + ')';
+      el.style.backgroundSize  = 'cover';
+      el.style.backgroundColor = '';
     }
   });
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
    FAB — animateFabPrice
-   Smooth ease-out counter over 300ms. Guard prevents overlapping animations.
+   Smooth ease-out counter over 300ms on the desktop price element.
+   Cancel-guard prevents overlapping rAF loops on rapid input.
    ───────────────────────────────────────────────────────────────────────────── */
 function animateFabPrice(target) {
   var el = document.getElementById('fab-price');
   if (!el) return;
+
   if (fabAnimId) { cancelAnimationFrame(fabAnimId); fabAnimId = null; }
+
   var start     = fabCurrentPrice;
   var duration  = 300;
   var startTime = null;
+
   function step(ts) {
     if (!startTime) startTime = ts;
-    var p   = Math.min((ts - startTime) / duration, 1);
-    var cur = start + (target - start) * p;
-    el.textContent = '\u00a3' + cur.toFixed(2);
-    fabCurrentPrice = cur;
-    if (p < 1) {
+    var progress = Math.min((ts - startTime) / duration, 1);
+    var current  = start + (target - start) * progress;
+    el.textContent  = '\u00a3' + current.toFixed(2);
+    fabCurrentPrice = current;
+    if (progress < 1) {
       fabAnimId = requestAnimationFrame(step);
     } else {
-      fabAnimId = null;
+      fabAnimId       = null;
       fabCurrentPrice = target;
-      el.textContent = '\u00a3' + target.toFixed(2);
+      el.textContent  = '\u00a3' + target.toFixed(2);
     }
   }
   fabAnimId = requestAnimationFrame(step);
@@ -665,28 +670,31 @@ function animateFabPrice(target) {
 
 /* ─────────────────────────────────────────────────────────────────────────────
    FAB — updateFab
-   Single source of truth for FAB state. Called from calcPrice().
+   Single source of truth for all FAB state.
+   Called from calcPrice() on every valid input change and on reset.
    ───────────────────────────────────────────────────────────────────────────── */
 function updateFab(len, area, flooring, underlay, fitting, total) {
   if (!fab) return;
 
   var hasVal = len > 0;
 
-  /* ── Price animation ──────────────────────────────────────────────────── */
+  /* ── Animated price (desktop) ─────────────────────────────────────────── */
   animateFabPrice(hasVal ? total : 0);
 
-  /* ── Subtitle ─────────────────────────────────────────────────────────── */
-  var sub    = hasVal ? (area + ' m\u00b2 \u00b7 Fully Installed') : 'Enter dimensions';
+  /* ── Subtitle text ────────────────────────────────────────────────────── */
+  var subtitle = hasVal
+    ? (area + '\u00a0m\u00b2\u00a0\u00b7\u00a0Fully Installed')
+    : 'Enter dimensions';
   var subEl  = document.getElementById('fab-price-sub');
   var subMob = document.getElementById('fab-price-sub-mobile');
-  if (subEl)  subEl.textContent  = sub;
-  if (subMob) subMob.textContent = sub;
+  if (subEl)  subEl.textContent  = subtitle;
+  if (subMob) subMob.textContent = subtitle;
 
-  /* ── Mobile price (static, no animation) ─────────────────────────────── */
+  /* ── Mobile static price ──────────────────────────────────────────────── */
   var mobPrice = document.getElementById('fab-price-mobile');
   if (mobPrice) mobPrice.textContent = hasVal ? ('\u00a3' + total.toFixed(2)) : '\u00a30.00';
 
-  /* ── Desktop glass panel rows ─────────────────────────────────────────── */
+  /* ── Desktop glass panel receipt rows ─────────────────────────────────── */
   var rFlooringLabel = document.getElementById('fab-r-flooring-label');
   var rFlooringPrice = document.getElementById('fab-r-flooring-price');
   var rUnderlay      = document.getElementById('fab-r-underlay');
@@ -696,22 +704,22 @@ function updateFab(len, area, flooring, underlay, fitting, total) {
   var rTotal         = document.getElementById('fab-r-total');
 
   if (hasVal) {
-    if (rFlooringLabel) rFlooringLabel.textContent = 'Carpet (' + area + 'm\u00b2)';
-    if (rFlooringPrice) rFlooringPrice.textContent = fmtGBP(flooring);
+    if (rFlooringLabel) rFlooringLabel.textContent = 'Carpet\u00a0(' + area + '\u00a0m\u00b2)';
+    if (rFlooringPrice) rFlooringPrice.textContent = '\u00a3' + flooring.toFixed(2);
     if (rUnderlay)      rUnderlay.classList.toggle('fab-panel-row--hidden', underlay <= 0);
-    if (rUnderlayPrice) rUnderlayPrice.textContent = fmtGBP(underlay);
+    if (rUnderlayPrice) rUnderlayPrice.textContent = '\u00a3' + underlay.toFixed(2);
     if (rFitting)       rFitting.classList.toggle('fab-panel-row--hidden',  fitting  <= 0);
-    if (rFittingPrice)  rFittingPrice.textContent  = fmtGBP(fitting);
-    if (rTotal)         rTotal.textContent         = fmtGBP(total);
+    if (rFittingPrice)  rFittingPrice.textContent  = '\u00a3' + fitting.toFixed(2);
+    if (rTotal)         rTotal.textContent          = '\u00a3' + total.toFixed(2);
   } else {
     if (rFlooringLabel) rFlooringLabel.textContent = 'Carpet';
     if (rFlooringPrice) rFlooringPrice.textContent = '\u2014';
     if (rUnderlay)      rUnderlay.classList.add('fab-panel-row--hidden');
     if (rFitting)       rFitting.classList.add('fab-panel-row--hidden');
-    if (rTotal)         rTotal.textContent         = '\u2014';
+    if (rTotal)         rTotal.textContent          = '\u2014';
   }
 
-  /* ── Mobile drawer rows ───────────────────────────────────────────────── */
+  /* ── Mobile drawer receipt rows ───────────────────────────────────────── */
   var rmFlooringLabel = document.getElementById('fab-rm-flooring-label');
   var rmFlooringPrice = document.getElementById('fab-rm-flooring-price');
   var rmUnderlay      = document.getElementById('fab-rm-underlay');
@@ -721,28 +729,28 @@ function updateFab(len, area, flooring, underlay, fitting, total) {
   var rmTotal         = document.getElementById('fab-rm-total');
 
   if (hasVal) {
-    if (rmFlooringLabel) rmFlooringLabel.textContent = 'Carpet (' + area + 'm\u00b2)';
-    if (rmFlooringPrice) rmFlooringPrice.textContent = fmtGBP(flooring);
+    if (rmFlooringLabel) rmFlooringLabel.textContent = 'Carpet\u00a0(' + area + '\u00a0m\u00b2)';
+    if (rmFlooringPrice) rmFlooringPrice.textContent = '\u00a3' + flooring.toFixed(2);
     if (rmUnderlay)      rmUnderlay.classList.toggle('fab-panel-row--hidden', underlay <= 0);
-    if (rmUnderlayPrice) rmUnderlayPrice.textContent = fmtGBP(underlay);
+    if (rmUnderlayPrice) rmUnderlayPrice.textContent = '\u00a3' + underlay.toFixed(2);
     if (rmFitting)       rmFitting.classList.toggle('fab-panel-row--hidden',  fitting  <= 0);
-    if (rmFittingPrice)  rmFittingPrice.textContent  = fmtGBP(fitting);
-    if (rmTotal)         rmTotal.textContent         = fmtGBP(total);
+    if (rmFittingPrice)  rmFittingPrice.textContent  = '\u00a3' + fitting.toFixed(2);
+    if (rmTotal)         rmTotal.textContent          = '\u00a3' + total.toFixed(2);
   } else {
     if (rmFlooringLabel) rmFlooringLabel.textContent = 'Carpet';
     if (rmFlooringPrice) rmFlooringPrice.textContent = '\u2014';
     if (rmUnderlay)      rmUnderlay.classList.add('fab-panel-row--hidden');
     if (rmFitting)       rmFitting.classList.add('fab-panel-row--hidden');
-    if (rmTotal)         rmTotal.textContent         = '\u2014';
+    if (rmTotal)         rmTotal.textContent          = '\u2014';
   }
 
-  /* ── FAB visibility ───────────────────────────────────────────────────── */
+  /* ── Visibility ───────────────────────────────────────────────────────── */
   if (hasVal) {
     fab.classList.add('fab--visible');
     fab.classList.remove('fab--ghost');
   }
 
-  /* ── Measure button hrefs ─────────────────────────────────────────────── */
+  /* ── Measure button hrefs (pre-filled contact form) ───────────────────── */
   if (hasVal) {
     var nameEl = document.querySelector('h1.hero-title') || document.querySelector('.desktop-name');
     var name   = nameEl ? nameEl.textContent.trim() : '';
@@ -756,13 +764,13 @@ function updateFab(len, area, flooring, underlay, fitting, total) {
     params.set('fitting',  fitting.toFixed(2));
     params.set('total',    total.toFixed(2));
     var href = '/?' + params.toString() + '#contact';
-    var mBtn  = document.getElementById('fab-measure');
-    var mMob  = document.getElementById('fab-measure-mobile');
-    if (mBtn)  mBtn.href  = href;
-    if (mMob)  mMob.href  = href;
+    var mBtn = document.getElementById('fab-measure');
+    var mMob = document.getElementById('fab-measure-mobile');
+    if (mBtn) mBtn.href = href;
+    if (mMob) mMob.href = href;
   }
 
-  /* ── PDF button enable/disable ────────────────────────────────────────── */
+  /* ── PDF button state ─────────────────────────────────────────────────── */
   var pdfBtn       = document.getElementById('fab-pdf-btn');
   var pdfBtnDrawer = document.getElementById('fab-pdf-btn-drawer');
   if (pdfBtn)       pdfBtn.disabled       = !hasVal;
@@ -771,27 +779,27 @@ function updateFab(len, area, flooring, underlay, fitting, total) {
 
 /* ─────────────────────────────────────────────────────────────────────────────
    FAB — initFab
+   Wires all FAB interactions. Called once after DOM is ready.
    ───────────────────────────────────────────────────────────────────────────── */
 function initFab() {
   fab = document.getElementById('fab');
   if (!fab) return;
 
-  /* Keyboard awareness (iOS safe-area) */
+  /* iOS virtual keyboard: hide FAB when keyboard pushes viewport */
   if (window.visualViewport) {
     var lastVH = window.visualViewport.height;
     window.visualViewport.addEventListener('resize', function () {
       var cur = window.visualViewport.height;
-      document.body.classList.toggle('keyboard-open', cur < lastVH * 0.85);
+      document.body.classList.toggle('keyboard-open', cur < lastVH * 0.82);
+      lastVH = cur;
     });
   }
 
-  /* Seed swatch thumb from initial product image */
+  /* Seed swatch thumb from the initial product image */
   var mainImg = document.getElementById('product-main-img');
-  if (mainImg && mainImg.src) {
-    updateFabThumbs(mainImg.src);
-  }
+  if (mainImg && mainImg.src) updateFabThumbs(mainImg.src);
 
-  /* Ghost on input focus */
+  /* Ghost on length-input focus (before a value is entered) */
   var lenInput = document.getElementById('room-len');
   if (lenInput) {
     lenInput.addEventListener('focus', function () {
@@ -799,24 +807,30 @@ function initFab() {
         fab.classList.add('fab--ghost');
       }
     });
+    lenInput.addEventListener('blur', function () {
+      var len = parseFloat(lenInput.value);
+      if (!(len > 0) && !fab.classList.contains('fab--visible')) {
+        fab.classList.remove('fab--ghost');
+      }
+    });
   }
 
-  /* PDF buttons */
+  /* PDF buttons (desktop circle + mobile drawer) */
   var pdfBtn       = document.getElementById('fab-pdf-btn');
   var pdfBtnDrawer = document.getElementById('fab-pdf-btn-drawer');
   if (pdfBtn)       pdfBtn.addEventListener('click', downloadQuotePDF);
   if (pdfBtnDrawer) pdfBtnDrawer.addEventListener('click', downloadQuotePDF);
 
-  /* Mobile drawer toggle */
+  /* Mobile: grabber opens/closes drawer */
   var grabber = document.getElementById('fab-grabber');
-  var drawer  = document.getElementById('fab-drawer');
   if (grabber) {
     grabber.addEventListener('click', function () {
       fabDrawerOpen = !fabDrawerOpen;
       fab.classList.toggle('fab--open', fabDrawerOpen);
     });
   }
-  /* Tap price area to open drawer */
+
+  /* Mobile: tapping price area also opens drawer */
   var mobileZone = document.querySelector('.fab-mobile-main .fab-zone-a');
   if (mobileZone) {
     mobileZone.style.cursor = 'pointer';
@@ -825,6 +839,7 @@ function initFab() {
       fab.classList.toggle('fab--open', fabDrawerOpen);
     });
   }
+
   /* Close drawer on outside tap */
   document.addEventListener('click', function (e) {
     if (fabDrawerOpen && fab && !fab.contains(e.target)) {
@@ -832,6 +847,7 @@ function initFab() {
       fab.classList.remove('fab--open');
     }
   });
+
   /* Close drawer on Escape */
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && fabDrawerOpen) {
@@ -840,6 +856,6 @@ function initFab() {
     }
   });
 
-  /* Initial render (hidden state) */
+  /* Render initial hidden state */
   updateFab(0, 0, 0, 0, 0, 0);
 }
