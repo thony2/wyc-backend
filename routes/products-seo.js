@@ -665,24 +665,80 @@ function buildProductPage(p) {
 
 <!-- ═══ FOOTER ═══════════════════════════════════════════════════════════════ -->
 <footer>
-  <div class="footer-logo">
-    <svg class="footer-logo-mark" viewBox="0 0 26 26" fill="none" aria-hidden="true">
-      <rect width="26" height="26" rx="4" fill="#B83232"/>
-      <path d="M6 6L13 13L6 20M13 6L20 13L13 20" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <div class="footer-brand-text">West Yorkshire<br>Carpets</div>
+  <div class="footer-inner">
+
+    <!-- Col 1: Brand -->
+    <div class="footer-brand">
+      <a href="/" class="footer-logo-link" aria-label="${SITE_NAME} — Home">
+        <img src="/images/logo2.svg" alt="${SITE_NAME}" class="footer-logo-img" width="130" height="34" loading="lazy">
+      </a>
+      <p class="footer-tagline">Premium flooring, professionally fitted across West Yorkshire.</p>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/westyorkshirecarpets" target="_blank" rel="noopener noreferrer" class="footer-social-btn" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@westyorkshirecarpets" target="_blank" rel="noopener noreferrer" class="footer-social-btn" aria-label="TikTok">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.79 1.54V6.78a4.85 4.85 0 0 1-1.02-.09z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/westyorkshirecarpets" target="_blank" rel="noopener noreferrer" class="footer-social-btn" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Col 2: Explore -->
+    <div class="footer-col">
+      <div class="footer-col-title">Explore</div>
+      <nav aria-label="Footer explore">
+        <a class="footer-col-link" href="/#range">Browse Flooring</a>
+        <a class="footer-col-link" href="/flooring/carpets">Carpets</a>
+        <a class="footer-col-link" href="/flooring/vinyl">Vinyl Flooring</a>
+        <a class="footer-col-link" href="/flooring/laminate">Laminate</a>
+        <a class="footer-col-link" href="/flooring/wood">Real Wood</a>
+      </nav>
+    </div>
+
+    <!-- Col 3: Services -->
+    <div class="footer-col">
+      <div class="footer-col-title">Services</div>
+      <nav aria-label="Footer services">
+        <a class="footer-col-link" href="/#contact">Free Home Measure</a>
+        <a class="footer-col-link" href="/#quote">Price Calculator</a>
+        <a class="footer-col-link" href="/#contact">Professional Fitting</a>
+        <a class="footer-col-link" href="/#contact">Request a Quote</a>
+      </nav>
+    </div>
+
+    <!-- Col 4: Contact -->
+    <div class="footer-col">
+      <div class="footer-col-title">Contact</div>
+      <div class="footer-contact-list">
+        <a class="footer-contact-item" href="${PHONE_HREF}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.63 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 15z"/></svg>
+          ${PHONE}
+        </a>
+        <a class="footer-contact-item" href="mailto:info@westyorkshirecarpets.com">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          info@westyorkshirecarpets.com
+        </a>
+        <div class="footer-contact-item footer-contact-addr">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Dewsbury, West Yorkshire</span>
+        </div>
+      </div>
+    </div>
+
   </div>
-  <nav class="footer-links" aria-label="Footer navigation">
-    <a class="footer-link" href="/#range">Browse Flooring</a>
-    <a class="footer-link" href="/#quote">Price Calculator</a>
-    <a class="footer-link" href="/#contact">Free Measure</a>
-    <a class="footer-link" href="/#contact">Contact Us</a>
-  </nav>
-  <div class="footer-rule"></div>
-  <div class="footer-legal">
-    &copy; 2026 ${SITE_NAME}. All rights reserved.
-    <a href="/privacy-policy.html">Privacy Policy</a>
-    <a href="/terms.html">Terms</a>
+
+  <!-- Bottom bar -->
+  <div class="footer-bottom">
+    <div class="footer-bottom-inner">
+      <span>&copy; 2026 ${SITE_NAME}. All rights reserved.</span>
+      <div class="footer-legal-links">
+        <a href="/privacy-policy.html">Privacy Policy</a>
+        <a href="/terms.html">Terms &amp; Conditions</a>
+      </div>
+    </div>
   </div>
 </footer>
 
