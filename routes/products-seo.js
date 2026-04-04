@@ -621,27 +621,6 @@ function buildProductPage(p) {
         </div>
       </div>
 
-      <!-- Estimate card -->
-      <div class="estimate-card" id="estimate-card">
-        <div class="estimate-card-inner">
-          <div class="estimate-top">
-            <div>
-              <div class="estimate-label">Estimated total</div>
-              <div class="estimate-total" id="est-total">&pound;&mdash;</div>
-            </div>
-            <div class="estimate-breakdown" id="est-breakdown"></div>
-          </div>
-          <div class="estimate-divider"></div>
-          <button class="estimate-cta" id="estimate-cta-btn" data-href="${ctaBase}" type="button">
-            Request Full Quote for This Room &rarr;
-          </button>
-          <button class="estimate-pdf-btn" id="estimate-pdf-btn" type="button" disabled>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download PDF Estimate
-          </button>
-        </div>
-      </div>
-
       <!-- Nudge card -->
       <a href="${ctaBase}" class="nudge-card">
         <div class="nudge-icon">&#128208;</div>

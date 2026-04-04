@@ -18,6 +18,9 @@ var fabCurrentPrice = 0;
 var fabAnimId       = null;
 var fabDrawerOpen   = false;
 
+/* ── Quote persistence key ────────────────────────────────────────────────── */
+var QUOTE_KEY = 'wyc_quote_v1';
+
 /* ─────────────────────────────────────────────────────────────────────────────
    HELPERS
    ───────────────────────────────────────────────────────────────────────────── */
@@ -26,7 +29,28 @@ function fmtGBP(v) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   SWATCH BACKGROUNDS  (CSP-safe: set via JS, never via inline style attr)
+   QUOTE PERSISTENCE — sessionStorage "Project Memory"
+   Survives page reloads and cross-page navigation within the same tab.
+   ───────────────────────────────────────────────────────────────────────────── */
+function saveQuote(data) {
+  try {
+    if (data) {
+      sessionStorage.setItem(QUOTE_KEY, JSON.stringify(data));
+    } else {
+      sessionStorage.removeItem(QUOTE_KEY);
+    }
+  } catch (e) { /* storage unavailable — fail silently */ }
+}
+
+function loadQuote() {
+  try {
+    var raw = sessionStorage.getItem(QUOTE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SWATCH BACKGROUNDS  (CSP-safe)
    ───────────────────────────────────────────────────────────────────────────── */
 function initSwatchBg() {
   document.querySelectorAll('.swatch').forEach(function (sw) {
@@ -65,13 +89,11 @@ function initSwatches() {
   var allSwatches  = document.querySelectorAll('.swatch');
   if (!allSwatches.length) return;
 
-  // Capture original image URL once at init
   var mainImg     = document.getElementById('product-main-img');
   var tabletImg   = document.getElementById('tablet-main-img');
   var heroBg      = document.getElementById('hero-bg');
   var originalUrl = mainImg ? (mainImg.dataset.original || mainImg.src) : '';
 
-  // Seed selected colour from first active swatch
   var first = document.querySelector('.swatch.active') || allSwatches[0];
   if (first) {
     selectedColour = {
@@ -81,23 +103,18 @@ function initSwatches() {
     };
   }
 
-  // Reset helpers
   function showReset(show) {
-    var heroReset   = document.getElementById('hero-img-reset');
-    var tabletReset = document.getElementById('tablet-img-reset');
-    var desktopReset= document.getElementById('desktop-img-reset');
-    if (heroReset)    heroReset.classList.toggle('visible', show);
-    if (tabletReset)  tabletReset.classList.toggle('visible', show);
-    if (desktopReset) desktopReset.classList.toggle('visible', show);
+    ['hero-img-reset', 'tablet-img-reset', 'desktop-img-reset'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.classList.toggle('visible', show);
+    });
   }
 
   function resetImages() {
     if (!originalUrl) return;
-    // Restore all targets
-    if (mainImg)   { mainImg.src   = originalUrl; }
-    if (tabletImg) { tabletImg.src = originalUrl; }
-    if (heroBg)    { heroBg.style.backgroundImage = 'url(' + originalUrl + ')'; }
-    // Restore active swatch to first
+    if (mainImg)   mainImg.src   = originalUrl;
+    if (tabletImg) tabletImg.src = originalUrl;
+    if (heroBg)    heroBg.style.backgroundImage = 'url(' + originalUrl + ')';
     allSwatches.forEach(function (s, i) { s.classList.toggle('active', i === 0); });
     selectedColour = {
       name: first ? (first.dataset.name || '') : '',
@@ -107,15 +124,15 @@ function initSwatches() {
     var nameEl = document.getElementById('swatch-name');
     if (nameEl) nameEl.textContent = selectedColour.name;
     showReset(false);
+    var q = loadQuote();
+    if (q) { q.colourName = selectedColour.name; q.colourImg = originalUrl; saveQuote(q); }
   }
 
-  // Wire reset buttons
   ['hero-img-reset', 'tablet-img-reset', 'desktop-img-reset'].forEach(function (id) {
     var btn = document.getElementById(id);
     if (btn) btn.addEventListener('click', resetImages);
   });
 
-  // Swatch click
   allSwatches.forEach(function (sw) {
     sw.addEventListener('click', function () {
       allSwatches.forEach(function (s) { s.classList.toggle('active', s === sw); });
@@ -128,19 +145,23 @@ function initSwatches() {
 
       updateFabThumbs(selectedColour.img || selectedColour.hex);
 
-      // Update name label
+      var q = loadQuote();
+      if (q) {
+        q.colourName = selectedColour.name;
+        q.colourImg  = selectedColour.img || selectedColour.hex || '';
+        saveQuote(q);
+      }
+
       document.querySelectorAll('#swatch-name').forEach(function (el) {
         el.textContent = selectedColour.name;
       });
 
-      // Update all image targets
       if (selectedColour.img) {
         setImage(mainImg,   selectedColour.img);
         setImage(tabletImg, selectedColour.img);
         if (heroBg) heroBg.style.backgroundImage = 'url(' + selectedColour.img + ')';
       }
 
-      // Show reset only if not the default
       var isDefault = selectedColour.img === originalUrl || sw === allSwatches[0];
       showReset(!isDefault);
     });
@@ -168,7 +189,6 @@ function setImage(imgEl, url) {
   };
 }
 
-// Keep setMainImage as thin wrapper for PDF compatibility
 function setMainImage(imgUrl, altText) {
   var mainImg = document.getElementById('product-main-img');
   setImage(mainImg, imgUrl);
@@ -231,14 +251,11 @@ function initCalc() {
 }
 
 function calcPrice() {
-  var lenInput  = document.getElementById('room-len');
-  var len       = lenInput ? parseFloat(lenInput.value) : NaN;
-  var estimCard = document.getElementById('estimate-card');
-  var pdfBtn    = document.getElementById('estimate-pdf-btn');
+  var lenInput = document.getElementById('room-len');
+  var len      = lenInput ? parseFloat(lenInput.value) : NaN;
 
   if (isNaN(len) || len <= 0) {
-    if (estimCard) estimCard.classList.remove('visible');
-    if (pdfBtn)    pdfBtn.disabled = true;
+    saveQuote(null);
     updateFab(0, 0, 0, 0, 0, 0);
     return;
   }
@@ -249,56 +266,33 @@ function calcPrice() {
   var withUnderlay = document.getElementById('svc-underlay')
     ? document.getElementById('svc-underlay').checked : true;
 
-  // Each line is independent — carpet always = PRICE * area
   var carpetCost   = parseFloat((area * PRICE).toFixed(2));
   var fittingCost  = withFitting  ? parseFloat((area * FITTING).toFixed(2))        : 0;
   var underlayCost = withUnderlay ? parseFloat((area * UNDERLAY_PRICE).toFixed(2)) : 0;
   var total        = parseFloat((carpetCost + fittingCost + underlayCost).toFixed(2));
 
-  var totalEl = document.getElementById('est-total');
-  var bkEl    = document.getElementById('est-breakdown');
+  /* Persist to sessionStorage — Project Memory */
+  var nameEl      = document.querySelector('h1.hero-title') || document.querySelector('.desktop-name');
+  var productName = nameEl ? nameEl.textContent.trim()
+    : (productData ? (productData.dataset.name || '') : '');
 
-  if (totalEl) totalEl.textContent = fmtGBP(total);
-  if (bkEl) {
-    var lines = ['<strong>Carpet</strong>: ' + fmtGBP(carpetCost)];
-    if (withFitting)  lines.push('Fitting: '  + fmtGBP(fittingCost));
-    if (withUnderlay) lines.push('Underlay: ' + fmtGBP(underlayCost));
-    bkEl.innerHTML = lines.join('<br>');
-  }
-
-  if (estimCard) estimCard.classList.add('visible');
-  if (pdfBtn)    pdfBtn.disabled = false;
-
-  // Update CTA href with pre-fill params for contact form
-  var ctaBtn = document.getElementById('estimate-cta-btn');
-  if (ctaBtn) {
-    var nameEl = document.querySelector('h1.hero-title') || document.querySelector('.desktop-name');
-    var name   = nameEl ? nameEl.textContent.trim() : '';
-    var params = new URLSearchParams();
-    params.set('product',  name);
-    params.set('price',    carpetCost.toFixed(2));
-    params.set('area',     area);
-    params.set('width',    selectedWidth);
-    params.set('flooring', carpetCost.toFixed(2));
-    params.set('underlay', underlayCost.toFixed(2));
-    params.set('fitting',  fittingCost.toFixed(2));
-    params.set('total',    total.toFixed(2));
-    ctaBtn.dataset.href = '/?' + params.toString() + '#contact';
-  }
+  saveQuote({
+    productName:  productName,
+    len:          len,
+    width:        selectedWidth,
+    area:         area,
+    withFitting:  withFitting,
+    withUnderlay: withUnderlay,
+    carpetCost:   carpetCost,
+    fittingCost:  fittingCost,
+    underlayCost: underlayCost,
+    total:        total,
+    colourName:   selectedColour.name,
+    colourImg:    selectedColour.img || selectedColour.hex || '',
+    savedAt:      Date.now()
+  });
 
   updateFab(len, area, carpetCost, underlayCost, fittingCost, total);
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   ESTIMATE CTA — navigate to contact form with pre-filled params
-   ───────────────────────────────────────────────────────────────────────────── */
-function initEstimateCta() {
-  var btn = document.getElementById('estimate-cta-btn');
-  if (!btn) return;
-  btn.addEventListener('click', function () {
-    var href = btn.dataset.href;
-    if (href) window.location.href = href;
-  });
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -314,13 +308,9 @@ function initGetPriceBtn() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   PDF QUOTE
+   PDF QUOTE — called exclusively from FAB buttons
+   Reads from persisted quote when available — works even after page reload.
    ───────────────────────────────────────────────────────────────────────────── */
-function initPDF() {
-  var btn = document.getElementById('estimate-pdf-btn');
-  if (btn) btn.addEventListener('click', downloadQuotePDF);
-}
-
 function downloadQuotePDF() {
   var jsPDF = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
   if (!jsPDF) {
@@ -328,27 +318,28 @@ function downloadQuotePDF() {
     return;
   }
 
-  var lenInput = document.getElementById('room-len');
-  var len      = lenInput ? parseFloat(lenInput.value) : 0;
+  var q    = loadQuote();
+  var len  = q ? q.len : (function () {
+    var el = document.getElementById('room-len');
+    return el ? parseFloat(el.value) : 0;
+  }());
   if (!len || len <= 0) return;
 
-  var area         = parseFloat((len * selectedWidth).toFixed(2));
-  var withFitting  = document.getElementById('svc-fitting')
-    ? document.getElementById('svc-fitting').checked  : true;
-  var withUnderlay = document.getElementById('svc-underlay')
-    ? document.getElementById('svc-underlay').checked : true;
-
-  var carpetCost   = parseFloat((area * PRICE).toFixed(2));
-  var fittingCost  = withFitting  ? parseFloat((area * FITTING).toFixed(2))        : 0;
-  var underlayCost = withUnderlay ? parseFloat((area * UNDERLAY_PRICE).toFixed(2)) : 0;
-  var total        = parseFloat((carpetCost + fittingCost + underlayCost).toFixed(2));
+  var width        = q ? q.width        : selectedWidth;
+  var area         = q ? q.area         : parseFloat((len * width).toFixed(2));
+  var withFitting  = q ? q.withFitting  : (document.getElementById('svc-fitting')  ? document.getElementById('svc-fitting').checked  : true);
+  var withUnderlay = q ? q.withUnderlay : (document.getElementById('svc-underlay') ? document.getElementById('svc-underlay').checked : true);
+  var carpetCost   = q ? q.carpetCost   : parseFloat((area * PRICE).toFixed(2));
+  var fittingCost  = q ? q.fittingCost  : (withFitting  ? parseFloat((area * FITTING).toFixed(2))        : 0);
+  var underlayCost = q ? q.underlayCost : (withUnderlay ? parseFloat((area * UNDERLAY_PRICE).toFixed(2)) : 0);
+  var total        = q ? q.total        : parseFloat((carpetCost + fittingCost + underlayCost).toFixed(2));
 
   var nameEl      = document.querySelector('h1.hero-title') || document.querySelector('.desktop-name');
-  var productName = nameEl ? nameEl.textContent.trim() : 'Product';
+  var productName = (q && q.productName) ? q.productName : (nameEl ? nameEl.textContent.trim() : 'Product');
   var imgEl       = document.getElementById('product-main-img');
   var imgUrl      = imgEl ? imgEl.src : '';
-  var colourEl    = document.getElementById('swatch-name');
-  var colourName  = colourEl ? colourEl.textContent.trim() : '';
+  var colourName  = (q && q.colourName) ? q.colourName
+    : (document.getElementById('swatch-name') ? document.getElementById('swatch-name').textContent.trim() : '');
 
   var now     = new Date();
   var validTo = new Date(now);
@@ -361,9 +352,9 @@ function downloadQuotePDF() {
     + String(now.getDate()).padStart(2, '0')
     + '-' + String(Math.floor(Math.random() * 9000) + 1000);
 
-  var doc  = new jsPDF({ unit: 'mm', format: 'a4' });
-  var W    = 210, H = 297, lm = 16, rm = 16;
-  var cw   = W - lm - rm;
+  var doc   = new jsPDF({ unit: 'mm', format: 'a4' });
+  var W     = 210, H = 297, lm = 16, rm = 16;
+  var cw    = W - lm - rm;
   var col1w = cw * 0.55;
   var col2x = lm + col1w + 6;
   var col2w = cw * 0.45 - 6;
@@ -383,7 +374,6 @@ function downloadQuotePDF() {
   };
 
   setF.apply(null,red); doc.rect(0,0,W,3,'F');
-
   doc.setFont('helvetica','bold'); doc.setFontSize(18); setC.apply(null,ink);
   doc.text('Estimate',W-rm,14,{align:'right'});
   doc.setFont('helvetica','normal'); doc.setFontSize(8); setC.apply(null,ink3);
@@ -419,7 +409,7 @@ function downloadQuotePDF() {
   rule(lm,y,lm+col1w,y); y += 6;
   lbl('Room Measurements',lm,y); y += 5;
   doc.setFont('helvetica','normal'); doc.setFontSize(10); setC.apply(null,ink);
-  doc.text(len+' m  \u00d7  '+selectedWidth+' m',lm,y); y += 5;
+  doc.text(len+' m  \u00d7  '+width+' m',lm,y); y += 5;
   doc.text('Total area: '+area+' m\u00b2',lm,y); y += 10;
 
   rule(lm,y,lm+col1w,y); y += 6;
@@ -567,7 +557,6 @@ function initTooltip() {
     btn.addEventListener('click', function (e) {
       e.stopPropagation();
       var catTag = btn.closest('.cat-tag');
-      // Strip the info icon text, leaving just the label
       var label  = catTag ? catTag.textContent.replace(/\s*[ⓘi]\s*$/,'').trim() : '';
       openModal(label, btn.dataset.tooltip || '');
     });
@@ -596,7 +585,6 @@ function initReveal() {
 
 /* ─────────────────────────────────────────────────────────────────────────────
    FAB — updateFabThumbs
-   Updates both desktop + mobile swatch circles on colour selection.
    ───────────────────────────────────────────────────────────────────────────── */
 function updateFabThumbs(imgOrHex) {
   var desktop = document.getElementById('fab-swatch-thumb');
@@ -618,7 +606,6 @@ function updateFabThumbs(imgOrHex) {
 
 /* ─────────────────────────────────────────────────────────────────────────────
    FAB — animateFabPrice
-   Smooth ease-out counter, 300ms, with cancel guard.
    ───────────────────────────────────────────────────────────────────────────── */
 function animateFabPrice(target) {
   var el = document.getElementById('fab-price');
@@ -646,7 +633,7 @@ function animateFabPrice(target) {
 
 /* ─────────────────────────────────────────────────────────────────────────────
    FAB — updateFab
-   Single source of truth for all FAB state. Called from calcPrice().
+   Single source of truth for all FAB state.
    ───────────────────────────────────────────────────────────────────────────── */
 function updateFab(len, area, flooring, underlay, fitting, total) {
   if (!fab) return;
@@ -663,7 +650,6 @@ function updateFab(len, area, flooring, underlay, fitting, total) {
   var mobPrice = document.getElementById('fab-price-mobile');
   if (mobPrice) mobPrice.textContent = hasVal ? ('\u00a3' + total.toFixed(2)) : '\u00a30.00';
 
-  /* Desktop glass panel rows */
   var rFlooringLabel = document.getElementById('fab-r-flooring-label');
   var rFlooringPrice = document.getElementById('fab-r-flooring-price');
   var rUnderlay      = document.getElementById('fab-r-underlay');
@@ -687,7 +673,6 @@ function updateFab(len, area, flooring, underlay, fitting, total) {
     if (rTotal)         rTotal.textContent          = '\u2014';
   }
 
-  /* Mobile drawer rows */
   var rmFlooringLabel = document.getElementById('fab-rm-flooring-label');
   var rmFlooringPrice = document.getElementById('fab-rm-flooring-price');
   var rmUnderlay      = document.getElementById('fab-rm-underlay');
@@ -711,13 +696,11 @@ function updateFab(len, area, flooring, underlay, fitting, total) {
     if (rmTotal)         rmTotal.textContent          = '\u2014';
   }
 
-  /* Visibility */
   if (hasVal) {
     fab.classList.add('fab--visible');
     fab.classList.remove('fab--ghost');
   }
 
-  /* Measure button hrefs */
   if (hasVal) {
     var nameEl = document.querySelector('h1.hero-title') || document.querySelector('.desktop-name');
     var name   = nameEl ? nameEl.textContent.trim() : '';
@@ -737,7 +720,6 @@ function updateFab(len, area, flooring, underlay, fitting, total) {
     if (mMob) mMob.href = href;
   }
 
-  /* PDF button enable/disable */
   var pdfBtnFab    = document.getElementById('fab-pdf-btn');
   var pdfBtnDrawer = document.getElementById('fab-pdf-btn-drawer');
   if (pdfBtnFab)    pdfBtnFab.disabled    = !hasVal;
@@ -745,14 +727,44 @@ function updateFab(len, area, flooring, underlay, fitting, total) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   FAB — restoreQuote (Project Memory)
+   On page load, reads wyc_quote_v1 from sessionStorage and instantly
+   rehydrates the FAB — no user input required.
+   ───────────────────────────────────────────────────────────────────────────── */
+function restoreQuote() {
+  var q = loadQuote();
+  if (!q || !q.total || q.total <= 0) return;
+
+  /* Restore form inputs if the configurator exists on this page */
+  var lenInput = document.getElementById('room-len');
+  if (lenInput) {
+    lenInput.value = q.len || '';
+    selectedWidth  = q.width || 4;
+
+    document.querySelectorAll('.seg-btn[data-width]').forEach(function (btn) {
+      btn.classList.toggle('active', parseFloat(btn.dataset.width) === selectedWidth);
+    });
+
+    var fitToggle   = document.getElementById('svc-fitting');
+    var underToggle = document.getElementById('svc-underlay');
+    if (fitToggle)   fitToggle.checked   = !!q.withFitting;
+    if (underToggle) underToggle.checked = !!q.withUnderlay;
+  }
+
+  if (q.colourImg) updateFabThumbs(q.colourImg);
+
+  /* Instant rehydration — skip animation for snappy restore */
+  fabCurrentPrice = q.total;
+  updateFab(q.len, q.area, q.carpetCost, q.underlayCost, q.fittingCost, q.total);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    FAB — initFab
-   Wires all FAB interactions. Called once after DOM ready.
    ───────────────────────────────────────────────────────────────────────────── */
 function initFab() {
   fab = document.getElementById('fab');
   if (!fab) return;
 
-  /* iOS virtual keyboard: hide FAB when keyboard opens */
   if (window.visualViewport) {
     var lastVH = window.visualViewport.height;
     window.visualViewport.addEventListener('resize', function () {
@@ -762,11 +774,12 @@ function initFab() {
     });
   }
 
-  /* Seed thumb from initial product image */
   var mainImg = document.getElementById('product-main-img');
   if (mainImg && mainImg.src) updateFabThumbs(mainImg.src);
 
-  /* Ghost on input focus before value entered */
+  /* Restore persisted quote — Project Memory */
+  restoreQuote();
+
   var lenInput = document.getElementById('room-len');
   if (lenInput) {
     lenInput.addEventListener('focus', function () {
@@ -780,13 +793,11 @@ function initFab() {
     });
   }
 
-  /* PDF buttons */
   var pdfBtnFab    = document.getElementById('fab-pdf-btn');
   var pdfBtnDrawer = document.getElementById('fab-pdf-btn-drawer');
   if (pdfBtnFab)    pdfBtnFab.addEventListener('click', downloadQuotePDF);
   if (pdfBtnDrawer) pdfBtnDrawer.addEventListener('click', downloadQuotePDF);
 
-  /* Mobile: grabber toggles drawer */
   var grabber = document.getElementById('fab-grabber');
   if (grabber) {
     grabber.addEventListener('click', function () {
@@ -795,7 +806,6 @@ function initFab() {
     });
   }
 
-  /* Mobile: tap price area to open drawer */
   var mobileZone = document.querySelector('.fab-mobile-main .fab-zone-a');
   if (mobileZone) {
     mobileZone.style.cursor = 'pointer';
@@ -805,7 +815,6 @@ function initFab() {
     });
   }
 
-  /* Close drawer on outside tap */
   document.addEventListener('click', function (e) {
     if (fabDrawerOpen && fab && !fab.contains(e.target)) {
       fabDrawerOpen = false;
@@ -813,15 +822,12 @@ function initFab() {
     }
   });
 
-  /* Close drawer on Escape */
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && fabDrawerOpen) {
       fabDrawerOpen = false;
       fab.classList.remove('fab--open');
     }
   });
-
-  updateFab(0, 0, 0, 0, 0, 0);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -834,9 +840,7 @@ initFab();
 initWidthBtns();
 initPresets();
 initCalc();
-initEstimateCta();
 initGetPriceBtn();
-initPDF();
 initLikeShare();
 initTooltip();
 initReveal();
