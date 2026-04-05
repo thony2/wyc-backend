@@ -828,7 +828,7 @@ h1.hero-title {
    TOOLTIP MODAL (pile style info)
    ═══════════════════════════════════════════════════════════════════════════ */
 .tooltip-modal {
-  display: none; position: fixed; inset: 0; z-index: 9999;
+  display: none; position: fixed; inset: 0; z-index: 10100;
   align-items: flex-end; justify-content: center;
   background: rgba(0,0,0,.45); padding: 16px;
 }
@@ -1139,7 +1139,7 @@ footer {
   transform: translateX(-50%) translateY(160px);
   opacity: 0; pointer-events: none;
   transition: transform .45s cubic-bezier(0.2,1,0.2,1), opacity .3s ease;
-  z-index: 10000;
+  z-index: 10000; /* stack: header 200 → FAB 10000 → glass panel 10001 → tooltip modal 10100 */
   display: flex; align-items: center;
   background: var(--white);
   border: 1px solid rgba(0,0,0,.08);
