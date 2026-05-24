@@ -471,55 +471,78 @@ function downloadQuotePDF() {
    LIKE & SHARE
    ───────────────────────────────────────────────────────────────────────────── */
 function initLikeShare() {
-  var API       = 'https://wyc-backend-production-ed78.up.railway.app';
-  var likeBtn   = document.getElementById('like-btn');
-  var likeCount = document.getElementById('like-count');
+    var API       = 'https://wyc-backend-production-ed78.up.railway.app';
+    var likeBtn   = document.getElementById('like-btn');
+    var likeCount = document.getElementById('like-count');
 
-  if (likeBtn) {
-    var productId = likeBtn.dataset.id;
-    var liked     = sessionStorage.getItem('liked-'+productId) === '1';
+    if (likeBtn) {
+        var productId = likeBtn.dataset.id;
 
-    if (liked) {
-      likeBtn.classList.add('liked');
-      var svgInit = likeBtn.querySelector('svg');
-      if (svgInit) svgInit.style.fill = 'currentColor';
+        // localStorage persists across refreshes (sessionStorage did not)
+        var liked = localStorage.getItem('liked-' + productId) === '1';
+
+        // Apply saved liked state on load
+        if (liked) {
+            likeBtn.classList.add('liked');
+            var svgInit = likeBtn.querySelector('svg');
+            if (svgInit) svgInit.style.fill = 'currentColor';
+        }
+
+        // Fetch the real like count from the database on page load
+        fetch(API + '/api/products/' + productId + '/likes')
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+                if (likeCount && d.likes !== undefined) {
+                    likeCount.textContent = d.likes;
+                }
+            })
+            .catch(function () {});
+
+        likeBtn.addEventListener('click', function () {
+            liked = !liked;
+            likeBtn.classList.toggle('liked', liked);
+            var svgEl = likeBtn.querySelector('svg');
+            if (svgEl) svgEl.style.fill = liked ? 'currentColor' : 'none';
+            likeBtn.style.transform = 'scale(1.2)';
+            setTimeout(function () { likeBtn.style.transform = ''; }, 200);
+
+            // Save state permanently in localStorage
+            if (liked) {
+                localStorage.setItem('liked-' + productId, '1');
+            } else {
+                localStorage.removeItem('liked-' + productId);
+            }
+
+            // Send like or unlike to the backend
+            fetch(API + '/api/products/' + productId + '/like', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: liked ? 'like' : 'unlike' })
+            })
+                .then(function (r) { return r.json(); })
+                .then(function (d) {
+                    if (likeCount && d.likes !== undefined) {
+                        likeCount.textContent = d.likes;
+                    }
+                })
+                .catch(function () {});
+        });
     }
 
-    likeBtn.addEventListener('click', function () {
-      liked = !liked;
-      likeBtn.classList.toggle('liked', liked);
-      var svgEl = likeBtn.querySelector('svg');
-      if (svgEl) svgEl.style.fill = liked ? 'currentColor' : 'none';
-      likeBtn.style.transform = 'scale(1.2)';
-      setTimeout(function () { likeBtn.style.transform = ''; }, 200);
-
-      if (liked) {
-        sessionStorage.setItem('liked-'+productId, '1');
-        fetch(API+'/api/products/'+productId+'/like', {method:'POST'})
-          .then(function (r) { return r.json(); })
-          .then(function (d) { if (likeCount && d.likes !== undefined) likeCount.textContent = d.likes; })
-          .catch(function () {});
-      } else {
-        sessionStorage.removeItem('liked-'+productId);
-        if (likeCount) likeCount.textContent = Math.max(0, parseInt(likeCount.textContent,10)-1);
-      }
-    });
-  }
-
-  var shareBtn = document.getElementById('share-btn');
-  if (shareBtn) {
-    shareBtn.addEventListener('click', function () {
-      if (navigator.share) {
-        navigator.share({title:document.title, url:window.location.href}).catch(function(){});
-      } else {
-        navigator.clipboard.writeText(window.location.href).then(function () {
-          var icon = shareBtn.querySelector('svg');
-          if (icon) icon.style.stroke = '#059669';
-          setTimeout(function () { if (icon) icon.style.stroke = ''; }, 1500);
-        }).catch(function(){});
-      }
-    });
-  }
+    var shareBtn = document.getElementById('share-btn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', function () {
+            if (navigator.share) {
+                navigator.share({ title: document.title, url: window.location.href }).catch(function () {});
+            } else {
+                navigator.clipboard.writeText(window.location.href).then(function () {
+                    var icon = shareBtn.querySelector('svg');
+                    if (icon) icon.style.stroke = '#059669';
+                    setTimeout(function () { if (icon) icon.style.stroke = ''; }, 1500);
+                }).catch(function () {});
+            }
+        });
+    }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────

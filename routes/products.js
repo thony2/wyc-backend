@@ -55,7 +55,21 @@ module.exports = (db) => {
         }
     });
 
-    // POST /api/products/:id/like — toggle like
+    // GET /api/products/:id/likes — fetch current like count
+router.get('/:id/likes', async (req, res) => {
+    try {
+        const result = await db.query(
+            'SELECT COALESCE(likes, 0) AS likes FROM products WHERE id = $1',
+            [req.params.id]
+        );
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });
+        res.json({ likes: result.rows[0].likes });
+    } catch (e) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// POST /api/products/:id/like — toggle like
     router.post('/:id/like', async (req, res) => {
         try {
             const { id } = req.params;
