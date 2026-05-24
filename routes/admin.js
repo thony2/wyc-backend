@@ -36,23 +36,6 @@ async function audit(db, user, action, table, recordId, details) {
     }
 }
 
-
-// POST /api/products/:id/like — increment like counter (public, no auth)
-router.post('/products/:id/like', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const result = await db.query(
-            `UPDATE products SET likes = COALESCE(likes, 0) + 1 WHERE id = $1 RETURNING likes`,
-            [id]
-        );
-        if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });
-        res.json({ likes: result.rows[0].likes });
-    } catch (e) {
-        console.error('Like error:', e);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
 module.exports = (db) => {
 
     const loginLimiter = require('express-rate-limit').rateLimit({
@@ -511,6 +494,23 @@ module.exports = (db) => {
             res.status(500).json({ success: false, error: e.message });
         }
     });
+
+
+    // POST /api/products/:id/like — increment like counter (public, no auth)
+router.post('/products/:id/like', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await db.query(
+            `UPDATE products SET likes = COALESCE(likes, 0) + 1 WHERE id = $1 RETURNING likes`,
+            [id]
+        );
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });
+        res.json({ likes: result.rows[0].likes });
+    } catch (e) {
+        console.error('Like error:', e);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
 
     return router;
 };
