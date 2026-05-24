@@ -191,8 +191,8 @@ async function exportCsv(req, res) {
         let sql = `
             SELECT id, name, email, phone, postcode, service_type, message,
                    room_length_m, room_width_m, flooring_type,
-                   CASE WHEN include_underlay = 1 THEN 'Yes' ELSE 'No' END AS include_underlay,
-                   CASE WHEN include_fitting  = 1 THEN 'Yes' ELSE 'No' END AS include_fitting,
+                   CASE WHEN include_underlay = TRUE THEN 'Yes' ELSE 'No' END AS include_underlay,
+                   CASE WHEN include_fitting  = TRUE THEN 'Yes' ELSE 'No' END AS include_fitting,
                    estimated_cost,
                    CASE WHEN gdpr_consent_at IS NOT NULL THEN 'Yes' ELSE 'No' END AS gdpr_consent,
                    status, source, created_at
