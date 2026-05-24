@@ -29,3 +29,6 @@ Thumbs.db
 # Editor folders
 .vscode/settings.json
 .idea/
+
+.vercel/
+.netlify/state.json
