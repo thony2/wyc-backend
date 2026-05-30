@@ -3412,8 +3412,7 @@ function loadColours(data) {
     block('impSourcePill');
 
     // Names
-    el('impSupplierName').value = data.supplierName;
-    el('impWycName').value      = data.wycName;
+    el('impWycName').value = '';
 
     // Specs
     el('impSpecFibre').value             = data.specs.fibre;
@@ -3421,8 +3420,7 @@ function loadColours(data) {
     el('impSpecSuitability').textContent = data.specs.suitability;
     el('impSpecDurability').innerHTML    = stars(data.specs.durability, 5);
     el('impSpecSoftness').innerHTML      = stars(data.specs.softness, 5);
-    el('impSpecDesc').value              = data.specs.description;
-
+    el('impSpecDesc').value              = '';
     // Feature checkboxes
     el('impFeaturesChecks').innerHTML = IMP_FEATURES.map(function (f) {
       return '<label class="imp-check-label"><input type="checkbox" data-feat="' + f.key + '" ' +
@@ -3447,8 +3445,7 @@ function loadColours(data) {
       }).join('');
       return '<tr>' +
         '<td style="width:72px;"><img src="' + esc(c.imgUrl) + '" style="width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid #e5e7eb;display:block;" alt="' + esc(c.supplierName) + '" onerror="this.style.opacity=\'0.25\'" /></td>' +
-        '<td style="color:#9ca3af;font-size:13px;">' + esc(c.supplierName) + '</td>' +
-        '<td><input type="text" data-ci="' + i + '" value="" placeholder="Type WYC name" style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;color:#1a2332;background:#fff;outline:none;box-sizing:border-box;" /></td>' +
+        '<td><input type="text" data-ci="' + i + '" value="" placeholder="' + esc(c.supplierName) + '" style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;color:#1a2332;background:#fff;outline:none;box-sizing:border-box;" /></td>' +
         '<td style="width:120px;"><div style="display:flex;align-items:center;gap:6px;"><input type="color" data-hex="' + i + '" value="' + esc(c.hex) + '" style="width:32px;height:32px;border:1px solid #e5e7eb;border-radius:6px;cursor:pointer;padding:2px;" /><span data-hexlabel="' + i + '" style="font-size:11px;color:#9ca3af;font-family:monospace;">' + esc(c.hex) + '</span></div></td>' +
         '<td style="width:130px;"><select data-family="' + i + '" style="width:100%;padding:6px 8px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;color:#1a2332;background:#fff;outline:none;">' + opts + '</select></td>' +
         '</tr>';
