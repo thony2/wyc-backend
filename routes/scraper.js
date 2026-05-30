@@ -15,14 +15,9 @@ const express    = require('express');
 const router     = express.Router();
 const axios      = require('axios');
 const cloudinary = require('cloudinary').v2;
-const { Pool }   = require('pg');
 const jwt        = require('jsonwebtoken');
 const { detectPlugin } = require('./suppliers/index');
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-});
+const db         = require('../src/config/database');
 
 // ── JWT auth guard ─────────────────────────────────────────────────────────────
 function requireAuth(req, res, next) {
@@ -160,7 +155,7 @@ router.post('/import-family', async (req, res) => {
     category_slug:    category,
     price:            parseFloat(family.price),
     original_price:   family.originalPrice ? parseFloat(family.originalPrice) : null,
-    description:      specs.description || '',
+    description:      '',
     img_url:          defaultImg,
     badge,
     badge_type:       badgeType,
@@ -218,7 +213,7 @@ router.post('/import-family', async (req, res) => {
   const placeholder = cols.map((_, i) => `$${i + 1}`).join(', ');
 
   try {
-    const result = await pool.query(
+    const result = await db.query(
       `INSERT INTO products (${colList}) VALUES (${placeholder}) RETURNING id, name`,
       values
     );
