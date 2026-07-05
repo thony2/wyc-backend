@@ -15,8 +15,11 @@ const jwt             = require('jsonwebtoken');
 const adminController = require('../controllers/adminController');
 const logger          = require('../utils/logger');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'wyc-change-this-secret-in-production';
-
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+    logger.error('FATAL: JWT_SECRET env var not set');
+    process.exit(1);
+}
 // ── JWT Auth Middleware ──────────────────────────────────────
 // Accepts the same JWT issued by /api/panel/login
 // so one login works for both leads and products.
