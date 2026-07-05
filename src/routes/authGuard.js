@@ -1,7 +1,6 @@
 /**
  * ============================================================
  * West Yorkshire Carpets — Admin Routes (Protected)
- * src/routes/admin.js
  *
  * All routes require: Authorization: Bearer <JWT>
  * JWT is issued by /api/panel/login (routes/admin.js)

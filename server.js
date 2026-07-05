@@ -18,9 +18,9 @@ const db = require('./src/config/database');
 require('./migrate-auto')(db).catch(e => logger.error(`[Migration] ${e.message}`));
 
 const leadRoutes     = require('./src/routes/leads');
-const adminRoutes    = require('./src/routes/admin');
+const adminRoutes    = require('./src/routes/authGuard');
 const productsRouter = require('./routes/products');
-const panelRouter    = require('./routes/admin');
+const panelRouter    = require('./routes/panel');
 const scraperRouter  = require('./routes/scraper');
 const seoRouter      = require('./routes/products-seo');
 
