@@ -122,13 +122,17 @@ const products = [
 products.forEach(p => ins.run(p));
 
 /* ── SEED ADMIN USER ── */
+require('dotenv').config();
 const bcrypt = require('bcryptjs');
-const hash = bcrypt.hashSync('Admin@WYC2026!', 10);
-db.prepare(`
-    INSERT OR IGNORE INTO admin_users (username, password_hash, role)
-    VALUES ('admin', ?, 'admin')
-`).run(hash);
-
-console.log('✅ Migration complete. Admin login: admin / Admin@WYC2026!');
-console.log('⚠️  Change your password immediately after first login!');
+if (process.env.SEED_ADMIN_PASSWORD) {
+    const hash = bcrypt.hashSync(process.env.SEED_ADMIN_PASSWORD, 10);
+    db.prepare(`
+        INSERT OR IGNORE INTO admin_users (username, password_hash, role)
+        VALUES ('admin', ?, 'admin')
+    `).run(hash);
+    console.log('✅ Migration complete. Admin login: admin / [password from SEED_ADMIN_PASSWORD]');
+    console.log('⚠️  Change your password immediately after first login!');
+} else {
+    console.warn('⚠️  SEED_ADMIN_PASSWORD not set in .env — skipping default admin creation');
+}
 db.close();
