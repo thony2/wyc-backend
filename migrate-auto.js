@@ -127,12 +127,16 @@ module.exports = async function(db) {
     // Hard floor: underfloor heating compatible
     await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS ufh_compatible INTEGER DEFAULT 0`);
 
-        const hash = bcrypt.hashSync('Admin@WYC2026!', 10);
-        await db.query(`
-            INSERT INTO admin_users (username, password_hash, role)
-            VALUES ($1, $2, 'admin')
-            ON CONFLICT (username) DO NOTHING
-        `, ['admin', hash]);
+        if (process.env.SEED_ADMIN_PASSWORD) {
+    const hash = bcrypt.hashSync(process.env.SEED_ADMIN_PASSWORD, 10);
+    await db.query(`
+        INSERT INTO admin_users (username, password_hash, role)
+        VALUES ($1, $2, 'admin')
+        ON CONFLICT (username) DO NOTHING
+    `, ['admin', hash]);
+} else {
+    console.warn('[Migration] SEED_ADMIN_PASSWORD not set — skipping default admin creation');
+}
 
         // Seed categories
         const cats = [
