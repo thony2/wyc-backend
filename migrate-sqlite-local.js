@@ -124,7 +124,7 @@ products.forEach(p => ins.run(p));
 /* ── SEED ADMIN USER ── */
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
-if (process.env.SEED_ADMIN_PASSWORD) {
+if (process.env.ADMIN_DEFAULT_PASSWORD) {
     const hash = bcrypt.hashSync(process.env.SEED_ADMIN_PASSWORD, 10);
     db.prepare(`
         INSERT OR IGNORE INTO admin_users (username, password_hash, role)
