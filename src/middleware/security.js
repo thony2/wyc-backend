@@ -93,10 +93,6 @@ function csrfTokenGenerator(req, res, next) {
     next();
 }
 
-function csrfValidator(req, res, next) {
-    return next();
-}
-
 function requestId(req, res, next) {
     const id = crypto.randomBytes(8).toString('hex');
     req.requestId = id;
@@ -110,6 +106,5 @@ module.exports = {
     leadSubmissionLimiter,
     generalLimiter,
     csrfTokenGenerator,
-    csrfValidator,
     requestId,
 };
