@@ -1,34 +1,6 @@
 'use strict';
 
-const path   = require('path');
-const fs     = require('fs');
 const logger = require('../utils/logger');
-
-function createSQLiteConnection() {
-    const dataDir = path.resolve(__dirname, '../../data');
-    const dbPath  = process.env.SQLITE_PATH
-        ? path.resolve(process.cwd(), process.env.SQLITE_PATH)
-        : path.join(dataDir, 'wyc_leads.db');
-
-    if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir, { recursive: true });
-    }
-
-    const Database = require('better-sqlite3');
-    const db = new Database(dbPath, {
-        fileMustExist: false,
-        verbose: process.env.NODE_ENV === 'development'
-            ? msg => logger.debug(`[SQLite] ${msg}`)
-            : null,
-    });
-
-    db.pragma('journal_mode = WAL');
-    db.pragma('foreign_keys = ON');
-    db.pragma('synchronous = NORMAL');
-
-    logger.info(`[DB] SQLite connected → ${dbPath}`);
-    return db;
-}
 
 function createPostgresPool() {
     const { Pool } = require('pg');
@@ -83,51 +55,23 @@ function convertPlaceholders(sql) {
     return sql.replace(/\?/g, () => `$${++i}`);
 }
 
-function runMigrations(db) {
-    const migrations = [
-        `ALTER TABLE leads ADD COLUMN booking_date  TEXT`,
-        `ALTER TABLE leads ADD COLUMN booking_time  TEXT`,
-        `ALTER TABLE leads ADD COLUMN booking_type  TEXT`,
-        `ALTER TABLE leads ADD COLUMN booking_notes TEXT`,
-        `ALTER TABLE leads ADD COLUMN lead_number   INTEGER`,
-    ];
-    for (const sql of migrations) {
-        try { db.exec(sql); } catch (e) { /* column already exists — safe */ }
-    }
-    try {
-        db.exec(`
-            UPDATE leads SET lead_number = (
-                SELECT COUNT(*) FROM leads l2 WHERE l2.created_at <= leads.created_at
-            ) WHERE lead_number IS NULL
-        `);
-    } catch (e) {}
-}
-
-function runSchema(db) {
-    const schemaPath = path.join(__dirname, 'schema.sql');
-    if (!fs.existsSync(schemaPath)) return;
-    const schema = fs.readFileSync(schemaPath, 'utf8');
-    if (db.exec) {
-        db.exec(schema);
-        logger.info('[DB] Schema applied');
-    }
-}
-
 let _instance = null;
 
 function getDatabase() {
     if (_instance) return _instance;
 
-    const dbType = (process.env.DB_TYPE || 'sqlite').toLowerCase();
+    const dbType = (process.env.DB_TYPE || 'postgres').toLowerCase();
 
-    if (dbType === 'postgres') {
-        _instance = createPostgresPool();
-    } else {
-        _instance = createSQLiteConnection();
-        runSchema(_instance);
-        runMigrations(_instance);
+    if (dbType === 'sqlite') {
+        throw new Error(
+            '[DB] SQLite support has been removed. This project now requires ' +
+            'PostgreSQL. Set DB_TYPE=postgres (or remove the DB_TYPE variable ' +
+            'entirely) and provide PGHOST/PGPORT/PGDATABASE/PGUSER/PGPASSWORD ' +
+            'in your .env file. See .env.example.'
+        );
     }
 
+    _instance = createPostgresPool();
     return _instance;
 }
 

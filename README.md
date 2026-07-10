@@ -14,18 +14,14 @@ wyc-backend/
 ├── package.json
 ├── .env.example                 # Copy to .env and configure
 │
-├── data/                        # Auto-created — SQLite database lives here
-│   └── wyc_leads.db             # Created on first run
-│
 ├── logs/                        # Auto-created in production
 │   ├── combined.log
 │   └── error.log
 │
 └── src/
     ├── config/
-    │   ├── database.js           # SQLite / PostgreSQL adapter
-    │   ├── schema.sql            # Database schema
-    │   └── initDb.js             # Initialisation script
+    │   ├── database.js           # PostgreSQL connection (required — see below)
+    │   └── initDb.js             # Connection check script
     │
     ├── controllers/
     │   ├── leadController.js     # POST /api/leads logic
@@ -406,8 +402,12 @@ sqlite3 data/wyc_leads.db "SELECT name, phone, postcode, service_type, status, c
 | `NODE_ENV`            | No       | `development`     | `development` or `production`      |
 | `PORT`                | No       | `3001`            | Server port                        |
 | `ALLOWED_ORIGIN`      | Yes      | `localhost:5500`  | Frontend origin (no trailing /)    |
-| `DB_TYPE`             | No       | `sqlite`          | `sqlite` or `postgres`             |
-| `SQLITE_PATH`         | No       | `./data/wyc.db`   | SQLite file path                   |
+| `DB_TYPE`             | No       | `postgres`        | Must be `postgres` (the only supported value) |
+| `PGHOST`              | Yes      | —                 | PostgreSQL host                    |
+| `PGPORT`              | Yes      | `5432`            | PostgreSQL port                    |
+| `PGDATABASE`          | Yes      | —                 | PostgreSQL database name           |
+| `PGUSER`              | Yes      | —                 | PostgreSQL username                |
+| `PGPASSWORD`          | Yes      | —                 | PostgreSQL password                |
 | `SESSION_SECRET`      | Yes      | —                 | 32+ char random string             |
 | `ADMIN_TOKEN`         | Yes      | —                 | Admin API bearer token             |
 | `MAIL_ENABLED`        | No       | `false`           | Enable email notifications         |

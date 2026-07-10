@@ -1,12 +1,14 @@
 /**
  * ============================================================
- * West Yorkshire Carpets — Database Initialiser
+ * West Yorkshire Carpets — Database Connection Check
  * src/config/initDb.js
  *
- * Run once before starting the server:
+ * Run once before starting the server, or any time you want to
+ * confirm your .env is pointing at a working PostgreSQL database:
  *   node src/config/initDb.js
  *
- * This is idempotent — safe to run multiple times.
+ * This only checks the connection and lists existing tables — it
+ * does not create or change anything. Safe to run any time.
  * ============================================================
  */
 
@@ -14,35 +16,25 @@
 
 require('dotenv').config();
 
-const path = require('path');
-const fs   = require('fs');
+console.log('\n▶  West Yorkshire Carpets — Database Connection Check\n');
 
-console.log('\n▶  West Yorkshire Carpets — Database Initialiser\n');
+(async () => {
+    try {
+        const db = require('./database');
 
-try {
-    // Ensure data directory exists
-    const dataDir = path.resolve(__dirname, '../../data');
-    if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir, { recursive: true });
-        console.log(`✓  Created data directory: ${dataDir}`);
+        const { rows } = await db.query(
+            "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name"
+        );
+
+        console.log('✓  Connected to PostgreSQL successfully');
+        console.log(`✓  ${rows.length} table(s) found:`);
+        rows.forEach(t => console.log(`     • ${t.table_name}`));
+
+        console.log('\n  You can now start the server with: npm run dev\n');
+        process.exit(0);
+    } catch (err) {
+        console.error('\n✗  Connection check failed:', err.message);
+        console.error('  Check PGHOST/PGPORT/PGDATABASE/PGUSER/PGPASSWORD in your .env file.\n');
+        process.exit(1);
     }
-
-    // getDatabase() triggers schema.sql execution on first call
-    const db = require('./database');
-
-    // Verify tables were created
-    const tables = db.prepare(
-        "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
-    ).all();
-
-    console.log('✓  Database initialised successfully');
-    console.log('✓  Tables created:');
-    tables.forEach(t => console.log(`     • ${t.name}`));
-
-    console.log('\n  You can now start the server with: npm run dev\n');
-
-} catch (err) {
-    console.error('\n✗  Initialisation failed:', err.message);
-    console.error('  Ensure all dependencies are installed: npm install\n');
-    process.exit(1);
-}
+})();
