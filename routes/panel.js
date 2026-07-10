@@ -19,12 +19,17 @@ function requireAdmin(req, res, next) {
     if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });
     next();
 }
-async function audit(db, user, action, table, recordId, details) {
+function getClientIp(req) {
+    return req.headers['x-forwarded-for']?.split(',')[0]?.trim()
+        || req.socket?.remoteAddress
+        || 'unknown';
+}
+async function audit(db, user, action, table, recordId, details, ip) {
     try {
         await db.query(
             `INSERT INTO audit_log (lead_id, action, actor, detail, ip_address)
              VALUES ($1, $2, $3, $4, $5)`,
-            [recordId || null, action, user.username, JSON.stringify({ table, ...details }), null]
+            [recordId || null, action, user.username, JSON.stringify({ table, ...details }), ip || null]
         );
     } catch (e) {
         // Audit failures must never break the main request
@@ -126,7 +131,7 @@ module.exports = (db) => {
                     softness_label || '', thickness || '', density || '',
                 ]
             );
-            await audit(db, req.user, 'CREATE', 'products', result.rows[0]?.id, req.body);
+            await audit(db, req.user, 'CREATE', 'products', result.rows[0]?.id, req.body, getClientIp(req));
             res.status(201).json({ id: result.rows[0]?.id, success: true });
         } catch (e) {
             console.error('[PRODUCT CREATE ERROR]', e);
@@ -164,7 +169,7 @@ module.exports = (db) => {
                     req.params.id,
                 ]
             );
-            await audit(db, req.user, 'UPDATE', 'products', req.params.id, req.body);
+            await audit(db, req.user, 'UPDATE', 'products', req.params.id, req.body, getClientIp(req));
             res.json({ success: true });
         } catch (e) {
             console.error('[PRODUCT UPDATE ERROR]', e);
@@ -175,7 +180,7 @@ module.exports = (db) => {
         try {
             const { is_active } = req.body;
             await db.query('UPDATE products SET is_active=$1, updated_at=NOW() WHERE id=$2', [is_active, req.params.id]);
-            await audit(db, req.user, 'VISIBILITY', 'products', req.params.id, { is_active });
+            await audit(db, req.user, 'VISIBILITY', 'products', req.params.id, { is_active }, getClientIp(req));
             res.json({ success: true });
         } catch (e) {
             res.status(500).json({ error: e.message });
@@ -184,7 +189,7 @@ module.exports = (db) => {
     router.delete('/products/:id', requireAuth, async (req, res) => {
         try {
             await db.query('DELETE FROM products WHERE id = $1', [req.params.id]);
-            await audit(db, req.user, 'DELETE', 'products', req.params.id, {});
+            await audit(db, req.user, 'DELETE', 'products', req.params.id, {}, getClientIp(req));
             res.json({ success: true });
         } catch (e) {
             res.status(500).json({ error: e.message });
@@ -197,7 +202,7 @@ module.exports = (db) => {
                 'UPDATE products SET stock_level = $1, updated_at = NOW() WHERE id = $2',
                 [stock_level, req.params.id]
             );
-            await audit(db, req.user, 'STOCK_UPDATE', 'products', req.params.id, { stock_level });
+            await audit(db, req.user, 'STOCK_UPDATE', 'products', req.params.id, { stock_level }, getClientIp(req));
             res.json({ success: true });
         } catch (e) {
             res.status(500).json({ error: e.message });
@@ -210,7 +215,7 @@ module.exports = (db) => {
                 'UPDATE products SET price = $1, updated_at = NOW() WHERE id = $2',
                 [price, req.params.id]
             );
-            await audit(db, req.user, 'PRICE_UPDATE', 'products', req.params.id, { price });
+            await audit(db, req.user, 'PRICE_UPDATE', 'products', req.params.id, { price }, getClientIp(req));
             res.json({ success: true });
         } catch (e) {
             res.status(500).json({ error: e.message });
@@ -243,7 +248,7 @@ module.exports = (db) => {
                  VALUES ($1, $2, $3, $4, $5, $6, $7)`,
                 [product_id, offer_name, discounted_price, start_date, end_date, is_featured || 0, is_active || 1]
             );
-            await audit(db, req.user, 'CREATE_OFFER', 'offers', null, req.body);
+            await audit(db, req.user, 'CREATE_OFFER', 'offers', null, req.body, getClientIp(req));
             res.status(201).json({ success: true });
         } catch (e) {
             res.status(500).json({ error: e.message });
@@ -252,7 +257,7 @@ module.exports = (db) => {
     router.delete('/offers/:id', requireAuth, async (req, res) => {
         try {
             await db.query('DELETE FROM offers WHERE id = $1', [req.params.id]);
-            await audit(db, req.user, 'DELETE_OFFER', 'offers', req.params.id, {});
+            await audit(db, req.user, 'DELETE_OFFER', 'offers', req.params.id, {}, getClientIp(req));
             res.json({ success: true });
         } catch (e) {
             res.status(500).json({ error: e.message });
@@ -368,7 +373,7 @@ module.exports = (db) => {
                 `UPDATE leads SET status=$1, updated_at=NOW() WHERE id=$2`,
                 [status, req.params.id]
             );
-            await audit(db, req.user, 'STATUS_UPDATE', 'leads', req.params.id, { status });
+            await audit(db, req.user, 'STATUS_UPDATE', 'leads', req.params.id, { status }, getClientIp(req));
             res.json({ success: true });
         } catch(e) {
             res.status(500).json({ success: false, error: e.message });
@@ -384,7 +389,7 @@ module.exports = (db) => {
                  WHERE id=$5`,
                 [booking_date||null, booking_time||null, booking_type||null, booking_notes||null, req.params.id]
             );
-            await audit(db, req.user, 'BOOKING_UPDATE', 'leads', req.params.id, req.body);
+            await audit(db, req.user, 'BOOKING_UPDATE', 'leads', req.params.id, req.body, getClientIp(req));
             res.json({ success: true });
         } catch(e) {
             res.status(500).json({ success: false, error: e.message });
@@ -393,7 +398,7 @@ module.exports = (db) => {
     router.delete('/leads/:id', requireAuth, async (req, res) => {
         try {
             await db.query(`DELETE FROM leads WHERE id=$1`, [req.params.id]);
-            await audit(db, req.user, 'DELETE', 'leads', req.params.id, {});
+            await audit(db, req.user, 'DELETE', 'leads', req.params.id, {}, getClientIp(req));
             res.json({ success: true });
         } catch(e) {
             res.status(500).json({ success: false, error: e.message });
