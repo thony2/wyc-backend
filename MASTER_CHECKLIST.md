@@ -10,6 +10,14 @@ Each item has a reference to the file(s) affected.
 > found in the audit that weren't previously documented. See `WYC-Backend-Technical-Audit.md` for full detail
 > and reasoning behind each new item.
 >
+> **Updated again 10 Jul 2026.** Most of 0.5-A and 0.5-B are now done (SQLite dropped, products-seo.js fixed,
+> dead files removed — see the individual items below for what's left). A second, independent audit was run
+> by a separate session that day and cross-checked against this one; every one of its claims was independently
+> re-verified against the actual code (and in one case, the actual live database) before being folded in here
+> — see 0.5-H for the one genuinely new critical finding it caught that this checklist had missed, plus a
+> few smaller items added to Phase 5 below. `WYC-Backend-Technical-Audit.md` is now actually committed to
+> the repo (it previously wasn't, despite being referenced above — the second audit caught that too).
+>
 > **Golden rule for this phase of work: the live site currently works. Every item below is sequenced so that
 > nothing is done directly on `main`. Branch → fix → verify locally → PR → merge. If a fix can't be verified
 > locally, it gets a manual verification step on staging/production immediately after merge, called out explicitly.**
@@ -19,7 +27,7 @@ Each item has a reference to the file(s) affected.
 ## PHASE 0 — Environment Setup
 *Must be complete before any development work.*
 
-- [x] Backend runs locally: `npm run dev` → http://localhost:3001 *(with `DB_TYPE=postgres` — see 0.5-A, `sqlite` mode is currently broken)*
+- [x] Backend runs locally: `npm run dev` → http://localhost:3001 *(Postgres only — SQLite support was dropped entirely, see 0.5-A)*
 - [x] Frontend runs locally: Live Server → http://127.0.0.1:5500
 - [x] Admin panel accessible and login works
 - [x] Railway PostgreSQL connected (production DB)
@@ -34,23 +42,49 @@ Each item has a reference to the file(s) affected.
 *New section. Work this before Phase 1 — several Phase 1 items assume these are fixed.
 Every item here is a branch-sized, single-purpose PR, matching the commit convention below.*
 
-### 0.5-A — Critical: database configuration
-- [ ] **Decide SQLite's fate** (blocks the rest of this section — see audit §2 C-1)
-      → Recommended: drop SQLite support formally, since production has always been Postgres-only.
-      → Alternative: keep both, but then `src/config/database.js`'s SQLite branch needs a real
-        `.query()`-shaped wrapper (mirror the Postgres wrapper) and every raw SQL string in the codebase
-        needs to become dialect-agnostic (no `NOW()`, `SERIAL`, `INTERVAL`, `ON CONFLICT`, `ADD COLUMN IF NOT EXISTS`).
-        This is materially more work — only worth it if local dev without a Postgres connection matters to you.
-- [ ] If dropping SQLite: `src/config/database.js` — remove `createSQLiteConnection()`, make `DB_TYPE=postgres`
-      the only path, and have `getDatabase()` throw a clear startup error if `DB_TYPE` is anything else
-- [ ] Delete `src/config/schema.sql` (legacy SQLite schema, unused in production per PROJECT_CONTEXT.md)
-- [ ] Delete `better-sqlite3` from `package.json` dependencies (only if SQLite is fully dropped)
-- [ ] Update `.env.example` — remove the "SQLite is used by default" claim, make `DB_TYPE=postgres` the shown default
-- [ ] Update `README.md` Quick Start so a fresh clone can't silently misconfigure itself
-- [ ] `routes/products-seo.js` — remove its own `new Pool({ connectionString: process.env.DATABASE_URL })`
-      and import the shared `src/config/database.js` instead (this is also 1B/5A below — do it once, here)
-- [ ] Verify: fresh `.env` from `.env.example`, `npm run dev`, submit a lead, log into `/admin`, open a
-      product page under `/flooring/...` — all three must work with zero query errors in the logs
+### 0.5-A — Critical: database configuration ✅ DONE (10 Jul 2026)
+- [x] **Decide SQLite's fate** → decided: dropped formally, production has always been Postgres-only
+- [x] `src/config/database.js` — `createSQLiteConnection()` removed; `getDatabase()` now throws a clear
+      startup error if `DB_TYPE=sqlite` is ever set, instead of booting and failing confusingly later
+      → `chore/drop-sqlite-support`
+- [x] `src/config/schema.sql` deleted
+- [x] `better-sqlite3` removed from `package.json`
+- [x] `.env.example` updated — `DB_TYPE=postgres` is now the shown default, `SQLITE_PATH` removed
+- [x] `README.md` — architecture tree and env var table corrected
+      *(note: the older "Deploying / migration" section further down the README, describing converting
+      schema.sql to Postgres, is now describing something that already happened years ago and reads as
+      out of date — not fixed in this pass, flagged for the eventual README overhaul in 5E)*
+- [x] `routes/products-seo.js` — now imports the shared `src/config/database.js` connection instead of its
+      own separate pool → `fix/products-seo-shared-db-pool`
+- [x] `src/config/initDb.js` — **bonus fix found while doing this work**: this script was *also* broken
+      under Postgres (it queried `sqlite_master`, a SQLite-only system table, and called `.all()`
+      synchronously on what would actually be a Promise). Rewritten to check the Postgres connection via
+      `information_schema.tables` instead — `npm run db:init` is now a genuinely working connection check.
+- [x] Verified: fresh `.env`, `npm run dev`, submitted a real lead through the live form — worked, no errors
+
+### 0.5-H — Critical: `audit_log` schema drift ✅ DONE (10 Jul 2026)
+*New item, not in the 7 Jul list — found by a second, independent audit and verified here before acting on it.*
+
+`migrate-auto.js` created `audit_log` with columns `(id, lead_id, user_id, username, action, table_name,
+record_id, details, created_at)`. But `leadController.js`, `adminController.js`, and `routes/panel.js` all
+read/write `actor`, `detail`, and `ip_address` — none of which the script ever created, going back to the
+very first commit.
+
+**Verification before fixing (don't just trust an audit — check it):**
+- Confirmed the column mismatch directly against the current code (not the audit's word for it)
+- The claim that this was *currently* breaking live lead submission turned out to be **wrong** — a real,
+  read-only query against the actual production database showed `actor`, `detail`, and `ip_address` already
+  present (added by hand at some point, outside of any migration — hence `details` **and** `detail` both
+  existing, one of them now dead code). So this was not an active outage; it was a landmine for the next
+  time this database needs to be rebuilt from scratch.
+- [x] `migrate-auto.js` — added the three missing `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` lines, matching
+      the file's existing pattern. No-op on the current database; prevents the exact crash a from-scratch
+      Postgres instance would otherwise hit on the very first lead submission → `fix/audit-log-missing-columns`
+- [ ] **Not done, worth doing:** the original `details` (plural) column is now confirmed dead — nothing reads
+      or writes it. Don't drop it yet (removing a column deserves more certainty than this pass needed) —
+      revisit once you're confident nothing else (an export, a report) quietly depends on it.
+- [ ] **Not done, worth doing:** add one real integration test that POSTs to `/api/leads` and asserts `201`
+      — this exact bug is precisely what a single test like that would have caught on day one. See 5C.
 
 ### 0.5-B — Critical: dead / broken repo artefacts (zero behavioural risk — safe to do anytime, independent of 0.5-A)
 - [x] ~~Delete root-level `panel.js`~~ → done in this session, see `chore/remove-dead-panel-js`
@@ -310,7 +344,12 @@ Every item here is a branch-sized, single-purpose PR, matching the commit conven
 - [ ] Remove routes/ directory entirely
 - [ ] Verify: server.js only imports from src/
 - [ ] Update server.js route mounts to match new structure
-- [ ] Remove migrate-sqlite-local.js (local dev artefact, no longer needed — see 0.5-A decision first)
+- [x] ~~Remove migrate-sqlite-local.js~~ → done as part of dropping SQLite entirely, see 0.5-A
+- [ ] **New (from second audit, 10 Jul):** three separate, near-identical copies of a `requireAuth` JWT
+      middleware exist — `src/routes/authGuard.js`, `routes/panel.js`, `routes/scraper.js` — confirmed by
+      direct grep, not just the audit's word for it. Any future change to auth behaviour (token refresh,
+      role checks, revocation) has to be made in three places and will drift. Consolidate into one shared
+      middleware as part of this same routing consolidation, rather than as a separate task later.
 
 ### 5B — Security hardening
 - [ ] CSRF protection — see 0.5-D, decide the approach first, then either:
@@ -336,14 +375,20 @@ Every item here is a branch-sized, single-purpose PR, matching the commit conven
 - [ ] Test: POST /api/panel/login — rate limit after 10 attempts
 - [ ] Test: GET /api/panel/products — without JWT returns 401
 - [ ] Test: GET /flooring/carpets/duna — returns valid HTML with product data
-- [ ] **New (from audit): a test that boots the DB layer under both `DB_TYPE` values and asserts `.query()`
-      resolves — this exact gap (C-1) is what let the SQLite path silently rot; a test would have caught it**
+- [x] ~~A test that boots the DB layer under both `DB_TYPE` values~~ → no longer applicable, SQLite was
+      dropped entirely rather than fixed (see 0.5-A) — there's only one `DB_TYPE` value now
+- [ ] **Highest-priority single test to add (from 0.5-H):** POST to `/api/leads` with valid data, assert
+      `201`. This is the one test that would have caught the `audit_log` column mismatch on day one, and
+      it's the cheapest possible insurance against something similar happening again in that same code path
 
 ### 5D — Dependency cleanup
 - [ ] Remove express-session (unused) *(verify still present first — see 3A note)*
 - [ ] Remove undici (duplicate of axios) *(verify still present first — see 3A note)*
 - [ ] Evaluate pdf-parse — document what it's used for or remove it *(not found in current package.json dependencies — verify before spending time here, may already be gone)*
-- [ ] Evaluate better-sqlite3 — resolved by the 0.5-A decision (removed entirely, or kept as a real dependency if SQLite support is fixed properly rather than dropped)
+- [x] ~~Evaluate better-sqlite3~~ → resolved, removed entirely as part of dropping SQLite (0.5-A)
+- [ ] **New (from second audit, 10 Jul):** `sharp` is declared in `package.json` and never imported
+      anywhere in the codebase (confirmed by grep) — `cloudinary` is the actual image-handling path via
+      `routes/scraper.js`. Dead dependency, safe to remove.
 - [ ] Update all dependencies to latest minor versions: `npm update`
 - [ ] Run `npm audit` — fix any high/critical vulnerabilities
 
@@ -386,7 +431,7 @@ Every item here is a branch-sized, single-purpose PR, matching the commit conven
 | Phase | Status | Started | Completed |
 |-------|--------|---------|-----------|
 | 0 — Environment | ✅ Complete | May 2026 | Jul 2026 |
-| 0.5 — Audit Findings | 🟡 In Progress | Jul 2026 | — |
+| 0.5 — Audit Findings | 🟡 In Progress *(0.5-A, 0.5-B, 0.5-H done; 0.5-C/D/E/F/G still open)* | Jul 2026 | — |
 | 1 — Admin Portal | 🟡 In Progress *(1B, 1D partially done)* | May 2026 | — |
 | 2 — Content | ⬜ Not started | — | — |
 | 3 — Website | ⬜ Not started | — | — |
