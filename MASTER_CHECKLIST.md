@@ -3,22 +3,97 @@
 Mark each item [ ] → [x] when complete.
 Each item has a reference to the file(s) affected.
 
+> **Updated 7 Jul 2026** following a full technical audit after the dormant period (30 May – 5 Jul).
+> Changes from the May version: stale file-path references corrected (`routes/admin.js` → `routes/panel.js`,
+> `src/routes/admin.js` → `src/routes/authGuard.js`), items verified as actually complete are now checked,
+> one item that was marked done but wasn't is corrected, and a new **PHASE 0.5** section captures issues
+> found in the audit that weren't previously documented. See `WYC-Backend-Technical-Audit.md` for full detail
+> and reasoning behind each new item.
+>
+> **Golden rule for this phase of work: the live site currently works. Every item below is sequenced so that
+> nothing is done directly on `main`. Branch → fix → verify locally → PR → merge. If a fix can't be verified
+> locally, it gets a manual verification step on staging/production immediately after merge, called out explicitly.**
+
 ---
 
 ## PHASE 0 — Environment Setup
 *Must be complete before any development work.*
 
-- [x] Backend runs locally: `npm run dev` → http://localhost:3001
+- [x] Backend runs locally: `npm run dev` → http://localhost:3001 *(with `DB_TYPE=postgres` — see 0.5-A, `sqlite` mode is currently broken)*
 - [x] Frontend runs locally: Live Server → http://127.0.0.1:5500
 - [x] Admin panel accessible and login works
 - [x] Railway PostgreSQL connected (production DB)
 - [x] .env file has all required variables (see PROJECT_CONTEXT.md §5)
-- [ ] package-lock.json committed to repo
-      → Run: `npm install` then `git add package-lock.json && git commit -m "chore: add lockfile"`
-- [ ] .env.example updated with all current variables including CLOUDINARY_*
-      → File: env.example.txt (also rename to .env.example)
-- [ ] netlify.toml deleted
-      → `git rm netlify.toml && git commit -m "chore: remove orphaned netlify config"`
+- [x] package-lock.json committed to repo
+- [x] .env.example updated with all current variables including CLOUDINARY_*
+- [x] netlify.toml deleted
+
+---
+
+## PHASE 0.5 — Audit Findings (7 Jul 2026)
+*New section. Work this before Phase 1 — several Phase 1 items assume these are fixed.
+Every item here is a branch-sized, single-purpose PR, matching the commit convention below.*
+
+### 0.5-A — Critical: database configuration
+- [ ] **Decide SQLite's fate** (blocks the rest of this section — see audit §2 C-1)
+      → Recommended: drop SQLite support formally, since production has always been Postgres-only.
+      → Alternative: keep both, but then `src/config/database.js`'s SQLite branch needs a real
+        `.query()`-shaped wrapper (mirror the Postgres wrapper) and every raw SQL string in the codebase
+        needs to become dialect-agnostic (no `NOW()`, `SERIAL`, `INTERVAL`, `ON CONFLICT`, `ADD COLUMN IF NOT EXISTS`).
+        This is materially more work — only worth it if local dev without a Postgres connection matters to you.
+- [ ] If dropping SQLite: `src/config/database.js` — remove `createSQLiteConnection()`, make `DB_TYPE=postgres`
+      the only path, and have `getDatabase()` throw a clear startup error if `DB_TYPE` is anything else
+- [ ] Delete `src/config/schema.sql` (legacy SQLite schema, unused in production per PROJECT_CONTEXT.md)
+- [ ] Delete `better-sqlite3` from `package.json` dependencies (only if SQLite is fully dropped)
+- [ ] Update `.env.example` — remove the "SQLite is used by default" claim, make `DB_TYPE=postgres` the shown default
+- [ ] Update `README.md` Quick Start so a fresh clone can't silently misconfigure itself
+- [ ] `routes/products-seo.js` — remove its own `new Pool({ connectionString: process.env.DATABASE_URL })`
+      and import the shared `src/config/database.js` instead (this is also 1B/5A below — do it once, here)
+- [ ] Verify: fresh `.env` from `.env.example`, `npm run dev`, submit a lead, log into `/admin`, open a
+      product page under `/flooring/...` — all three must work with zero query errors in the logs
+
+### 0.5-B — Critical: dead / broken repo artefacts (zero behavioural risk — safe to do anytime, independent of 0.5-A)
+- [x] ~~Delete root-level `panel.js`~~ → done in this session, see `chore/remove-dead-panel-js`
+      → It was an unreferenced duplicate of `routes/panel.js` left over from the `routes/admin.js` → `panel.js`
+        rename. `server.js` only ever loads `routes/panel.js`. Confirmed nothing else required it.
+- [x] ~~Remove broken orphaned git submodule at `wyc-backend`~~ → done in this session, see `chore/remove-broken-submodule`
+      → Leftover from an accidental nested-copy that was reverted (`fe1ecc3` / `46681af`). No `.gitmodules`
+        entry backs it; it's dead weight only. Confirmed the working tree contains no files there.
+
+### 0.5-C — High: broken/missing npm scripts
+- [ ] `db:seed` script points to `src/config/seedDb.js`, which doesn't exist
+      → Check first whether `seed-products.js` (repo root) already does this job — if so, point the script
+        there instead of writing a new file; if not, decide what "seeding" should mean and implement it
+- [ ] `admin:reset-password` script referenced by `scripts/reset-admin-password.js`'s own header comment
+      is **not** in `package.json` (the May checklist marked this "done in session" — it wasn't; add it now:
+      `"admin:reset-password": "node scripts/reset-admin-password.js"`)
+
+### 0.5-D — High: CSRF — decision needed
+- [ ] `README.md`'s Security Summary still lists CSRF double-submit-cookie protection as active. It isn't —
+      commits `b7dda53`/`3bfe28e` removed the validating middleware, relying on the CORS allow-list instead.
+      `GET /api/csrf-token` still exists and issues a token that nothing checks.
+      → **Decide:** (a) formally adopt CORS-only and update the README + delete the now-pointless
+        `/csrf-token` route and `csrfTokenGenerator`, or (b) restore real CSRF validation per the original
+        Phase 5B plan below. Either is defensible for a same-origin JSON API — just pick one and make the
+        code and docs agree.
+
+### 0.5-E — High: audit-log IP gap in the legacy layer
+- [ ] `routes/panel.js`'s local `audit()` helper hardcodes the IP parameter to `null` for every product/offer/
+      login action. `src/controllers/adminController.js`'s separate `audit()` already does this correctly —
+      mirror that implementation into `routes/panel.js` (same fix noted below in 1F, duplicated here because
+      it's a real audit-trail gap, not just a UX nicety)
+
+### 0.5-F — Medium: ops scripts don't run anywhere but one old laptop
+- [ ] `scripts/backup.sh`, `scripts/check-leads.sh`, `scripts/check.sh` hardcode
+      `/Users/potencial/Desktop/project/wyc-backend/...` and query the SQLite file directly — but production
+      is Postgres-only. Either rewrite them against Postgres (`pg_dump` for backup, a `db.query` call for
+      check-leads) with a relative/env-driven path, or delete them if Railway's managed Postgres backups
+      already cover this and they're not actually used
+
+### 0.5-G — Medium: other hygiene
+- [ ] `.vercel/README.txt` is committed despite `.vercel/` being in `.gitignore` — `git rm --cached .vercel/README.txt`
+- [ ] `og:image` still missing (see 3A below — already tracked, just cross-referencing)
+- [ ] `npm test` still only runs a placeholder assertion — see 5C below
 
 ---
 
@@ -31,21 +106,21 @@ Each item has a reference to the file(s) affected.
       → The /api/panel/scrape-family response must not include supplier name
 - [ ] routes/scraper.js — Auto-generated description must not include supplier name
       → Description field should be empty or generic ("Premium carpet, [style] pile")
-- [ ] routes/scraper.js — Use shared db from src/config/database.js
-      → Remove `const { Pool } = require('pg'); const pool = new Pool({...})`
-      → Replace with `const db = require('../src/config/database')`
+- [x] routes/scraper.js — Use shared db from src/config/database.js *(confirmed done — no longer has its own `new Pool()`)*
 - [ ] admin/index.html — Remove "Supplier Name" column from colour variants table
       → Section: Import Catalogue → Step 3 "Colour variants"
 - [ ] admin/index.html — Description field starts empty, not pre-filled with supplier text
 - [ ] admin/index.html — "WYC Product Name" is the only name field visible
-- [ ] Test: Import a product from carpetlinedirect.co.uk → verify zero supplier references
+- [ ] **Test: Import a product from carpetlinedirect.co.uk → verify zero supplier references**
+      → ⚠️ Two separate commits (`4a130c7`, `714c7b5`) with the identical message
+        "fix: remove supplier branding from import catalogue" exist in history — the first attempt
+        apparently didn't stick. Re-verify this end-to-end before your next real supplier import.
 
 ### 1B — Database Connection Consolidation
 *Goal: One connection pool, used everywhere.*
 
-- [ ] routes/products-seo.js — Remove standalone `new Pool()` — use shared db
-      → Replace with `const db = require('./src/config/database')` (adjust path)
-- [ ] routes/scraper.js — Same as above (covered in 1A)
+- [x] routes/scraper.js — Same as above (covered in 1A)
+- [ ] routes/products-seo.js — Remove standalone `new Pool()` — use shared db *(now tracked as 0.5-A — do it there, checked off here once done)*
 - [ ] Verify: Only ONE pool is created at startup (check logs show single "PostgreSQL connected")
 
 ### 1C — Migrate-auto cleanup
@@ -65,13 +140,14 @@ Each item has a reference to the file(s) affected.
 
 - [x] scripts/generate-hash.js created
 - [x] scripts/reset-admin-password.js created
-- [ ] migrate-auto.js — Admin seed reads from env var, not hardcoded string
-      → `const pwd = process.env.ADMIN_SEED_PASSWORD` (blocked by 1C — do after migration refactor)
-- [ ] Add ADMIN_SEED_PASSWORD to .env.example with a placeholder value
-- [ ] Verify: `git log --all -S "Admin@WYC2026"` returns no results
+- [x] migrate-auto.js — Admin seed reads from env var, not hardcoded string *(confirmed fixed — reads `ADMIN_DEFAULT_PASSWORD`, commits `8a4169f`/`8e19fe9`)*
+- [x] Add ADMIN_DEFAULT_PASSWORD to .env.example with a placeholder value
+- [ ] Verify: `git log --all -S "Admin@WYC2026"` returns no results *(run this yourself — I didn't find the string in the current tree, but you should confirm it's gone from history too, not just HEAD)*
+- [ ] Add the missing `admin:reset-password` npm script (see 0.5-C)
 
 ### 1E — Admin Panel: Split the monolith
 *Goal: admin/index.html split into maintainable files.*
+*Status: still 3,663 lines, unchanged since May — no sub-items started.*
 
 - [ ] Create admin/css/admin.css — extract all <style> blocks from admin/index.html
 - [ ] Create admin/js/admin-auth.js — login, logout, JWT storage, requireAuth guard
@@ -97,7 +173,8 @@ Each item has a reference to the file(s) affected.
 - [ ] Leads page — Click anywhere on row to open lead detail (not just the name)
 - [ ] Leads page — Quick-reply WhatsApp link from lead row (opens wa.me/447449... with pre-filled message)
 - [ ] Audit log — Record IP address on every admin action
-      → Fix: `null` → `req.ip` in routes/admin.js audit() function
+      → Fix: `null` → real IP in **`routes/panel.js`** `audit()` function *(file corrected — was
+        mis-referenced as `routes/admin.js` in the original checklist; see 0.5-E, same underlying issue)*
 - [ ] Settings page — Change password enforces minimum 12 characters (currently 8)
 
 ---
@@ -133,16 +210,17 @@ Each item has a reference to the file(s) affected.
 - [ ] Configure Google Analytics 4
       → Replace G-XXXXXXXXXX in index.html with real Measurement ID
       → Create GA4 property at analytics.google.com if not done
-- [ ] Remove hardcoded Railway URL from js/form-handler.js
-      → Replace with relative path or window.WYC_CONFIG.apiBase
-- [ ] Remove hardcoded Railway URL from js/catalogue.js
-      → Same approach
+- [ ] Remove hardcoded Railway URL — currently in **`js/form-handler.js`, `js/catalogue.js` (3 call sites),
+      and `js/product-page.js`** *(product-page.js wasn't in the original list — audit found a 4th file)*
+      → Replace with one shared config (e.g. a single `js/config.js` exposing `window.WYC_CONFIG.apiBase`,
+        loaded before the other scripts on every page that needs it)
 - [ ] Fix broken npm scripts in package.json
-      → db:seed: point to correct file or delete
-      → test: create placeholder test or delete
+      → db:seed: point to correct file or delete (see 0.5-C)
+      → admin:reset-password: add it (see 0.5-C)
+      → test: currently a placeholder, not broken — see 5C for real coverage
 - [ ] Fix "licence" typo → "license" in package.json
-- [ ] Remove express-session from dependencies (not used)
-- [ ] Remove undici from dependencies (axios already handles HTTP)
+- [ ] Remove express-session from dependencies (not used) *(verify still present — audit didn't find it in current package.json, may already be gone; check before spending time here)*
+- [ ] Remove undici from dependencies (duplicate of axios) *(same — verify first, audit didn't find it in current package.json)*
 
 ### 3B — Catalogue as standalone page
 *Goal: /catalogue.html is a real page, not a modal.*
@@ -180,7 +258,7 @@ Each item has a reference to the file(s) affected.
 *Goal: Clean, fast, high-converting homepage.*
 
 - [ ] Hero — new headline and subheadline copy
-- [ ] Hero — replace 212.png with optimised WebP hero image
+- [ ] Hero — replace 212.png with optimised WebP hero image *(6.8MB currently — see 0.5-G / audit M-4)*
 - [ ] Features strip — review copy, ensure accurate
 - [ ] Flooring range section — cards link to catalogue.html?category=X
 - [ ] Deals section — pull real deals from API (not hardcoded HTML)
@@ -197,6 +275,7 @@ Each item has a reference to the file(s) affected.
 - [ ] Add robots.txt entry blocking /api/* if not already done (it is — verify)
 - [ ] Ensure canonical URLs are correct on catalogue.html and product pages
 - [ ] Page speed test (PageSpeed Insights) — score above 85 on mobile
+      → Note: several source images are 2–8MB (audit M-4) — this will likely fail until 3D's image work is done
 
 ---
 
@@ -225,23 +304,24 @@ Each item has a reference to the file(s) affected.
 ### 5A — Architecture consolidation
 *Goal: One routing system, one DB pool, clean separation of concerns.*
 
-- [ ] Migrate all functionality from routes/admin.js → src/controllers/ + src/routes/
+- [ ] Migrate all functionality from **`routes/panel.js`** → src/controllers/ + src/routes/
+      *(file name corrected — this was `routes/admin.js` before the July rename commits)*
 - [ ] Migrate all functionality from routes/products.js → src/controllers/
 - [ ] Remove routes/ directory entirely
 - [ ] Verify: server.js only imports from src/
 - [ ] Update server.js route mounts to match new structure
-- [ ] Remove migrate-sqlite-local.js (local dev artefact, no longer needed)
+- [ ] Remove migrate-sqlite-local.js (local dev artefact, no longer needed — see 0.5-A decision first)
 
 ### 5B — Security hardening
-- [ ] Implement CSRF protection properly
-      → src/middleware/security.js csrfValidator() must validate token
-      → Token cookie must be set on page load
-      → Lead form and admin mutations must send X-CSRF-Token header
+- [ ] CSRF protection — see 0.5-D, decide the approach first, then either:
+      → Implement it properly (`src/middleware/security.js` `csrfTokenGenerator` already exists and issues
+        tokens; add back a validator middleware and wire it into `src/routes/leads.js`'s POST route), or
+      → Formally remove it and update the README to describe CORS-only protection accurately
 - [ ] Add Content-Security-Policy header to catalogue.html and product pages
 - [ ] Admin panel — add IP allowlist option via environment variable
       → If ADMIN_ALLOWED_IPS is set, reject requests from other IPs
 - [ ] Review CORS allowed origins — ensure no wildcards in production
-- [ ] Ensure all admin routes return 401 (not 403 or 404) for missing JWT
+- [ ] Ensure all admin routes return 401 (not 403 or 404) for missing JWT *(spot-checked `src/routes/authGuard.js` during the audit — this one already returns 401 correctly; verify the equivalent check in `routes/panel.js`'s own auth middleware too)*
 - [ ] Rate limit the scraper endpoint separately from general API
 
 ### 5C — Testing
@@ -256,22 +336,24 @@ Each item has a reference to the file(s) affected.
 - [ ] Test: POST /api/panel/login — rate limit after 10 attempts
 - [ ] Test: GET /api/panel/products — without JWT returns 401
 - [ ] Test: GET /flooring/carpets/duna — returns valid HTML with product data
+- [ ] **New (from audit): a test that boots the DB layer under both `DB_TYPE` values and asserts `.query()`
+      resolves — this exact gap (C-1) is what let the SQLite path silently rot; a test would have caught it**
 
 ### 5D — Dependency cleanup
-- [ ] Remove express-session (unused)
-- [ ] Remove undici (duplicate of axios)
-- [ ] Evaluate pdf-parse — document what it's used for or remove it
-- [ ] Evaluate better-sqlite3 — move to devDependencies if only used locally
+- [ ] Remove express-session (unused) *(verify still present first — see 3A note)*
+- [ ] Remove undici (duplicate of axios) *(verify still present first — see 3A note)*
+- [ ] Evaluate pdf-parse — document what it's used for or remove it *(not found in current package.json dependencies — verify before spending time here, may already be gone)*
+- [ ] Evaluate better-sqlite3 — resolved by the 0.5-A decision (removed entirely, or kept as a real dependency if SQLite support is fixed properly rather than dropped)
 - [ ] Update all dependencies to latest minor versions: `npm update`
 - [ ] Run `npm audit` — fix any high/critical vulnerabilities
 
 ### 5E — Developer experience
-- [ ] Add README.md with setup instructions, env vars, scripts
-- [ ] Add CONTRIBUTING.md with commit conventions and workflow
-- [ ] package-lock.json in repo (Phase 0 — verify done)
-- [ ] Add `"admin:reset-password"` to package.json scripts (done in session)
+- [ ] Add README.md with setup instructions, env vars, scripts *(README exists — audit found it's stale in places, see 0.5-A and 0.5-D; treat as "update," not "add")*
+- [ ] Add CONTRIBUTING.md with commit conventions and workflow *(the convention already exists informally — see §10 below — just needs to be its own file)*
+- [x] package-lock.json in repo
+- [ ] Add `"admin:reset-password"` to package.json scripts *(corrected: this was marked done in May but isn't in the current package.json — see 0.5-C)*
 - [ ] Add `"db:migrate"` to package.json scripts (Phase 1C)
-- [ ] Rename env.example.txt → .env.example
+- [x] Rename env.example.txt → .env.example
 
 ---
 
@@ -303,8 +385,9 @@ Each item has a reference to the file(s) affected.
 
 | Phase | Status | Started | Completed |
 |-------|--------|---------|-----------|
-| 0 — Environment | 🟡 In Progress | May 2026 | — |
-| 1 — Admin Portal | ⬜ Not started | — | — |
+| 0 — Environment | ✅ Complete | May 2026 | Jul 2026 |
+| 0.5 — Audit Findings | 🟡 In Progress | Jul 2026 | — |
+| 1 — Admin Portal | 🟡 In Progress *(1B, 1D partially done)* | May 2026 | — |
 | 2 — Content | ⬜ Not started | — | — |
 | 3 — Website | ⬜ Not started | — | — |
 | 4 — Automation | ⬜ Not started | — | — |
@@ -323,7 +406,9 @@ Paste this at the start of any new conversation:
 Read PROJECT_CONTEXT.md and MASTER_CHECKLIST.md which I will attach.
 Find the first unchecked item in the checklist and let's work on it.
 Work like a senior full-stack engineer — no shortcuts, no hardcoded values,
-no patches. One task at a time, commit after each change."*
+no patches. One task at a time, commit after each change. The production site
+is live and works — never make a change that can't be verified before it
+reaches `main`."*
 
 Then attach both PROJECT_CONTEXT.md and MASTER_CHECKLIST.md.
 ---
