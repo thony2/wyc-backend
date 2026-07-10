@@ -127,6 +127,17 @@ module.exports = async function(db) {
     // Hard floor: underfloor heating compatible
     await db.query(`ALTER TABLE products ADD COLUMN IF NOT EXISTS ufh_compatible INTEGER DEFAULT 0`);
 
+    // audit_log columns used by src/controllers/leadController.js,
+    // src/controllers/adminController.js, and routes/panel.js. These already
+    // exist on the live database (added there manually at some point, outside
+    // of this script) — this brings a *fresh* database build into line with
+    // what the code actually expects. Confirmed via a real query against the
+    // live database on 10 Jul 2026: production already has these columns, so
+    // this is a no-op there; it only matters for a from-scratch database.
+    await db.query(`ALTER TABLE audit_log ADD COLUMN IF NOT EXISTS actor TEXT`);
+    await db.query(`ALTER TABLE audit_log ADD COLUMN IF NOT EXISTS detail TEXT`);
+    await db.query(`ALTER TABLE audit_log ADD COLUMN IF NOT EXISTS ip_address TEXT`);
+
         if (process.env.ADMIN_DEFAULT_PASSWORD) {
     const hash = bcrypt.hashSync(process.env.ADMIN_DEFAULT_PASSWORD, 10);
     await db.query(`
