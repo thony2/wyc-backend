@@ -10,6 +10,7 @@ const {
 const {
     leadSubmissionLimiter,
     csrfTokenGenerator,
+    csrfValidator,
 } = require('../middleware/security');
 
 router.get('/csrf-token', csrfTokenGenerator, (req, res) => {
@@ -19,6 +20,7 @@ router.get('/csrf-token', csrfTokenGenerator, (req, res) => {
 router.post(
     '/leads',
     leadSubmissionLimiter,
+    csrfValidator,
     honeypotCheck,
     validateLeadSubmission,
     validateResult,
