@@ -100,33 +100,11 @@ function requestId(req, res, next) {
     next();
 }
 
-// Double-submit cookie check: the cookie can only have been set by this
-// server, and only JS running on an allowed origin (per corsMiddleware)
-// can read it back to send as a header. A request with a missing or
-// mismatched header is rejected -- this doesn't protect an authenticated
-// session (the admin panel uses a JWT in an Authorization header, which
-// is already immune to CSRF by design), it raises the bar against
-// automated bots/other sites blindly POSTing to the public lead form.
-function csrfValidator(req, res, next) {
-    const cookieToken = req.cookies['csrf_token'];
-    const headerToken = req.headers['x-csrf-token'];
-
-    if (!cookieToken || !headerToken || cookieToken !== headerToken) {
-        logger.warn(`[CSRF] Rejected request with missing/mismatched token — ${req.ip}`);
-        return res.status(403).json({
-            success: false,
-            error:   'Your session has expired. Please refresh the page and try again.',
-        });
-    }
-    next();
-}
-
 module.exports = {
     helmetMiddleware,
     corsMiddleware,
     leadSubmissionLimiter,
     generalLimiter,
     csrfTokenGenerator,
-    csrfValidator,
     requestId,
 };

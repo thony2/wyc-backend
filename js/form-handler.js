@@ -1,17 +1,7 @@
 (function () {
     'use strict';
 
-    const API_URL  = 'https://wyc-backend-production-ed78.up.railway.app/api/leads';
-    const CSRF_URL = API_URL.replace('/leads', '/csrf-token');
-
-    async function getCsrfToken() {
-        const res  = await fetch(CSRF_URL, { credentials: 'include' });
-        const data = await res.json();
-        if (!data.success || !data.token) {
-            throw new Error('Could not get a security token');
-        }
-        return data.token;
-    }
+    const API_URL = 'https://wyc-backend-production-ed78.up.railway.app/api/leads';
 
     function getCalculatorData() {
         const length = parseFloat(document.getElementById('calc-length')?.value);
@@ -138,36 +128,30 @@
         setLoading(submitBtn, true);
 
         try {
-            const csrfToken = await getCsrfToken();
+    const response = await fetch(API_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload),
+    });
 
-            const response = await fetch(API_URL, {
-                method:      'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-Token': csrfToken,
-                },
-                body: JSON.stringify(payload),
-            });
+    const data = await response.json();
 
-            const data = await response.json();
-
-            if (response.ok && data.success) {
-                showSuccess(form);
-                history.replaceState(null, '', window.location.pathname);
-            } else if (response.status === 429) {
-                showError(form, 'Too many requests. Please wait a few minutes or call us on <a href="tel:07449188303" style="color:#DE3848;font-weight:600;">07449 188 303</a>.');
-            } else if (response.status === 422 && data.fields) {
-                const firstError = data.fields[0];
-                showError(form, firstError.message);
-            } else {
-                showError(form, data.error || 'Something went wrong. Please call us on <a href="tel:07449188303" style="color:#DE3848;font-weight:600;">07449 188 303</a>.');
-            }
-        } catch (err) {
-            showError(form, 'Could not reach the server. Please check your connection or call us on <a href="tel:07449188303" style="color:#DE3848;font-weight:600;">07449 188 303</a>.');
-        } finally {
-            setLoading(submitBtn, false);
-        }
+    if (response.ok && data.success) {
+        showSuccess(form);
+        history.replaceState(null, '', window.location.pathname);
+    } else if (response.status === 429) {
+        showError(form, 'Too many requests. Please wait a few minutes or call us on <a href="tel:07449188303" style="color:#DE3848;font-weight:600;">07449 188 303</a>.');
+    } else if (response.status === 422 && data.fields) {
+        const firstError = data.fields[0];
+        showError(form, firstError.message);
+    } else {
+        showError(form, data.error || 'Something went wrong. Please call us on <a href="tel:07449188303" style="color:#DE3848;font-weight:600;">07449 188 303</a>.');
+    }
+} catch (err) {
+    showError(form, 'Could not reach the server. Please check your connection or call us on <a href="tel:07449188303" style="color:#DE3848;font-weight:600;">07449 188 303</a>.');
+} finally {
+    setLoading(submitBtn, false);
+}
     }
 
     function prefillFromUrl() {
