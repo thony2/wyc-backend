@@ -3,7 +3,10 @@
 Mark each item [ ] → [x] when complete.
 Each item has a reference to the file(s) affected.
 
-> **Updated 7 Jul 2026** following a full technical audit after the dormant period (30 May – 5 Jul).
+> **Updated 7 Jul 2026**> **Updated again 11 Jul 2026.** Discovered the live frontend (easyflooring.vercel.app) was a manually-uploaded
+> Vercel deployment, never connected to this GitHub repo — frozen since April, missing everything since. Fixed
+> by properly connecting it to `main`. This edit is the commit that triggers its first real deployment.
+>  following a full  technical audit after the dormant period (30 May – 5 Jul).
 > Changes from the May version: stale file-path references corrected (`routes/admin.js` → `routes/panel.js`,
 > `src/routes/admin.js` → `src/routes/authGuard.js`), items verified as actually complete are now checked,
 > one item that was marked done but wasn't is corrected, and a new **PHASE 0.5** section captures issues
