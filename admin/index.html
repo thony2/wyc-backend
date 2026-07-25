@@ -1252,6 +1252,76 @@ span.flatpickr-weekday{color:#9C9589!important;background:transparent!important}
   <div id="impStep1Error" style="display:none;margin-top:12px;padding:11px 14px;background:#fff3f4;border:1px solid #fcc;border-radius:8px;color:#c0392b;font-size:13px;"></div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     BULK SCRAPE — separate from the CSV "Bulk Import" tool on the Products page.
+     That one imports hand-entered data you already have; this one scrapes a list
+     of supplier URLs at once, the same way the single-URL flow above scrapes one.
+     Naming below is deliberately "bulkScrape*" / "bscrape-*" throughout, to avoid
+     any collision with the existing "bim*" / "bulk-import-*" CSV feature.
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<div id="bscrapeToggleWrap" style="margin-bottom:20px;">
+  <button onclick="bulkScrapeShow()" style="background:none;border:none;color:#c8102e;font-size:13px;font-weight:600;cursor:pointer;padding:0;text-decoration:underline;">
+    Have several URLs to import at once? →
+  </button>
+</div>
+
+<div id="bscrapeSection" style="display:none;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:20px;">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+    <h3 style="font-size:15px;font-weight:700;color:#1a2332;margin:0;">Bulk Scrape</h3>
+    <button onclick="bulkScrapeHide()" style="background:none;border:none;color:#9ca3af;font-size:13px;cursor:pointer;">✕ Close</button>
+  </div>
+  <p style="font-size:13px;color:#6b7280;margin:0 0 16px;">
+    Paste one product family URL per line — up to 50 at once. Each is scraped one at a time with a natural
+    pause in between, so a batch of 20 will genuinely take a few minutes. That's expected, not stuck.
+  </p>
+
+  <textarea id="bscrapeUrls" rows="6" placeholder="https://www.carpetlinedirect.co.uk/abyss/&#10;https://www.carpetlinedirect.co.uk/duna/"
+    oninput="bulkScrapeUpdateCount()"
+    style="width:100%;padding:10px 14px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;color:#1a2332;outline:none;box-sizing:border-box;font-family:ui-monospace,monospace;resize:vertical;"></textarea>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
+    <span id="bscrapeCount" style="font-size:12px;color:#9ca3af;">0 URLs</span>
+    <button onclick="bulkScrapeStart()" id="bscrapeStartBtn"
+      style="padding:10px 20px;background:#c8102e;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">
+      Scrape All
+    </button>
+  </div>
+  <div id="bscrapeError" style="display:none;margin-top:12px;padding:11px 14px;background:#fff3f4;border:1px solid #fcc;border-radius:8px;color:#c0392b;font-size:13px;"></div>
+
+  <div id="bscrapeProgress" style="display:none;margin-top:20px;">
+    <div style="display:flex;justify-content:space-between;font-size:13px;color:#6b7280;margin-bottom:8px;">
+      <span id="bscrapeProgressLabel">Scraping…</span>
+      <span id="bscrapeProgressCount">0 / 0</span>
+    </div>
+    <div style="width:100%;height:6px;background:#f0eee9;border-radius:3px;overflow:hidden;">
+      <div id="bscrapeProgressFill" style="height:100%;width:0%;background:#c8102e;transition:width .3s;"></div>
+    </div>
+    <div id="bscrapeResultsList" style="margin-top:16px;display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto;"></div>
+  </div>
+</div>
+
+<div id="bscrapeReview" style="display:none;">
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:20px;">
+    <h3 style="font-size:15px;font-weight:700;color:#1a2332;margin:0 0 6px;">
+      Review batch — <span id="bscrapeReviewCount"></span> ready to import
+    </h3>
+    <p style="font-size:13px;color:#6b7280;margin:0;">
+      Every colour name below starts blank — the supplier's name is shown as a placeholder only, as a
+      reminder of what to rename it to. The system will refuse to import anything left unrenamed, so it's
+      quicker to fix that here than to hit an error later.
+    </p>
+  </div>
+  <div id="bscrapeCards"></div>
+  <div style="display:flex;justify-content:flex-end;gap:10px;margin:20px 0;">
+    <button onclick="bulkScrapeImportAll()" id="bscrapeImportAllBtn"
+      style="padding:12px 24px;background:#c8102e;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">
+      Import All Approved
+    </button>
+  </div>
+  <div id="bscrapeImportResults" style="margin-bottom:24px;"></div>
+</div>
+
 <div id="impLoading" style="display:none;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:28px 24px;margin-bottom:20px;align-items:center;gap:14px;color:#6b7280;font-size:14px;">
   <div style="width:26px;height:26px;border:3px solid #e5e7eb;border-top-color:#c8102e;border-radius:50%;animation:impSpin .7s linear infinite;flex-shrink:0;"></div>
   <span>Reading supplier page — this usually takes 3-5 seconds...</span>
@@ -3599,6 +3669,257 @@ function loadColours(data) {
     hide('impLoading');
     setProgress(0);
     el('impStep1').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     BULK SCRAPE SCRIPT — fully self-contained (own IIFE, own helpers), so this
+     whole block can be lifted out into its own admin/js/admin-import.js file
+     later without needing to untangle it from anything else.
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  function el(id)    { return document.getElementById(id); }
+  function hide(id)  { el(id).style.display = 'none';  }
+  function block(id) { el(id).style.display = 'block'; }
+
+  function esc(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+      .replace(/'/g, '&#x27;');
+  }
+
+  function authHeader() {
+    var t = localStorage.getItem('wyc_token');
+    return t ? { 'Authorization': 'Bearer ' + t } : {};
+  }
+
+  var bscrapeResults = []; // successfully-scraped families from the current batch
+
+  window.bulkScrapeShow = function () {
+    block('bscrapeSection');
+    hide('bscrapeToggleWrap');
+  };
+  window.bulkScrapeHide = function () {
+    hide('bscrapeSection');
+    el('bscrapeToggleWrap').style.display = 'block';
+  };
+
+  function bscrapeUrlList() {
+    return el('bscrapeUrls').value
+      .split('\n')
+      .map(function (l) { return l.trim(); })
+      .filter(Boolean);
+  }
+
+  window.bulkScrapeUpdateCount = function () {
+    var n = bscrapeUrlList().length;
+    el('bscrapeCount').textContent = n + ' URL' + (n !== 1 ? 's' : '');
+  };
+
+  window.bulkScrapeStart = async function () {
+    var urls = bscrapeUrlList();
+    el('bscrapeError').style.display = 'none';
+
+    if (urls.length === 0) {
+      el('bscrapeError').textContent = 'Paste at least one URL.';
+      el('bscrapeError').style.display = 'block';
+      return;
+    }
+    if (urls.length > 50) {
+      el('bscrapeError').textContent = 'Maximum 50 URLs per batch — split into smaller batches.';
+      el('bscrapeError').style.display = 'block';
+      return;
+    }
+
+    bscrapeResults = [];
+    el('bscrapeStartBtn').disabled = true;
+    block('bscrapeProgress');
+    hide('bscrapeReview');
+    el('bscrapeResultsList').innerHTML = '';
+    el('bscrapeProgressFill').style.width = '0%';
+    el('bscrapeProgressLabel').textContent = 'Scraping…';
+    el('bscrapeProgressCount').textContent = '0 / ' + urls.length;
+
+    try {
+      var res = await fetch('/api/panel/scrape-bulk', {
+        method: 'POST',
+        headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
+        body: JSON.stringify({ urls: urls }),
+      });
+
+      if (!res.ok) {
+        var errData = await res.json();
+        throw new Error(errData.error || 'Bulk scrape failed to start.');
+      }
+
+      var reader  = res.body.getReader();
+      var decoder = new TextDecoder();
+      var buffer  = '';
+
+      while (true) {
+        var chunk = await reader.read();
+        if (chunk.done) break;
+        buffer += decoder.decode(chunk.value, { stream: true });
+
+        var lines = buffer.split('\n');
+        buffer = lines.pop(); // keep any incomplete trailing line for the next chunk
+
+        for (var i = 0; i < lines.length; i++) {
+          if (!lines[i].trim()) continue;
+          bscrapeHandleResult(JSON.parse(lines[i]), urls.length);
+        }
+      }
+      if (buffer.trim()) {
+        try { bscrapeHandleResult(JSON.parse(buffer), urls.length); } catch (e) { /* ignore trailing partial */ }
+      }
+
+      el('bscrapeProgressLabel').textContent = 'Done';
+      bscrapeRenderReview();
+    } catch (err) {
+      el('bscrapeError').textContent = err.message;
+      el('bscrapeError').style.display = 'block';
+    } finally {
+      el('bscrapeStartBtn').disabled = false;
+    }
+  };
+
+  function bscrapeHandleResult(line, total) {
+    var pct = Math.round((line.progress.done / total) * 100);
+    el('bscrapeProgressFill').style.width = pct + '%';
+    el('bscrapeProgressCount').textContent = line.progress.done + ' / ' + total;
+
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 10px;' +
+      'border-radius:6px;background:' + (line.success ? '#f0fbf4' : '#fff3f4') + ';' +
+      'color:' + (line.success ? '#1e7e42' : '#c0392b') + ';';
+    row.innerHTML = (line.success ? '✓ ' : '✕ ') + esc(line.url) + (line.success ? '' : ' — ' + esc(line.error));
+    el('bscrapeResultsList').appendChild(row);
+    row.scrollIntoView({ block: 'nearest' });
+
+    if (line.success) bscrapeResults.push(line.data);
+  }
+
+  function bscrapeRenderReview() {
+    if (bscrapeResults.length === 0) return; // nothing succeeded -- leave the results list as the record
+
+    el('bscrapeReviewCount').textContent = bscrapeResults.length;
+    el('bscrapeCards').innerHTML = bscrapeResults.map(function (family, fi) {
+      var coloursHtml = family.colours.map(function (c, ci) {
+        return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">' +
+          '<img src="' + esc(c.imgUrl || '') + '" style="width:36px;height:36px;object-fit:cover;border-radius:4px;' +
+            'border:1px solid #e5e7eb;flex-shrink:0;background:#f5f0eb;" onerror="this.style.visibility=\'hidden\'" />' +
+          '<input type="text" class="bscrapeColourName" data-fi="' + fi + '" data-ci="' + ci + '" value="" ' +
+            'placeholder="' + esc(c.supplierName) + '" ' +
+            'style="flex:1;padding:6px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;' +
+            'color:#1a2332;background:#fff;outline:none;" />' +
+          '</div>';
+      }).join('');
+
+      return '<div class="bscrape-card" data-fi="' + fi + '" ' +
+          'style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:14px;">' +
+        '<div style="display:flex;gap:16px;margin-bottom:14px;">' +
+          '<div style="flex:1;">' +
+            '<label style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;' +
+              'display:block;margin-bottom:4px;">WYC Product Name</label>' +
+            '<input type="text" class="bscrapeWycName" data-fi="' + fi + '" placeholder="Enter a WYC name — required" ' +
+              'style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;box-sizing:border-box;" />' +
+          '</div>' +
+          '<div style="width:120px;">' +
+            '<label style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;' +
+              'display:block;margin-bottom:4px;">Price (£)</label>' +
+            '<input type="number" class="bscrapePrice" data-fi="' + fi + '" step="0.01" min="0.01" ' +
+              'style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;box-sizing:border-box;" />' +
+          '</div>' +
+        '</div>' +
+        '<label style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;' +
+          'display:block;margin-bottom:6px;">Colour Names (' + family.colours.length + ')</label>' +
+        coloursHtml +
+        '<div class="bscrape-card-status" data-fi="' + fi + '" style="margin-top:10px;font-size:12px;"></div>' +
+      '</div>';
+    }).join('');
+
+    block('bscrapeReview');
+    el('bscrapeReview').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  window.bulkScrapeImportAll = async function () {
+    el('bscrapeImportAllBtn').disabled = true;
+    el('bscrapeImportResults').innerHTML = '';
+    var successCount = 0, failCount = 0;
+
+    for (var fi = 0; fi < bscrapeResults.length; fi++) {
+      var family    = bscrapeResults[fi];
+      var card      = document.querySelector('.bscrape-card[data-fi="' + fi + '"]');
+      var statusEl  = document.querySelector('.bscrape-card-status[data-fi="' + fi + '"]');
+      var wycNameEl = document.querySelector('.bscrapeWycName[data-fi="' + fi + '"]');
+      var priceEl   = document.querySelector('.bscrapePrice[data-fi="' + fi + '"]');
+      var wycName   = wycNameEl.value.trim();
+      var price     = parseFloat(priceEl.value);
+
+      if (!wycName) {
+        statusEl.style.color = '#c0392b';
+        statusEl.textContent = 'Skipped — WYC name is required.';
+        failCount++;
+        continue;
+      }
+      if (!price || price <= 0) {
+        statusEl.style.color = '#c0392b';
+        statusEl.textContent = 'Skipped — a valid price is required.';
+        failCount++;
+        continue;
+      }
+
+      var colours = family.colours.map(function (c, ci) {
+        var nameEl = document.querySelector('.bscrapeColourName[data-fi="' + fi + '"][data-ci="' + ci + '"]');
+        var name = nameEl && nameEl.value.trim() ? nameEl.value.trim() : c.supplierName;
+        return Object.assign({}, c, { wycName: name });
+      });
+
+      statusEl.style.color = '#6b7280';
+      statusEl.textContent = 'Importing…';
+
+      try {
+        var res = await fetch('/api/panel/import-family', {
+          method: 'POST',
+          headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
+          body: JSON.stringify({
+            family: {
+              wycName:  wycName,
+              price:    price,
+              category: family.category,
+              specs:    family.specs,
+              colours:  colours,
+            },
+          }),
+        });
+        var data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Import failed.');
+
+        statusEl.style.color = '#1e7e42';
+        statusEl.textContent = '✓ Imported successfully.';
+        card.style.opacity = '0.6';
+        successCount++;
+      } catch (err) {
+        statusEl.style.color = '#c0392b';
+        statusEl.textContent = '✕ ' + err.message;
+        failCount++;
+      }
+    }
+
+    el('bscrapeImportResults').innerHTML =
+      '<div style="padding:14px 18px;background:#f0fbf4;border:1px solid #b8e6c4;border-radius:8px;' +
+      'font-size:13px;color:#1e7e42;">' +
+      successCount + ' imported successfully' +
+      (failCount > 0 ? ', ' + failCount + ' need attention (see above)' : '.') +
+      '</div>';
+    el('bscrapeImportAllBtn').disabled = false;
   };
 
 })();
