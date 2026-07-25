@@ -103,6 +103,26 @@ router.post('/import-family', async (req, res) => {
   if (!family.price || family.price <= 0)  return res.status(400).json({ error: 'A valid price is required.' });
   if (!family.colours?.length)             return res.status(400).json({ error: 'No colour variants to import.' });
 
+  // ── Branding safety check ────────────────────────────────────────────────────
+  // Refuse to import any colour whose name still exactly matches the supplier's
+  // original name. The admin UI pre-fills each colour's name with the supplier's
+  // name as a placeholder (not a real value) precisely so this can be caught here
+  // if it's never actually changed — this is the one place that's guaranteed to
+  // run no matter how the import was triggered, so it's where this gets enforced.
+  const unbranded = family.colours.filter(c =>
+    c.wycName && c.supplierName &&
+    c.wycName.trim().toLowerCase() === c.supplierName.trim().toLowerCase()
+  );
+  if (unbranded.length > 0) {
+    return res.status(422).json({
+      error: `${unbranded.length} colour name${unbranded.length !== 1 ? 's' : ''} still ` +
+             `match${unbranded.length === 1 ? 'es' : ''} the supplier's original name. ` +
+             `Please rename before importing.`,
+      unbrandedColours: unbranded.map(c => c.supplierName),
+    });
+  }
+
+
   const category = family.category || 'carpets';
   const imageResults = { uploaded: 0, fallback: 0, skipped: 0, errors: [] };
   const processedColours = [];
