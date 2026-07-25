@@ -3,10 +3,7 @@
 Mark each item [ ] → [x] when complete.
 Each item has a reference to the file(s) affected.
 
-> **Updated 7 Jul 2026**> **Updated again 11 Jul 2026.** Discovered the live frontend (easyflooring.vercel.app) was a manually-uploaded
-> Vercel deployment, never connected to this GitHub repo — frozen since April, missing everything since. Fixed
-> by properly connecting it to `main`. This edit is the commit that triggers its first real deployment.
->  following a full  technical audit after the dormant period (30 May – 5 Jul).
+> **Updated 7 Jul 2026** following a full technical audit after the dormant period (30 May – 5 Jul).
 > Changes from the May version: stale file-path references corrected (`routes/admin.js` → `routes/panel.js`,
 > `src/routes/admin.js` → `src/routes/authGuard.js`), items verified as actually complete are now checked,
 > one item that was marked done but wasn't is corrected, and a new **PHASE 0.5** section captures issues
@@ -20,6 +17,18 @@ Each item has a reference to the file(s) affected.
 > — see 0.5-H for the one genuinely new critical finding it caught that this checklist had missed, plus a
 > few smaller items added to Phase 5 below. `WYC-Backend-Technical-Audit.md` is now actually committed to
 > the repo (it previously wasn't, despite being referenced above — the second audit caught that too).
+>
+> **Updated again 11 Jul 2026.** Two things, both bigger than a normal day's work:
+> 1. **The live frontend (`easyflooring.vercel.app`) was never connected to this GitHub repo at all** — it
+>    was a one-time manual upload, frozen since ~5 April, silently missing every change since (including
+>    everything from the May session and everything from this one, until today). Fixed by properly connecting
+>    it via Vercel's Git integration. See 0.5-I.
+> 2. **0.5-D (CSRF) was decided, implemented, tested locally, merged — and then reverted the same day**,
+>    after real-world testing on the now-properly-connected live site revealed it broke lead submission for
+>    Safari users with default privacy settings (Safari blocks the cross-domain cookie the double-submit
+>    pattern depends on). The original reasoning wasn't wrong given what was known at the time — this is a
+>    case of new evidence changing a decision, not a mistake. See 0.5-D for the full account; left in place
+>    rather than deleted, since the reasoning is worth keeping for next time this gets reconsidered.
 >
 > **Golden rule for this phase of work: the live site currently works. Every item below is sequenced so that
 > nothing is done directly on `main`. Branch → fix → verify locally → PR → merge. If a fix can't be verified
@@ -105,14 +114,47 @@ very first commit.
       is **not** in `package.json` (the May checklist marked this "done in session" — it wasn't; add it now:
       `"admin:reset-password": "node scripts/reset-admin-password.js"`)
 
-### 0.5-D — High: CSRF — decision needed
-- [ ] `README.md`'s Security Summary still lists CSRF double-submit-cookie protection as active. It isn't —
-      commits `b7dda53`/`3bfe28e` removed the validating middleware, relying on the CORS allow-list instead.
-      `GET /api/csrf-token` still exists and issues a token that nothing checks.
-      → **Decide:** (a) formally adopt CORS-only and update the README + delete the now-pointless
-        `/csrf-token` route and `csrfTokenGenerator`, or (b) restore real CSRF validation per the original
-        Phase 5B plan below. Either is defensible for a same-origin JSON API — just pick one and make the
-        code and docs agree.
+### 0.5-D — High: CSRF — decided, implemented, tested, reverted (11 Jul 2026)
+- [x] **Decision made:** restore real CSRF validation on `POST /api/leads` only (not the admin panel, which
+      is already immune via JWT-in-header auth — see reasoning discussion, 11 Jul)
+- [x] Implemented: `csrfValidator` middleware (double-submit cookie pattern) in `src/middleware/security.js`,
+      wired into `src/routes/leads.js`; `js/form-handler.js` updated to fetch and send the token →
+      `feat/restore-csrf-validation-on-leads`
+- [x] Tested end-to-end locally (real browser, real local server, real submission) — worked correctly
+- [x] **Reverted the same day**, after testing on the live site (which required first discovering and fixing
+      0.5-I below) revealed a real problem the local test couldn't have caught: Safari's default
+      "Prevent Cross-Site Tracking" setting blocks the cookie this pattern depends on, because the frontend
+      (`vercel.app`) and backend (`railway.app`) are different domains. Confirmed directly — form failed
+      with tracking protection on, worked with it off. A meaningful share of real iPhone visitors use Safari
+      with default settings, so this would have silently lost real leads with no visible error on your end.
+      → Reverted via GitHub's PR revert feature, confirmed live site works normally again afterward.
+- **Current state:** back to CORS-only, as it was before 11 Jul. `GET /api/csrf-token` still exists and is
+  still unused — cleaning that up formally (matching option (a) from the original decision) is the one
+  piece of this still worth doing, now that (b) has been tried and ruled out by real evidence rather than
+  just reasoned about in the abstract.
+- [ ] Remove the now-confirmed-unnecessary `/csrf-token` route and `csrfTokenGenerator` (option (a) from the
+      original decision, now the clear right call), and update the README's Security Summary to accurately
+      describe CORS-only protection
+
+### 0.5-I — Critical: live frontend was never connected to this repository ✅ FIXED (11 Jul 2026)
+*Bigger than anything else found this session — discovered by accident while testing 0.5-D on the "live" site.*
+
+`easyflooring.vercel.app` — the actual site checked when asking "does this work" — was a one-time manual
+upload to Vercel, never connected to `thony2/wyc-backend` via Git at all. It had been frozen since roughly
+5 April 2026. Every change since then — the entire May session, and everything from this session before this
+was caught — never reached it. Confirmed via Vercel's own Git settings page, which stated outright:
+*"This Project is not connected to a Git repository."*
+
+- [x] Connected the project to `thony2/wyc-backend` (`main`) via Vercel's Git integration
+- [x] Triggered the first real deployment (an empty/doc commit, since connecting alone didn't auto-deploy)
+- [x] Verified: `easyflooring.vercel.app` now genuinely reflects current `main`, confirmed by testing the
+      live contact form and seeing behaviour that matched the current code (including, ironically, catching
+      the 0.5-D Safari issue — which only reveals itself against a genuinely live, cross-domain deployment)
+- [ ] **Worth doing:** do a full pass over the live site (not just the contact form) to check for anything
+      else that assumed the old, frozen April version was still current — e.g. cached copy in Search Console,
+      any external links pointing at old content, social media previews
+- [ ] **Worth understanding:** why/how this became disconnected in the first place (a manual upload at some
+      point, replacing a Git connection?) — not urgent, but worth knowing so it doesn't happen again silently
 
 ### 0.5-E — High: audit-log IP gap in the legacy layer
 - [ ] `routes/panel.js`'s local `audit()` helper hardcodes the IP parameter to `null` for every product/offer/
@@ -355,10 +397,9 @@ very first commit.
       middleware as part of this same routing consolidation, rather than as a separate task later.
 
 ### 5B — Security hardening
-- [ ] CSRF protection — see 0.5-D, decide the approach first, then either:
-      → Implement it properly (`src/middleware/security.js` `csrfTokenGenerator` already exists and issues
-        tokens; add back a validator middleware and wire it into `src/routes/leads.js`'s POST route), or
-      → Formally remove it and update the README to describe CORS-only protection accurately
+- [ ] CSRF protection — resolved, see 0.5-D: tried real validation, real-world testing showed it breaks
+      Safari users (cross-domain cookie blocking), reverted. Remaining task is the cleanup 0.5-D already
+      identifies (remove the now-pointless `/csrf-token` route) plus the README correction below
 - [ ] Add Content-Security-Policy header to catalogue.html and product pages
 - [ ] Admin panel — add IP allowlist option via environment variable
       → If ADMIN_ALLOWED_IPS is set, reject requests from other IPs
