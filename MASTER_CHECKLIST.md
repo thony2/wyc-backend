@@ -106,13 +106,11 @@ very first commit.
       → Leftover from an accidental nested-copy that was reverted (`fe1ecc3` / `46681af`). No `.gitmodules`
         entry backs it; it's dead weight only. Confirmed the working tree contains no files there.
 
-### 0.5-C — High: broken/missing npm scripts
-- [ ] `db:seed` script points to `src/config/seedDb.js`, which doesn't exist
-      → Check first whether `seed-products.js` (repo root) already does this job — if so, point the script
-        there instead of writing a new file; if not, decide what "seeding" should mean and implement it
-- [ ] `admin:reset-password` script referenced by `scripts/reset-admin-password.js`'s own header comment
-      is **not** in `package.json` (the May checklist marked this "done in session" — it wasn't; add it now:
-      `"admin:reset-password": "node scripts/reset-admin-password.js"`)
+### 0.5-C — High: broken/missing npm scripts ✅ DONE (10 Jul 2026)
+- [x] `db:seed` script pointed at nonexistent `src/config/seedDb.js` → fixed to point at the real
+      `seed-products.js` (repo root), which already did this job → `fix/broken-npm-scripts`
+- [x] `admin:reset-password` script now actually added to `package.json`, matching what
+      `scripts/reset-admin-password.js`'s own header always claimed → `fix/broken-npm-scripts`
 
 ### 0.5-D — High: CSRF — decided, implemented, tested, reverted (11 Jul 2026)
 - [x] **Decision made:** restore real CSRF validation on `POST /api/leads` only (not the admin panel, which
@@ -156,11 +154,11 @@ was caught — never reached it. Confirmed via Vercel's own Git settings page, w
 - [ ] **Worth understanding:** why/how this became disconnected in the first place (a manual upload at some
       point, replacing a Git connection?) — not urgent, but worth knowing so it doesn't happen again silently
 
-### 0.5-E — High: audit-log IP gap in the legacy layer
-- [ ] `routes/panel.js`'s local `audit()` helper hardcodes the IP parameter to `null` for every product/offer/
-      login action. `src/controllers/adminController.js`'s separate `audit()` already does this correctly —
-      mirror that implementation into `routes/panel.js` (same fix noted below in 1F, duplicated here because
-      it's a real audit-trail gap, not just a UX nicety)
+### 0.5-E — High: audit-log IP gap in the legacy layer ✅ DONE (10 Jul 2026)
+- [x] `routes/panel.js`'s local `audit()` helper hardcoded the IP parameter to `null` for every
+      product/offer/login action. Added a `getClientIp(req)` helper matching
+      `src/controllers/adminController.js`'s already-correct approach, threaded through all 11 call
+      sites → `fix/panel-audit-log-ip` (also closes the duplicate mention of this in 1F below)
 
 ### 0.5-F — Medium: ops scripts don't run anywhere but one old laptop
 - [ ] `scripts/backup.sh`, `scripts/check-leads.sh`, `scripts/check.sh` hardcode
@@ -251,9 +249,7 @@ was caught — never reached it. Confirmed via Vercel's own Git settings page, w
 - [ ] Import page — Preview images before confirming import
 - [ ] Leads page — Click anywhere on row to open lead detail (not just the name)
 - [ ] Leads page — Quick-reply WhatsApp link from lead row (opens wa.me/447449... with pre-filled message)
-- [ ] Audit log — Record IP address on every admin action
-      → Fix: `null` → real IP in **`routes/panel.js`** `audit()` function *(file corrected — was
-        mis-referenced as `routes/admin.js` in the original checklist; see 0.5-E, same underlying issue)*
+- [x] Audit log — Record IP address on every admin action → done, see 0.5-E
 - [ ] Settings page — Change password enforces minimum 12 characters (currently 8)
 
 ---
