@@ -94,6 +94,82 @@ router.post('/scrape-family', async (req, res) => {
   });
 });
 
+// ── POST /scrape-bulk ───────────────────────────────────────────────────────────
+// Same as /scrape-family, but for a whole list of URLs at once. Streams one
+// result back at a time (newline-delimited JSON) as each URL finishes, instead
+// of making the admin wait silently for the whole batch -- which, at a
+// deliberately unhurried pace, can genuinely take several minutes for a large
+// batch. Requests are spaced with a randomized delay so this reads as normal
+// browsing rather than a bot working through a page list.
+const MAX_BULK_URLS = 50;
+const MIN_DELAY_MS  = 3000;
+const MAX_DELAY_MS  = 8000;
+
+function randomDelay() {
+  const ms = MIN_DELAY_MS + Math.random() * (MAX_DELAY_MS - MIN_DELAY_MS);
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+router.post('/scrape-bulk', async (req, res) => {
+  const { urls } = req.body;
+
+  if (!Array.isArray(urls) || urls.length === 0) {
+    return res.status(400).json({ error: 'urls must be a non-empty array.' });
+  }
+  if (urls.length > MAX_BULK_URLS) {
+    return res.status(400).json({ error: `Maximum ${MAX_BULK_URLS} URLs per batch.` });
+  }
+
+  res.writeHead(200, {
+    'Content-Type':      'application/x-ndjson',
+    'Cache-Control':      'no-cache',
+    'X-Accel-Buffering': 'no', // ask any reverse proxy in front of this not to buffer either
+  });
+
+  for (let i = 0; i < urls.length; i++) {
+    const url = typeof urls[i] === 'string' ? urls[i].trim() : '';
+    let line;
+
+    if (!url) {
+      line = { url: urls[i] ?? null, success: false, error: 'Empty or invalid URL.' };
+    } else {
+      const plugin = detectPlugin(url);
+      if (!plugin) {
+        line = { url, success: false, error: 'Unsupported supplier for this URL.' };
+      } else {
+        try {
+          const html   = await fetchPage(url);
+          const result = await plugin.parse(html, url);
+          if (!result.colours || result.colours.length === 0) {
+            line = { url, success: false, error: 'No colour variants found on this page.' };
+          } else {
+            line = {
+              url,
+              success: true,
+              data: {
+                ...result,
+                url,
+                supplierDomain: new URL(url).hostname.replace(/^www\./, ''),
+              },
+            };
+          }
+        } catch (err) {
+          line = { url, success: false, error: err.message };
+        }
+      }
+    }
+
+    line.progress = { done: i + 1, total: urls.length };
+    res.write(JSON.stringify(line) + '\n');
+
+    if (i < urls.length - 1) {
+      await randomDelay();
+    }
+  }
+
+  res.end();
+});
+
 // ── POST /import-family ────────────────────────────────────────────────────────
 router.post('/import-family', async (req, res) => {
   const { family } = req.body;

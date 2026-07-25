@@ -54,7 +54,16 @@ app.use(morgan('combined', {
     skip:   req => req.path === '/health',
 }));
 
-app.use(compression());
+app.use(compression({
+  // /scrape-bulk streams results back one at a time as each URL finishes;
+  // compression buffers the response to decide how best to compress it,
+  // which would silently hold results back until the whole batch is done --
+  // defeating the point. Skip compression for that one route only.
+  filter: (req, res) => {
+    if (req.path.includes('/scrape-bulk')) return false;
+    return compression.filter(req, res);
+  },
+}));
 app.use(cookieParser());
 app.use(express.json({ limit: '16kb' }));
 app.use(express.urlencoded({ extended: false, limit: '16kb' }));
