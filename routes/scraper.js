@@ -251,7 +251,7 @@ router.post('/import-family', async (req, res) => {
     category_slug:    category,
     price:            parseFloat(family.price),
     original_price:   family.originalPrice ? parseFloat(family.originalPrice) : null,
-    description:      '',
+    description:      (specs.description || '').trim(),
     img_url:          defaultImg,
     badge,
     badge_type:       badgeType,
