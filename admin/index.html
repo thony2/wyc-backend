@@ -3886,6 +3886,13 @@ function loadColours(data) {
       statusEl.textContent = 'Importing…';
 
       try {
+        // The scraped description text (e.g. "Cormar Moorland Twist — Bedrooms...")
+        // echoes the supplier's own product name -- there's no review field for it in
+        // this bulk flow the way there is in the single-URL import, so it's cleared
+        // here rather than forwarded as-is. Matches the single-import flow's default
+        // (always blank unless the admin explicitly types one).
+        var specsWithoutDescription = Object.assign({}, family.specs, { description: '' });
+
         var res = await fetch('/api/panel/import-family', {
           method: 'POST',
           headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
@@ -3894,7 +3901,7 @@ function loadColours(data) {
               wycName:  wycName,
               price:    price,
               category: family.category,
-              specs:    family.specs,
+              specs:    specsWithoutDescription,
               colours:  colours,
             },
           }),
