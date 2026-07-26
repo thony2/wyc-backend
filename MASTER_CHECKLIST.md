@@ -30,6 +30,16 @@ Each item has a reference to the file(s) affected.
 >    case of new evidence changing a decision, not a mistake. See 0.5-D for the full account; left in place
 >    rather than deleted, since the reasoning is worth keeping for next time this gets reconsidered.
 >
+> **Updated again 26 Jul 2026.** A third, independent audit (`WYC-Backend-Independent-Audit-2026-07-26.md`,
+> not committed to the repo — shared as a reference document) was reviewed the same way as the second one:
+> every specific claim independently re-checked against the actual code before being trusted. It held up
+> well — almost everything it flagged as "still open" genuinely is, confirming `MASTER_CHECKLIST.md` is
+> still accurate rather than stale. The one thing it correctly identified that neither this checklist nor
+> the second audit had real data for: `npm audit`, actually run for the first time this session, found a
+> genuine high-severity vulnerability in the already-flagged-as-dead `sharp` dependency, plus two smaller
+> ones in `body-parser` and `morgan` — see 5D. Also confirmed `admin/index.html` was split partially, not
+> fully, this same day — see 1E for why, and what was deliberately left for later.
+>
 > **Golden rule for this phase of work: the live site currently works. Every item below is sequenced so that
 > nothing is done directly on `main`. Branch → fix → verify locally → PR → merge. If a fix can't be verified
 > locally, it gets a manual verification step on staging/production immediately after merge, called out explicitly.**
@@ -254,22 +264,35 @@ the original list didn't point to.
 - [ ] Verify: `git log --all -S "Admin@WYC2026"` returns no results *(run this yourself — I didn't find the string in the current tree, but you should confirm it's gone from history too, not just HEAD)*
 - [ ] Add the missing `admin:reset-password` npm script (see 0.5-C)
 
-### 1E — Admin Panel: Split the monolith
+### 1E — Admin Panel: Split the monolith 🟡 PARTIALLY DONE (25 Jul 2026)
 *Goal: admin/index.html split into maintainable files.*
-*Status: still 3,663 lines, unchanged since May — no sub-items started.*
+*Status: 3,991 lines (grew from 3,663 in May) → 2,440 lines after this pass.*
 
-- [ ] Create admin/css/admin.css — extract all <style> blocks from admin/index.html
-- [ ] Create admin/js/admin-auth.js — login, logout, JWT storage, requireAuth guard
-- [ ] Create admin/js/admin-leads.js — leads table, filters, status updates, export CSV
-- [ ] Create admin/js/admin-products.js — product grid, add/edit modal, hide/delete
-- [ ] Create admin/js/admin-import.js — scraper UI, colour variant editor, import flow
-- [ ] Create admin/js/admin-offers.js — deals & offers section
-- [ ] Create admin/js/admin-calendar.js — calendar view and booking management
-- [ ] Create admin/js/admin-ui.js — shared utilities (toast, modals, formatters)
-- [ ] Update admin/index.html — replace all inline <style> and <script> with file references
-- [ ] Verify: admin/index.html is under 300 lines after extraction
-- [ ] Delete admin/images/ — duplicate of root images/ folder
-      → Update admin/index.html logo src to ../images/logo.svg
+**Deliberate decision, made with the project owner:** a redesign of the admin panel is planned. Rather
+than do the full six-way split now and risk it being reshuffled again shortly after for no lasting
+benefit, only the parts that were genuinely safe, low-risk, and *not* likely to be redesigned were
+extracted today. The rest is intentionally left alone until the redesign happens — split and redesign
+together, as one piece of work, not split twice.
+
+- [x] Create admin/css/admin.css — both `<style>` blocks (base stylesheet + the later
+      `wyc-admin-theme` block) extracted and combined into one file, one `<link>` tag
+      → `refactor/split-admin-css-and-import-js`
+- [x] Create admin/js/admin-import.js — the single-URL and bulk-scrape import flows (both already
+      written as clean, self-contained IIFEs specifically so this extraction would be close to
+      mechanical when it came time to do it) → same PR as above
+- [ ] Create admin/js/admin-auth.js, admin-leads.js, admin-products.js, admin-offers.js,
+      admin-calendar.js, admin-ui.js — **on hold until the planned redesign**, since these all live in
+      one large (~64,000-character), genuinely tangled script block sharing state across leads,
+      products, calendar, offers, navigation, and auth. Splitting this safely needs careful mapping of
+      every cross-reference first — the highest-risk, most complex remaining piece of this whole task,
+      and better done once alongside the redesign than twice.
+- [x] Verify: admin/index.html is dramatically smaller after extraction *(not yet under the original
+      300-line target — that target assumed the full six-way split; revisit once the rest happens)*
+- [ ] Delete admin/images/ — duplicate of root images/ folder *(confirmed smaller than originally
+      described — just logo.svg/logo2.svg/.gitkeep now — still worth doing, low priority)*
+- [x] Verified working correctly in a real browser after the split (25 Jul 2026) — visual check across
+      Leads/Products/Calendar/Deals plus both import flows, confirmed by the project owner, not just
+      static checks
 
 ### 1F — Admin UX Improvements
 *Goal: Faster, clearer workflow for managing products and leads.*
@@ -454,15 +477,22 @@ the original list didn't point to.
       it's the cheapest possible insurance against something similar happening again in that same code path
 
 ### 5D — Dependency cleanup
-- [ ] Remove express-session (unused) *(verify still present first — see 3A note)*
-- [ ] Remove undici (duplicate of axios) *(verify still present first — see 3A note)*
-- [ ] Evaluate pdf-parse — document what it's used for or remove it *(not found in current package.json dependencies — verify before spending time here, may already be gone)*
+- [x] ~~Remove express-session~~ → confirmed already gone, not in package.json (verified 26 Jul)
+- [x] ~~Remove undici~~ → confirmed already gone, not in package.json (verified 26 Jul)
+- [x] ~~Evaluate pdf-parse~~ → confirmed already gone, not in package.json (verified 26 Jul)
 - [x] ~~Evaluate better-sqlite3~~ → resolved, removed entirely as part of dropping SQLite (0.5-A)
-- [ ] **New (from second audit, 10 Jul):** `sharp` is declared in `package.json` and never imported
-      anywhere in the codebase (confirmed by grep) — `cloudinary` is the actual image-handling path via
-      `routes/scraper.js`. Dead dependency, safe to remove.
+- [ ] **`sharp` — flagged twice now (second audit 10 Jul, third independent audit 26 Jul), still not
+      actually removed.** Confirmed unused by grep both times. `npm audit` (actually run for the first
+      time this session, 26 Jul — neither prior audit had a working `node_modules` to run it from) shows
+      why this is worth doing soon rather than eventually: `sharp <0.35.0` carries a **high-severity**
+      vulnerability (inherited from its underlying image library). Since it's confirmed 100% unused,
+      removing it eliminates the vulnerability entirely rather than needing the breaking-change
+      `npm audit fix --force` route.
+- [ ] **New, from the same `npm audit` run (26 Jul):** `body-parser` (low) and `morgan` (moderate) also
+      have known vulnerabilities, both with non-breaking fixes available via plain `npm audit fix`
 - [ ] Update all dependencies to latest minor versions: `npm update`
-- [ ] Run `npm audit` — fix any high/critical vulnerabilities
+- [x] ~~Run `npm audit`~~ → done 26 Jul, see the three findings above — this item can be removed once
+      those three are actually fixed, not just identified
 
 ### 5E — Developer experience
 - [ ] Add README.md with setup instructions, env vars, scripts *(README exists — audit found it's stale in places, see 0.5-A and 0.5-D; treat as "update," not "add")*
@@ -504,7 +534,7 @@ the original list didn't point to.
 |-------|--------|---------|-----------|
 | 0 — Environment | ✅ Complete | May 2026 | Jul 2026 |
 | 0.5 — Audit Findings | 🟡 In Progress *(0.5-A, 0.5-B, 0.5-H done; 0.5-C/D/E/F/G still open)* | Jul 2026 | — |
-| 1 — Admin Portal | 🟡 In Progress *(1A done; 1B, 1D partially done)* | May 2026 | — |
+| 1 — Admin Portal | 🟡 In Progress *(1A done; 1B, 1D, 1E partially done)* | May 2026 | — |
 | 2 — Content | ⬜ Not started | — | — |
 | 3 — Website | ⬜ Not started | — | — |
 | 4 — Automation | ⬜ Not started | — | — |
