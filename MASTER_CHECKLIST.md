@@ -201,8 +201,13 @@ the original list didn't point to.
 - [x] routes/scraper.js — Use shared db from src/config/database.js *(confirmed done — no longer has its own `new Pool()`)*
 - [x] **Test: Import a product → verify zero supplier references** → confirmed working end-to-end,
       including via the new bulk-import flow below (25 Jul 2026)
-- [ ] **New, unrelated bug found along the way:** admin-typed product descriptions are silently discarded
-      (backend hardcodes the field to blank) — worth a small separate fix, not urgent
+- [x] **Description bug, found along the way, now fixed** (25 Jul 2026): admin-typed descriptions were
+      being silently discarded on save. Fixed — and while fixing it, found that doing so naively would have
+      reopened a branding leak through descriptions instead of colours (the bulk-scrape flow's
+      auto-generated description text embeds the supplier's product name). Both fixed together: single-URL
+      import now genuinely saves what's typed; bulk import explicitly clears this field rather than
+      forwarding the risky auto-generated text → `fix/save-admin-typed-description`. Confirmed working for
+      real on both paths.
 
 #### Bonus: bulk import (not on the original list, added 25 Jul 2026)
 *Business need: importing products one at a time was slow; wanted to paste a whole list of URLs at once.*
