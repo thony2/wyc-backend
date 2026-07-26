@@ -176,22 +176,49 @@ was caught — never reached it. Confirmed via Vercel's own Git settings page, w
 
 ## PHASE 1 — Admin Portal: Logic & Code Quality
 
-### 1A — Scraper / Import Catalogue (HIGHEST PRIORITY)
+### 1A — Scraper / Import Catalogue (HIGHEST PRIORITY) ✅ DONE (25 Jul 2026)
 *Goal: Zero supplier branding in any imported product.*
 
-- [ ] routes/scraper.js — Remove supplierName from all API responses
-      → The /api/panel/scrape-family response must not include supplier name
-- [ ] routes/scraper.js — Auto-generated description must not include supplier name
-      → Description field should be empty or generic ("Premium carpet, [style] pile")
+Investigated properly before making changes, rather than assuming the original list of sub-tasks below
+was still accurate — several of them turned out to already be non-issues, and the real gap was somewhere
+the original list didn't point to.
+
+- [x] **Real finding:** the top-level product name field was already safe — starts empty, required, never
+      pre-filled with supplier text. No change needed.
+- [x] **Real finding:** the product description is hardcoded to always save as blank in the backend
+      (`routes/scraper.js`), regardless of what's scraped or typed — so this was never actually a branding
+      leak. *(Separately noted: this means admin-typed descriptions are currently silently discarded — a
+      real bug, unrelated to branding, not yet fixed — see new item below.)*
+- [x] **The actual leak:** colour variant names. The input box shows the supplier's name only as grey
+      placeholder text — but if left blank, the code was silently submitting the raw supplier name as the
+      real value. Easy to miss, since the placeholder makes the field look filled in at a glance.
+- [x] **Fix implemented:** rather than hiding supplier names from the admin (you still need to see the
+      original name to know what to rename it to), added a hard server-side block in
+      `POST /api/panel/import-family` — refuses to import any colour whose name still exactly matches the
+      supplier's original name. This is the one place guaranteed to run no matter how an import is
+      triggered, so it's the right place to actually enforce this, rather than relying on the UI alone.
+      → `feat/block-supplier-branding-on-import`
 - [x] routes/scraper.js — Use shared db from src/config/database.js *(confirmed done — no longer has its own `new Pool()`)*
-- [ ] admin/index.html — Remove "Supplier Name" column from colour variants table
-      → Section: Import Catalogue → Step 3 "Colour variants"
-- [ ] admin/index.html — Description field starts empty, not pre-filled with supplier text
-- [ ] admin/index.html — "WYC Product Name" is the only name field visible
-- [ ] **Test: Import a product from carpetlinedirect.co.uk → verify zero supplier references**
-      → ⚠️ Two separate commits (`4a130c7`, `714c7b5`) with the identical message
-        "fix: remove supplier branding from import catalogue" exist in history — the first attempt
-        apparently didn't stick. Re-verify this end-to-end before your next real supplier import.
+- [x] **Test: Import a product → verify zero supplier references** → confirmed working end-to-end,
+      including via the new bulk-import flow below (25 Jul 2026)
+- [ ] **New, unrelated bug found along the way:** admin-typed product descriptions are silently discarded
+      (backend hardcodes the field to blank) — worth a small separate fix, not urgent
+
+#### Bonus: bulk import (not on the original list, added 25 Jul 2026)
+*Business need: importing products one at a time was slow; wanted to paste a whole list of URLs at once.*
+
+- [x] `POST /api/panel/scrape-bulk` — scrapes a list of URLs (up to 50) one at a time, with a randomized
+      3-8 second pause between each so it reads as normal browsing rather than automated traffic. Streams
+      results back live as each one finishes rather than one long silent wait. Required a small, targeted
+      change to `server.js` (a compression-bypass filter for this one route) for the live streaming to
+      actually reach the browser rather than getting buffered → `feat/bulk-scrape-endpoint`
+- [x] Bulk-scrape UI on the Import Catalogue page — paste a list of URLs, watch live progress, review the
+      whole batch (same "blank colour name, supplier name as placeholder" pattern as the single-import
+      flow), Import All. Built as its own self-contained section, deliberately named to avoid any collision
+      with the separate, already-existing CSV-based "Bulk Import" tool on the Products page (different tool,
+      different purpose — that one's for data you've already prepared yourself, not scraping) →
+      `feat/bulk-scrape-ui`
+- [x] **Confirmed working end-to-end by real use, not just testing** (25 Jul 2026)
 
 ### 1B — Database Connection Consolidation
 *Goal: One connection pool, used everywhere.*
@@ -472,7 +499,7 @@ was caught — never reached it. Confirmed via Vercel's own Git settings page, w
 |-------|--------|---------|-----------|
 | 0 — Environment | ✅ Complete | May 2026 | Jul 2026 |
 | 0.5 — Audit Findings | 🟡 In Progress *(0.5-A, 0.5-B, 0.5-H done; 0.5-C/D/E/F/G still open)* | Jul 2026 | — |
-| 1 — Admin Portal | 🟡 In Progress *(1B, 1D partially done)* | May 2026 | — |
+| 1 — Admin Portal | 🟡 In Progress *(1A done; 1B, 1D partially done)* | May 2026 | — |
 | 2 — Content | ⬜ Not started | — | — |
 | 3 — Website | ⬜ Not started | — | — |
 | 4 — Automation | ⬜ Not started | — | — |
