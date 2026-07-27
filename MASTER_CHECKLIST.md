@@ -40,9 +40,25 @@ Each item has a reference to the file(s) affected.
 > ones in `body-parser` and `morgan` — see 5D. Also confirmed `admin/index.html` was split partially, not
 > fully, this same day — see 1E for why, and what was deliberately left for later.
 >
+> **Updated again 26 Jul 2026 (second update this day).** A fourth, independent audit was reviewed —
+> excellent, rigorous work, every specific claim checked came back accurate. One important correction to
+> its own recommendation, caught by verifying rather than trusting the guess: it assumed `/api/panel` was
+> the "live" admin API and `/api/admin` the dead legacy one, and recommended confirming before deleting
+> either. Confirming directly (reading exactly what `admin/index.html` calls) found the opposite split —
+> **both are genuinely live, divided by feature** (leads/dashboard/calendar → `/api/admin`;
+> login/products/offers/scraping → `/api/panel`) — see 5A. Real new findings folded in: an SSRF gap in the
+> image-import step, unpinned JWT algorithm, CSV formula-injection risk via the message field, synchronous
+> bcrypt calls, a quantified (not vague) error-handling inconsistency (`routes/panel.js` leaks raw errors
+> 21 times), and a fully-built customer confirmation email that's never actually called anywhere — see
+> 4A/5A/5B. A companion document (`README-discrepancies.md`, not committed, shared as reference) did a
+> thorough claim-by-claim comparison of `README.md` against reality — confirms what was already known
+> (the README describes an old, pre-Postgres architecture) in much more detail; worth pulling up when the
+> README rewrite in 5E actually happens, rather than starting that rewrite from scratch.
+>
 > **Golden rule for this phase of work: the live site currently works. Every item below is sequenced so that
 > nothing is done directly on `main`. Branch → fix → verify locally → PR → merge. If a fix can't be verified
 > locally, it gets a manual verification step on staging/production immediately after merge, called out explicitly.**
+
 
 ---
 
@@ -419,6 +435,13 @@ together, as one piece of work, not split twice.
 - [ ] Email template — customer confirmation: professional, branded, sets expectations
 - [ ] Email template — owner notification: includes name, phone, postcode, service, message
 - [ ] (Future) Email template — lead follow-up at 3 days if no status change
+- [ ] **New (fourth audit, 26 Jul, verified):** `src/services/emailService.js`'s
+      `sendCustomerConfirmation` function is fully built (branded HTML email, plain-text fallback,
+      properly HTML-escaped) but is **never called anywhere in the codebase** — confirmed by grep finding
+      zero call sites outside its own definition and export line. Customers submitting a lead right now
+      get no confirmation email at all, despite fully-working code for exactly that already existing.
+      Likely the fastest, highest-value item in this whole phase once `MAIL_ENABLED` work above happens —
+      wiring this in may be most of the "customer confirmation" task already done.
 
 ### 4B — Lead workflow improvements
 - [ ] Add "Assign to installer" field on lead detail
@@ -434,6 +457,18 @@ together, as one piece of work, not split twice.
 ### 5A — Architecture consolidation
 *Goal: One routing system, one DB pool, clean separation of concerns.*
 
+- [ ] **Important correction (26 Jul, fourth audit + independently verified):** this is not "one live API,
+      one dead legacy API." **Both are genuinely in active use, split by feature** — confirmed by reading
+      exactly what `admin/index.html`'s remaining script actually calls:
+      → `/api/admin` (`src/routes/authGuard.js` → `src/controllers/adminController.js`): leads, dashboard,
+        calendar, booking, status updates, CSV export
+      → `/api/panel` (`routes/panel.js`): login, products, offers — plus scraping/import
+        (`routes/scraper.js`), already confirmed separately
+      A fourth independent audit guessed the opposite ("my read is `/api/panel` is the one in active use")
+      and explicitly recommended confirming before deleting either — good instinct, and confirming it
+      first is exactly what caught that the guess was wrong. **Consolidating these means genuinely merging
+      two feature-complete implementations, not picking a winner and deleting a loser** — size this task
+      accordingly; it's bigger than "delete the dead one."
 - [ ] Migrate all functionality from **`routes/panel.js`** → src/controllers/ + src/routes/
       *(file name corrected — this was `routes/admin.js` before the July rename commits)*
 - [ ] Migrate all functionality from routes/products.js → src/controllers/
@@ -441,11 +476,17 @@ together, as one piece of work, not split twice.
 - [ ] Verify: server.js only imports from src/
 - [ ] Update server.js route mounts to match new structure
 - [x] ~~Remove migrate-sqlite-local.js~~ → done as part of dropping SQLite entirely, see 0.5-A
-- [ ] **New (from second audit, 10 Jul):** three separate, near-identical copies of a `requireAuth` JWT
-      middleware exist — `src/routes/authGuard.js`, `routes/panel.js`, `routes/scraper.js` — confirmed by
-      direct grep, not just the audit's word for it. Any future change to auth behaviour (token refresh,
-      role checks, revocation) has to be made in three places and will drift. Consolidate into one shared
-      middleware as part of this same routing consolidation, rather than as a separate task later.
+- [ ] Three separate, near-identical copies of a `requireAuth` JWT middleware exist —
+      `src/routes/authGuard.js`, `routes/panel.js`, `routes/scraper.js` — confirmed by direct grep (second
+      audit, 10 Jul). Any future change to auth behaviour has to be made in three places and will drift.
+      Consolidate as part of this same routing work, not separately.
+- [ ] **New (fourth audit, 26 Jul, verified):** error-handling is inconsistent across the two layers, and
+      not by a small amount — `src/controllers/leadController.js` and `adminController.js` correctly log
+      the real error and return a generic message; `routes/panel.js` returns the raw `e.message` straight
+      to the client **21 separate times**, `routes/products.js` 3 times, `routes/scraper.js` 2 times
+      (counted directly, not estimated). Exposure is to authenticated admins only (all behind JWT), not the
+      public — but worth standardising on the disciplined pattern already used correctly elsewhere, as
+      part of the same consolidation rather than patching each call site separately later.
 
 ### 5B — Security hardening
 - [ ] CSRF protection — resolved, see 0.5-D: tried real validation, real-world testing showed it breaks
@@ -457,6 +498,29 @@ together, as one piece of work, not split twice.
 - [ ] Review CORS allowed origins — ensure no wildcards in production
 - [ ] Ensure all admin routes return 401 (not 403 or 404) for missing JWT *(spot-checked `src/routes/authGuard.js` during the audit — this one already returns 401 correctly; verify the equivalent check in `routes/panel.js`'s own auth middleware too)*
 - [ ] Rate limit the scraper endpoint separately from general API
+- [ ] **New (fourth audit, 26 Jul, verified):** `/import-family`'s image-download step
+      (`axios.get(colour.imgUrl, ...)` in `routes/scraper.js`) fetches whatever URL is pasted, with **no
+      domain restriction at all** — unlike `/scrape-family`/`/scrape-bulk`, which are correctly restricted
+      to a fixed supplier allow-list via `detectPlugin()`. Since this endpoint is JWT-admin-only, practical
+      risk is limited to a compromised/malicious admin account being able to make the server fetch
+      arbitrary internal or external URLs. Worth a domain allow-list or at least blocking private/link-local
+      IP ranges (RFC1918) before treating this as closed.
+- [ ] **New (fourth audit, 26 Jul, verified):** `jwt.verify(token, JWT_SECRET)` is called in all three auth
+      implementations without pinning `{ algorithms: ['HS256'] }`. Low practical risk with a single
+      symmetric secret (the classic attack this guards against needs an asymmetric public key involved,
+      which isn't the case here) — but a one-line, zero-cost hardening, worth doing whenever the auth
+      consolidation above happens.
+- [ ] **New (fourth audit, 26 Jul, verified):** CSV lead export can be tricked into executing a formula in
+      Excel/Sheets — confirmed the export's escaping (`routes/panel.js`) only handles quote-escaping, not
+      formula-injection characters (`=`, `+`, `-`, `@`) at the start of a cell. The `name` field is already
+      safe (its format validation rejects those characters) — but `message` is free text up to 2,000
+      characters with no such restriction, so it's genuinely exploitable via that field specifically.
+      Low-effort fix: prefix values starting with those characters with a `'` on export.
+- [ ] **New (fourth audit, 26 Jul, verified):** `routes/panel.js` uses `bcrypt.compareSync`/`hashSync`
+      (blocking) on login and password-change, instead of the async `bcrypt.compare`/`hash`. Not a bug at
+      current traffic levels (a local business, a handful of admin users) — a scalability foot-gun worth
+      swapping when convenient, not urgent.
+
 
 ### 5C — Testing
 *Goal: Confidence when refactoring.*
