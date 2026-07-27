@@ -545,18 +545,17 @@ together, as one piece of work, not split twice.
 - [x] ~~Remove undici~~ → confirmed already gone, not in package.json (verified 26 Jul)
 - [x] ~~Evaluate pdf-parse~~ → confirmed already gone, not in package.json (verified 26 Jul)
 - [x] ~~Evaluate better-sqlite3~~ → resolved, removed entirely as part of dropping SQLite (0.5-A)
-- [ ] **`sharp` — flagged twice now (second audit 10 Jul, third independent audit 26 Jul), still not
-      actually removed.** Confirmed unused by grep both times. `npm audit` (actually run for the first
-      time this session, 26 Jul — neither prior audit had a working `node_modules` to run it from) shows
-      why this is worth doing soon rather than eventually: `sharp <0.35.0` carries a **high-severity**
-      vulnerability (inherited from its underlying image library). Since it's confirmed 100% unused,
-      removing it eliminates the vulnerability entirely rather than needing the breaking-change
-      `npm audit fix --force` route.
-- [ ] **New, from the same `npm audit` run (26 Jul):** `body-parser` (low) and `morgan` (moderate) also
-      have known vulnerabilities, both with non-breaking fixes available via plain `npm audit fix`
+- [x] **`sharp` removed** (26 Jul) — flagged twice before (second audit 10 Jul, third/fourth audits 26 Jul)
+      and never actually removed until now. `npm audit` had shown it carried a high-severity
+      vulnerability; since it was confirmed 100% unused, removing it eliminated the vulnerability
+      entirely rather than needing the breaking-change `npm audit fix --force` route.
+      → `chore/remove-sharp-and-audit-fix`
+- [x] **`body-parser` and `morgan` vulnerabilities fixed** (26 Jul) — both via plain, non-breaking
+      `npm audit fix`. `npm audit` now reports **0 vulnerabilities**. Verified for real, not just by
+      reading the diff: booted the actual server locally afterward and sent a real request through the
+      updated middleware — got the expected response, not a crash → same PR as above
 - [ ] Update all dependencies to latest minor versions: `npm update`
-- [x] ~~Run `npm audit`~~ → done 26 Jul, see the three findings above — this item can be removed once
-      those three are actually fixed, not just identified
+- [x] ~~Run `npm audit`~~ → done 26 Jul, all three findings now fixed, 0 vulnerabilities remaining
 
 ### 5E — Developer experience
 - [ ] Add README.md with setup instructions, env vars, scripts *(README exists — audit found it's stale in places, see 0.5-A and 0.5-D; treat as "update," not "add")*
