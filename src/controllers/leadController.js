@@ -79,6 +79,8 @@ async function create(req, res) {
 
         logger.info(`[Lead] New submission — id: ${leadId}, service: ${service_type}, postcode: ${postcode}`);
 
+        const reference = leadId.split('-')[0].toUpperCase();
+
         if (process.env.MAIL_ENABLED === 'true') {
             emailService.sendAdminNotification({
                 leadId, name, phone,
@@ -89,12 +91,19 @@ async function create(req, res) {
                 estimated_cost,
                 created_at:    new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' }),
             }).catch(err => logger.error(`[Email] Failed for lead ${leadId}: ${err.message}`));
+
+            // sendCustomerConfirmation already guards on its own (no-op if no email
+            // was provided, or if MAIL_ENABLED isn't 'true') -- calling it here
+            // unconditionally is intentional, not a missing check.
+            emailService.sendCustomerConfirmation({
+                name, email, reference,
+            }).catch(err => logger.error(`[Email] Customer confirmation failed for lead ${leadId}: ${err.message}`));
         }
 
         return res.status(201).json({
             success:   true,
             message:   "Thank you! We'll be in touch within 24 hours.",
-            reference: leadId.split('-')[0].toUpperCase(),
+            reference,
         });
 
     } catch (err) {
