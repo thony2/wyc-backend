@@ -55,6 +55,34 @@ Each item has a reference to the file(s) affected.
 > (the README describes an old, pre-Postgres architecture) in much more detail; worth pulling up when the
 > README rewrite in 5E actually happens, rather than starting that rewrite from scratch.
 >
+> **Updated again 29–31 Jul 2026.** Three small, independently-verified PRs landed, each checked against
+> a fresh clone (not just the working copy) before being called done:
+> 1. **5E — README rewrite, done** (PR #30). Rewritten from scratch against the current code rather than
+>    patched — corrects the deployment model (static site on Vercel, API on Railway, not one combined
+>    service, which the checklist itself hadn't previously stated explicitly), documents JWT auth in place
+>    of the old `ADMIN_TOKEN` framing, flags that local frontend dev hits the production API by default
+>    (hardcoded Railway URL in `js/form-handler.js`/`catalogue.js`/`product-page.js` — this is 3A below,
+>    now cross-referenced from the README itself), and notes Railway's outbound-SMTP block on
+>    Free/Trial/Hobby plans as the most likely cause if `MAIL_ENABLED` email silently doesn't send. Two
+>    independently-produced drafts were compared line-by-line against the code before merging; where they
+>    disagreed (deployment model, Node version prerequisite), the code settled it.
+> 2. **5B — CSV formula-injection, done** (PR #31). `quoteField()` now runs every value through a new
+>    `sanitizeFormula()` step first, prefixing a leading `'` onto anything starting with `=`, `+`, `-`, or
+>    `@` before it's written to the exported file. Verified with an actual `=HYPERLINK(...)`-style payload
+>    through `generateCsv()` — comes out neutralised; a normal message with a comma round-trips unchanged.
+> 3. **5A — partial, done** (PR #32). Not the full consolidation — that's still open, see below — but the
+>    narrower thing that was actually safe to do now: `routes/panel.js` turned out to contain its own
+>    *second* copy of all 7 lead/dashboard/calendar endpoints (`GET /dashboard`, `GET /leads`,
+>    `GET /leads/export.csv`, `PATCH /leads/:id/status`, `PATCH /leads/:id/booking`, `DELETE /leads/:id`,
+>    `GET /calendar`), never called by the live frontend, sitting alongside the genuinely-used
+>    login/products/offers/scraping endpoints in the same file. Confirmed dead by grep against every
+>    `fetch()` call in `admin/index.html`, then removed — 142 lines, nothing else in the file touched.
+>    Worth flagging why this mattered beyond tidiness: this dead copy's `DELETE /leads/:id` did a **hard
+>    delete with no anonymisation option**, unlike the live implementation, which anonymises by default. If
+>    anything had ever been mis-wired to call it, GDPR-anonymisation would have silently not happened.
+>    The remaining, larger part of 5A (migrating login/products/offers/scraping into `src/`) is unchanged
+>    and still open.
+>
 > **Golden rule for this phase of work: the live site currently works. Every item below is sequenced so that
 > nothing is done directly on `main`. Branch → fix → verify locally → PR → merge. If a fix can't be verified
 > locally, it gets a manual verification step on staging/production immediately after merge, called out explicitly.**
@@ -89,9 +117,10 @@ Every item here is a branch-sized, single-purpose PR, matching the commit conven
 - [x] `better-sqlite3` removed from `package.json`
 - [x] `.env.example` updated — `DB_TYPE=postgres` is now the shown default, `SQLITE_PATH` removed
 - [x] `README.md` — architecture tree and env var table corrected
-      *(note: the older "Deploying / migration" section further down the README, describing converting
-      schema.sql to Postgres, is now describing something that already happened years ago and reads as
-      out of date — not fixed in this pass, flagged for the eventual README overhaul in 5E)*
+      *(note: this was a partial, in-place fix at the time — the "Deploying / migration" section further
+      down the README, describing converting schema.sql to Postgres, was left out of date and flagged for
+      a full rewrite in 5E. That rewrite happened 29–31 Jul 2026 — see the update note above and 5E below.
+      This item stays checked as an accurate record of what was done in this specific pass.)*
 - [x] `routes/products-seo.js` — now imports the shared `src/config/database.js` connection instead of its
       own separate pool → `fix/products-seo-shared-db-pool`
 - [x] `src/config/initDb.js` — **bonus fix found while doing this work**: this script was *also* broken
@@ -469,6 +498,15 @@ together, as one piece of work, not split twice.
       first is exactly what caught that the guess was wrong. **Consolidating these means genuinely merging
       two feature-complete implementations, not picking a winner and deleting a loser** — size this task
       accordingly; it's bigger than "delete the dead one."
+- [x] **Done 31 Jul 2026** (PR #32): `routes/panel.js` also had its own unused second copy of exactly the
+      7 endpoints listed above (`/dashboard`, `/leads`, `/leads/export.csv`, `/leads/:id/status`,
+      `/leads/:id/booking`, `DELETE /leads/:id`, `/calendar`) — dead code, never called by the frontend,
+      distinct from the genuine `/api/admin` vs `/api/panel` feature split described above. Removed;
+      confirmed by loading the resulting router directly and checking the remaining 16 routes are exactly
+      login/products/offers/audit/change-password/likes, by grepping the whole repo for any reference to
+      the removed paths (none found), and by re-running the test suite. **This does not close 5A** — it
+      only removes the one part of the duplication that was safely deletable outright. The two items below
+      it, and the real merge of login/products/offers/scraping into `src/`, are still fully open.
 - [ ] Migrate all functionality from **`routes/panel.js`** → src/controllers/ + src/routes/
       *(file name corrected — this was `routes/admin.js` before the July rename commits)*
 - [ ] Migrate all functionality from routes/products.js → src/controllers/
@@ -510,12 +548,15 @@ together, as one piece of work, not split twice.
       symmetric secret (the classic attack this guards against needs an asymmetric public key involved,
       which isn't the case here) — but a one-line, zero-cost hardening, worth doing whenever the auth
       consolidation above happens.
-- [ ] **New (fourth audit, 26 Jul, verified):** CSV lead export can be tricked into executing a formula in
-      Excel/Sheets — confirmed the export's escaping (`routes/panel.js`) only handles quote-escaping, not
-      formula-injection characters (`=`, `+`, `-`, `@`) at the start of a cell. The `name` field is already
-      safe (its format validation rejects those characters) — but `message` is free text up to 2,000
-      characters with no such restriction, so it's genuinely exploitable via that field specifically.
-      Low-effort fix: prefix values starting with those characters with a `'` on export.
+- [x] **Fixed 31 Jul 2026** (PR #31): CSV lead export could be tricked into executing a formula in
+      Excel/Sheets — the export's escaping (`src/services/csvService.js`'s `quoteField()`) only handled
+      quote-escaping, not formula-injection characters (`=`, `+`, `-`, `@`) at the start of a cell. The
+      `name` field was already safe (its format validation rejects those characters) — `message` is free
+      text up to 2,000 characters with no such restriction, so it was genuinely exploitable via that field
+      specifically. Fixed with a new `sanitizeFormula()` step that prefixes a leading `'` onto any value
+      starting with those characters before it reaches the CSV. Verified manually with an
+      `=HYPERLINK(...)`-style message (comes out prefixed and inert) and a normal comma-containing message
+      (comes out byte-for-byte unchanged) — see `csvService.js` for the exact logic.
 - [ ] **New (fourth audit, 26 Jul, verified):** `routes/panel.js` uses `bcrypt.compareSync`/`hashSync`
       (blocking) on login and password-change, instead of the async `bcrypt.compare`/`hash`. Not a bug at
       current traffic levels (a local business, a handful of admin users) — a scalability foot-gun worth
@@ -558,7 +599,11 @@ together, as one piece of work, not split twice.
 - [x] ~~Run `npm audit`~~ → done 26 Jul, all three findings now fixed, 0 vulnerabilities remaining
 
 ### 5E — Developer experience
-- [ ] Add README.md with setup instructions, env vars, scripts *(README exists — audit found it's stale in places, see 0.5-A and 0.5-D; treat as "update," not "add")*
+- [x] **Done 29–31 Jul 2026** (PR #30): README.md rewritten from scratch against the current code —
+      setup instructions, full env var table (including `JWT_SECRET`, previously undocumented despite the
+      server refusing to boot without it), npm scripts, deployment model, security summary, and a "Known
+      Gaps" section cross-referenced to this checklist so it doesn't go stale silently again. See the
+      29–31 Jul update note above for what specifically changed and why.
 - [ ] Add CONTRIBUTING.md with commit conventions and workflow *(the convention already exists informally — see §10 below — just needs to be its own file)*
 - [x] package-lock.json in repo
 - [ ] Add `"admin:reset-password"` to package.json scripts *(corrected: this was marked done in May but isn't in the current package.json — see 0.5-C)*
@@ -601,7 +646,7 @@ together, as one piece of work, not split twice.
 | 2 — Content | ⬜ Not started | — | — |
 | 3 — Website | ⬜ Not started | — | — |
 | 4 — Automation | ⬜ Not started | — | — |
-| 5 — Code Quality | ⬜ Not started | — | — |
+| 5 — Code Quality | 🟡 In Progress *(5B CSV-injection fix and 5E README rewrite done; 5A partially done — see the 29–31 Jul update note above; everything else in 5A/5B/5C/5D still open)* | Jul 2026 | — |
 | 6 — Performance | ⬜ Not started | — | — |
 | 7 — Scale | ⬜ Future | — | — |
 
