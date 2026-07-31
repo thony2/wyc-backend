@@ -41,9 +41,24 @@ function generateCsv(leads) {
     });
 }
 
+// Excel, Google Sheets, and LibreOffice all treat a cell that *starts* with
+// =, +, -, or @ as a formula rather than plain text. Free-text fields (the
+// lead's "message" in particular) are never restricted to exclude these
+// characters at submission time, so a value like `=HYPERLINK(...)` typed
+// into the enquiry form would be executed as a formula by whoever opens the
+// exported CSV. A leading single quote tells every major spreadsheet app
+// "this is text" without changing what the person sees.
+function sanitizeFormula(str) {
+    if (/^[=+\-@]/.test(str)) {
+        return `'${str}`;
+    }
+    return str;
+}
+
 function quoteField(value) {
     if (value === null || value === undefined) return '';
-    const str = String(value).replace(/\r\n|\r|\n/g, ' ').trim();
+    let str = String(value).replace(/\r\n|\r|\n/g, ' ').trim();
+    str = sanitizeFormula(str);
     if (str.includes(',') || str.includes('"') || str !== value) {
         return `"${str.replace(/"/g, '""')}"`;
     }
