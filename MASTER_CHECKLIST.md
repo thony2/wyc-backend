@@ -540,10 +540,16 @@ together, as one piece of work, not split twice.
 - [ ] Verify: server.js only imports from src/
 - [ ] Update server.js route mounts to match new structure
 - [x] ~~Remove migrate-sqlite-local.js~~ → done as part of dropping SQLite entirely, see 0.5-A
-- [ ] Three separate, near-identical copies of a `requireAuth` JWT middleware exist —
-      `src/routes/authGuard.js`, `routes/panel.js`, `routes/scraper.js` — confirmed by direct grep (second
-      audit, 10 Jul). Any future change to auth behaviour has to be made in three places and will drift.
-      Consolidate as part of this same routing work, not separately.
+- [x] **Done 1 Aug 2026:** the three separate, near-identical copies of a `requireAuth` JWT middleware —
+      `src/routes/authGuard.js`, `routes/panel.js`, `routes/scraper.js` (confirmed by direct grep, second
+      audit, 10 Jul) — are consolidated into a single `src/middleware/auth.js` (`requireAuth` +
+      `requireAdmin`), imported by all three call sites. `routes/scraper.js` previously set `req.admin`
+      instead of `req.user`; standardized on `req.user` after grepping the file first to confirm nothing
+      downstream reads either property, so this was a safe rename, not a behaviour change. No route paths,
+      request/response shapes, or frontend code changed. Verified: all four touched files pass
+      `node --check`; applied and confirmed via a real `git am` on a clean checkout before merging.
+      **This is step 1 of 5 in the routing consolidation — the actual merge of
+      login/products/offers/scraping into `src/` (the two items below) is still fully open.**
 - [ ] **New (fourth audit, 26 Jul, verified):** error-handling is inconsistent across the two layers, and
       not by a small amount — `src/controllers/leadController.js` and `adminController.js` correctly log
       the real error and return a generic message; `routes/panel.js` returns the raw `e.message` straight
@@ -577,11 +583,10 @@ together, as one piece of work, not split twice.
       JWT-admin-only. A domain allow-list (matching `/scrape-family`'s approach) was considered instead but
       not used, since legitimate supplier image URLs come from many different CDN domains that would need
       constant maintenance.
-- [ ] **New (fourth audit, 26 Jul, verified):** `jwt.verify(token, JWT_SECRET)` is called in all three auth
-      implementations without pinning `{ algorithms: ['HS256'] }`. Low practical risk with a single
-      symmetric secret (the classic attack this guards against needs an asymmetric public key involved,
-      which isn't the case here) — but a one-line, zero-cost hardening, worth doing whenever the auth
-      consolidation above happens.
+- [x] **Done 1 Aug 2026:** `jwt.verify()` now pins `{ algorithms: ['HS256'] }`, done as a side effect of
+      the auth-middleware consolidation above (this is now a single call site instead of three). Low
+      practical risk either way with a single symmetric secret, as noted when this was first flagged
+      (fourth audit, 26 Jul) — but a one-line, zero-cost hardening, so done rather than deferred.
 - [x] **Fixed 31 Jul 2026** (PR #31): CSV lead export could be tricked into executing a formula in
       Excel/Sheets — the export's escaping (`src/services/csvService.js`'s `quoteField()`) only handled
       quote-escaping, not formula-injection characters (`=`, `+`, `-`, `@`) at the start of a cell. The
@@ -687,7 +692,7 @@ together, as one piece of work, not split twice.
 | 2 — Content | ⬜ Not started | — | — |
 | 3 — Website | ⬜ Not started | — | — |
 | 4 — Automation | ⬜ Not started | — | — |
-| 5 — Code Quality | 🟡 In Progress *(5B CSV-injection fix and 5E README rewrite done; 5A partially done; 5C now has its first two tests, most of it still open — see the update notes above for detail)* | Jul 2026 | — |
+| 5 — Code Quality | 🟡 In Progress *(5B CSV-injection fix, JWT algorithm pinning, and 5E README rewrite done; 5A step 1 of 5 done (auth middleware consolidated) — the actual routing merge is still open; 5C now has its first two tests, most of it still open — see the update notes above for detail)* | Jul 2026 | — |
 | 6 — Performance | ⬜ Not started | — | — |
 | 7 — Scale | ⬜ Future | — | — |
 
