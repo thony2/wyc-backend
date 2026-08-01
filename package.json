@@ -9,6 +9,7 @@
     "db:init": "node src/config/initDb.js",
     "db:seed": "node seed-products.js",
     "admin:reset-password": "node scripts/reset-admin-password.js",
+    "db:drop-audit-details-column": "node scripts/drop-audit-log-details-column.js",
     "test": "node --test src/tests/leads.test.js"
   },
   "dependencies": {
