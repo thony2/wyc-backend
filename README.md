@@ -316,8 +316,8 @@ as if it were the real one.
 Safari users with default privacy settings (Safari blocks the cross-domain cookie the pattern needs,
 since the frontend and API are on different domains). That was the right call given the constraint, not
 a mistake. Current protection against forged cross-site submissions relies on the CORS origin allow-list
-instead. `GET /api/csrf-token` still exists and issues a token nothing verifies — vestigial, tracked for
-cleanup in `MASTER_CHECKLIST.md` 0.5-D.
+instead. The vestigial `GET /api/csrf-token` route and its unused `csrfTokenGenerator` middleware
+have been removed (`MASTER_CHECKLIST.md` 0.5-D, closed).
 
 **Known, currently-open gaps** (all tracked in `MASTER_CHECKLIST.md` 5A/5B, none of them exploitable
 by an unauthenticated public user):

@@ -210,9 +210,10 @@ very first commit.
   still unused — cleaning that up formally (matching option (a) from the original decision) is the one
   piece of this still worth doing, now that (b) has been tried and ruled out by real evidence rather than
   just reasoned about in the abstract.
-- [ ] Remove the now-confirmed-unnecessary `/csrf-token` route and `csrfTokenGenerator` (option (a) from the
-      original decision, now the clear right call), and update the README's Security Summary to accurately
-      describe CORS-only protection
+- [x] **Done 1 Aug 2026:** removed the `/csrf-token` route (`src/routes/leads.js`) and the unused
+      `csrfTokenGenerator` middleware (`src/middleware/security.js`); confirmed via grep that nothing in
+      `js/`, `admin/js/`, or `index.html` ever called the endpoint, so there was nothing on the frontend
+      to update. README's Security Summary updated to match.
 
 ### 0.5-I — Critical: live frontend was never connected to this repository ✅ FIXED (11 Jul 2026)
 *Bigger than anything else found this session — discovered by accident while testing 0.5-D on the "live" site.*
