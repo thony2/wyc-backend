@@ -333,7 +333,9 @@ the original list didn't point to.
 - [x] migrate-auto.js — Admin seed reads from env var, not hardcoded string *(confirmed fixed — reads `ADMIN_DEFAULT_PASSWORD`, commits `8a4169f`/`8e19fe9`)*
 - [x] Add ADMIN_DEFAULT_PASSWORD to .env.example with a placeholder value
 - [ ] Verify: `git log --all -S "Admin@WYC2026"` returns no results *(run this yourself — I didn't find the string in the current tree, but you should confirm it's gone from history too, not just HEAD)*
-- [ ] Add the missing `admin:reset-password` npm script (see 0.5-C)
+- [x] ~~Add the missing `admin:reset-password` npm script~~ → already done, see 0.5-C. (This was a
+      duplicate tracking entry for the same fix — found during the 1 Aug reconciliation pass; the
+      checklist had it marked open here while 0.5-C correctly had it marked done.)
 
 ### 1E — Admin Panel: Split the monolith 🟡 PARTIALLY DONE (25 Jul 2026)
 *Goal: admin/index.html split into maintainable files.*
@@ -417,11 +419,13 @@ together, as one piece of work, not split twice.
         loaded before the other scripts on every page that needs it)
 - [ ] Fix broken npm scripts in package.json
       → db:seed: point to correct file or delete (see 0.5-C)
-      → admin:reset-password: add it (see 0.5-C)
-      → test: currently a placeholder, not broken — see 5C for real coverage
+      → admin:reset-password: ~~add it~~ already done, see 0.5-C
+      → test: ~~currently a placeholder, not broken~~ real integration + unit tests since PR #34/#38 — see 5C
 - [ ] Fix "licence" typo → "license" in package.json
-- [ ] Remove express-session from dependencies (not used) *(verify still present — audit didn't find it in current package.json, may already be gone; check before spending time here)*
-- [ ] Remove undici from dependencies (duplicate of axios) *(same — verify first, audit didn't find it in current package.json)*
+- [x] ~~Remove express-session from dependencies~~ → confirmed already gone, not in package.json (same
+      fact tracked twice in this document — see the other entry, verified 26 Jul, for the original)
+- [x] ~~Remove undici from dependencies~~ → confirmed already gone, not in package.json (same fact
+      tracked twice in this document — see the other entry, verified 26 Jul, for the original)
 
 ### 3B — Catalogue as standalone page
 *Goal: /catalogue.html is a real page, not a modal.*
@@ -550,18 +554,22 @@ together, as one piece of work, not split twice.
       `node --check`; applied and confirmed via a real `git am` on a clean checkout before merging.
       **This is step 1 of 5 in the routing consolidation — the actual merge of
       login/products/offers/scraping into `src/` (the two items below) is still fully open.**
-- [ ] **New (fourth audit, 26 Jul, verified):** error-handling is inconsistent across the two layers, and
-      not by a small amount — `src/controllers/leadController.js` and `adminController.js` correctly log
-      the real error and return a generic message; `routes/panel.js` returns the raw `e.message` straight
-      to the client **21 separate times**, `routes/products.js` 3 times, `routes/scraper.js` 2 times
-      (counted directly, not estimated). Exposure is to authenticated admins only (all behind JWT), not the
-      public — but worth standardising on the disciplined pattern already used correctly elsewhere, as
-      part of the same consolidation rather than patching each call site separately later.
+- [ ] **New (fourth audit, 26 Jul, verified); partially closed 1 Aug:** error-handling is inconsistent
+      across the two layers — `src/controllers/leadController.js` and `adminController.js` correctly log
+      the real error and return a generic message; `routes/panel.js` still returns the raw `e.message`
+      straight to the client **21 separate times**, `routes/scraper.js` still does it **2 times** (counted
+      directly, not estimated). `routes/products.js`'s 3 instances were closed as part of migrating it to
+      `src/controllers/productPublicController.js` (5A step 2, above) — arguably more urgent than the
+      remaining two since that one was public-facing, not authenticated-admin-only. The remaining 23
+      instances are still admin-only exposure, not public — but worth standardising on the disciplined
+      pattern already used correctly elsewhere, as part of the same consolidation (5A steps 3-4) rather
+      than patching each call site separately later.
 
 ### 5B — Security hardening
-- [ ] CSRF protection — resolved, see 0.5-D: tried real validation, real-world testing showed it breaks
-      Safari users (cross-domain cookie blocking), reverted. Remaining task is the cleanup 0.5-D already
-      identifies (remove the now-pointless `/csrf-token` route) plus the README correction below
+- [x] ~~CSRF protection — resolved, see 0.5-D~~ → both remaining tasks this item used to describe are
+      done: the `/csrf-token` route was removed (PR #37), and the README correction happened as part of
+      the 29–31 Jul rewrite (5E). This checkbox was left unchecked after both landed — found during the
+      1 Aug reconciliation pass.
 - [ ] Add Content-Security-Policy header to catalogue.html and product pages
 - [ ] Admin panel — add IP allowlist option via environment variable
       → If ADMIN_ALLOWED_IPS is set, reject requests from other IPs
@@ -652,9 +660,22 @@ together, as one piece of work, not split twice.
       29–31 Jul update note above for what specifically changed and why.
 - [ ] Add CONTRIBUTING.md with commit conventions and workflow *(the convention already exists informally — see §10 below — just needs to be its own file)*
 - [x] package-lock.json in repo
-- [ ] Add `"admin:reset-password"` to package.json scripts *(corrected: this was marked done in May but isn't in the current package.json — see 0.5-C)*
+- [x] **Done** (dated before this correction was noticed — confirmed already present by direct grep of
+      `package.json`, 1 Aug 2026 reconciliation pass): `"admin:reset-password": "node scripts/reset-admin-password.js"`
+      is in `package.json`. This item was left open here after the fix landed; the checklist entry itself
+      had drifted from the code, which is the same class of problem `5E`'s README rewrite exists to
+      prevent — see the note below.
 - [ ] Add `"db:migrate"` to package.json scripts (Phase 1C)
 - [x] Rename env.example.txt → .env.example
+- [x] **Done 1 Aug 2026 (reconciliation pass):** README.md had drifted from actual code in 4 places since
+      the 29–31 Jul rewrite above — 3 caused by real work landing after the rewrite without a follow-up
+      README pass (PR #32's dead-route removal, PR #34's real test replacing the placeholder, and PR #39's
+      auth-middleware consolidation), plus one undocumented npm script. All 4 corrected in the same PR as
+      this checklist update. **The lesson, not just the fix**: a README rewrite is a snapshot, not a
+      standing guarantee — it goes stale again the next time a PR changes something it describes and
+      nobody does a matching README edit. Going forward, any PR that changes something the README
+      documents (an endpoint, a script, a file's location, a "Known Gaps" item) should update the README
+      in the same commit, the same way this checklist is expected to be — not as a separate deferred pass.
 
 ---
 
