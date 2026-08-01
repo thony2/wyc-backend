@@ -3,22 +3,12 @@ const express = require('express');
 const bcrypt  = require('bcryptjs');
 const jwt     = require('jsonwebtoken');
 const router  = express.Router();
+const { requireAuth, requireAdmin } = require('../src/middleware/auth');
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) { console.error('FATAL: JWT_SECRET env var not set'); process.exit(1); }
-function requireAuth(req, res, next) {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ error: 'Unauthorised' });
-    try {
-        req.user = jwt.verify(token, JWT_SECRET);
-        next();
-    } catch {
-        res.status(401).json({ error: 'Invalid or expired token' });
-    }
-}
-function requireAdmin(req, res, next) {
-    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });
-    next();
-}
+// requireAuth/requireAdmin now come from src/middleware/auth.js (5A consolidation,
+// step 1 — see MASTER_CHECKLIST.md). JWT_SECRET is still needed directly below,
+// for jwt.sign() at login — that's the one legitimate use left in this file.
 function getClientIp(req) {
     return req.headers['x-forwarded-for']?.split(',')[0]?.trim()
         || req.socket?.remoteAddress
