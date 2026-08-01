@@ -17,6 +17,7 @@ const axios      = require('axios');
 const cloudinary = require('cloudinary').v2;
 const jwt        = require('jsonwebtoken');
 const { detectPlugin } = require('./suppliers/index');
+const { assertSafeExternalUrl } = require('../src/utils/urlSafety');
 const db         = require('../src/config/database');
 
 // ── JWT auth guard ─────────────────────────────────────────────────────────────
@@ -216,12 +217,21 @@ router.post('/import-family', async (req, res) => {
     }
 
     try {
+      // SSRF guard: refuse to fetch anything that resolves to a private/
+      // internal address before making the actual request. See
+      // src/utils/urlSafety.js for what this does and does not cover.
+      await assertSafeExternalUrl(colour.imgUrl);
+
       const dlResponse = await axios.get(colour.imgUrl, {
         responseType: 'arraybuffer',
         timeout: 30000,
+        maxRedirects: 3,
         headers: { 'User-Agent': 'Mozilla/5.0 (compatible)' },
       });
       const mimeType = dlResponse.headers['content-type'] || 'image/jpeg';
+      if (!mimeType.startsWith('image/')) {
+        throw new Error(`URL did not return an image (got "${mimeType}").`);
+      }
       const dataUri  = `data:${mimeType};base64,${Buffer.from(dlResponse.data).toString('base64')}`;
       const upload   = await cloudinary.uploader.upload(dataUri, { public_id: publicId, overwrite: true });
 

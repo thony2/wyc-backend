@@ -321,10 +321,7 @@ have been removed (`MASTER_CHECKLIST.md` 0.5-D, closed).
 
 **Known, currently-open gaps** (all tracked in `MASTER_CHECKLIST.md` 5A/5B, none of them exploitable
 by an unauthenticated public user):
-- The image-download step in `/api/panel/import-family` fetches whatever URL is supplied with no
-  domain restriction — admin-only, but worth a domain allow-list
 - `jwt.verify()` doesn't pin the expected algorithm (low practical risk with a single symmetric secret)
-- CSV export doesn't guard against formula injection in the free-text `message` field
 - `routes/panel.js` uses synchronous `bcrypt` calls on the request path
 
 **Dependency health:** `npm audit` reported zero vulnerabilities as of 26 Jul 2026. A previously-flagged

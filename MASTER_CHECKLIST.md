@@ -562,13 +562,21 @@ together, as one piece of work, not split twice.
 - [ ] Review CORS allowed origins — ensure no wildcards in production
 - [ ] Ensure all admin routes return 401 (not 403 or 404) for missing JWT *(spot-checked `src/routes/authGuard.js` during the audit — this one already returns 401 correctly; verify the equivalent check in `routes/panel.js`'s own auth middleware too)*
 - [ ] Rate limit the scraper endpoint separately from general API
-- [ ] **New (fourth audit, 26 Jul, verified):** `/import-family`'s image-download step
-      (`axios.get(colour.imgUrl, ...)` in `routes/scraper.js`) fetches whatever URL is pasted, with **no
-      domain restriction at all** — unlike `/scrape-family`/`/scrape-bulk`, which are correctly restricted
-      to a fixed supplier allow-list via `detectPlugin()`. Since this endpoint is JWT-admin-only, practical
-      risk is limited to a compromised/malicious admin account being able to make the server fetch
-      arbitrary internal or external URLs. Worth a domain allow-list or at least blocking private/link-local
-      IP ranges (RFC1918) before treating this as closed.
+- [x] **Done 1 Aug 2026:** `/import-family`'s image-download step
+      (`axios.get(colour.imgUrl, ...)` in `routes/scraper.js`) now runs every URL through
+      `src/utils/urlSafety.js`'s `assertSafeExternalUrl()` before fetching — resolves the hostname and
+      rejects it if the IP falls in a private/loopback/link-local range (covers the RFC1918 ranges,
+      127.0.0.0/8, and 169.254.0.0/16, which is what cloud metadata endpoints use), rejects non-http(s)
+      schemes, and rejects `localhost` by name. Also added: a content-type check after download (rejects
+      anything that isn't `image/*`) and `maxRedirects: 3` (was previously unset, so axios's default of 5).
+      Covered by 7 new unit tests (`src/tests/urlSafety.test.js`), all passing.
+      **Known residual gap, not fully closed:** this checks the IP *before* the request, not on every
+      redirect hop — a URL that resolves safely but redirects to a private address afterward would still
+      get through. Closing that fully means either disabling redirects entirely or validating the IP of
+      every hop; not done here. Worth revisiting if this endpoint's trust model ever widens beyond
+      JWT-admin-only. A domain allow-list (matching `/scrape-family`'s approach) was considered instead but
+      not used, since legitimate supplier image URLs come from many different CDN domains that would need
+      constant maintenance.
 - [ ] **New (fourth audit, 26 Jul, verified):** `jwt.verify(token, JWT_SECRET)` is called in all three auth
       implementations without pinning `{ algorithms: ['HS256'] }`. Low practical risk with a single
       symmetric secret (the classic attack this guards against needs an asymmetric public key involved,

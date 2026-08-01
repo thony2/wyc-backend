@@ -10,7 +10,7 @@
     "db:seed": "node seed-products.js",
     "admin:reset-password": "node scripts/reset-admin-password.js",
     "db:drop-audit-details-column": "node scripts/drop-audit-log-details-column.js",
-    "test": "node --test src/tests/leads.test.js"
+    "test": "node --test src/tests/leads.test.js src/tests/urlSafety.test.js"
   },
   "dependencies": {
     "axios": "^1.13.6",
@@ -40,5 +40,5 @@
     "node": ">=20.0.0"
   },
   "author": "West Yorkshire Carpets",
-  "licence": "UNLICENSED"
+  "license": "UNLICENSED"
 }
