@@ -76,23 +76,6 @@ const generalLimiter = rateLimit({
     },
 });
 
-function csrfTokenGenerator(req, res, next) {
-    if (!req.cookies['csrf_token']) {
-        const token = crypto.randomBytes(32).toString('hex');
-        res.cookie('csrf_token', token, {
-            httpOnly: false,
-            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-            secure:   process.env.NODE_ENV === 'production',
-            maxAge:   3_600_000,
-            path:     '/',
-        });
-        req.csrfToken = token;
-    } else {
-        req.csrfToken = req.cookies['csrf_token'];
-    }
-    next();
-}
-
 function requestId(req, res, next) {
     const id = crypto.randomBytes(8).toString('hex');
     req.requestId = id;
@@ -105,6 +88,5 @@ module.exports = {
     corsMiddleware,
     leadSubmissionLimiter,
     generalLimiter,
-    csrfTokenGenerator,
     requestId,
 };
