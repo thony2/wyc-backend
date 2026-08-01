@@ -535,8 +535,8 @@ together, as one piece of work, not split twice.
       it, and the real merge of login/products/offers/scraping into `src/`, are still fully open.
 - [ ] Migrate all functionality from **`routes/panel.js`** → src/controllers/ + src/routes/
       *(file name corrected — this was `routes/admin.js` before the July rename commits)*
-- [ ] Migrate all functionality from routes/products.js → src/controllers/
-- [ ] Remove routes/ directory entirely
+- [x] **Done 1 Aug 2026:** migrated all functionality from `routes/products.js` → `src/controllers/productPublicController.js` + `src/routes/products.js`, still mounted at `/api/products`. No longer a `(db) => {...}` factory — requires the shared db pool directly, matching `src/routes/authGuard.js`/`routes/scraper.js`'s style. Also closed the "3 raw `e.message` leaks" part of the finding below for this file specifically (all 5 handlers now log internally, return a generic message — the `/:id/likes` and `/:id/like` handlers already did this correctly; `/`, `/categories`, `/deals` now match). **Same commit also resolves the like/unlike duplication noted separately in 5A's own audit history**: `routes/panel.js`'s increment-only `POST /products/:id/like` (unauthenticated, no unlike) is removed — confirmed by grepping `admin/index.html`, `admin/js/*`, and every public `js/*.js` file for any reference to that path first; none found. The surviving implementation is the toggle version, now living in `productPublicController.js`. **`routes/panel.js` itself (login/products-CRUD/offers) is not migrated — that's still fully open below.**
+- [ ] Remove routes/ directory entirely *(blocked on routes/panel.js and routes/scraper.js migrations, still open)*
 - [ ] Verify: server.js only imports from src/
 - [ ] Update server.js route mounts to match new structure
 - [x] ~~Remove migrate-sqlite-local.js~~ → done as part of dropping SQLite entirely, see 0.5-A
@@ -692,7 +692,7 @@ together, as one piece of work, not split twice.
 | 2 — Content | ⬜ Not started | — | — |
 | 3 — Website | ⬜ Not started | — | — |
 | 4 — Automation | ⬜ Not started | — | — |
-| 5 — Code Quality | 🟡 In Progress *(5B CSV-injection fix, JWT algorithm pinning, and 5E README rewrite done; 5A step 1 of 5 done (auth middleware consolidated) — the actual routing merge is still open; 5C now has its first two tests, most of it still open — see the update notes above for detail)* | Jul 2026 | — |
+| 5 — Code Quality | 🟡 In Progress *(5B CSV-injection fix, JWT algorithm pinning, and 5E README rewrite done; 5A steps 1-2 of 5 done (auth middleware consolidated; routes/products.js migrated + like/unlike duplication resolved) — routes/panel.js and routes/scraper.js migrations still open; 5C now has its first two tests, most of it still open — see the update notes above for detail)* | Jul 2026 | — |
 | 6 — Performance | ⬜ Not started | — | — |
 | 7 — Scale | ⬜ Future | — | — |
 

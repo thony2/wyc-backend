@@ -19,7 +19,7 @@ require('./migrate-auto')(db).catch(e => logger.error(`[Migration] ${e.message}`
 
 const leadRoutes     = require('./src/routes/leads');
 const adminRoutes    = require('./src/routes/authGuard');
-const productsRouter = require('./routes/products');
+const productsRouter = require('./src/routes/products');
 const panelRouter    = require('./routes/panel');
 const scraperRouter  = require('./routes/scraper');
 const seoRouter      = require('./routes/products-seo');
@@ -84,7 +84,7 @@ app.get('/health', (_req, res) => {
 
 app.use('/api', leadRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/products', productsRouter(db));
+app.use('/api/products', productsRouter);
 app.use('/api/panel', panelRouter(db));
 app.use('/api/panel', scraperRouter);
 app.use('/flooring', seoRouter);

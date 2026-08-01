@@ -285,19 +285,11 @@ module.exports = (db) => {
             res.status(500).json({ error: e.message });
         }
     });
-    router.post('/products/:id/like', async (req, res) => {
-        try {
-            const { id } = req.params;
-            const result = await db.query(
-                `UPDATE products SET likes = COALESCE(likes, 0) + 1 WHERE id = $1 RETURNING likes`,
-                [id]
-            );
-            if (result.rows.length === 0) return res.status(404).json({ error: 'Not found' });
-            res.json({ likes: result.rows[0].likes });
-        } catch (e) {
-            console.error('Like error:', e);
-            res.status(500).json({ error: 'Server error' });
-        }
-    });
+    // The increment-only POST /products/:id/like duplicate that lived here was
+    // removed as part of 5A step 2 (see MASTER_CHECKLIST.md) — confirmed by
+    // grepping the whole frontend (admin + public) for any reference to this
+    // path before removing it; none found. The surviving implementation
+    // (like/unlike toggle) is src/controllers/productPublicController.js,
+    // mounted at /api/products/:id/like.
     return router;
 };
