@@ -72,7 +72,9 @@ wyc-backend/
 ├── vercel.json                  # Only rule: proxies /flooring/* to the Railway API
 │
 └── PROJECT_CONTEXT.md, MASTER_CHECKLIST.md, WYC-Backend-Technical-Audit.md
-                                  # Project history and the actively-maintained task list.
+                                  # PROJECT_CONTEXT.md is archived (see its own banner) — MASTER_CHECKLIST.md
+                                  # is the actively-maintained task list. WYC-Backend-Technical-Audit.md is
+                                  # a dated historical snapshot (7 Jul 2026), also archived.
                                   # Read MASTER_CHECKLIST.md before assuming anything below
                                   # is still accurate months from now.
 ```
@@ -329,9 +331,8 @@ a mistake. Current protection against forged cross-site submissions relies on th
 instead. The vestigial `GET /api/csrf-token` route and its unused `csrfTokenGenerator` middleware
 have been removed (`MASTER_CHECKLIST.md` 0.5-D, closed).
 
-**Known, currently-open gaps** (all tracked in `MASTER_CHECKLIST.md` 5A/5B, none of them exploitable
-by an unauthenticated public user):
-- `jwt.verify()` doesn't pin the expected algorithm (low practical risk with a single symmetric secret)
+**Known, currently-open gaps** (tracked in `MASTER_CHECKLIST.md` 5A, not exploitable by an
+unauthenticated public user):
 - `routes/panel.js` uses synchronous `bcrypt` calls on the request path
 
 **Dependency health:** `npm audit` reported zero vulnerabilities as of 26 Jul 2026. A previously-flagged
