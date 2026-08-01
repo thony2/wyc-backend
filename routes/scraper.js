@@ -15,24 +15,15 @@ const express    = require('express');
 const router     = express.Router();
 const axios      = require('axios');
 const cloudinary = require('cloudinary').v2;
-const jwt        = require('jsonwebtoken');
 const { detectPlugin } = require('./suppliers/index');
 const { assertSafeExternalUrl } = require('../src/utils/urlSafety');
 const db         = require('../src/config/database');
+const { requireAuth } = require('../src/middleware/auth');
 
-// ── JWT auth guard ─────────────────────────────────────────────────────────────
-function requireAuth(req, res, next) {
-  const header = req.headers['authorization'] || '';
-  const token  = header.startsWith('Bearer ') ? header.slice(7) : null;
-  if (!token) return res.status(401).json({ error: 'Unauthorised.' });
-  try {
-    req.admin = jwt.verify(token, process.env.JWT_SECRET);
-    next();
-  } catch {
-    return res.status(401).json({ error: 'Session expired — please log in again.' });
-  }
-}
-
+// requireAuth now comes from src/middleware/auth.js (5A consolidation, step 1 —
+// see MASTER_CHECKLIST.md). Previously set req.admin; now sets req.user like
+// every other route in the app. Nothing in this file reads either property —
+// confirmed by grep before making this change — so this is a safe rename.
 router.use(requireAuth);
 
 // ── Shared fetch helper ────────────────────────────────────────────────────────
