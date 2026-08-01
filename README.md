@@ -33,25 +33,30 @@ wyc-backend/
 │   │   └── initDb.js            # Read-only connection check. Does NOT create anything —
 │   │                            # migrate-auto.js (above) is what actually builds the schema.
 │   ├── controllers/
-│   │   ├── leadController.js    # POST /api/leads
-│   │   └── adminController.js   # Leads/dashboard/calendar admin logic (see API Reference)
+│   │   ├── leadController.js          # POST /api/leads
+│   │   ├── adminController.js         # Leads/dashboard/calendar admin logic (see API Reference)
+│   │   └── productPublicController.js # Public product catalogue + likes (migrated from
+│   │                                  # routes/products.js, 5A step 2 — see MASTER_CHECKLIST.md)
 │   ├── middleware/
 │   │   ├── security.js          # Helmet, CORS, rate limiters
 │   │   └── validate.js          # express-validator chains for the public lead form
 │   ├── routes/
 │   │   ├── leads.js             # Mounts leadController at /api
-│   │   └── authGuard.js         # JWT check + mounts adminController at /api/admin
+│   │   ├── authGuard.js         # JWT check + mounts adminController at /api/admin
+│   │   └── products.js          # Public product catalogue + likes — mounted at /api/products
+│   │                            # (migrated from routes/products.js, 5A step 2)
 │   ├── services/
 │   │   ├── emailService.js      # Admin notification + customer confirmation emails
 │   │   └── csvService.js        # CSV export helper
 │   └── tests/
-│       └── leads.test.js        # Currently a placeholder — see "Known Gaps" below
+│       ├── leads.test.js        # Real integration test (pg-mem), added PR #34 — not a placeholder,
+│       │                        # see "Known Gaps" below for what test coverage still doesn't exist
+│       └── urlSafety.test.js    # SSRF-guard unit tests for src/utils/urlSafety.js
 │
 ├── routes/                      # Older layer — still genuinely live, not legacy/dead code.
-│   │                            # Handles everything src/ doesn't: login, products, offers,
+│   │                            # Handles what src/ doesn't yet: login, products CRUD, offers,
 │   │                            # supplier scraping/import. See "The Two Admin APIs" below.
 │   ├── panel.js                 # Login, products, offers, audit log — mounted at /api/panel
-│   ├── products.js              # Public product catalogue + likes — mounted at /api/products
 │   ├── products-seo.js          # Server-rendered product pages — mounted at /flooring
 │   ├── scraper.js               # Supplier scraping + Cloudinary import — mounted at /api/panel
 │   └── suppliers/                # One plugin per supported supplier site (see below)
@@ -89,9 +94,14 @@ Consolidating these into one is tracked as Phase 5A of `MASTER_CHECKLIST.md` and
 there as "merge two feature-complete implementations," not "delete the unused one." Nothing here is
 safe to delete without checking the checklist first.
 
-One thing *is* already known to be safely removable: `routes/panel.js` also contains its own second,
-unused copy of the leads/dashboard/calendar endpoints (dead code the frontend never calls) — see
-`MASTER_CHECKLIST.md` 5A for the specific line references.
+Two duplications of this kind have already been found and removed, not left for later:
+- `routes/panel.js`'s own second, unused copy of the leads/dashboard/calendar endpoints (dead code
+  the frontend never called) — removed 31 Jul 2026 (PR #32).
+- A second, behaviourally-different `POST /products/:id/like` that lived in `routes/panel.js`
+  (unauthenticated, always-increment, no unlike) alongside the real one in `src/routes/products.js`
+  (unauthenticated, like/unlike toggle) — removed as part of the `routes/products.js` → `src/`
+  migration (5A step 2). Confirmed unused first by grepping the entire frontend for any reference
+  to the removed path.
 
 ---
 
@@ -231,7 +241,7 @@ new → contacted → quoted → won
 | Method | Path | Description |
 |---|---|---|
 | POST | `/api/panel/login` | Get a JWT (see above) |
-| GET/POST/PATCH/DELETE | `/api/panel/products` | Product CRUD |
+| GET/POST/PUT/PATCH/DELETE | `/api/panel/products` | Product CRUD |
 | GET/POST/DELETE | `/api/panel/offers` | Offers/deals CRUD |
 | POST | `/api/panel/scrape-family` | Scrape one supplier product URL |
 | POST | `/api/panel/scrape-bulk` | Scrape up to 50 URLs, streamed results |
@@ -345,9 +355,12 @@ confirmed 100% unused, so this closed the vulnerability outright rather than nee
 
 ## Known Gaps (honest, not exhaustive — see MASTER_CHECKLIST.md for the full, current list)
 
-- **Automated test coverage is effectively zero.** `src/tests/leads.test.js` is a literal placeholder.
-  A schema-drift bug in the `audit_log` table shipped silently for months in 2026 and would have been
-  caught on day one by a single real integration test against `POST /api/leads`.
+- **Automated test coverage is real but thin, not zero.** `src/tests/leads.test.js` (PR #34) is a genuine
+  integration test against an in-memory Postgres, covering the valid- and invalid-submission paths for
+  `POST /api/leads`. `src/tests/urlSafety.test.js` covers the SSRF guard. Everything else — admin login,
+  product CRUD, the honeypot field, the SEO product pages — has no test coverage yet. A schema-drift bug
+  in the `audit_log` table shipped silently for months in 2026 before the first of these tests existed;
+  that specific class of bug is now caught, most others still aren't.
 - **`migrate-auto.js` runs a large idempotent block on every server boot** rather than using a real
   migration tool with version tracking. Works today because it's disciplined about
   `IF NOT EXISTS` everywhere, but has no down-migrations and already has one confirmed case of drift
@@ -355,9 +368,6 @@ confirmed 100% unused, so this closed the vulnerability outright rather than nee
 - **`admin/index.html` is still a large single file** (~2,400 lines, down from ~4,000 after a partial
   split). The remaining split is deliberately deferred until a planned admin panel redesign happens, so
   it isn't done twice.
-- **Three separate, near-identical copies of JWT auth-checking middleware** exist
-  (`src/routes/authGuard.js`, `routes/panel.js`, `routes/scraper.js`). Any change to auth behaviour has
-  to be made in three places.
 - **`.vercel/README.txt` is tracked in git despite `.gitignore` excluding `.vercel/`** — it was committed
   before that ignore rule was added, so it wasn't retroactively removed. Harmless, but it's leftover
   debris from an earlier Vercel-for-everything setup that predates the current Vercel-site/Railway-API
@@ -399,7 +409,8 @@ anywhere in the actual code. Harmless to leave unset; not worth generating value
 | `db:init` | `node src/config/initDb.js` | Read-only connection check — lists existing tables, creates nothing |
 | `db:seed` | `node seed-products.js` | **Dev only** — inserts placeholder products with Unsplash image URLs. Never run against production. |
 | `admin:reset-password` | `node scripts/reset-admin-password.js` | Resets the `admin` user's password to `ADMIN_DEFAULT_PASSWORD` from `.env` |
-| `test` | `node --test src/tests/leads.test.js` | Currently exercises a single placeholder assertion — see Known Gaps |
+| `test` | `node --test src/tests/leads.test.js src/tests/urlSafety.test.js` | Real integration + unit tests (PR #34, #38) — not placeholders. See Known Gaps for what's still uncovered |
+| `db:drop-audit-details-column` | `node scripts/drop-audit-log-details-column.js` | One-off, deliberately **not** part of `migrate-auto.js` (that script only ever does safe additive changes). Drops `audit_log.details` (plural) — confirmed dead, distinct from the actively-used `audit_log.detail` (singular). Reports row counts before dropping; safe to run more than once |
 
 `scripts/generate-hash.js` (not wired into `package.json`) prints a bcrypt hash of
 `ADMIN_DEFAULT_PASSWORD` for cases where you need to set an admin password by hand via a database
