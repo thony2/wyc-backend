@@ -1,6 +1,22 @@
 # Technical Audit — `thony2/wyc-backend`
 **West Yorkshire Carpets — Lead Management & Catalogue Backend**
 
+> **📋 ARCHIVED — historical snapshot, superseded.** This audit reflects the repository as it stood on
+> **7 July 2026** only. It was the first of what became a recurring self-audit practice on this project;
+> its findings have since been absorbed into, and superseded by, `MASTER_CHECKLIST.md`, which is the
+> current, actively-maintained source of truth for implementation status. Two independent re-verifications
+> (26 Jul, 1 Aug 2026) confirmed this document's findings were accurate *for that date* — most have since
+> been resolved (tracked in `MASTER_CHECKLIST.md`); a handful (hardcoded frontend URL, ops-script paths,
+> unoptimized images, missing `og-image.jpg`) are, as of 1 Aug 2026, still open and still accurately
+> described here. Read this as a dated history document, not a current action list — check
+> `MASTER_CHECKLIST.md` for what's actually still outstanding today.
+>
+> This document's own "Activity Timeline" table (§1) was independently checked against direct `git log`
+> queries on 1 Aug 2026 and found to be substantially inaccurate for the two oldest periods it covers
+> (its commit counts for 10 Mar–5 Apr and 24–30 May don't reconcile with the actual repository history —
+> the two most recent periods it covers do match exactly). This doesn't affect the document's code-level
+> findings, which independently check out, but the timeline table specifically shouldn't be relied on.
+
 Audited: 7 July 2026 · Method: full local clone + static analysis + targeted empirical verification (dependency inspection, git archaeology, cross-referencing docs against source). Not a black-box review — every finding below is traced to a specific file, line, or commit.
 
 ---

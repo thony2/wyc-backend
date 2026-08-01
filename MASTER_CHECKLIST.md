@@ -106,7 +106,10 @@ Each item has a reference to the file(s) affected.
 - [x] Frontend runs locally: Live Server → http://127.0.0.1:5500
 - [x] Admin panel accessible and login works
 - [x] Railway PostgreSQL connected (production DB)
-- [x] .env file has all required variables (see PROJECT_CONTEXT.md §5)
+- [x] .env file has all required variables (see README.md's "Environment Variables Reference" —
+      *corrected 1 Aug 2026: this used to cite `PROJECT_CONTEXT.md §5`, which has wrong variable names
+      for email config (`MAIL_HOST` etc. instead of the real `SMTP_HOST` etc.) and is now retired, see
+      that document's own archived banner*)
 - [x] package-lock.json committed to repo
 - [x] .env.example updated with all current variables including CLOUDINARY_*
 - [x] netlify.toml deleted
@@ -554,16 +557,20 @@ together, as one piece of work, not split twice.
       `node --check`; applied and confirmed via a real `git am` on a clean checkout before merging.
       **This is step 1 of 5 in the routing consolidation — the actual merge of
       login/products/offers/scraping into `src/` (the two items below) is still fully open.**
-- [ ] **New (fourth audit, 26 Jul, verified); partially closed 1 Aug:** error-handling is inconsistent
-      across the two layers — `src/controllers/leadController.js` and `adminController.js` correctly log
-      the real error and return a generic message; `routes/panel.js` still returns the raw `e.message`
-      straight to the client **21 separate times**, `routes/scraper.js` still does it **2 times** (counted
-      directly, not estimated). `routes/products.js`'s 3 instances were closed as part of migrating it to
-      `src/controllers/productPublicController.js` (5A step 2, above) — arguably more urgent than the
-      remaining two since that one was public-facing, not authenticated-admin-only. The remaining 23
-      instances are still admin-only exposure, not public — but worth standardising on the disciplined
-      pattern already used correctly elsewhere, as part of the same consolidation (5A steps 3-4) rather
-      than patching each call site separately later.
+- [ ] **New (fourth audit, 26 Jul, verified); partially closed 1 Aug; counts refreshed 1 Aug 2026
+      reconciliation pass:** error-handling is inconsistent across the two layers — `src/controllers/
+      leadController.js` and `adminController.js` correctly log the real error and return a generic
+      message; `routes/panel.js` currently returns the raw `e.message` straight to the client **14
+      separate times** (down from 21 on 26 Jul — most likely because the same 5A commit that removed
+      panel.js's 142 lines of dead duplicate leads/dashboard/calendar routes also removed several of
+      these along with them, not because anyone fixed them individually), `routes/scraper.js` does it
+      **5 times** counting client-facing responses only (up from 2 on 26 Jul — the SSRF-guard work added
+      afterward touched this file and added more of the same pattern). `routes/products.js`'s 3 instances
+      were closed as part of migrating it to `src/controllers/productPublicController.js` (5A step 2,
+      above) — arguably more urgent than the remaining ones since that one was public-facing, not
+      authenticated-admin-only. The remaining 19 instances are still admin-only exposure, not public —
+      but worth standardising on the disciplined pattern already used correctly elsewhere, as part of
+      the same consolidation (5A steps 3-4) rather than patching each call site separately later.
 
 ### 5B — Security hardening
 - [x] ~~CSRF protection — resolved, see 0.5-D~~ → both remaining tasks this item used to describe are
@@ -725,12 +732,21 @@ Paste this at the start of any new conversation:
 
 ---
 *"I am building a flooring lead-generation platform (West Yorkshire Carpets).
-Read PROJECT_CONTEXT.md and MASTER_CHECKLIST.md which I will attach.
+Read README.md and MASTER_CHECKLIST.md, which I will attach — README.md for how the system actually
+works today, MASTER_CHECKLIST.md for what's done and what's still open.
 Find the first unchecked item in the checklist and let's work on it.
 Work like a senior full-stack engineer — no shortcuts, no hardcoded values,
 no patches. One task at a time, commit after each change. The production site
 is live and works — never make a change that can't be verified before it
 reaches `main`."*
 
-Then attach both PROJECT_CONTEXT.md and MASTER_CHECKLIST.md.
+Then attach both README.md and MASTER_CHECKLIST.md.
+
+**Corrected 1 Aug 2026 (documentation reconciliation pass):** this used to say `PROJECT_CONTEXT.md` and
+`MASTER_CHECKLIST.md`, with no caveat. `PROJECT_CONTEXT.md` hasn't been updated since 27 May 2026 and is
+now formally archived — see its own banner. Attaching it to a new session used to mean handing that
+session wrong architecture facts (stale file paths, a fictional API route, wrong env var names) at the
+exact moment it was most likely to act on them uncritically. `PROJECT_CONTEXT.md §1` (business model) is
+still worth reading if the session needs business context, not technical context — but it's no longer
+part of the default onboarding pair.
 ---

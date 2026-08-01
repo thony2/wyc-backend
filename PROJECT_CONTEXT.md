@@ -1,6 +1,27 @@
 # WYC — Project Context & Handover Document
-**Version:** 1.0 | **Last updated:** May 2026
-**Use this document to:** onboard a new developer, resume in a new chat, or audit progress.
+**Version:** 1.0 | **Last updated:** May 2026 | **Status: ARCHIVED — see banner below**
+
+---
+
+> ## ⚠️ ARCHIVED DOCUMENT — most of this file describes a version of the project that no longer exists
+>
+> This document was written **27 May 2026** and has not been edited since. Everything technical in it
+> — file paths, API routes, environment variable names, the known-issues list — describes the codebase
+> as it was **before** SQLite was removed, before the admin API split was correctly understood, before
+> the CSRF saga, before the auth-middleware consolidation, and before most of what `MASTER_CHECKLIST.md`
+> now tracks even existed. An independent documentation audit (1 Aug 2026, cross-verified directly
+> against the repository rather than taken on trust) found roughly 70% of this document's checkable
+> technical content to be actively wrong, not just outdated.
+>
+> **For current technical fact, use these instead:**
+> - **[`README.md`](./README.md)** — architecture, project structure, API reference, environment
+>   variables, security posture, deployment.
+> - **[`MASTER_CHECKLIST.md`](./MASTER_CHECKLIST.md)** — what's actually done, what's still open, the
+>   project's own running engineering log.
+>
+> **What's still genuinely worth reading here:** §1 (business model) — this hasn't changed and isn't a
+> technical claim that can go stale the way a file path can. The rest of this document is kept for
+> historical record, not as a reference.
 
 ---
 
@@ -17,11 +38,21 @@ and passes installation leads to local fitters in exchange for commission.
 - Pass install leads to local fitter → earn commission on product + installation
 - Core asset is SEO-ranked web presence, not physical stock
 
-**Current state:** Functional prototype. Live in production. No real products yet.
+**Current state (as of May 2026 — see `MASTER_CHECKLIST.md` for the current state today):**
+Functional prototype. Live in production. No real products yet.
+
+**Not evaluated by the 1 Aug 2026 documentation audit, worth someone's attention separately:** the
+scraper/import subsystem (`routes/scraper.js`, `routes/suppliers/`) exists specifically to pull content
+— images, specifications, descriptions — from supplier websites and re-host it, rebranded, without
+attribution. Nothing in this repository's documentation addresses whether this has been checked against
+the relevant suppliers' terms of service, or the copyright status of re-hosted supplier photography.
+That's a business/legal question, not a code question, and outside what any of these four documents can
+answer — flagging it here since this is the one section of this archived document actually about the
+business, not the implementation.
 
 ---
 
-## 2. Tech Stack
+## 2. Tech Stack (mostly still accurate — verify anything version-specific against `package.json`)
 
 | Layer | Technology | Hosting |
 |-------|-----------|---------|
@@ -33,183 +64,68 @@ and passes installation leads to local fitters in exchange for commission.
 | Auth | JWT (8h expiry) | — |
 | Logging | Winston | — |
 
-**Key versions:**
-- Node: ≥18.0.0
-- Express: 4.18.x
-- pg: 8.19.x
+**Key versions — corrected 1 Aug 2026, this table was wrong:** this document previously said
+`Node: ≥18.0.0`. The actual, current requirement in `package.json` is **`Node: ≥20.0.0`** — matching
+`README.md`, which is correct. Don't trust exact dependency versions (Express, `pg`, etc.) from this
+document at all; check `package.json` directly, since those drift on every `npm update` and this file
+doesn't.
 
 ---
 
-## 3. Repository Structure
+## 3. Repository Structure — RETIRED, see `README.md`
 
-```
-project/
-├── admin/
-│   ├── index.html          ← MONOLITHIC: 3,669 lines. HTML + CSS + JS all inline.
-│   └── images/             ← Duplicate of root images/ — to be cleaned
-├── css/
-│   ├── styles.css          ← Main website styles
-│   ├── catalogue.css       ← Catalogue overlay/page styles
-│   └── product-page.css    ← SSR product page styles
-├── images/                 ← Static assets (logo, hero, gallery, tiktok screenshots)
-├── js/
-│   ├── script.js           ← Homepage scripts (calculator, animations, nav)
-│   ├── form-handler.js     ← Lead form submission (⚠️ hardcoded Railway URL)
-│   ├── catalogue.js        ← Catalogue overlay logic (⚠️ hardcoded Railway URL)
-│   └── product-page.js     ← Product page JS (calculator, PDF, lightbox)
-├── routes/                 ← ⚠️ LEGACY LAYER — partially superseded, still active
-│   ├── admin.js            ← Old admin router (mounted at /api/panel)
-│   ├── products.js         ← Old products router
-│   ├── scraper.js          ← Catalogue importer (⚠️ own DB pool, supplier name leaks)
-│   └── suppliers/          ← Web scrapers per supplier (cld, cormar, victoria, etc.)
-├── src/                    ← NEW LAYER — refactored architecture
-│   ├── config/
-│   │   ├── database.js     ← PostgreSQL/SQLite abstraction layer
-│   │   └── schema.sql      ← SQLite schema (legacy, not used in production)
-│   ├── controllers/
-│   │   ├── adminController.js
-│   │   └── leadController.js
-│   ├── middleware/
-│   │   ├── security.js     ← Helmet, CORS, rate limiting. ⚠️ csrfValidator is a stub
-│   │   └── validate.js     ← express-validator input validation
-│   ├── routes/
-│   │   ├── admin.js        ← New admin router (mounted at /api/admin)
-│   │   └── leads.js        ← Lead routes
-│   ├── services/
-│   │   ├── emailService.js ← Nodemailer email templates
-│   │   └── csvService.js   ← Lead CSV export
-│   └── utils/
-│       └── logger.js       ← Winston logger
-├── scripts/
-│   ├── generate-hash.js    ← Utility: generates bcrypt hash from .env password
-│   └── reset-admin-password.js ← Utility: resets admin password in DB
-├── index.html              ← Main website landing page
-├── catalogue.html          ← ⚠️ PLANNED but not yet built
-├── privacy-policy.html
-├── terms.html
-├── robots.txt
-├── sitemap.xml
-├── sitemap-pages.xml
-├── server.js               ← Express app entry point
-├── migrate-auto.js         ← ⚠️ Runs schema + seeds on every server start
-├── package.json
-├── vercel.json             ← Frontend deployment config
-└── netlify.toml            ← ⚠️ ORPHANED — should be deleted
-```
+The structure described here (a `routes/admin.js`, `src/routes/admin.js`, `src/config/schema.sql`, and
+a "PostgreSQL/SQLite abstraction layer") is stale. Some of it was stale on the day this document was
+written — `routes/admin.js` had already been renamed to `routes/panel.js` before this file's own commit,
+per `git log`. **`README.md`'s "Project Structure" section is accurate and actively maintained; use
+that instead of anything below this line in this section.**
 
 ---
 
-## 4. Active API Routes
+## 4. Active API Routes — RETIRED, see `README.md`
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | /health | None | Server health check |
-| POST | /api/leads | None | Submit lead form |
-| GET | /api/leads | JWT | List leads (src/routes) |
-| POST | /api/panel/login | Rate limited | Admin login → returns JWT |
-| GET | /api/panel/stats | JWT | Dashboard stats |
-| GET | /api/panel/products | JWT | List products |
-| POST | /api/panel/products | JWT | Create product |
-| PUT | /api/panel/products/:id | JWT | Update product |
-| DELETE | /api/panel/products/:id | JWT | Delete product |
-| POST | /api/panel/scrape-family | JWT | Scrape supplier URL |
-| POST | /api/panel/import-family | JWT | Import scraped products |
-| GET | /flooring/:category/:slug | None | SSR product page (SEO) |
-| GET | /flooring/sitemap.xml | None | Dynamic sitemap |
-| GET | /admin | None | Serve admin panel HTML |
+The table this document used to have here was both wrong (it listed `GET /api/leads (JWT)`, a route
+that has never existed — `src/routes/leads.js` only ever defined `POST /leads`) and badly incomplete
+(it omitted the entire `/api/admin/*` tree, offers, audit log, change-password, and likes — roughly
+two-thirds of the app's real routes). **`README.md`'s "API Reference" section lists every route
+currently confirmed to exist; use that instead.**
 
 ---
 
-## 5. Environment Variables
+## 5. Environment Variables — RETIRED, see `README.md`
 
-### Required on Railway (wyc-backend service):
-
-```env
-# Database
-DB_TYPE=postgres
-PGHOST=postgres.railway.internal
-PGPORT=5432
-PGDATABASE=railway
-PGUSER=postgres
-PGPASSWORD=<from Railway Postgres service Variables tab>
-
-# App
-NODE_ENV=production
-PORT=8080
-JWT_SECRET=<strong random string, min 32 chars>
-ALLOWED_ORIGIN=https://www.westyorkshirecarpets.com,https://project-rho-nine-19.vercel.app
-
-# Email (optional)
-MAIL_ENABLED=false
-MAIL_HOST=
-MAIL_PORT=
-MAIL_USER=
-MAIL_PASS=
-MAIL_FROM=
-
-# Cloudinary (for product images)
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
-```
-
-### Required locally (.env file):
-
-Same as above but with:
-```env
-PGHOST=hopper.proxy.rlwy.net   ← Public Railway host for local dev
-PGPORT=10115                    ← Public Railway port
-NODE_ENV=development
-ALLOWED_ORIGIN=http://localhost:5500
-```
+The email variable names this document used to list here (`MAIL_HOST`, `MAIL_PORT`, `MAIL_USER`,
+`MAIL_PASS`) are wrong and always were — the actual code has only ever read `SMTP_HOST`, `SMTP_PORT`,
+`SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` (confirmed directly in `src/services/emailService.js`). Anyone
+configuring email from this section alone would set variables the code never reads. **`README.md`'s
+"Environment Variables Reference" table is accurate and matches `.env.example`; use that instead.**
 
 ---
 
-## 6. Known Critical Issues
+## 6. Known Critical Issues — RETIRED, see `MASTER_CHECKLIST.md`
 
-### 🔴 CRITICAL
-
-| # | Issue | File | Impact |
-|---|-------|------|--------|
-| C1 | CSRF validator is empty stub — does nothing | src/middleware/security.js | Security |
-| C2 | Admin password hardcoded in source code | migrate-auto.js | Security |
-| C3 | Dual routing architecture — both layers active simultaneously | server.js | Maintainability |
-| C4 | Three separate PostgreSQL connection pools | database.js + products-seo.js + scraper.js | Reliability |
-| C5 | Migrations run on every server start | migrate-auto.js | Stability |
-
-### 🟠 HIGH
-
-| # | Issue | File | Impact |
-|---|-------|------|--------|
-| H1 | Supplier name leaks into imported products | routes/scraper.js | Business critical |
-| H2 | Railway backend URL hardcoded in frontend JS | js/form-handler.js, js/catalogue.js | Dev workflow |
-| H3 | admin/index.html is 3,669 lines (all inline) | admin/index.html | Maintainability |
-| H4 | og-image.jpg referenced but doesn't exist | index.html | SEO/Social |
-| H5 | Google Analytics not configured | index.html | Business |
-| H6 | Zero automated tests | — | Quality |
-| H7 | package-lock.json not in repo | — | Reproducibility |
-
-### 🟡 MEDIUM
-
-| # | Issue | File | Impact |
-|---|-------|------|--------|
-| M1 | Catalogue is a modal overlay, not a page | index.html | UX/SEO |
-| M2 | netlify.toml orphaned | netlify.toml | Confusion |
-| M3 | express-session in deps but unused | package.json | Bundle size |
-| M4 | undici + axios both present (duplicate) | package.json | Bundle size |
-| M5 | npm scripts db:seed and test are broken | package.json | DX |
-| M6 | Audit log never records IP address | routes/admin.js | Security |
-| M7 | "licence" typo in package.json | package.json | Minor |
+Of the 19 items originally listed in this section (5 critical, 7 high, 7 medium), an independent audit
+(1 Aug 2026) confirmed 13–14 are now fixed, 2 are now described backwards relative to current reality
+(CSRF was characterized as "an empty stub" — it was fully implemented, tested, and deliberately reverted
+for a documented reason; the "dual routing architecture" is real but is now a correctly-diagnosed,
+intentionally-tracked situation with its own remediation plan, not an unexplained problem), and only
+4–5 are both still open and still accurately described. **This section is no longer a reliable action
+list. `MASTER_CHECKLIST.md` is the current, actively-maintained one — use that instead.**
 
 ---
 
 ## 7. Architecture Decisions Already Made
 
+Still true, and worth keeping as-is — these are stable decisions, not implementation details that drift:
 - **Frontend on Vercel, backend on Railway** — correct, keep this split
-- **PostgreSQL in production, SQLite option for local** — abstraction in database.js
 - **SSR product pages** at /flooring/:category/:slug — correct for SEO
 - **JWT auth, no sessions** — correct for stateless API
 - **Cloudinary for images** — correct, keep
+
+**One correction:** this document used to also claim *"PostgreSQL in production, SQLite option for
+local — abstraction in database.js."* That's wrong — SQLite was fully removed 10 Jul 2026, by deliberate
+design. `src/config/database.js` now throws a startup error if `DB_TYPE=sqlite` is ever set. See
+`README.md`'s architecture section.
 
 ---
 
@@ -225,6 +141,14 @@ Vercel auto-deploys frontend static files
 vercel.json proxies /flooring/* → Railway backend
 ```
 
+**Caveat, not a correction — this needs checking against the live dashboards, not this file:**
+`MASTER_CHECKLIST.md`'s `0.5-I` entry documents that the live frontend (`easyflooring.vercel.app`) was
+at one point **not** connected to this GitHub repo at all, and was later reconnected and verified
+(11–26 Jul 2026). Whether the simple diagram above is currently accurate depends on live Vercel/Railway
+dashboard state, which no static document — including this correction — can confirm. Check
+`MASTER_CHECKLIST.md` `0.5-I` for the most recent verification, and the dashboards themselves for
+anything more recent than that.
+
 **Local dev:**
 - Backend: npm run dev → http://localhost:3001
 - Frontend: VS Code Live Server → http://127.0.0.1:5500
@@ -234,7 +158,7 @@ vercel.json proxies /flooring/* → Railway backend
 
 ## 9. Supplier Scrapers
 
-The import catalogue feature scrapes these suppliers:
+Still accurate — this subsystem's file layout hasn't moved:
 
 | Supplier | File | URL pattern |
 |----------|------|------------|
@@ -251,23 +175,19 @@ They must be monitored and verified regularly.
 
 **Business rule:** ALL supplier names must be stripped before saving to the database.
 The customer must never see "Carpet Line Direct", "Cormar", etc.
-Only the owner's brand name is visible.
+Only the owner's brand name is visible. **Update, 1 Aug 2026:** this is no longer just a stated rule —
+`routes/scraper.js`'s `/import-family` endpoint enforces it in code, rejecting any colour whose name
+still matches the supplier's original name at import time. See `MASTER_CHECKLIST.md` `1A`.
 
 ---
 
-## 10. For the Next Developer / Chat Session
+## 10. For the Next Developer / Chat Session — see `MASTER_CHECKLIST.md`'s "How to Resume" instead
 
-### Before starting any work:
+This section used to tell the reader to start by reading this document in full. Don't — see the banner
+at the top. **`MASTER_CHECKLIST.md`'s "How to Resume in a New Chat" section (bottom of that file) is the
+current, correct version of this instruction.**
 
-1. Read this document fully
-2. Read MASTER_CHECKLIST.md — find the first unchecked item
-3. Run `npm run dev` — confirm server starts cleanly
-4. Open http://127.0.0.1:5500 — confirm frontend loads
-5. Log into the admin panel — confirm it works
-
-### The single most important rule:
-
-**One change at a time. Commit after each change. Never mix multiple fixes in one commit.**
+The one thing worth keeping from this section is still true and still worth following:
 
 ### Git commit conventions:
 
@@ -278,14 +198,6 @@ refactor: code restructure, no behaviour change
 chore: cleanup, deps, config
 docs: documentation only
 ```
-
-### The non-negotiables:
-
-- No supplier names in any customer-facing content
-- No hardcoded URLs or secrets in source code
-- Every database query goes through src/config/database.js
-- All new routes go in src/routes/ + src/controllers/
-- admin/index.html must eventually be split into separate files
 
 ---
 
@@ -299,4 +211,11 @@ docs: documentation only
 | Railway dashboard | https://railway.app |
 | Vercel dashboard | https://vercel.com |
 | Cloudinary | https://cloudinary.com |
-| GitHub repo | [your repo URL] |
+| GitHub repo | https://github.com/thony2/wyc-backend |
+
+**Corrected 1 Aug 2026:** this table previously listed the frontend Vercel URL as
+`project-rho-nine-19.vercel.app`. `MASTER_CHECKLIST.md`'s `0.5-I` entry — based on directly inspecting
+the Vercel dashboard, not assumed — identifies `easyflooring.vercel.app` as the actual live, currently-
+relevant deployment. `project-rho-nine-19.vercel.app` is either an old, superseded project or was simply
+wrong; either way, don't use it. The `GitHub repo` row previously contained a literal unfilled
+`[your repo URL]` placeholder, left in since this document's creation — filled in above.
