@@ -83,6 +83,15 @@ Each item has a reference to the file(s) affected.
 >    The remaining, larger part of 5A (migrating login/products/offers/scraping into `src/`) is unchanged
 >    and still open.
 >
+> **Updated again 1 Aug 2026.** Both of 0.5-H's two open items are now genuinely done, not just prepared:
+> 1. **The real integration test** (PR #34) — see 0.5-H and 5C for the full account, including the
+>    before/after proof that the test actually fails when the original bug is reintroduced.
+> 2. **The dead `audit_log.details` column was dropped from the real production database** (PR #35 added
+>    the script; running it against production was done separately by hand, 1 Aug 2026, after confirming
+>    with the project owner that this database currently holds no real customer data — see 0.5-H for the
+>    honest note about the 3 unexpected non-null rows this surfaced, and what to do differently once real
+>    leads exist here).
+>
 > **Golden rule for this phase of work: the live site currently works. Every item below is sequenced so that
 > nothing is done directly on `main`. Branch → fix → verify locally → PR → merge. If a fix can't be verified
 > locally, it gets a manual verification step on staging/production immediately after merge, called out explicitly.**
@@ -147,11 +156,27 @@ very first commit.
 - [x] `migrate-auto.js` — added the three missing `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` lines, matching
       the file's existing pattern. No-op on the current database; prevents the exact crash a from-scratch
       Postgres instance would otherwise hit on the very first lead submission → `fix/audit-log-missing-columns`
-- [ ] **Not done, worth doing:** the original `details` (plural) column is now confirmed dead — nothing reads
-      or writes it. Don't drop it yet (removing a column deserves more certainty than this pass needed) —
-      revisit once you're confident nothing else (an export, a report) quietly depends on it.
-- [ ] **Not done, worth doing:** add one real integration test that POSTs to `/api/leads` and asserts `201`
-      — this exact bug is precisely what a single test like that would have caught on day one. See 5C.
+- [x] **Done 1 Aug 2026:** the original `details` (plural) column is confirmed dead — nothing reads or
+      writes it (checked every file that touches `audit_log` at all, including the admin panel's own
+      display of the audit log; only the singular `detail` is ever used). Dropped via a standalone,
+      manually-run script (`scripts/drop-audit-log-details-column.js`, `npm run
+      db:drop-audit-details-column`) — deliberately kept out of `migrate-auto.js`, since that script runs
+      automatically on every boot and is meant only for safe, additive, idempotent changes, not anything
+      destructive. See `chore/drop-dead-audit-log-details-column`.
+      **Worth recording honestly:** running it against the real production database found 3 rows with a
+      non-null value in the column — unexpected against a codebase-only check, though consistent with the
+      column being old, pre-dating the `details` → `detail` rename, and nothing since ever writing to it
+      again. That data is gone now (dropping a column isn't reversible) — acceptable here specifically
+      because the project currently holds no real leads, confirmed directly by the person running it. If
+      this project ever holds real customer data, a change like this should be preceded by an actual
+      backup and a slower look at what those rows were, not just a warning printed to the console.
+- [x] **Done 31 Jul 2026** (PR #34): added a real integration test — `src/tests/leads.test.js` now POSTs
+      to `/api/leads` and asserts `201`, using an in-memory Postgres (`pg-mem`, test-only dependency) built
+      from the actual `migrate-auto.js` rather than a hand-copied schema. Verified the test has real teeth,
+      not just that it passes: deliberately reintroduced this exact bug (dropped `audit_log.detail`)
+      against the finished test file and confirmed it fails with a genuine "column does not exist" error,
+      then restored it and confirmed it passes again. See 5C — this was that section's highest-priority
+      item, and it's now done, not just proposed.
 
 ### 0.5-B — Critical: dead / broken repo artefacts (zero behavioural risk — safe to do anytime, independent of 0.5-A)
 - [x] ~~Delete root-level `panel.js`~~ → done in this session, see `chore/remove-dead-panel-js`
@@ -566,10 +591,14 @@ together, as one piece of work, not split twice.
 ### 5C — Testing
 *Goal: Confidence when refactoring.*
 
-- [ ] Set up test runner (Node built-in test runner — already in package.json)
-- [ ] Test: POST /api/leads — success case
-- [ ] Test: POST /api/leads — missing required fields returns 400
-- [ ] Test: POST /api/leads — honeypot field filled returns 400
+- [x] Set up test runner (Node built-in test runner — already in package.json) → now actually exercised,
+      not just declared unused, see below
+- [x] Test: POST /api/leads — success case → done, PR #34 (`src/tests/leads.test.js`)
+- [x] Test: POST /api/leads — invalid data is rejected and no row is written → done, PR #34. *(Correcting
+      this item as written: this app returns `422` for validation failures throughout, not `400` — the
+      test asserts the status this codebase actually uses, not the one originally guessed here.)*
+- [ ] Test: POST /api/leads — honeypot field filled returns 400 *(still open — not covered by PR #34,
+      which only exercises the valid-data and invalid-field-data paths)*
 - [ ] Test: POST /api/panel/login — success returns JWT
 - [ ] Test: POST /api/panel/login — wrong password returns 401
 - [ ] Test: POST /api/panel/login — rate limit after 10 attempts
@@ -577,9 +606,12 @@ together, as one piece of work, not split twice.
 - [ ] Test: GET /flooring/carpets/duna — returns valid HTML with product data
 - [x] ~~A test that boots the DB layer under both `DB_TYPE` values~~ → no longer applicable, SQLite was
       dropped entirely rather than fixed (see 0.5-A) — there's only one `DB_TYPE` value now
-- [ ] **Highest-priority single test to add (from 0.5-H):** POST to `/api/leads` with valid data, assert
-      `201`. This is the one test that would have caught the `audit_log` column mismatch on day one, and
-      it's the cheapest possible insurance against something similar happening again in that same code path
+- [x] **Done 31 Jul 2026** (PR #34) — **Highest-priority single test to add (from 0.5-H):** POST to
+      `/api/leads` with valid data, assert `201`. Built using an in-memory Postgres (`pg-mem`) running the
+      real `migrate-auto.js`, specifically so it validates real column existence rather than trusting a
+      JS-level mock that would pass even with the original bug still present. Verified both directions —
+      confirmed it fails when the exact `audit_log` bug is reintroduced, confirmed it passes once fixed —
+      before calling it done. See 0.5-H for the full account.
 
 ### 5D — Dependency cleanup
 - [x] ~~Remove express-session~~ → confirmed already gone, not in package.json (verified 26 Jul)
@@ -646,7 +678,7 @@ together, as one piece of work, not split twice.
 | 2 — Content | ⬜ Not started | — | — |
 | 3 — Website | ⬜ Not started | — | — |
 | 4 — Automation | ⬜ Not started | — | — |
-| 5 — Code Quality | 🟡 In Progress *(5B CSV-injection fix and 5E README rewrite done; 5A partially done — see the 29–31 Jul update note above; everything else in 5A/5B/5C/5D still open)* | Jul 2026 | — |
+| 5 — Code Quality | 🟡 In Progress *(5B CSV-injection fix and 5E README rewrite done; 5A partially done; 5C now has its first two tests, most of it still open — see the update notes above for detail)* | Jul 2026 | — |
 | 6 — Performance | ⬜ Not started | — | — |
 | 7 — Scale | ⬜ Future | — | — |
 
