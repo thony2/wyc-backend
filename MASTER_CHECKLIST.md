@@ -551,11 +551,28 @@ together, as one piece of work, not split twice.
       login/products/offers/audit/change-password/likes, by grepping the whole repo for any reference to
       the removed paths (none found), and by re-running the test suite. **This does not close 5A** — it
       only removes the one part of the duplication that was safely deletable outright. The two items below
-      it, and the real merge of login/products/offers/scraping into `src/`, are still fully open.
-- [ ] Migrate all functionality from **`routes/panel.js`** → src/controllers/ + src/routes/
-      *(file name corrected — this was `routes/admin.js` before the July rename commits)*
-- [x] **Done 1 Aug 2026:** migrated all functionality from `routes/products.js` → `src/controllers/productPublicController.js` + `src/routes/products.js`, still mounted at `/api/products`. No longer a `(db) => {...}` factory — requires the shared db pool directly, matching `src/routes/authGuard.js`/`routes/scraper.js`'s style. Also closed the "3 raw `e.message` leaks" part of the finding below for this file specifically (all 5 handlers now log internally, return a generic message — the `/:id/likes` and `/:id/like` handlers already did this correctly; `/`, `/categories`, `/deals` now match). **Same commit also resolves the like/unlike duplication noted separately in 5A's own audit history**: `routes/panel.js`'s increment-only `POST /products/:id/like` (unauthenticated, no unlike) is removed — confirmed by grepping `admin/index.html`, `admin/js/*`, and every public `js/*.js` file for any reference to that path first; none found. The surviving implementation is the toggle version, now living in `productPublicController.js`. **`routes/panel.js` itself (login/products-CRUD/offers) is not migrated — that's still fully open below.**
-- [ ] Remove routes/ directory entirely *(blocked on routes/panel.js and routes/scraper.js migrations, still open)*
+      it, and the real merge of login/products/offers/scraping into `src/`, are still fully open — as
+      of 1 Aug 2026, login/products/offers are done (5A steps 2-3), only scraping (step 4) and the final
+      routes/ removal + server.js cleanup (step 5) remain.
+- [x] **Done 1 Aug 2026:** migrated all functionality from `routes/panel.js` → `src/controllers/
+      adminAuthController.js` (login, change-password) + `src/controllers/productAdminController.js`
+      (stats, product CRUD, offer CRUD, audit log) + `src/routes/panel.js`, still mounted at
+      `/api/panel`. No longer a `(db) => {...}` factory. The shared `audit()` helper that used to live
+      inline in `routes/panel.js` is now `src/utils/auditLog.js` (`auditProductAction` + `getClientIp`)
+      — extracted, not duplicated across the two new controllers. Two changes made during the move,
+      beyond relocation: (1) closed this file's share of the error-handling finding below — all 14
+      instances now log internally and return a generic message, matching the pattern already used
+      correctly elsewhere; (2) switched `bcryptjs`'s synchronous `compareSync`/`hashSync` to the async
+      `compare`/`hash` in login and change-password — this was the last item under README.md's Security
+      Summary "known, currently-open gaps," now closed. Verified: all 5 touched/added files pass
+      `node --check`; every route path cross-checked unchanged against the original file; every
+      controller function referenced by the new router cross-checked against actual exports (all 15
+      matched exactly); applied and confirmed via a real `git am` on a clean checkout before merging.
+      **Not fixed here, deliberately out of scope:** the `audit_log.lead_id` column-overload schema
+      smell this helper inherited — see the comment in `src/utils/auditLog.js` itself for why.
+      `routes/scraper.js` is still not migrated — that's 5A step 4, still open below.
+- [ ] Remove routes/ directory entirely *(blocked on routes/scraper.js migration only, now — panel.js
+      and products.js are both done)*
 - [ ] Verify: server.js only imports from src/
 - [ ] Update server.js route mounts to match new structure
 - [x] ~~Remove migrate-sqlite-local.js~~ → done as part of dropping SQLite entirely, see 0.5-A
@@ -568,21 +585,17 @@ together, as one piece of work, not split twice.
       request/response shapes, or frontend code changed. Verified: all four touched files pass
       `node --check`; applied and confirmed via a real `git am` on a clean checkout before merging.
       **This is step 1 of 5 in the routing consolidation — the actual merge of
-      login/products/offers/scraping into `src/` (the two items below) is still fully open.**
-- [ ] **New (fourth audit, 26 Jul, verified); partially closed 1 Aug; counts refreshed 1 Aug 2026
-      reconciliation pass:** error-handling is inconsistent across the two layers — `src/controllers/
-      leadController.js` and `adminController.js` correctly log the real error and return a generic
-      message; `routes/panel.js` currently returns the raw `e.message` straight to the client **14
-      separate times** (down from 21 on 26 Jul — most likely because the same 5A commit that removed
-      panel.js's 142 lines of dead duplicate leads/dashboard/calendar routes also removed several of
-      these along with them, not because anyone fixed them individually), `routes/scraper.js` does it
-      **5 times** counting client-facing responses only (up from 2 on 26 Jul — the SSRF-guard work added
-      afterward touched this file and added more of the same pattern). `routes/products.js`'s 3 instances
-      were closed as part of migrating it to `src/controllers/productPublicController.js` (5A step 2,
-      above) — arguably more urgent than the remaining ones since that one was public-facing, not
-      authenticated-admin-only. The remaining 19 instances are still admin-only exposure, not public —
-      but worth standardising on the disciplined pattern already used correctly elsewhere, as part of
-      the same consolidation (5A steps 3-4) rather than patching each call site separately later.
+      login/products/offers/scraping into `src/` (the two items below) is still fully open.** *(Update,
+      1 Aug 2026: login/products/offers are now done — 5A steps 2-3, below. Only scraping remains.)*
+- [ ] **New (fourth audit, 26 Jul, verified); partially closed 1 Aug; fully closed for panel.js and
+      products.js 1 Aug 2026 (5A steps 2-3):** error-handling is inconsistent across the two layers —
+      `src/controllers/leadController.js` and `adminController.js` correctly log the real error and
+      return a generic message; `routes/panel.js`'s 14 instances and `routes/products.js`'s 3 were both
+      closed as part of migrating those files into `src/` (5A steps 2-3, above). `routes/scraper.js` is
+      the only file left with this pattern — **5 times**, counting client-facing responses only (grew
+      from 2 on 26 Jul when the SSRF-guard work touched this file afterward). Admin-only exposure, not
+      public — but worth closing as part of 5A step 4 (scraper.js's migration) rather than patching
+      separately, matching how the other two files were handled.
 
 ### 5B — Security hardening
 - [x] ~~CSRF protection — resolved, see 0.5-D~~ → both remaining tasks this item used to describe are
@@ -732,7 +745,7 @@ together, as one piece of work, not split twice.
 | 2 — Content | ⬜ Not started | — | — |
 | 3 — Website | ⬜ Not started | — | — |
 | 4 — Automation | ⬜ Not started | — | — |
-| 5 — Code Quality | 🟡 In Progress *(5B CSV-injection fix, JWT algorithm pinning, and 5E README rewrite done; 5A steps 1-2 of 5 done (auth middleware consolidated; routes/products.js migrated + like/unlike duplication resolved) — routes/panel.js and routes/scraper.js migrations still open; 5C now has its first two tests, most of it still open — see the update notes above for detail)* | Jul 2026 | — |
+| 5 — Code Quality | 🟡 In Progress *(5B CSV-injection fix, JWT algorithm pinning, sync-bcrypt fix, and 5E README rewrite done; 5A steps 1-3 of 5 done (auth middleware consolidated; routes/products.js migrated + like/unlike duplication resolved; routes/panel.js migrated, error-handling closed for both) — only routes/scraper.js's migration and final routes/ removal remain; 5C now has its first two tests, most of it still open — see the update notes above for detail)* | Jul 2026 | — |
 | 6 — Performance | ⬜ Not started | — | — |
 | 7 — Scale | ⬜ Future | — | — |
 
