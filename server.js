@@ -21,8 +21,8 @@ const leadRoutes     = require('./src/routes/leads');
 const adminRoutes    = require('./src/routes/authGuard');
 const productsRouter = require('./src/routes/products');
 const panelRouter    = require('./src/routes/panel');
-const scraperRouter  = require('./routes/scraper');
-const seoRouter      = require('./routes/products-seo');
+const importRouter   = require('./src/routes/import');
+const seoRouter      = require('./src/routes/products-seo');
 
 const app  = express();
 const PORT = parseInt(process.env.PORT || '3001', 10);
@@ -86,7 +86,7 @@ app.use('/api', leadRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/products', productsRouter);
 app.use('/api/panel', panelRouter);
-app.use('/api/panel', scraperRouter);
+app.use('/api/panel', importRouter);
 app.use('/flooring', seoRouter);
 
 app.get('/admin', (req, res) => {

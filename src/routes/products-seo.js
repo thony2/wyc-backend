@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * routes/products-seo.js
+ * src/routes/products-seo.js
  *
  * GET /flooring/:category/:slug
  *
@@ -9,12 +9,20 @@
  * Google and other bots get complete HTML with all SEO tags + JSON-LD.
  *
  * Mounted in server.js:
- *   app.use('/flooring', require('./routes/products-seo'));
+ *   app.use('/flooring', require('./src/routes/products-seo'));
+ *
+ * Migrated from routes/products-seo.js (5A step 4 — see MASTER_CHECKLIST.md).
+ * Deliberately a pure relocation, not a rewrite — no route, response, or
+ * behavioural changes. The only things that changed are this comment block
+ * and the require path below, both because the file's location changed and
+ * for no other reason. The SITE_URL dead-domain-fallback issue this file
+ * has is a real, separately-tracked bug (MASTER_CHECKLIST.md 3A) — not
+ * touched here, on purpose, to keep this move low-risk and easy to verify.
  */
 
 const express    = require('express');
 const router     = express.Router();
-const pool       = require('../src/config/database');
+const pool       = require('../config/database');
 
 const SITE_URL   = process.env.SITE_URL || 'https://www.westyorkshirecarpets.com';
 const SITE_NAME  = 'West Yorkshire Carpets';
