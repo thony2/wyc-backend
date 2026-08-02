@@ -552,8 +552,7 @@ together, as one piece of work, not split twice.
       the removed paths (none found), and by re-running the test suite. **This does not close 5A** — it
       only removes the one part of the duplication that was safely deletable outright. The two items below
       it, and the real merge of login/products/offers/scraping into `src/`, are still fully open — as
-      of 1 Aug 2026, login/products/offers are done (5A steps 2-3), only scraping (step 4) and the final
-      routes/ removal + server.js cleanup (step 5) remain.
+      of 1 Aug 2026, all 5 steps of 5A are done, see below.
 - [x] **Done 1 Aug 2026:** migrated all functionality from `routes/panel.js` → `src/controllers/
       adminAuthController.js` (login, change-password) + `src/controllers/productAdminController.js`
       (stats, product CRUD, offer CRUD, audit log) + `src/routes/panel.js`, still mounted at
@@ -571,10 +570,29 @@ together, as one piece of work, not split twice.
       **Not fixed here, deliberately out of scope:** the `audit_log.lead_id` column-overload schema
       smell this helper inherited — see the comment in `src/utils/auditLog.js` itself for why.
       `routes/scraper.js` is still not migrated — that's 5A step 4, still open below.
-- [ ] Remove routes/ directory entirely *(blocked on routes/scraper.js migration only, now — panel.js
-      and products.js are both done)*
-- [ ] Verify: server.js only imports from src/
-- [ ] Update server.js route mounts to match new structure
+- [x] **Done 1 Aug 2026 — 5A complete, all 5 steps:** migrated `routes/scraper.js` →
+      `src/controllers/importController.js` + `src/routes/import.js`, still mounted at `/api/panel`.
+      Closed this file's 5 remaining client-facing error-message leaks (the last ones anywhere in the
+      codebase), matching the pattern used for every other file — reasoned about and rejected keeping
+      the detailed messages on the theory that admins need the diagnostic detail for a scraping tool;
+      the detail isn't lost, it's in server logs now instead of round-tripped through the API response,
+      consistent with how every other file handles it. `routes/suppliers/*` moved to
+      `src/services/suppliers/` as a straight directory move — confirmed by direct diff that every file
+      is byte-identical except the two that only ever used relative `./` requires within their own
+      folder, which needed no changes at all regardless of where the parent directory sits.
+      **`routes/products-seo.js` was folded into this same step**, even though it was never part of
+      5A's original scope (it's SEO page rendering, not the admin-routing problem 5A exists to fix) —
+      decided against leaving a single-file exception in an otherwise-empty `routes/` directory. Moved
+      to `src/routes/products-seo.js` as a **deliberate pure relocation, no behavioural change** —
+      confirmed by direct diff that only the top-of-file comment and one require path changed across
+      939 lines; the file's known `SITE_URL` dead-domain-fallback bug (tracked separately, 3A) was
+      explicitly left untouched to keep this move low-risk. `routes/` directory removed entirely.
+      `server.js` now imports only from `src/`. Verified: all files pass `node --check`; every route
+      path and every controller function reference cross-checked against the original/actual exports;
+      applied and confirmed via a real `git am` on a clean checkout before merging.
+- [x] ~~Remove routes/ directory entirely~~ → done 1 Aug 2026, 5A step 4/5 (above)
+- [x] ~~Verify: server.js only imports from src/~~ → done 1 Aug 2026, 5A step 4/5 (above)
+- [x] ~~Update server.js route mounts to match new structure~~ → done across 5A steps 1-5
 - [x] ~~Remove migrate-sqlite-local.js~~ → done as part of dropping SQLite entirely, see 0.5-A
 - [x] **Done 1 Aug 2026:** the three separate, near-identical copies of a `requireAuth` JWT middleware —
       `src/routes/authGuard.js`, `routes/panel.js`, `routes/scraper.js` (confirmed by direct grep, second
@@ -586,16 +604,15 @@ together, as one piece of work, not split twice.
       `node --check`; applied and confirmed via a real `git am` on a clean checkout before merging.
       **This is step 1 of 5 in the routing consolidation — the actual merge of
       login/products/offers/scraping into `src/` (the two items below) is still fully open.** *(Update,
-      1 Aug 2026: login/products/offers are now done — 5A steps 2-3, below. Only scraping remains.)*
-- [ ] **New (fourth audit, 26 Jul, verified); partially closed 1 Aug; fully closed for panel.js and
-      products.js 1 Aug 2026 (5A steps 2-3):** error-handling is inconsistent across the two layers —
-      `src/controllers/leadController.js` and `adminController.js` correctly log the real error and
-      return a generic message; `routes/panel.js`'s 14 instances and `routes/products.js`'s 3 were both
-      closed as part of migrating those files into `src/` (5A steps 2-3, above). `routes/scraper.js` is
-      the only file left with this pattern — **5 times**, counting client-facing responses only (grew
-      from 2 on 26 Jul when the SSRF-guard work touched this file afterward). Admin-only exposure, not
-      public — but worth closing as part of 5A step 4 (scraper.js's migration) rather than patching
-      separately, matching how the other two files were handled.
+      1 Aug 2026: all 5 steps of 5A are now done — see below.)*
+- [x] **Fourth audit, 26 Jul, verified; fully closed 1 Aug 2026 across all of 5A steps 2-4:**
+      error-handling was inconsistent across the two layers — `src/controllers/leadController.js` and
+      `adminController.js` always did this correctly; `routes/panel.js` (14 instances), `routes/products.js`
+      (3), and `routes/scraper.js` (5, grew from 2 on 26 Jul when the SSRF-guard work touched that file)
+      all leaked raw `e.message` to the client. All three were closed as part of migrating their
+      respective files into `src/` (5A steps 2, 3, and 4). **Zero known instances remain anywhere in
+      the codebase as of 1 Aug 2026** — every controller now logs the real error internally and returns
+      a generic message to the client, consistently.
 
 ### 5B — Security hardening
 - [x] ~~CSRF protection — resolved, see 0.5-D~~ → both remaining tasks this item used to describe are
@@ -745,7 +762,7 @@ together, as one piece of work, not split twice.
 | 2 — Content | ⬜ Not started | — | — |
 | 3 — Website | ⬜ Not started | — | — |
 | 4 — Automation | ⬜ Not started | — | — |
-| 5 — Code Quality | 🟡 In Progress *(5B CSV-injection fix, JWT algorithm pinning, sync-bcrypt fix, and 5E README rewrite done; 5A steps 1-3 of 5 done (auth middleware consolidated; routes/products.js migrated + like/unlike duplication resolved; routes/panel.js migrated, error-handling closed for both) — only routes/scraper.js's migration and final routes/ removal remain; 5C now has its first two tests, most of it still open — see the update notes above for detail)* | Jul 2026 | — |
+| 5 — Code Quality | 🟡 In Progress *(**5A architecture consolidation: complete, all 5 steps** — auth middleware unified, routes/products.js + routes/panel.js + routes/scraper.js + routes/products-seo.js all migrated to src/, routes/ directory removed entirely, error-handling leaks closed everywhere, like/unlike duplication resolved; 5B CSV-injection fix, JWT algorithm pinning, and sync-bcrypt fix done; 5E README rewrite done; 5C now has its first two tests, most of it still open — see the update notes above for detail)* | Jul 2026 | — |
 | 6 — Performance | ⬜ Not started | — | — |
 | 7 — Scale | ⬜ Future | — | — |
 

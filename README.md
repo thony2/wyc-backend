@@ -22,7 +22,7 @@ alongside.
 
 **Despite the repo name, this is not just a backend.** It contains three things in one place:
 1. The **static marketing site** (`index.html`, `css/`, `js/`, `images/`) — hosted on **Vercel**
-2. The **Express API** (`server.js`, `src/`, `routes/`) — lead capture, admin auth, product catalogue,
+2. The **Express API** (`server.js`, `src/`) — lead capture, admin auth, product catalogue,
    a supplier-scraping/import tool — hosted on **Railway**
 3. The **admin panel** (`admin/`) — a single-page app, served statically by the same Express app
 
@@ -37,7 +37,10 @@ wyc-backend/
 ├── package.json
 ├── .env.example                 # Copy to .env and configure — kept accurate, trust this file
 │
-├── src/                         # Newer layer — leads (public) + part of the admin API
+├── src/                         # Everything — one unified route tree as of 1 Aug 2026 (5A
+│   │                            # consolidation, all 5 steps complete). There used to be a
+│   │                            # second, separate routes/ directory at the repo root, split by
+│   │                            # feature not by age — see "Admin API" below for that history.
 │   ├── config/
 │   │   ├── database.js          # PostgreSQL only. Throws a deliberate startup error if
 │   │   │                        # DB_TYPE=sqlite is ever set — SQLite was fully removed 10 Jul 2026.
@@ -46,31 +49,33 @@ wyc-backend/
 │   ├── controllers/
 │   │   ├── leadController.js          # POST /api/leads
 │   │   ├── adminController.js         # Leads/dashboard/calendar admin logic (see API Reference)
-│   │   └── productPublicController.js # Public product catalogue + likes (migrated from
-│   │                                  # routes/products.js, 5A step 2 — see MASTER_CHECKLIST.md)
+│   │   ├── productPublicController.js # Public product catalogue + likes
+│   │   ├── adminAuthController.js     # Admin login, change-password
+│   │   ├── productAdminController.js  # Product/offer CRUD, stats, audit log
+│   │   └── importController.js        # Supplier scraping + Cloudinary import
 │   ├── middleware/
 │   │   ├── security.js          # Helmet, CORS, rate limiters
-│   │   └── validate.js          # express-validator chains for the public lead form
+│   │   ├── validate.js          # express-validator chains for the public lead form
+│   │   └── auth.js              # The one requireAuth/requireAdmin — used everywhere admin-only
 │   ├── routes/
 │   │   ├── leads.js             # Mounts leadController at /api
 │   │   ├── authGuard.js         # JWT check + mounts adminController at /api/admin
-│   │   └── products.js          # Public product catalogue + likes — mounted at /api/products
-│   │                            # (migrated from routes/products.js, 5A step 2)
+│   │   ├── products.js          # Public product catalogue + likes — mounted at /api/products
+│   │   ├── panel.js             # Admin auth + product/offer CRUD — mounted at /api/panel
+│   │   ├── import.js            # Supplier scraping/import — mounted at /api/panel
+│   │   └── products-seo.js      # Server-rendered product pages — mounted at /flooring
 │   ├── services/
 │   │   ├── emailService.js      # Admin notification + customer confirmation emails
-│   │   └── csvService.js        # CSV export helper
+│   │   ├── csvService.js        # CSV export helper
+│   │   └── suppliers/           # One plugin per supported supplier site (see below)
+│   ├── utils/
+│   │   ├── logger.js            # Winston, console + file transports in production
+│   │   ├── urlSafety.js         # SSRF guard for server-initiated fetches of user-supplied URLs
+│   │   └── auditLog.js          # Shared audit_log writer for product/offer admin actions
 │   └── tests/
 │       ├── leads.test.js        # Real integration test (pg-mem), added PR #34 — not a placeholder,
 │       │                        # see "Known Gaps" below for what test coverage still doesn't exist
 │       └── urlSafety.test.js    # SSRF-guard unit tests for src/utils/urlSafety.js
-│
-├── routes/                      # Older layer — still genuinely live, not legacy/dead code.
-│   │                            # Handles what src/ doesn't yet: login, products CRUD, offers,
-│   │                            # supplier scraping/import. See "The Two Admin APIs" below.
-│   ├── panel.js                 # Login, products, offers, audit log — mounted at /api/panel
-│   ├── products-seo.js          # Server-rendered product pages — mounted at /flooring
-│   ├── scraper.js               # Supplier scraping + Cloudinary import — mounted at /api/panel
-│   └── suppliers/                # One plugin per supported supplier site (see below)
 │
 ├── admin/                       # The admin single-page app, served statically at /admin
 │   ├── index.html               # Still large (~2,400 lines) — a partial split into css/js
@@ -92,29 +97,28 @@ wyc-backend/
 
 ---
 
-## The Two Admin APIs — read this before touching anything admin-related
+## Admin API — two URL prefixes, one route tree
 
-There are genuinely **two** separate admin route trees, both live, split by feature — not one
-current and one dead:
+There are two admin-facing URL prefixes, kept separate for organizational reasons (they were
+historically built at different times, by different sessions) rather than any technical requirement —
+but as of 1 Aug 2026 (5A consolidation, all 5 steps complete) both live under `src/`, not split across
+two different directory trees the way they used to be:
 
 | Feature | Live route | File |
 |---|---|---|
 | Leads, dashboard, calendar, booking, CSV export | `/api/admin/*` | `src/routes/authGuard.js` → `src/controllers/adminController.js` |
-| Login, products, offers, supplier scraping/import | `/api/panel/*` | `routes/panel.js`, `routes/scraper.js` |
+| Login, products, offers | `/api/panel/*` | `src/routes/panel.js` → `src/controllers/adminAuthController.js` + `src/controllers/productAdminController.js` |
+| Supplier scraping/import | `/api/panel/*` | `src/routes/import.js` → `src/controllers/importController.js` |
 
-This was confirmed by reading exactly what the admin panel's own frontend code calls — not assumed.
-Consolidating these into one is tracked as Phase 5A of `MASTER_CHECKLIST.md` and is correctly sized
-there as "merge two feature-complete implementations," not "delete the unused one." Nothing here is
-safe to delete without checking the checklist first.
-
-Two duplications of this kind have already been found and removed, not left for later:
+**Historical note, no longer a live risk:** until 1 Aug 2026, this section carried a strong warning —
+these were genuinely two separate route trees, one under `routes/` and one under `src/`, both live, and
+it was easy to mistake one for dead code. That risk is gone now that `routes/` doesn't exist. Along the
+way, two real duplications were found and removed, not left for later:
 - `routes/panel.js`'s own second, unused copy of the leads/dashboard/calendar endpoints (dead code
   the frontend never called) — removed 31 Jul 2026 (PR #32).
 - A second, behaviourally-different `POST /products/:id/like` that lived in `routes/panel.js`
-  (unauthenticated, always-increment, no unlike) alongside the real one in `src/routes/products.js`
-  (unauthenticated, like/unlike toggle) — removed as part of the `routes/products.js` → `src/`
-  migration (5A step 2). Confirmed unused first by grepping the entire frontend for any reference
-  to the removed path.
+  (unauthenticated, always-increment, no unlike) alongside the real one (unauthenticated, like/unlike
+  toggle) — removed 1 Aug 2026 as part of the products migration (5A step 2).
 
 ---
 
@@ -264,7 +268,7 @@ The import step refuses to save any colour whose name still exactly matches the 
 original name — a deliberate safety check, not a bug, so a supplier's branding can never accidentally
 reach a live customer-facing product.
 
-**Supported suppliers for scraping** (`routes/suppliers/`): Carpet Line Direct, Cormar, Victoria,
+**Supported suppliers for scraping** (`src/services/suppliers/`): Carpet Line Direct, Cormar, Victoria,
 Woodpecker, Karndean, Quick-Step. Each is a small plugin implementing a common shape — adding a new
 supplier means adding one new plugin file, not changing the scraping logic itself.
 
@@ -318,7 +322,7 @@ single rewrite rule, which proxies `/flooring/*` requests through to the Railway
 product pages.
 
 **⚠️ Known live bug, not just a documentation issue (found 1 Aug 2026):** both `index.html` and
-`routes/products-seo.js` still hardcode/default to `https://www.westyorkshirecarpets.com` — a domain that
+`src/routes/products-seo.js` still hardcode/default to `https://www.westyorkshirecarpets.com` — a domain that
 returns a 404, confirmed by direct fetch — for canonical URLs, `og:image`, Twitter cards, and JSON-LD
 business schema. `SITE_URL` (used by `products-seo.js` for exactly this) isn't currently set on Railway
 at all, so it falls back to that same dead domain. Low real-world urgency *specifically because* nothing
@@ -349,7 +353,7 @@ as if it were the real one.
 | CSRF | **Not implemented as a dedicated mechanism** — see note below |
 | Spam / Bots | Honeypot field + rate limiting (5 lead submissions per 15 min per IP) |
 | Brute Force | Separate rate limiter on admin login (10 attempts per 15 min) + general 60/min API limiter |
-| Info Leakage | Generic error messages in `leadController.js`/`adminController.js`; **inconsistent** in `routes/panel.js`, which returns raw error text to authenticated admins in some cases — a known, tracked gap, not a public-facing issue |
+| Info Leakage | Generic error messages, logged internally in full — consistent across every controller as of 1 Aug 2026 (5A steps 2-4 closed the last of the raw-error-text leaks that used to exist in `routes/panel.js`/`routes/products.js`/`routes/scraper.js`, all now migrated into `src/`) |
 | IP Privacy | Last IP octet (v4) truncated before storage |
 | GDPR Article 17 | Soft anonymisation preserves aggregate stats, removes PII |
 
@@ -404,7 +408,7 @@ confirmed 100% unused, so this closed the vulnerability outright rather than nee
   debris from an earlier Vercel-for-everything setup that predates the current Vercel-site/Railway-API
   split; safe to `git rm` whenever someone's doing general housekeeping.
 - **Dead-domain references baked into live output** — see "Deployment" above for the full detail.
-  `index.html`'s SEO meta tags and `routes/products-seo.js`'s `SITE_URL` fallback both currently point at
+  `index.html`'s SEO meta tags and `src/routes/products-seo.js`'s `SITE_URL` fallback both currently point at
   a domain that 404s. Not urgent while nothing's being publicly promoted, but needs fixing before launch.
 
 ---
