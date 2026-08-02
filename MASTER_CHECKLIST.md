@@ -244,17 +244,41 @@ was caught — never reached it. Confirmed via Vercel's own Git settings page, w
       `src/controllers/adminController.js`'s already-correct approach, threaded through all 11 call
       sites → `fix/panel-audit-log-ip` (also closes the duplicate mention of this in 1F below)
 
-### 0.5-F — Medium: ops scripts don't run anywhere but one old laptop
-- [ ] `scripts/backup.sh`, `scripts/check-leads.sh`, `scripts/check.sh` hardcode
-      `/Users/potencial/Desktop/project/wyc-backend/...` and query the SQLite file directly — but production
-      is Postgres-only. Either rewrite them against Postgres (`pg_dump` for backup, a `db.query` call for
-      check-leads) with a relative/env-driven path, or delete them if Railway's managed Postgres backups
-      already cover this and they're not actually used
+### 0.5-F — Medium: ops scripts don't run anywhere but one old laptop ✅ DONE (2 Aug 2026)
+- [x] `scripts/backup.sh` rewritten — was copying a local SQLite file (`data/wyc_leads.db`) that hasn't
+      existed since SQLite was removed (0.5-A, 10 Jul). Now runs `pg_dump` against the real Postgres
+      database, loading connection details from `.env` the same way the app does. Backup output moved
+      to a new `backups/` directory at repo root (added to `.gitignore` in the same change — it holds
+      real customer data). Hardcoded `/Users/potencial/...` path removed — resolves relative to the
+      script's own location now, so it works on any machine the repo is checked out on.
+- [x] `scripts/check-leads.sh` → **replaced with `scripts/check-leads.js`**, not just patched. Two real
+      bugs found in the original, both silent failures rather than errors: (1) it called
+      `db.prepare(sql).all()` and used the result synchronously, but that method is async — it would
+      have printed a pending Promise object, not lead data; (2) it never loaded `.env` — `server.js` is
+      the only place in this codebase that calls `dotenv.config()`, so any standalone script requiring
+      `src/config/database.js` directly gets `undefined` for `PGHOST` etc. unless it loads `.env` itself,
+      which the original didn't. Converted from a bash-wrapped `node -e` one-liner to a real `.js` file,
+      matching how `scripts/reset-admin-password.js` and `scripts/generate-hash.js` already do this —
+      partly because a proper async/await flow is much harder to get right correctly in an inline
+      one-liner, which is arguably *why* bug (1) happened in the first place.
+- [x] `scripts/check.sh` rewritten — was checking for a `data/` directory and `data/backups/` folder that
+      haven't existed since the SQLite removal, and its `backup.sh` existence check looked for
+      `./backup.sh` in the repo root — the real file has always been at `scripts/backup.sh`, so this
+      check would have failed even before the SQLite rewrite made the rest of the script stale. Now
+      checks the variables that actually matter (`JWT_SECRET`, `PGHOST`, `PGDATABASE`, `PGUSER`,
+      `PGPASSWORD`), checks the correct `scripts/backup.sh` path, and checks that the new `backups/`
+      directory is gitignored. Hardcoded machine path removed here too.
+- [x] Verified: all three pass `node --check` / `bash -n`. Not run end-to-end in this environment (no
+      network access to a real Postgres instance) — before relying on `backup.sh`, run it once manually
+      and confirm the resulting `.sql.gz` file actually restores.
 
 ### 0.5-G — Medium: other hygiene
 - [ ] `.vercel/README.txt` is committed despite `.vercel/` being in `.gitignore` — `git rm --cached .vercel/README.txt`
 - [ ] `og:image` still missing (see 3A below — already tracked, just cross-referencing)
-- [ ] `npm test` still only runs a placeholder assertion — see 5C below
+- [x] ~~`npm test` still only runs a placeholder assertion~~ → false since PR #34/#38 (real integration +
+      unit tests) — see 5C. This was the third place this same stale claim was found sitting unfixed
+      this session (also in README.md's Known Gaps and npm Scripts table, both corrected 1 Aug) —
+      genuinely just an overlooked duplicate, not a new discovery each time.
 
 ---
 
@@ -313,7 +337,9 @@ the original list didn't point to.
 *Goal: One connection pool, used everywhere.*
 
 - [x] routes/scraper.js — Same as above (covered in 1A)
-- [ ] routes/products-seo.js — Remove standalone `new Pool()` — use shared db *(now tracked as 0.5-A — do it there, checked off here once done)*
+- [x] ~~routes/products-seo.js — Remove standalone `new Pool()` — use shared db~~ → done, see 0.5-A
+      (that list already had this checked off; this duplicate tracking entry was left open — found
+      during the 1 Aug reconciliation pass, same recurring pattern as several other items this session)
 - [ ] Verify: Only ONE pool is created at startup (check logs show single "PostgreSQL connected")
 
 ### 1C — Migrate-auto cleanup
@@ -757,8 +783,8 @@ together, as one piece of work, not split twice.
 | Phase | Status | Started | Completed |
 |-------|--------|---------|-----------|
 | 0 — Environment | ✅ Complete | May 2026 | Jul 2026 |
-| 0.5 — Audit Findings | 🟡 In Progress *(0.5-A, 0.5-B, 0.5-H done; 0.5-C/D/E/F/G still open)* | Jul 2026 | — |
-| 1 — Admin Portal | 🟡 In Progress *(1A done; 1B, 1D, 1E partially done)* | May 2026 | — |
+| 0.5 — Audit Findings | 🟡 In Progress *(0.5-A/B/C/D/E/F/H all done; 0.5-I's core fix done, 2 optional follow-ups still open; only 0.5-G — 2 minor hygiene items, `.vercel/README.txt` cleanup and `og-image.jpg` — genuinely remains. Corrected 2 Aug 2026: this row previously undercounted 6 of 8 sub-sections as still open)* | Jul 2026 | — |
+| 1 — Admin Portal | 🟡 In Progress *(1A done; 1B down to one manual verification step after the products-seo.js duplicate was corrected 2 Aug; 1D down to one manual git-history check; 1E partially done, rest deliberately deferred to a planned redesign; 1C and 1F not started)* | May 2026 | — |
 | 2 — Content | ⬜ Not started | — | — |
 | 3 — Website | ⬜ Not started | — | — |
 | 4 — Automation | ⬜ Not started | — | — |

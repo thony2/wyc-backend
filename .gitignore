@@ -15,6 +15,9 @@ data/
 *.sqlite
 *.sqlite3
 
+# Postgres backups (scripts/backup.sh output) — contains real customer data
+backups/
+
 # Log files — not needed in version control
 logs/
 *.log
