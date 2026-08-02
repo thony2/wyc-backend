@@ -361,9 +361,9 @@ a mistake. Current protection against forged cross-site submissions relies on th
 instead. The vestigial `GET /api/csrf-token` route and its unused `csrfTokenGenerator` middleware
 have been removed (`MASTER_CHECKLIST.md` 0.5-D, closed).
 
-**Known, currently-open gaps** (tracked in `MASTER_CHECKLIST.md` 5A, not exploitable by an
-unauthenticated public user):
-- `routes/panel.js` uses synchronous `bcrypt` calls on the request path
+**Known, currently-open gaps in this area:** none as of 1 Aug 2026 — the last one tracked here
+(`routes/panel.js` using synchronous `bcrypt` calls on the request path) was fixed as part of migrating
+that file into `src/` (5A step 3, see `MASTER_CHECKLIST.md`).
 
 **Dependency health:** `npm audit` reported zero vulnerabilities as of 26 Jul 2026. A previously-flagged
 high-severity issue in the `sharp` package was resolved by removing the dependency entirely (it was
