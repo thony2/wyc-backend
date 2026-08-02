@@ -413,6 +413,16 @@ together, as one piece of work, not split twice.
 ### 3A — Quick wins (no redesign needed, fix in hours)
 - [ ] Create images/og-image.jpg (1200×630px branded image)
       → Referenced in every OG/Twitter meta tag — currently missing → broken social shares
+- [ ] **New (documentation reconciliation pass, 1 Aug 2026):** `index.html`'s canonical URL, `og:url`,
+      `og:image`, Twitter card, and JSON-LD business schema all hardcode `https://www.westyorkshirecarpets.com`
+      — confirmed by direct fetch to return a 404, the project owner no longer owns this domain. Same root
+      problem as the `og-image.jpg` and hardcoded-Railway-URL items in this section, found separately.
+      Fix once a real domain exists, or point everything at `https://easyflooring.vercel.app` in the
+      meantime — that's a product decision, not something to default silently.
+- [ ] **New (documentation reconciliation pass, 1 Aug 2026):** same problem, second location —
+      `routes/products-seo.js` falls back to the same dead domain via its `SITE_URL` default when that
+      env var isn't set, which — confirmed directly against Railway's actual variable list — it currently
+      isn't. Affects every SSR product page's canonical URL, `og:image`, and sitemap.xml entries.
 - [ ] Configure Google Analytics 4
       → Replace G-XXXXXXXXXX in index.html with real Measurement ID
       → Create GA4 property at analytics.google.com if not done
@@ -424,7 +434,9 @@ together, as one piece of work, not split twice.
       → db:seed: point to correct file or delete (see 0.5-C)
       → admin:reset-password: ~~add it~~ already done, see 0.5-C
       → test: ~~currently a placeholder, not broken~~ real integration + unit tests since PR #34/#38 — see 5C
-- [ ] Fix "licence" typo → "license" in package.json
+- [x] ~~Fix "licence" typo → "license" in package.json~~ → already correct, `"license": "UNLICENSED"` —
+      confirmed by direct grep, 1 Aug 2026 reconciliation pass. This item was left open after the fix
+      landed, same pattern as several other items found and fixed elsewhere in this document already.
 - [x] ~~Remove express-session from dependencies~~ → confirmed already gone, not in package.json (same
       fact tracked twice in this document — see the other entry, verified 26 Jul, for the original)
 - [x] ~~Remove undici from dependencies~~ → confirmed already gone, not in package.json (same fact
