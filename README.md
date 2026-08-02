@@ -1,13 +1,24 @@
-# West Yorkshire Carpets — Backend & Site
+# WYC Flooring Platform — Backend & Site
+*(working name — no business name has been finalized yet, see note below)*
 
-A GDPR-conscious lead-capture API, admin panel, and supplier-catalogue importer for West Yorkshire
-Carpets, plus the static marketing site it serves alongside.
+A GDPR-conscious lead-capture API, admin panel, and supplier-catalogue importer for a flooring
+e-commerce/lead-generation business that's still being built, plus the static marketing site it serves
+alongside.
 
-> **Honesty note (29 Jul 2026):** this README was rewritten from scratch against the actual current
-> code, after five separate audits over July 2026 all independently confirmed the previous version was
-> describing an earlier, different architecture (SQLite-first, a single admin API, bearer-token auth)
-> that no longer exists. If anything here ever drifts from reality again, `MASTER_CHECKLIST.md` is the
-> living, actively-maintained source of truth — trust that over this file if they ever disagree.
+> **Honesty note (1 Aug 2026):** this README was substantially rewritten after the project owner
+> confirmed the business itself doesn't exist yet — no finalized name, no domain, no real customers or
+> leads — which the previous version didn't reflect accurately. It builds on a 29 Jul 2026 full rewrite
+> (after five audits over July found the version before *that* describing an architecture that no longer
+> existed), so this is the second time this file has needed correcting for reasons beyond normal code
+> drift. `MASTER_CHECKLIST.md` is the living, actively-maintained source of truth — trust that over this
+> file if they ever disagree.
+>
+> **Current status, stated plainly:** the app is fully built and technically deployed — both URLs below
+> are live and reachable — but this is **pre-launch**. There is no registered domain, no finalized
+> business name (the repo and this doc use "WYC" only because that's the existing repo name, not because
+> it's a confirmed brand), and no real customer leads have been captured yet. Everything under
+> "Deployment" below is explicitly temporary infrastructure, not production infrastructure in the sense
+> of serving real customers — treat it as a live staging environment, not a live business.
 
 **Despite the repo name, this is not just a backend.** It contains three things in one place:
 1. The **static marketing site** (`index.html`, `css/`, `js/`, `images/`) — hosted on **Vercel**
@@ -291,11 +302,30 @@ this is almost certainly why — check your Railway plan before anything else.
 
 ## Deployment
 
-**Current production setup:** the API (`server.js` and everything it needs) runs on **Railway**,
-auto-deploying from `main`. The static frontend (`index.html`, `css/`, `js/`, `images/`) is hosted
-separately on **Vercel**, also auto-deploying from `main` — the two are connected via CORS
-(`ALLOWED_ORIGIN`) and `vercel.json`'s single rewrite rule, which proxies `/flooring/*` requests
-through to the Railway API for server-rendered product pages.
+**Current live URLs — both confirmed reachable directly, 1 Aug 2026. Both explicitly temporary:**
+- Frontend: **https://easyflooring.vercel.app**
+- Backend/admin: **https://wyc-backend-production-ed78.up.railway.app** (admin panel at `/admin`)
+
+Neither is a final destination — there's no domain registered yet (see the honesty note at the top).
+Don't remove or "clean up" either URL from anywhere in the codebase on the assumption it's a placeholder;
+they're the real, live, currently-in-use infrastructure until a domain and business name are settled.
+
+**The API** (`server.js` and everything it needs) runs on **Railway**, auto-deploying from `main`. **The
+static frontend** (`index.html`, `css/`, `js/`, `images/`) is hosted separately on **Vercel**, also
+auto-deploying from `main` — the two are connected via CORS (`ALLOWED_ORIGIN`, confirmed currently set to
+`https://easyflooring.vercel.app,https://wyc-backend-production-ed78.up.railway.app`) and `vercel.json`'s
+single rewrite rule, which proxies `/flooring/*` requests through to the Railway API for server-rendered
+product pages.
+
+**⚠️ Known live bug, not just a documentation issue (found 1 Aug 2026):** both `index.html` and
+`routes/products-seo.js` still hardcode/default to `https://www.westyorkshirecarpets.com` — a domain that
+returns a 404, confirmed by direct fetch — for canonical URLs, `og:image`, Twitter cards, and JSON-LD
+business schema. `SITE_URL` (used by `products-seo.js` for exactly this) isn't currently set on Railway
+at all, so it falls back to that same dead domain. Low real-world urgency *specifically because* nothing
+is being promoted or shared publicly yet — but this needs fixing (either point everything at
+`easyflooring.vercel.app` for now, or leave it broken deliberately until a real domain exists — that's a
+product decision, not one this document should make) before any real launch. Tracked in
+`MASTER_CHECKLIST.md`, not fixed as part of this documentation pass.
 
 If you're setting this up fresh:
 1. **Railway:** connect the GitHub repo, set the environment variables from `.env.example`, deploy.
@@ -373,6 +403,9 @@ confirmed 100% unused, so this closed the vulnerability outright rather than nee
   before that ignore rule was added, so it wasn't retroactively removed. Harmless, but it's leftover
   debris from an earlier Vercel-for-everything setup that predates the current Vercel-site/Railway-API
   split; safe to `git rm` whenever someone's doing general housekeeping.
+- **Dead-domain references baked into live output** — see "Deployment" above for the full detail.
+  `index.html`'s SEO meta tags and `routes/products-seo.js`'s `SITE_URL` fallback both currently point at
+  a domain that 404s. Not urgent while nothing's being publicly promoted, but needs fixing before launch.
 
 ---
 
@@ -391,13 +424,21 @@ confirmed 100% unused, so this closed the vulnerability outright rather than nee
 | `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` / `SMTP_USER` / `SMTP_PASS` | No | — | Required if `MAIL_ENABLED=true`. See the Railway SMTP-blocking note above. |
 | `MAIL_FROM` / `MAIL_TO` | No | — | Sender/recipient for notification emails |
 | `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | Only if using the scraper | — | Required for `/api/panel/scrape-*` and `/import-family`'s image upload step |
-| `SITE_URL` | No | — | Used for SEO product pages, canonical URLs, sitemap generation |
+| `SITE_URL` | No | — | Used for SEO product pages, canonical URLs, sitemap generation. **Confirmed not currently set on Railway (1 Aug 2026)** — falls back to a hardcoded dead domain, see the Deployment section's known-bug note. Should be set to `https://easyflooring.vercel.app` until a real domain exists |
 | `RATE_LIMIT_MAX` / `RATE_LIMIT_WINDOW_MS` | No | `5` / `900000` | Lead-submission rate limit |
 | `LOG_LEVEL` | No | `info` | `debug` / `info` / `warn` / `error` |
 
+**Set on Railway but confirmed to do nothing (1 Aug 2026):** `CACHE_BUST` is set in the production
+environment but has zero references anywhere in this codebase — grepped directly, no matches. Almost
+certainly a leftover from a manual "change an env var to force a redeploy" trick rather than something
+the app reads. Harmless; safe to remove from Railway whenever someone's doing general housekeeping, or
+just as safe to leave alone.
+
 **Variables listed in `.env.example` that don't currently do anything:** `SESSION_SECRET` and
 `ADMIN_TOKEN` are both present in `.env.example` but confirmed (by grep, zero hits) to never be read
-anywhere in the actual code. Harmless to leave unset; not worth generating values for.
+anywhere in the actual code. Both are also confirmed actually *set* on Railway (not just present in the
+example file) — still inert either way. Harmless to leave as-is; not worth removing or generating new
+values for.
 
 ---
 
