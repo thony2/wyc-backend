@@ -32,8 +32,15 @@ alongside.
 
 ```
 wyc-backend/
-├── server.js                    # Express entry point — wires up every router below
-├── migrate-auto.js              # Runs on every server boot — creates/updates the schema
+├── server.js                    # Express entry point — wires up every router below.
+│                                 # Runs NO migration logic itself — see scripts/migrate.js below (1C).
+├── scripts/
+│   ├── migrate.js                # Runs schema migrations — chained into "start"/"dev" in package.json,
+│   │                              # so it still runs automatically, but as a distinct step (1C, 2 Aug
+│   │                              # 2026 — replaces the old migrate-auto.js, which ran on every boot)
+│   └── migrations/
+│       └── 001_initial_schema.sql  # Baseline schema. Future changes are new numbered files here,
+│                                    # never edits to this one.
 ├── package.json
 ├── .env.example                 # Copy to .env and configure — kept accurate, trust this file
 │
@@ -45,7 +52,7 @@ wyc-backend/
 │   │   ├── database.js          # PostgreSQL only. Throws a deliberate startup error if
 │   │   │                        # DB_TYPE=sqlite is ever set — SQLite was fully removed 10 Jul 2026.
 │   │   └── initDb.js            # Read-only connection check. Does NOT create anything —
-│   │                            # migrate-auto.js (above) is what actually builds the schema.
+│   │                            # scripts/migrate.js (see top of tree) is what actually builds the schema.
 │   ├── controllers/
 │   │   ├── leadController.js          # POST /api/leads
 │   │   ├── adminController.js         # Leads/dashboard/calendar admin logic (see API Reference)
@@ -151,9 +158,14 @@ npm run dev
 ```
 
 The API is now running at **http://localhost:3001**. The database schema is created/updated
-automatically on this first boot — there's no separate manual "initialise the database" step. If you
-just want to confirm your Postgres connection is working without starting the full server, use
-`npm run db:init` (this only checks and lists existing tables — it doesn't create anything).
+automatically before the server starts — `npm run dev` runs `scripts/migrate.js` first, then starts
+`nodemon`, so there's still no separate manual "initialise the database" step for a normal `npm run dev`.
+(This changed 2 Aug 2026 — see 1C in `MASTER_CHECKLIST.md`: schema setup used to run inside `server.js`
+itself, on every single restart; it's now a distinct step, run once per `npm run dev`/`npm start`
+invocation, not on every file-save restart nodemon triggers.) If you just want to confirm your Postgres
+connection is working without running migrations, use `npm run db:init` (only checks and lists existing
+tables — doesn't create anything). To run migrations without starting the server at all, use
+`npm run db:migrate` directly.
 
 Open the frontend (`index.html`) via a local static server (e.g. VS Code's Live Server extension) and
 submit the contact form to test the integration end to end.
@@ -396,10 +408,12 @@ confirmed 100% unused, so this closed the vulnerability outright rather than nee
   product CRUD, the honeypot field, the SEO product pages — has no test coverage yet. A schema-drift bug
   in the `audit_log` table shipped silently for months in 2026 before the first of these tests existed;
   that specific class of bug is now caught, most others still aren't.
-- **`migrate-auto.js` runs a large idempotent block on every server boot** rather than using a real
-  migration tool with version tracking. Works today because it's disciplined about
-  `IF NOT EXISTS` everywhere, but has no down-migrations and already has one confirmed case of drift
-  between what it creates and what production's database actually has.
+- **The new migration system (`scripts/migrate.js`, 1C, 2 Aug 2026) has no down-migrations.** Each
+  numbered `.sql` file only ever moves the schema forward — there's no built-in way to undo one. This
+  wasn't a stated requirement when 1C was scoped, and for a single-developer project with infrequent
+  schema changes it's a reasonable trade-off, but it's worth knowing before this ever becomes a team
+  project: reverting a bad migration currently means writing and running a new forward migration that
+  undoes it, not running an automatic rollback.
 - **`admin/index.html` is still a large single file** (~2,400 lines, down from ~4,000 after a partial
   split). The remaining split is deliberately deferred until a planned admin panel redesign happens, so
   it isn't done twice.
@@ -423,7 +437,7 @@ confirmed 100% unused, so this closed the vulnerability outright rather than nee
 | `DB_TYPE` | No | `postgres` | Must be `postgres` — the only supported value |
 | `PGHOST` / `PGPORT` / `PGDATABASE` / `PGUSER` / `PGPASSWORD` | Yes | — | PostgreSQL connection |
 | `JWT_SECRET` | **Yes** | — | Admin login secret. **Server refuses to start without this.** |
-| `ADMIN_DEFAULT_PASSWORD` | No | — | Used only by `migrate-auto.js`'s initial admin seed and `npm run admin:reset-password` |
+| `ADMIN_DEFAULT_PASSWORD` | No | — | Used only by `scripts/migrate.js`'s initial admin seed and `npm run admin:reset-password` |
 | `MAIL_ENABLED` | No | `false` | Enable admin notification + customer confirmation emails |
 | `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` / `SMTP_USER` / `SMTP_PASS` | No | — | Required if `MAIL_ENABLED=true`. See the Railway SMTP-blocking note above. |
 | `MAIL_FROM` / `MAIL_TO` | No | — | Sender/recipient for notification emails |
@@ -456,7 +470,8 @@ values for.
 | `db:seed` | `node seed-products.js` | **Dev only** — inserts placeholder products with Unsplash image URLs. Never run against production. |
 | `admin:reset-password` | `node scripts/reset-admin-password.js` | Resets the `admin` user's password to `ADMIN_DEFAULT_PASSWORD` from `.env` |
 | `test` | `node --test src/tests/leads.test.js src/tests/urlSafety.test.js` | Real integration + unit tests (PR #34, #38) — not placeholders. See Known Gaps for what's still uncovered |
-| `db:drop-audit-details-column` | `node scripts/drop-audit-log-details-column.js` | One-off, deliberately **not** part of `migrate-auto.js` (that script only ever does safe additive changes). Drops `audit_log.details` (plural) — confirmed dead, distinct from the actively-used `audit_log.detail` (singular). Reports row counts before dropping; safe to run more than once |
+| `db:migrate` | `node scripts/migrate.js` | Runs pending schema migrations from `scripts/migrations/`. Chained into `start`/`dev` automatically (1C, 2 Aug 2026) — running it directly is only needed if you want migrations without also starting the server |
+| `db:drop-audit-details-column` | `node scripts/drop-audit-log-details-column.js` | One-off, deliberately **not** part of `scripts/migrate.js` (that only ever does safe additive changes). Drops `audit_log.details` (plural) — confirmed dead, distinct from the actively-used `audit_log.detail` (singular). Reports row counts before dropping; safe to run more than once |
 
 `scripts/generate-hash.js` (not wired into `package.json`) prints a bcrypt hash of
 `ADMIN_DEFAULT_PASSWORD` for cases where you need to set an admin password by hand via a database

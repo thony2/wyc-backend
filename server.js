@@ -14,8 +14,15 @@ const {
     requestId,
 } = require('./src/middleware/security');
 
-const db = require('./src/config/database');
-require('./migrate-auto')(db).catch(e => logger.error(`[Migration] ${e.message}`));
+// Migrations no longer run here — see scripts/migrate.js (1C, see
+// MASTER_CHECKLIST.md). Chained into "start"/"dev" in package.json instead,
+// so they still run automatically on every deploy/dev session, but as a
+// distinct, visible step rather than a side effect buried in server.js.
+// No db require here either — every router now requires the shared pool
+// directly (src/config/database.js), and server.js itself has no direct
+// use for it. Requiring it just to leave it unused would open a real
+// Postgres connection pool for nothing (module.exports = getDatabase()
+// runs immediately on require).
 
 const leadRoutes     = require('./src/routes/leads');
 const adminRoutes    = require('./src/routes/authGuard');
