@@ -342,17 +342,61 @@ the original list didn't point to.
       during the 1 Aug reconciliation pass, same recurring pattern as several other items this session)
 - [ ] Verify: Only ONE pool is created at startup (check logs show single "PostgreSQL connected")
 
-### 1C — Migrate-auto cleanup
+### 1C — Migrate-auto cleanup ✅ DONE (2 Aug 2026)
 *Goal: Migrations don't run on every server start.*
 
-- [ ] Create scripts/migrations/ folder with numbered SQL files
-      → 001_initial_schema.sql, 002_add_product_columns.sql, etc.
-- [ ] Create scripts/migrate.js — simple runner that executes SQL files in order
-      → Tracks which migrations have run in a `_migrations` table
-- [ ] Add to package.json scripts: `"db:migrate": "node scripts/migrate.js"`
-- [ ] Remove `require('./migrate-auto')(db)` from server.js
-- [ ] Delete migrate-auto.js
-- [ ] Test: Fresh server start shows no migration output, just "Listening on port X"
+- [x] Created `scripts/migrations/001_initial_schema.sql` — the full current schema as one baseline file,
+      not split into files matching migrate-auto.js's exact historical additions (reverse-engineering
+      those boundaries would be archaeology with no operational benefit — every future schema change is
+      a new numbered file from here on, e.g. `002_...`). Deliberately idempotent throughout
+      (`IF NOT EXISTS` / `ON CONFLICT DO NOTHING`), matching migrate-auto.js's own discipline — this is
+      what makes it safe to run for the first time against the already-migrated live database (a no-op
+      there) as well as a genuinely fresh one.
+- [x] Created `scripts/migrate.js` — tracks applied migrations in a new `_migrations` table, only runs
+      files not yet recorded there. Exports a single `applyMigrations(db)` function (same shape as
+      migrate-auto.js's own `module.exports = async function(db) {...}`) rather than only being a CLI
+      script — `src/tests/leads.test.js` requires this file directly and awaits it against a test
+      database, exactly like it did with migrate-auto.js before this change; keeping the same shape
+      meant that test only needed a path update, not a rewrite. The bcrypt-based default-admin seed
+      (`ADMIN_DEFAULT_PASSWORD`) couldn't move into the `.sql` file — plain SQL can't hash a password —
+      so it stayed as a JS step in `migrate.js` itself, run after the `.sql` files, same idempotency
+      (`ON CONFLICT DO NOTHING`) as everything else.
+- [x] Added `"db:migrate": "node scripts/migrate.js"` to `package.json`. Also chained into `"start"`
+      (`node scripts/migrate.js && node server.js`) and `"dev"` (`node scripts/migrate.js && nodemon
+      server.js`) — **a deliberate addition beyond the original plan, not just the literal checklist
+      text.** Without this, nothing would actually run migrations on Railway deploys once `server.js`
+      stopped doing it automatically — a real gap: a deploy could boot fine and then break on the first
+      query touching a column a forgotten migration never created. Chaining into `start` closes that gap
+      entirely in the repo, with zero Railway dashboard configuration needed. Chaining into `dev` too is
+      safe specifically because it's cheap now: an already-applied migration is a fast tracking-table
+      check, not 30 real schema statements, and nodemon only restarts `server.js` on file changes — not
+      the outer `npm run dev` command — so this still only runs once per dev session, not on every save.
+- [x] `require('./migrate-auto')(db)` removed from `server.js`. The `db` require that only existed to
+      support that call was removed too, not left as dead code — `require()`-ing
+      `src/config/database.js` opens a real Postgres connection pool immediately
+      (`module.exports = getDatabase()` runs on require), so an unused import there wouldn't just be
+      dead code, it'd be a wasted connection.
+- [x] `migrate-auto.js` deleted.
+- [x] **Deliberate behaviour change, beyond the stated plan:** migrate-auto.js caught every error, logged
+      it, and let the server boot anyway — a broken migration could leave the app running against an
+      incomplete schema without anyone necessarily noticing. `scripts/migrate.js`'s CLI entrypoint does
+      not swallow errors — it exits non-zero on failure, which (via the `&&` chain above) stops the
+      server from starting at all. Failing loudly is safer than booting quietly broken.
+- [x] Test criterion met, with one honest clarification: running `node server.js` directly now shows
+      zero migration output, since there's none left in that file at all. Running `npm start` (the
+      actual Railway entrypoint) does show migration output first, by design — see the point above about
+      why that's a deliberate addition, not a deviation from the goal. The underlying goal ("schema
+      changes are a deliberate, visible step, not an invisible side effect of every boot") is met either
+      way.
+- [x] Verified: `scripts/migrate.js` and `server.js` pass `node --check`; `src/tests/leads.test.js`
+      updated (path only — `MIGRATE_PATH` now points at `scripts/migrate.js`, comments updated to match,
+      an unused `path` import removed since `require.resolve()` replaced `path.resolve()`). Every other
+      reference to `migrate-auto.js` across the codebase swept and checked individually — historical
+      references (dated checklist entries describing past fixes, the archived 7 Jul audit doc) left
+      alone; current-tense references (README.md, `scripts/drop-audit-log-details-column.js`'s own
+      comment) updated. Not run end-to-end in this environment (no network access to a real Postgres
+      instance) — before relying on this, run `npm run db:migrate` once against a real database and
+      confirm it completes cleanly, then run it a second time and confirm it reports "nothing to do."
 
 ### 1D — Admin Security
 *Goal: Admin password never in source code.*
@@ -784,7 +828,7 @@ together, as one piece of work, not split twice.
 |-------|--------|---------|-----------|
 | 0 — Environment | ✅ Complete | May 2026 | Jul 2026 |
 | 0.5 — Audit Findings | 🟡 In Progress *(0.5-A/B/C/D/E/F/H all done; 0.5-I's core fix done, 2 optional follow-ups still open; only 0.5-G — 2 minor hygiene items, `.vercel/README.txt` cleanup and `og-image.jpg` — genuinely remains. Corrected 2 Aug 2026: this row previously undercounted 6 of 8 sub-sections as still open)* | Jul 2026 | — |
-| 1 — Admin Portal | 🟡 In Progress *(1A done; 1B down to one manual verification step after the products-seo.js duplicate was corrected 2 Aug; 1D down to one manual git-history check; 1E partially done, rest deliberately deferred to a planned redesign; 1C and 1F not started)* | May 2026 | — |
+| 1 — Admin Portal | 🟡 In Progress *(1A and 1C done; 1B down to one manual verification step; 1D down to one manual git-history check; 1E partially done, rest deliberately deferred to a planned redesign; 1F not started)* | May 2026 | — |
 | 2 — Content | ⬜ Not started | — | — |
 | 3 — Website | ⬜ Not started | — | — |
 | 4 — Automation | ⬜ Not started | — | — |

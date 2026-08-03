@@ -8,10 +8,11 @@
  * helper, adminController.js, leadController.js, and the admin panel's own
  * display of the audit log all confirmed to use "detail", never "details").
  *
- * This is deliberately NOT part of migrate-auto.js. That script runs
- * automatically on every server boot and is designed only for safe,
- * additive, idempotent changes (CREATE TABLE IF NOT EXISTS, ADD COLUMN IF
- * NOT EXISTS). Dropping a column is destructive and shouldn't be something
+ * This is deliberately NOT part of scripts/migrate.js. That script runs
+ * automatically on every deploy/dev session (1C, 2 Aug 2026 — replaces the
+ * old migrate-auto.js) and is designed only for safe, additive, idempotent
+ * changes (CREATE TABLE IF NOT EXISTS, ADD COLUMN IF NOT EXISTS). Dropping
+ * a column is destructive and shouldn't be something
  * that could ever run silently and automatically — it belongs in a script
  * a person deliberately chooses to run once, the same way
  * reset-admin-password.js works.
