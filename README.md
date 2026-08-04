@@ -94,10 +94,12 @@ wyc-backend/
 ├── index.html, css/, js/, images/   # The public marketing site (Vercel-hosted)
 ├── vercel.json                  # Only rule: proxies /flooring/* to the Railway API
 │
-└── PROJECT_CONTEXT.md, MASTER_CHECKLIST.md, WYC-Backend-Technical-Audit.md
-                                  # PROJECT_CONTEXT.md is archived (see its own banner) — MASTER_CHECKLIST.md
-                                  # is the actively-maintained task list. WYC-Backend-Technical-Audit.md is
-                                  # a dated historical snapshot (7 Jul 2026), also archived.
+└── ROADMAP.md, PROJECT_CONTEXT.md, MASTER_CHECKLIST.md, WYC-Backend-Technical-Audit.md
+                                  # ROADMAP.md is the current strategic sequencing doc — what order
+                                  # Phases 2-7 below happen in, and why. PROJECT_CONTEXT.md is archived
+                                  # (see its own banner) — MASTER_CHECKLIST.md is the actively-maintained
+                                  # task list. WYC-Backend-Technical-Audit.md is a dated historical
+                                  # snapshot (7 Jul 2026), also archived.
                                   # Read MASTER_CHECKLIST.md before assuming anything below
                                   # is still accurate months from now.
 ```

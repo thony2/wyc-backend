@@ -44,6 +44,11 @@ rather than the implementation.
 capture, admin panel, product catalogue, supplier scraping/import — is built and deployed. Treat the
 current deployment as a live staging environment for continued development, not as a live business.
 
+**What happens next:** the business name, domain, and visual identity decisions above are `ROADMAP.md`'s
+Stage 0 — the first step in that document's sequencing, and a hard dependency for most of what comes
+after it (the redesign, real content, and SEO strategy all wait on this specifically). See that document
+for the full reasoning, not repeated here.
+
 ---
 
 ## For the next developer or chat session
