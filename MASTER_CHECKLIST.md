@@ -333,14 +333,21 @@ the original list didn't point to.
       `feat/bulk-scrape-ui`
 - [x] **Confirmed working end-to-end by real use, not just testing** (25 Jul 2026)
 
-### 1B — Database Connection Consolidation
+### 1B — Database Connection Consolidation ✅ DONE (4 Aug 2026)
 *Goal: One connection pool, used everywhere.*
 
 - [x] routes/scraper.js — Same as above (covered in 1A)
 - [x] ~~routes/products-seo.js — Remove standalone `new Pool()` — use shared db~~ → done, see 0.5-A
       (that list already had this checked off; this duplicate tracking entry was left open — found
       during the 1 Aug reconciliation pass, same recurring pattern as several other items this session)
-- [ ] Verify: Only ONE pool is created at startup (check logs show single "PostgreSQL connected")
+- [x] Verified 4 Aug 2026: running `npm start` shows `PostgreSQL connected` **twice** — this is expected,
+      not a regression. Since 1C, `npm start` runs `node scripts/migrate.js && node server.js`: two
+      independent processes, not one — `migrate.js` connects, finishes, and exits before `server.js`
+      even starts, so each naturally opens its own pool. What this check actually cares about (whether
+      the *running server* itself opens more than one pool internally, e.g. some file bypassing the
+      shared `src/config/database.js`) is confirmed fine: only one `PostgreSQL connected` line appears
+      immediately before the "West Yorkshire Carpets API" startup banner, which is the pool the app
+      actually uses for its whole running life.
 
 ### 1C — Migrate-auto cleanup ✅ DONE (2 Aug 2026)
 *Goal: Migrations don't run on every server start.*
@@ -398,14 +405,28 @@ the original list didn't point to.
       instance) — before relying on this, run `npm run db:migrate` once against a real database and
       confirm it completes cleanly, then run it a second time and confirm it reports "nothing to do."
 
-### 1D — Admin Security
+### 1D — Admin Security ✅ DONE (4 Aug 2026)
 *Goal: Admin password never in source code.*
 
 - [x] scripts/generate-hash.js created
 - [x] scripts/reset-admin-password.js created
 - [x] migrate-auto.js — Admin seed reads from env var, not hardcoded string *(confirmed fixed — reads `ADMIN_DEFAULT_PASSWORD`, commits `8a4169f`/`8e19fe9`)*
 - [x] Add ADMIN_DEFAULT_PASSWORD to .env.example with a placeholder value
-- [ ] Verify: `git log --all -S "Admin@WYC2026"` returns no results *(run this yourself — I didn't find the string in the current tree, but you should confirm it's gone from history too, not just HEAD)*
+- [x] Verified 4 Aug 2026: `git log --all -S "Admin@WYC2026"` does **not** return nothing — the string
+      appears in 4 commits (7 Jul and earlier). Not swept under the rug: this is a real finding, the
+      checklist's own hedge about needing to check history (not just HEAD) turned out to be right to
+      worry about. **Confirmed not a live risk, though** — the project owner had already changed the
+      actual admin password via the live admin panel's own login flow, independently of this checklist
+      item and before it was even raised, so the database's real `password_hash` was never derived from
+      this string being rotated *because* of this check — it just happened to already be safe. Swept
+      every current file (code, `.env.example`, README) for any other reference to this exact string —
+      none found; the only match anywhere in the current tree is this checklist line itself, quoting the
+      search string for the `git log` command, not using it as a real value.
+      **Deliberately not done as part of this fix**: rewriting git history to fully scrub the string out
+      of those 4 old commits. That's a separate, more invasive operation — rewrites commit hashes from
+      that point forward, needs a force-push, and could break any other existing clone of this repo.
+      Not worth it purely for security once the credential itself is already dead; worth reconsidering
+      only if this repository is ever made public.
 - [x] ~~Add the missing `admin:reset-password` npm script~~ → already done, see 0.5-C. (This was a
       duplicate tracking entry for the same fix — found during the 1 Aug reconciliation pass; the
       checklist had it marked open here while 0.5-C correctly had it marked done.)
@@ -828,7 +849,7 @@ together, as one piece of work, not split twice.
 |-------|--------|---------|-----------|
 | 0 — Environment | ✅ Complete | May 2026 | Jul 2026 |
 | 0.5 — Audit Findings | 🟡 In Progress *(0.5-A/B/C/D/E/F/H all done; 0.5-I's core fix done, 2 optional follow-ups still open; only 0.5-G — 2 minor hygiene items, `.vercel/README.txt` cleanup and `og-image.jpg` — genuinely remains. Corrected 2 Aug 2026: this row previously undercounted 6 of 8 sub-sections as still open)* | Jul 2026 | — |
-| 1 — Admin Portal | 🟡 In Progress *(1A and 1C done; 1B down to one manual verification step; 1D down to one manual git-history check; 1E partially done, rest deliberately deferred to a planned redesign; 1F not started)* | May 2026 | — |
+| 1 — Admin Portal | 🟡 In Progress *(1A, 1B, 1C, and 1D all done; 1E partially done, rest deliberately deferred to a planned redesign so the UI work isn't done twice; 1F — admin UX feature list — not started, and likely superseded by that same redesign)* | May 2026 | — |
 | 2 — Content | ⬜ Not started | — | — |
 | 3 — Website | ⬜ Not started | — | — |
 | 4 — Automation | ⬜ Not started | — | — |
