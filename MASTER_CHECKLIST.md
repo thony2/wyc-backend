@@ -92,6 +92,43 @@ Each item has a reference to the file(s) affected.
 >    honest note about the 3 unexpected non-null rows this surfaced, and what to do differently once real
 >    leads exist here).
 >
+> **Updated again 4 Aug 2026.** An extended session closed out the rest of 5A and Phase 1's remaining
+> code-quality items, working from a full `git bundle` of the real repository throughout rather than a
+> partial reconstruction (a methodology problem in earlier parts of this same session, corrected partway
+> through) — every patch verified via an actual `git am` on a fresh clone before being handed over, not
+> just written and assumed correct:
+> 1. **5A fully complete, all 5 steps.** `routes/products.js`, `routes/panel.js`, `routes/scraper.js`, and
+>    (folded in by request, though never part of 5A's original scope) `routes/products-seo.js` all
+>    migrated into `src/`. The `routes/` directory no longer exists. Every raw-error-message leak across
+>    all three originally-flagged files closed — zero known instances remain anywhere. The panel.js
+>    like/unlike duplication resolved along the way.
+> 2. **A full documentation reconciliation pass**, triggered by an independent external audit
+>    (`WYC-Documentation-Audit-Report.md`, not committed — supplied as input, every claim independently
+>    re-verified against the repo before acting on it, same discipline as every audit before it).
+>    `PROJECT_CONTEXT.md` rewritten from scratch and formally archived — down from 221 lines to 64,
+>    business-context-only. `WYC-Backend-Technical-Audit.md` given an explicit archived banner (content
+>    otherwise untouched — it didn't need rewriting, only clearer signposting that it's a dated
+>    snapshot). `README.md` corrected for several claims that had drifted from actual live
+>    infrastructure — the frontend/backend URLs, the business's actual pre-launch status (no domain, no
+>    finalized name — confirmed directly with the project owner rather than assumed from context).
+> 3. **1C — migration tooling, done.** `migrate-auto.js` (ran on every server boot) replaced with tracked,
+>    numbered migrations (`scripts/migrations/`, `scripts/migrate.js`). Caught one real cross-file risk
+>    before it became a break: `src/tests/leads.test.js` requires the migration file directly by path to
+>    build its test database, so the new file was deliberately kept to the same exported-function shape
+>    as the old one. Verified against the real production database by the project owner, not just
+>    locally — `npm run db:migrate` run twice, second run correctly reported nothing to do.
+> 4. **`0.5-F` (broken ops scripts) and the last two manual-verification items in `1B`/`1D` closed.**
+>    `backup.sh` was copying a SQLite file that hadn't existed since 10 Jul — rewritten to `pg_dump` the
+>    real database. `check-leads.sh` had two real bugs (treated an async DB call as sync; never loaded
+>    `.env`) — replaced with `check-leads.js`, not just patched. `1D`'s old hardcoded-password string was
+>    confirmed still present in 4 old git commits (a real finding, not a false alarm) but confirmed not a
+>    live risk — the project owner had already rotated the actual credential independently, before this
+>    check was even run.
+> 5. **`ROADMAP.md` added** — the strategic sequencing this checklist's granular Phase 2–6 content never
+>    had: what order to tackle them in, and why, plus naming one real gap (the business-level rebrand —
+>    name and domain — has no home in any existing phase). Read that document for what comes next; this
+>    one stays the record of what's actually done.
+>
 > **Golden rule for this phase of work: the live site currently works. Every item below is sequenced so that
 > nothing is done directly on `main`. Branch → fix → verify locally → PR → merge. If a fix can't be verified
 > locally, it gets a manual verification step on staging/production immediately after merge, called out explicitly.**
@@ -864,16 +901,19 @@ together, as one piece of work, not split twice.
 Paste this at the start of any new conversation:
 
 ---
-*"I am building a flooring lead-generation platform (West Yorkshire Carpets).
-Read README.md and MASTER_CHECKLIST.md, which I will attach — README.md for how the system actually
-works today, MASTER_CHECKLIST.md for what's done and what's still open.
-Find the first unchecked item in the checklist and let's work on it.
+*"I am building a flooring lead-generation platform (currently using the working name "WYC" — see
+ROADMAP.md, business rebrand is Stage 0 and hasn't happened yet).
+Read README.md, MASTER_CHECKLIST.md, and ROADMAP.md, which I will attach — README.md for how the system
+actually works today, MASTER_CHECKLIST.md for what's done and what's still open, ROADMAP.md for what
+order things should happen in and why.
+Check ROADMAP.md before picking a task — the first unchecked checklist item isn't automatically the
+right next thing to work on if it belongs to a later stage than where the project actually is.
 Work like a senior full-stack engineer — no shortcuts, no hardcoded values,
 no patches. One task at a time, commit after each change. The production site
 is live and works — never make a change that can't be verified before it
 reaches `main`."*
 
-Then attach both README.md and MASTER_CHECKLIST.md.
+Then attach README.md, MASTER_CHECKLIST.md, and ROADMAP.md.
 
 **Corrected 1 Aug 2026 (documentation reconciliation pass):** this used to say `PROJECT_CONTEXT.md` and
 `MASTER_CHECKLIST.md`, with no caveat. `PROJECT_CONTEXT.md` hasn't been updated since 27 May 2026 and is
@@ -882,4 +922,9 @@ session wrong architecture facts (stale file paths, a fictional API route, wrong
 exact moment it was most likely to act on them uncritically. `PROJECT_CONTEXT.md §1` (business model) is
 still worth reading if the session needs business context, not technical context — but it's no longer
 part of the default onboarding pair.
+
+**Updated again 4 Aug 2026:** `ROADMAP.md` added to the default pair (now a trio). Without it, a new
+session following "find the first unchecked item" literally could pick up `2A` (populate the catalogue)
+or `3D` (landing page redesign) before Stage 0 (the business rebrand) has happened — technically a valid
+unchecked item, but work that would likely need redoing once a real name/domain/visual identity exists.
 ---
